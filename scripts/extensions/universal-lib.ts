@@ -174,12 +174,14 @@ function newCharacter(L: Loaded, id: string) {
   };
 }
 
-const show = (v: unknown): string =>
-  v === undefined || v === null
-    ? ''
-    : typeof v === 'object'
-      ? ((v as Any).text ?? (v as Any).notation ?? JSON.stringify(v))
-      : String(v);
+/** A value as text: a content item's ID by its name, a list item by item, a roll by its notation. */
+const show = (v: unknown, L?: Loaded): string => {
+  if (v === undefined || v === null) return '';
+  if (Array.isArray(v)) return v.map((x) => show(x, L)).join(', ');
+  if (typeof v === 'string' && L?.ruleset.content?.[v]) return L.text.content(v);
+  if (typeof v === 'object') return (v as Any).text ?? (v as Any).notation ?? JSON.stringify(v);
+  return String(v);
+};
 const errorText = (L: Loaded, errors: Any[]) =>
   errors.map((e: Any) => L.text.error(e) || e.code).join('; ');
 const allCopies = (character: Any): Any[] => [
@@ -217,7 +219,12 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
     return {
       id,
       label: t.field(id),
-      value: def.type === 'enum' && typeof v === 'string' ? t.fieldValue(id, v) : show(v),
+      value:
+        def.type === 'enum' && typeof v === 'string'
+          ? t.fieldValue(id, v)
+          : def.type === 'set' && Array.isArray(v)
+            ? v.map((m) => t.setMember(String(m), packOf(id))).join(', ')
+            : show(v, L),
     };
   };
   // Field groups from the display hints; without them, every shown field in ruleset order.
@@ -250,11 +257,11 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
       quantity: c.quantity,
       state: Object.entries(c.state ?? {}).map(([k, v]) => ({
         label: t.state(c.item, k, type),
-        value: show(v),
+        value: show(v, L),
       })),
       computed: Object.entries(sheet.copies?.[c.id] ?? {}).map(([k, v]) => ({
         key: k,
-        value: show(v),
+        value: show(v, L),
       })),
     };
   };
@@ -282,10 +289,14 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
         forCreation: tags.some((x) => x === 'creation' || x.endsWith(':creation')),
       };
     });
+  // Input fields the sheet shows: a `hidden` one (an in-between helper, such as a skill's
+  // advancement credit) is never shown, not even when editing; nor one its showWhen hides.
   const inputs = Object.entries(R.fields)
     .filter(
-      ([, d]: Any) =>
-        d.input && ['string', 'integer', 'boolean', 'enum', 'decimal'].includes(d.type),
+      ([id, d]: Any) =>
+        d.input &&
+        ['string', 'integer', 'boolean', 'enum', 'decimal'].includes(d.type) &&
+        values[id]?.shown !== false,
     )
     .map(([id, d]: Any) => ({
       id,
@@ -425,12 +436,13 @@ function settle(sid: string, result: Any) {
   const changed = Object.keys(after.values ?? {})
     .filter(
       (id) =>
-        L.ruleset.fields[id] && show(before.values?.[id]?.value) !== show(after.values[id].value),
+        L.ruleset.fields[id] &&
+        show(before.values?.[id]?.value, L) !== show(after.values[id].value, L),
     )
     .map((id) => ({
       label: L.text.field(id),
-      from: show(before.values?.[id]?.value),
-      to: show(after.values[id].value),
+      from: show(before.values?.[id]?.value, L),
+      to: show(after.values[id].value, L),
     }));
   const action = S.action ?? { id: '' };
   const res = result.outcome?.result;
@@ -440,7 +452,10 @@ function settle(sid: string, result: Any) {
   const outcome = {
     action: actionLabel(L, S.character, after, action),
     result: resultText,
-    data: Object.entries(result.outcome?.data ?? {}).map(([k, v]) => ({ key: k, value: show(v) })),
+    data: Object.entries(result.outcome?.data ?? {}).map(([k, v]) => ({
+      key: k,
+      value: show(v, L),
+    })),
     rolls: rollsOf(L, result.log),
     changed,
     others,
