@@ -1,20 +1,20 @@
 // SagaS character creation (sagas-core pack) in the terminal, interactive or random.
 //
-//   node --import tsx --conditions @opencharacter/source scripts/perso/sagas-create-cli.ts [options]
+//   node --import tsx --conditions @opencharacter/source scripts/extensions/sagas-create-cli.ts [options]
 //
 // Options:
 //   --random          roll a random character (no questions)
 //   --points N        creation points: 150, 250 or 350 (default 150)
 //   --id ID           character ID (default sagas-<timestamp>)
-//   --out FILE        output file (default examples/characters/<id>.yaml)
+//   --out FILE        output file (default examples/characters/extensions/<id>.yaml)
 //
 // The engine computes the point costs (the pack's points.remaining field): this script recodes no
 // rule, it only fills in the character file.
 import { computeSheet, loadRuleset } from '../../packages/engine/src/index.ts';
 import { readPack } from '../../packages/engine/test/packs.ts';
 import { parse, stringify } from 'yaml';
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 
@@ -361,7 +361,7 @@ const main = async () => {
   summary();
   if (remaining() < 0) console.log(`\nWarning: over budget by ${-remaining()} points.`);
 
-  const out = opt('out') ?? join('examples', 'characters', `${id}.yaml`);
+  const out = opt('out') ?? join('examples', 'characters', 'extensions', `${id}.yaml`);
   if (rl) {
     const ok = await ask(
       `\nSave to ${out}?${existsSync(out) ? ' (the file exists and will be replaced)' : ''} (y/n)`,
@@ -370,6 +370,7 @@ const main = async () => {
     rl.close();
     if (!/^y/i.test(ok)) return;
   }
+  mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, stringify(ch));
   console.log(`Saved: ${out}`);
 };

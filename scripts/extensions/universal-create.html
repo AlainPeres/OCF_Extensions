@@ -686,7 +686,7 @@
               .join('')
           : '<p class="muted">Nothing yet.</p>';
         if (!$('saveFile').value || $('saveFile').dataset.sid !== v.sid) {
-          $('saveFile').value = v.file || `${v.character.id}.yaml`;
+          $('saveFile').value = v.file || `extensions/${v.character.id}.yaml`;
           $('saveFile').dataset.sid = v.sid;
         }
         if (!$('yaml').classList.contains('hidden')) showYaml();

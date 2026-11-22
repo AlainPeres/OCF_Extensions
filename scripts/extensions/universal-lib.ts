@@ -4,8 +4,9 @@
 // continueAction) and hands each pause to the page with its text (describeNeed): a choice, an
 // allocation (a budget or a list of values). Finished actions' changes for the character are
 // applied (applyChanges); their rolls and outcome go back to the page. Forms for actions come
-// from describeAction; input fields are set with `set` changes; characters are saved to
-// examples/characters/.
+// from describeAction; input fields are set with `set` changes. Characters are listed from
+// examples/characters/ (OCF's) and examples/characters/extensions/ (ours); a loaded one is saved
+// back where it was, a new one to extensions/.
 
 import {
   applyChanges,
@@ -23,7 +24,7 @@ import {
   type Text,
 } from '../../packages/text/src/index.ts';
 import { parse, stringify } from 'yaml';
-import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { join } from 'node:path';
 import { exec } from 'node:child_process';
@@ -510,6 +511,21 @@ const session = (sid: string) => {
 };
 const safeName = (s: string) => s.replace(/[^\w.-]+/g, '-').replace(/^-+|-+$/g, '');
 
+// Character files are named relative to examples/characters/: `name.yaml` (OCF's examples) or
+// `extensions/name.yaml` (ours). Nothing else gets through, so no path leaves those two folders.
+const EXT = 'extensions';
+const charFile = (s: string) => {
+  const m = /^extensions[/\\](.+)$/.exec(String(s ?? ''));
+  return m ? `${EXT}/${safeName(m[1] ?? '')}` : safeName(String(s ?? ''));
+};
+const charPath = (file: string) => join(charsDir, ...file.split('/'));
+const yamlIn = (dir: string, prefix = '') =>
+  existsSync(dir)
+    ? readdirSync(dir)
+        .filter((f) => f.endsWith('.yaml'))
+        .map((f) => prefix + f)
+    : [];
+
 /** Serves `page` (next to this file) and the API on 127.0.0.1; `--port` and `--no-open` from argv. */
 export function serve(title: string, page: string, defaultPort: number) {
   const argv = process.argv.slice(2);
@@ -525,17 +541,15 @@ export function serve(title: string, page: string, defaultPort: number) {
       if (p === '/api/packs') return send(res, 200, packList());
       if (p === '/api/characters') {
         const pack = url.searchParams.get('pack');
-        const list = readdirSync(charsDir)
-          .filter((f) => f.endsWith('.yaml'))
-          .filter((f) => {
+        const list = [...yamlIn(charsDir), ...yamlIn(join(charsDir, EXT), `${EXT}/`)].filter(
+          (f) => {
             try {
-              return (
-                !pack || (readYaml(join(charsDir, f)).packs ?? []).some((x: Any) => x.id === pack)
-              );
+              return !pack || (readYaml(charPath(f)).packs ?? []).some((x: Any) => x.id === pack);
             } catch {
               return false;
             }
-          });
+          },
+        );
         return send(res, 200, list);
       }
       if (req.method !== 'POST') return send(res, 404, { error: 'not found' });
@@ -551,8 +565,8 @@ export function serve(title: string, page: string, defaultPort: number) {
         return send(res, 200, view(sid));
       }
       if (p === '/api/load') {
-        const file = safeName(b.file);
-        const character = readYaml(join(charsDir, file));
+        const file = charFile(b.file);
+        const character = readYaml(charPath(file));
         // The pack asked for if the character uses it, else the character's last pack.
         const ids: string[] = (character.packs ?? []).map((x: Any) => x.id);
         const pack = b.pack && ids.includes(b.pack) ? b.pack : ids.at(-1);
@@ -652,10 +666,16 @@ export function serve(title: string, page: string, defaultPort: number) {
         return send(res, 200, stringify(session(b.sid).character), 'text/yaml; charset=utf-8');
       if (p === '/api/save') {
         const S = session(b.sid);
-        const file = safeName(b.file || `${S.character.id}.yaml`).replace(/(\.yaml)?$/, '.yaml');
-        const path = join(charsDir, file);
+        // A loaded character is saved back where it was; any other file goes to extensions/.
+        let file = charFile(b.file || S.file || `${S.character.id}.yaml`).replace(
+          /(\.yaml)?$/,
+          '.yaml',
+        );
+        if (file !== S.file && !file.startsWith(`${EXT}/`)) file = `${EXT}/${file}`;
+        const path = charPath(file);
         if (existsSync(path) && !b.overwrite && file !== S.file)
           return send(res, 409, { error: `${file} already exists` });
+        mkdirSync(join(charsDir, EXT), { recursive: true });
         writeFileSync(path, stringify(S.character));
         S.file = file;
         return send(res, 200, { saved: `examples/characters/${file}` });

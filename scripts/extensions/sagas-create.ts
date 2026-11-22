@@ -1,6 +1,6 @@
 // SagaS character creation in the browser.
 //
-//   node --import tsx --conditions @opencharacter/source scripts/perso/sagas-create.ts [--port 5174]
+//   node --import tsx --conditions @opencharacter/source scripts/extensions/sagas-create.ts [--port 5174]
 //
 // A small local server (127.0.0.1 only) serves sagas-create.html and runs the engine: the page sends
 // the character, the server sends back the computed sheet. Costs come from the pack's formulas
@@ -8,7 +8,7 @@
 import { computeSheet, loadRuleset } from '../../packages/engine/src/index.ts';
 import { readPack } from '../../packages/engine/test/packs.ts';
 import { parse, stringify } from 'yaml';
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { join } from 'node:path';
 import { exec } from 'node:child_process';
@@ -16,7 +16,7 @@ import { exec } from 'node:child_process';
 const PACK = 'sagas-core';
 const root = process.cwd();
 const packDir = join(root, 'packs', 'sagas', 'core');
-const charDir = join(root, 'examples', 'characters');
+const charDir = join(root, 'examples', 'characters', 'extensions');
 const pagePath = join(import.meta.dirname, 'sagas-create.html');
 const portArg = process.argv.indexOf('--port');
 const port = portArg >= 0 ? Number(process.argv[portArg + 1]) : 5174;
@@ -207,6 +207,7 @@ const server = createServer(async (req, res) => {
         return send(res, 400, { error: 'invalid ID (lowercase letters, digits, hyphens)' });
       const file = join(charDir, `${character.id}.yaml`);
       if (existsSync(file) && !overwrite) return send(res, 409, { error: 'exists', file });
+      mkdirSync(charDir, { recursive: true });
       writeFileSync(file, stringify(character));
       console.log(`Saved: ${file}`);
       return send(res, 200, { file });

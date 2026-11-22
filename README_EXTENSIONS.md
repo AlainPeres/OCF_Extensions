@@ -26,24 +26,29 @@ clone is on: `git log -1`.
 
 ## What was added
 
-| Path                                             | What                                                            |
-| ------------------------------------------------ | --------------------------------------------------------------- |
-| `packs/sagas/core/`                              | The `sagas-core` pack (rules, 119 skills, 62 weapons, 14 armor) |
-| `scripts/perso/sagas-create-cli.ts`              | SagaS character creation in the terminal                        |
-| `scripts/perso/sagas-create.ts` + `.html`        | SagaS character creation in the browser                         |
-| `scripts/perso/sagas-play.ts` + `.html`          | SagaS play sheet in the browser                                 |
-| `scripts/perso/universal-lib.ts`                 | Shared server of the two universal tools                        |
-| `scripts/perso/universal-create.ts` + `.html`    | Character creator for any pack                                  |
-| `scripts/perso/universal-play.ts` + `.html`      | Play sheet for any pack and character                           |
-| `scripts/perso/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                 |
-| `.vscode/launch.json`, `.vscode/settings.json`   | Run and debug the current TS file from VS Code                  |
+| Path                                                  | What                                                            |
+| ----------------------------------------------------- | --------------------------------------------------------------- |
+| `packs/sagas/core/`                                   | The `sagas-core` pack (rules, 119 skills, 62 weapons, 14 armor) |
+| `scripts/extensions/sagas-create-cli.ts`              | SagaS character creation in the terminal                        |
+| `scripts/extensions/sagas-create.ts` + `.html`        | SagaS character creation in the browser                         |
+| `scripts/extensions/sagas-play.ts` + `.html`          | SagaS play sheet in the browser                                 |
+| `scripts/extensions/universal-lib.ts`                 | Shared server of the two universal tools                        |
+| `scripts/extensions/universal-create.ts` + `.html`    | Character creator for any pack                                  |
+| `scripts/extensions/universal-play.ts` + `.html`      | Play sheet for any pack and character                           |
+| `scripts/extensions/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                 |
+| `examples/characters/extensions/`                     | SagaS example characters and the characters the tools save      |
+| `.vscode/launch.json`, `.vscode/settings.json`        | Run and debug the current TS file from VS Code                  |
+
+Our files stay apart from OCF's: scripts in `scripts/extensions/`, characters in
+`examples/characters/extensions/`. `pnpm validate` reads `examples/characters/` with its
+sub-folders, so it still checks them.
 
 ## Running the tools
 
 Each tool is a TypeScript file run with `tsx` and the repo's source condition, from the repo root:
 
 ```sh
-node --import tsx --conditions @opencharacter/source scripts/perso/<tool>.ts [options]
+node --import tsx --conditions @opencharacter/source scripts/extensions/<tool>.ts [options]
 ```
 
 In VS Code, open the file and press F5 (launch configuration "Exécuter le fichier TS courant
@@ -59,8 +64,10 @@ server (127.0.0.1 only) and opens the page in the browser. `--port N` changes th
 | `universal-create.ts` | 5176 | `--port`, `--no-open`                                                                         |
 | `universal-play.ts`   | 5177 | `--port`, `--no-open`                                                                         |
 
-Characters are saved to `examples/characters/` (an existing file is never overwritten without
-asking).
+Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
+without asking). The SagaS tools read and write that folder only. The universal tools list OCF's
+example characters (`examples/characters/`) and ours (`extensions/…`); a loaded character is saved
+back where it was, and a new one, or one saved under another name, goes to `extensions/`.
 
 ## The SagaS pack (`packs/sagas/core`)
 
@@ -242,7 +249,7 @@ Without CI, check locally before pushing:
 
 ```sh
 npx oxlint --deny-warnings
-npx oxfmt --check packs/sagas scripts/perso README_EXTENSIONS.md
+npx oxfmt --check packs/sagas scripts/extensions README_EXTENSIONS.md
 pnpm typecheck
 pnpm validate
 ```
@@ -436,7 +443,7 @@ Rename it first (`opencharacter` → `opencharacter_old`), then test the copy:
 
 ```powershell
 pnpm validate
-node --import tsx --conditions @opencharacter/source scripts/perso/universal-play.ts
+node --import tsx --conditions @opencharacter/source scripts/extensions/universal-play.ts
 ```
 
 If everything works while the original has another name, the copy no longer depends on it. Delete

@@ -1,11 +1,11 @@
 // SagaS character sheet in the browser, for play: skill and characteristic rolls, dealing damage
 // with a weapon, taking damage, rest.
 //
-//   node --import tsx --conditions @opencharacter/source scripts/perso/sagas-play.ts [--port 5175] [--no-open]
+//   node --import tsx --conditions @opencharacter/source scripts/extensions/sagas-play.ts [--port 5175] [--no-open]
 //
 // A small local server (127.0.0.1 only) serves sagas-play.html and runs the pack's actions with the
 // engine (startAction, random dice); changes an action proposes for the character (injuries, stun)
-// are applied with applyChanges. The page saves the character back to examples/characters/.
+// are applied with applyChanges. The page saves the character back to examples/characters/extensions/.
 import {
   applyChanges,
   computeSheet,
@@ -14,7 +14,7 @@ import {
 } from '../../packages/engine/src/index.ts';
 import { readPack } from '../../packages/engine/test/packs.ts';
 import { parse, stringify } from 'yaml';
-import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { join } from 'node:path';
 import { exec } from 'node:child_process';
@@ -22,7 +22,7 @@ import { exec } from 'node:child_process';
 const PACK = 'sagas-core';
 const root = process.cwd();
 const packDir = join(root, 'packs', 'sagas', 'core');
-const charDir = join(root, 'examples', 'characters');
+const charDir = join(root, 'examples', 'characters', 'extensions');
 const pagePath = join(import.meta.dirname, 'sagas-play.html');
 const portArg = process.argv.indexOf('--port');
 const port = portArg >= 0 ? Number(process.argv[portArg + 1]) : 5175;
@@ -188,6 +188,7 @@ const server = createServer(async (req, res) => {
     if (url.pathname === '/api/save' && req.method === 'POST') {
       const { character, file } = await body(req);
       if (!FILE.test(file ?? '')) return send(res, 400, { error: 'invalid file name' });
+      mkdirSync(charDir, { recursive: true });
       writeFileSync(join(charDir, file), stringify(character));
       console.log(`Saved: ${join(charDir, file)}`);
       return send(res, 200, { file: join(charDir, file) });

@@ -6,7 +6,7 @@
 // input fields (hit points…) and saves the character back. The server is universal-lib.ts, shared
 // with universal-create.
 //
-//   node --import tsx --conditions @opencharacter/source scripts/perso/universal-play.ts [--port 5177] [--no-open]
+//   node --import tsx --conditions @opencharacter/source scripts/extensions/universal-play.ts [--port 5177] [--no-open]
 
 import { serve } from './universal-lib.ts';
 

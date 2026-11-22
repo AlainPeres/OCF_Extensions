@@ -5,7 +5,7 @@
 // rules list (those tagged `creation` first), sets input fields, and saves the character to
 // examples/characters/. The server is universal-lib.ts, shared with universal-play.
 //
-//   node --import tsx --conditions @opencharacter/source scripts/perso/universal-create.ts [--port 5176] [--no-open]
+//   node --import tsx --conditions @opencharacter/source scripts/extensions/universal-create.ts [--port 5176] [--no-open]
 
 import { serve } from './universal-lib.ts';
 
