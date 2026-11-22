@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SagaS Creation</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --panel: #ffffff; --text: #1d1c1a; --muted: #6b675f; --line: #e2dfd8;
+    --accent: #2f6f5e; --accent-soft: #e3f0eb; --bad: #b3261e; --bad-soft: #fbe9e7; --warn: #8a5a00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161614; --panel: #1f1f1c; --text: #ecebe6; --muted: #a29e94; --line: #34332e;
+      --accent: #6cc4a8; --accent-soft: #1f3530; --bad: #f2867c; --bad-soft: #3a1f1c; --warn: #e0b45c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, "Segoe UI", sans-serif; }
+  header {
+    position: sticky; top: 0; z-index: 5; background: var(--panel); border-bottom: 1px solid var(--line);
+    padding: 10px 20px; display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center;
+  }
+  header h1 { font-size: 17px; margin: 0; }
+  .budget { flex: 1; min-width: 240px; }
+  .bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; margin-top: 4px; }
+  .bar > div { height: 100%; background: var(--accent); transition: width .2s; }
+  .budget.over .bar > div { background: var(--bad); }
+  .budget.over b { color: var(--bad); }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; padding: 20px; max-width: 1300px; margin: 0 auto; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } aside { order: -1; } }
+  section, aside > div { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+  aside > div { position: sticky; top: 76px; }
+  h2 { font-size: 15px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  h2 small { font-weight: normal; color: var(--muted); font-size: 12px; }
+  button, select, input { font: inherit; color: inherit; }
+  button {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 5px 11px; cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+  button.small { padding: 1px 8px; min-width: 28px; }
+  input, select { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; }
+  input[type=number] { width: 64px; text-align: right; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+  .stat { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; }
+  .stat .name { flex: 1; }
+  .stat .cost { color: var(--muted); font-size: 12px; min-width: 42px; text-align: right; }
+  .stepper { display: flex; align-items: center; gap: 4px; }
+  .stepper input { width: 52px; }
+  .ident { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px 16px; }
+  .ident label { display: flex; flex-direction: column; align-items: stretch; gap: 3px; color: var(--muted); font-size: 12px; }
+  .ident label.wide { grid-column: 1 / -1; }
+  .ident input, .ident textarea { color: var(--text); font-size: 14px; }
+  textarea { font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; resize: vertical; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+  label { display: inline-flex; gap: 6px; align-items: center; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .seg button { border: 0; border-radius: 0; }
+  .seg button.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--line); padding: 4px 6px; }
+  td { border-bottom: 1px solid var(--line); padding: 4px 6px; }
+  tr.taken td { background: var(--accent-soft); }
+  tr.group th { background: var(--bg); color: var(--text); font-size: 13px; padding: 8px 6px 4px; border-bottom: 1px solid var(--line); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .scroll { max-height: 460px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; }
+  .scroll thead th { position: sticky; top: 0; background: var(--panel); }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .filters input[type=search] { flex: 1; min-width: 160px; }
+  .muted { color: var(--muted); }
+  .pill { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); color: var(--muted); }
+  dl { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; margin: 0; }
+  dt { color: var(--muted); }
+  dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .sep { grid-column: 1 / -1; border-top: 1px solid var(--line); margin: 6px 0; }
+  .issues { margin-top: 10px; padding: 8px; border-radius: 6px; background: var(--bad-soft); color: var(--bad); font-size: 12px; white-space: pre-wrap; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 4px 3px 10px; border: 1px solid var(--line); border-radius: 14px; }
+  #toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 8px 14px; border-radius: 8px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<header>
+  <h1>SagaS character creation</h1>
+  <div class="budget" id="budget">
+    <div><b id="remaining">…</b> points left <span class="muted" id="spent"></span></div>
+    <div class="bar"><div id="bar" style="width:0"></div></div>
+  </div>
+  <div class="actions">
+    <button id="btnRandom" title="Roll a random character at the chosen power level">Random</button>
+    <select id="loadSelect" title="Load an existing character"><option value="">Load…</option></select>
+    <button id="btnReset">New</button>
+    <button id="btnYaml">Download YAML</button>
+    <button id="btnSave" class="primary">Save</button>
+  </div>
+</header>
+
+<main>
+  <div>
+    <section>
+      <h2>Identity</h2>
+      <div class="ident">
+        <label>Name <input data-identity="name" placeholder="Character name"></label>
+        <label>Species <input data-identity="species"></label>
+        <label>Profession <input data-identity="profession" placeholder="Needs 11+ in its skills to be competent"></label>
+        <label>File ID <input id="charId" pattern="[a-z0-9]+(-[a-z0-9]+)*" title="Lowercase letters, digits and hyphens: the file name"></label>
+        <label class="wide">Description <textarea data-identity="description" rows="3" placeholder="Appearance, personality, tastes…"></textarea></label>
+      </div>
+    </section>
+
+    <section>
+      <h2>Creation</h2>
+      <div class="row">
+        <span>Power level
+          <span class="seg" id="power">
+            <button data-v="150" title="A little more powerful than normal">150</button><button data-v="250" title="More powerful than normal">250</button><button data-v="350" title="Much more powerful than normal">350</button>
+          </span>
+        </span>
+        <label title="Any number of creation points, for example with preliminary experience">Creation points <input type="number" id="points" min="0" step="1"></label>
+        <label>Social class
+          <select id="social">
+            <option value="-1">Less favored (+10 pts)</option>
+            <option value="0">Middle class</option>
+            <option value="1">Privileged (−10 pts)</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <h2>Characteristics <small>5 is free · cost per point 3 / 6 / 12 / 24 / 48 by the final value</small></h2>
+      <div class="grid" id="chars"></div>
+    </section>
+
+    <section>
+      <h2>Secondary characteristics <small>bought bonus, cost ×3</small></h2>
+      <div class="grid" id="secondary"></div>
+    </section>
+
+    <section>
+      <h2>Skills <small id="skillCount"></small></h2>
+      <div class="filters">
+        <input type="search" id="skillSearch" placeholder="Search a skill…">
+        <select id="skillChar"><option value="">All characteristics</option></select>
+        <label><input type="checkbox" id="skillTaken"> learned only</label>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Skill</th><th>Char.</th><th class="num">Initial</th><th class="num">Learning</th><th class="num">Total</th><th>Grade</th><th></th></tr></thead>
+          <tbody id="skills"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Equipment</h2>
+      <div class="chips" id="inventory"></div>
+      <div class="filters" style="margin-top:10px">
+        <input type="search" id="gearSearch" placeholder="Search a weapon or protection…">
+        <select id="gearKind">
+          <option value="weapons">Weapons</option>
+          <option value="armors">Protections</option>
+        </select>
+      </div>
+      <div class="scroll" style="max-height:300px">
+        <table>
+          <thead id="gearHead"></thead>
+          <tbody id="gear"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Possessions <small>besides weapons and protections, one per line</small></h2>
+      <div class="ident">
+        <label class="wide"><textarea data-identity="possessions" rows="4" placeholder="Rope, lantern, purse of 20 silver…"></textarea></label>
+      </div>
+    </section>
+
+    <section>
+      <h2>Background</h2>
+      <div class="ident">
+        <label class="wide"><textarea data-identity="background" rows="8" placeholder="Origins, past, motives, purpose in life…"></textarea></label>
+      </div>
+    </section>
+  </div>
+
+  <aside>
+    <div>
+      <h2>Summary</h2>
+      <dl id="summary"></dl>
+      <div id="issues"></div>
+    </div>
+  </aside>
+</main>
+<div id="toast"></div>
+
+<script>
+const GRADES = ['incompetent', 'beginner', 'amateur', 'professional', 'expert', 'master'];
+const $ = (id) => document.getElementById(id);
+let D; // pack data
+let ch; // character being edited
+let sheet = { values: {}, copies: {}, issues: [] };
+
+const k = (f) => `${D.pack}:${f}`;
+const getV = (f, def = 0) => ch.values[k(f)] ?? def;
+const setV = (f, v, def) => { if (v === def) delete ch.values[k(f)]; else ch.values[k(f)] = v; };
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const toast = (msg) => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2500); };
+const api = async (path, payload) => {
+  const r = await fetch(path, payload === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+  const type = r.headers.get('content-type') ?? '';
+  const out = type.includes('json') ? await r.json() : await r.text();
+  if (!r.ok) throw Object.assign(new Error(out.error ?? r.statusText), { status: r.status, body: out });
+  return out;
+};
+
+const fresh = () => ({
+  specVersion: '0.4.0',
+  id: `sagas-${Date.now().toString(36)}`,
+  packs: [{ id: D.pack, version: '0.1.0' }],
+  values: { [`${D.pack}:creation.points`]: 150 },
+  features: [],
+  inventory: [],
+});
+
+// --- Computing ----------------------------------------------------------------------------------
+let pending;
+const recompute = () => {
+  clearTimeout(pending);
+  pending = setTimeout(async () => {
+    sheet = await api('/api/compute', { character: ch });
+    render();
+  }, 60);
+};
+const change = () => { renderInputs(); recompute(); };
+
+// --- Rendering -----------------------------------------------------------------------------------
+const V = (f) => sheet.values[f];
+const charName = (f) => D.fieldNames[f] ?? f;
+
+// Learning levels move in steps of 5 below 0 (-15, -10, -5, 0), then 1 by 1.
+const nextLearning = (l) => (l < 0 ? Math.floor(l / 5) * 5 + 5 : l + 1);
+const prevLearning = (l) => (l <= 0 ? Math.ceil(l / 5) * 5 - 5 : l - 1);
+
+function stepper(value, min, onSet, next = (v) => v + 1, prev = (v) => v - 1) {
+  const wrap = document.createElement('div');
+  wrap.className = 'stepper';
+  const minus = Object.assign(document.createElement('button'), { className: 'small', textContent: '−' });
+  const input = Object.assign(document.createElement('input'), { type: 'number', value, min });
+  const plus = Object.assign(document.createElement('button'), { className: 'small', textContent: '+' });
+  const set = (v) => { if (Number.isInteger(v) && v >= min) onSet(v); };
+  minus.onclick = () => set(prev(Number(input.value)));
+  plus.onclick = () => set(next(Number(input.value)));
+  input.onchange = () => set(Number(input.value));
+  wrap.append(minus, input, plus);
+  return wrap;
+}
+
+const IDENTITY_DEFAULTS = { species: 'Human' };
+
+function renderInputs() {
+  $('charId').value = ch.id;
+  for (const el of document.querySelectorAll('[data-identity]')) {
+    const f = el.dataset.identity;
+    el.value = getV(`identity.${f}`, IDENTITY_DEFAULTS[f] ?? '');
+  }
+  for (const b of $('power').children) b.classList.toggle('on', Number(b.dataset.v) === getV('creation.points', 150));
+  $('points').value = getV('creation.points', 150);
+  $('social').value = String(getV('creation.social', 0));
+
+  const chars = $('chars');
+  chars.replaceChildren();
+  for (const c of D.chars) {
+    const div = document.createElement('div');
+    div.className = 'stat';
+    div.innerHTML = `<span class="name">${esc(c.name)}</span>`;
+    div.append(stepper(getV(c.key, 5), 0, (v) => { setV(c.key, v); change(); }));
+    chars.append(div);
+  }
+
+  const sec = $('secondary');
+  sec.replaceChildren();
+  for (const s of D.secondary) {
+    const div = document.createElement('div');
+    div.className = 'stat';
+    div.innerHTML = `<span class="name">${esc(s.name)}<br><span class="muted" data-sec="${s.key}"></span></span>`;
+    div.append(stepper(getV(`creation.${s.key}`, 0), 0, (v) => { setV(`creation.${s.key}`, v, 0); change(); }));
+    sec.append(div);
+  }
+  renderSkills();
+  renderGear();
+}
+
+function renderSkills() {
+  const q = $('skillSearch').value.trim().toLowerCase();
+  const fc = $('skillChar').value;
+  const takenOnly = $('skillTaken').checked;
+  const body = $('skills');
+  body.replaceChildren();
+  let shown = 0;
+  // Skills grouped by characteristic, in the sheet's order; "Other" last in each group.
+  const groups = [...D.chars.map((c) => c.key), ...D.secondary.map((s) => `sec.${s.key}`)];
+  const ordered = groups.flatMap((g) => D.skills
+    .filter((s) => s.fields.characteristic === g)
+    .sort((a, b) => (a.fields.variableBase ? 1 : 0) - (b.fields.variableBase ? 1 : 0) || a.name.localeCompare(b.name)));
+  let group;
+  for (const sk of ordered) {
+    const local = sk.id.replace('skills.', '');
+    // A generic skill has one copy per specialization; any other skill at most one.
+    const feats = ch.features.filter((f) => f.item === k(sk.id));
+    if (takenOnly && !feats.length) continue;
+    if (fc && sk.fields.characteristic !== fc) continue;
+    const specs = feats.map((f) => f.state.specialty ?? '').join(' ').toLowerCase();
+    if (q && !sk.name.toLowerCase().includes(q) && !sk.id.includes(q) && !specs.includes(q)) continue;
+    shown++;
+    if (sk.fields.characteristic !== group) {
+      group = sk.fields.characteristic;
+      const head = document.createElement('tr');
+      head.className = 'group';
+      head.innerHTML = `<th colspan="7">${esc(charName(group))}</th>`;
+      body.append(head);
+    }
+    const base = sk.fields.base ?? 0;
+    const variable = !!sk.fields.variableBase;
+    const tags = [sk.fields.generic ? '<span class="pill" title="Must be specialized; can be learned once per specialty">generic</span>' : '', sk.fields.techLevel ? `<span class="pill">TL ${sk.fields.techLevel}</span>` : ''].join(' ');
+    const learn = (label) => {
+      const b = Object.assign(document.createElement('button'), { className: 'small', textContent: label });
+      b.onclick = () => {
+        let specialty = '';
+        if (sk.fields.generic) {
+          specialty = (prompt(`${sk.name}: specialty`) ?? '').trim();
+          if (!specialty) return;
+        }
+        const state = { learning: base };
+        if (specialty) state.specialty = specialty;
+        if (variable) state.initial = base; // chosen afterwards in the Initial column
+        ch.features.push({ id: newFeatureId(local, specialty), item: k(sk.id), state });
+        change();
+      };
+      return b;
+    };
+    if (!feats.length) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${esc(sk.name)} ${tags}</td><td>${esc(charName(sk.fields.characteristic))}</td><td class="num">${variable ? '<span title="Chosen when learned">−15 to 0</span>' : base}</td><td class="num"></td><td class="num"></td><td></td><td></td>`;
+      tr.children[6].append(learn(sk.fields.generic ? 'Learn…' : 'Learn'));
+      body.append(tr);
+      continue;
+    }
+    feats.forEach((feat, n) => {
+      const tr = document.createElement('tr');
+      tr.className = 'taken';
+      tr.innerHTML = `<td>${esc(sk.name)} ${tags}</td><td>${esc(charName(sk.fields.characteristic))}</td><td class="num">${base}</td><td class="num"></td><td class="num" data-total="${esc(feat.id)}"></td><td data-grade="${esc(feat.id)}"></td><td></td>`;
+      const cells = tr.children;
+      if (sk.fields.generic) {
+        const spec = Object.assign(document.createElement('input'), { value: feat.state.specialty ?? '', placeholder: 'Specialty', title: 'Specialty' });
+        spec.style.marginTop = '3px';
+        spec.style.width = '100%';
+        spec.onchange = () => {
+          const v = spec.value.trim();
+          if (v) feat.state.specialty = v; else delete feat.state.specialty;
+          change();
+        };
+        cells[0].append(document.createElement('br'), spec);
+      }
+      const initial = feat.state.initial ?? base;
+      if (variable) {
+        // Other skills: the initial level is chosen per copy; learning never goes below it.
+        const sel = document.createElement('select');
+        sel.title = 'Initial level';
+        sel.innerHTML = [-15, -10, -5, 0].map((v) => `<option value="${v}"${v === initial ? ' selected' : ''}>${v}</option>`).join('');
+        sel.onchange = () => {
+          const v = Number(sel.value);
+          feat.state.initial = v;
+          if (feat.state.learning < v) feat.state.learning = v;
+          change();
+        };
+        cells[2].replaceChildren(sel);
+      }
+      cells[3].append(stepper(feat.state.learning, initial, (v) => { feat.state.learning = v; change(); }, nextLearning, prevLearning));
+      const rm = Object.assign(document.createElement('button'), { className: 'small', textContent: '×', title: 'Remove' });
+      rm.onclick = () => { ch.features = ch.features.filter((f) => f !== feat); change(); };
+      cells[6].style.whiteSpace = 'nowrap';
+      cells[6].append(rm);
+      if (sk.fields.generic && n === feats.length - 1) cells[6].append(' ', learn('+ Specialty'));
+      body.append(tr);
+    });
+  }
+  $('skillCount').textContent = `${ch.features.length} learned · ${shown} shown of ${D.skills.length}`;
+  fillComputed();
+}
+
+/** A feature ID from the skill and its specialty ("foreign-languages-spanish"), unique in the file. */
+function newFeatureId(local, specialty) {
+  const slug = specialty.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  let id = slug ? `${local}-${slug}` : local;
+  for (let n = 2; ch.features.some((f) => f.id === id); n++) id = `${slug ? `${local}-${slug}` : local}-${n}`;
+  return id;
+}
+
+/** A skill copy's name, with its specialty: "Foreign languages (Spanish)". */
+function featureName(entry) {
+  const f = ch.features.find((x) => x.id === entry);
+  if (!f) return entry;
+  const sk = D.skills.find((s) => k(s.id) === f.item);
+  return `${sk?.name ?? f.item}${f.state?.specialty ? ` (${f.state.specialty})` : ''}`;
+}
+
+// Distance column of the Universal Table (section 10), by score 0 to 40.
+const UT_DISTANCE = ['0.2 m', '0.6 m', '1.2 m', '3 m', '6 m', '12 m', '14 m', '16 m', '18 m', '20 m', '22 m', '24 m', '26 m', '29 m', '32 m', '36 m', '40 m', '45 m', '50 m', '55 m', '60 m', '80 m', '100 m', '150 m', '200 m', '300 m', '500 m', '750 m', '1 km', '2 km', '4 km', '8 km', '15 km', '50 km', '200 km', '800 km', '3,500 km', '14,000 km', '63,000 km', '225,000 km', '900,000 km'];
+/** A ranged weapon's range: its UT score and the distance ("9 (20 m)"); empty in melee. */
+const rangeText = (f) => (f.kind === 'ranged' && f.range !== undefined ? `${f.range} (${UT_DISTANCE[f.range] ?? '?'})` : '');
+
+const itemById = (id) => [...D.weapons, ...D.armors].find((i) => k(i.id) === id);
+
+function renderGear() {
+  const inv = $('inventory');
+  inv.replaceChildren();
+  if (!ch.inventory.length) inv.innerHTML = '<span class="muted">No equipment.</span>';
+  for (const g of ch.inventory) {
+    const it = itemById(g.item);
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.innerHTML = `<label title="Equipped"><input type="checkbox" ${g.equipped ? 'checked' : ''}> ${esc(it?.name ?? g.item)}</label>`;
+    chip.querySelector('input').onchange = (e) => { g.equipped = e.target.checked; change(); };
+    const rm = Object.assign(document.createElement('button'), { className: 'small', textContent: '×', title: 'Remove' });
+    rm.onclick = () => { ch.inventory = ch.inventory.filter((x) => x !== g); change(); };
+    chip.append(rm);
+    inv.append(chip);
+  }
+
+  const kind = $('gearKind').value;
+  const q = $('gearSearch').value.trim().toLowerCase();
+  const weapons = kind === 'weapons';
+  $('gearHead').innerHTML = weapons
+    ? '<tr><th>Weapon</th><th>Kind</th><th>Skill</th><th class="num">Damage</th><th class="num" title="Maximum effect dice">DMAX</th><th class="num" title="Range on the Universal Table, and its distance">Range</th><th class="num">Min. STR</th><th class="num">TL</th><th></th></tr>'
+    : '<tr><th>Protection</th><th class="num">Protection</th><th class="num">Bullets</th><th class="num">TL</th><th></th></tr>';
+  const body = $('gear');
+  body.replaceChildren();
+  for (const it of D[kind]) {
+    if (q && !it.name.toLowerCase().includes(q) && !it.id.includes(q)) continue;
+    const f = it.fields;
+    const tr = document.createElement('tr');
+    const skill = D.skills.find((s) => s.id === f.skill);
+    const hasSkill = ch.features.some((x) => x.item === k(f.skill));
+    tr.innerHTML = weapons
+      ? `<td>${esc(it.name)}</td><td>${esc(f.kind ?? '')}</td><td>${esc(skill?.name ?? '—')}${hasSkill ? ' ✓' : ''}</td><td class="num">${f.damageBonus ?? ''}</td><td class="num">${f.dmax ?? ''}</td><td class="num">${rangeText(f)}</td><td class="num">${f.strReq ?? ''}</td><td class="num">${f.techLevel ?? ''}</td><td></td>`
+      : `<td>${esc(it.name)}</td><td class="num">${f.protection ?? ''}</td><td class="num">${f.bulletProtection ?? ''}</td><td class="num">${f.techLevel ?? ''}</td><td></td>`;
+    const add = Object.assign(document.createElement('button'), { className: 'small', textContent: 'Add' });
+    add.onclick = () => {
+      let local = it.id.split('.')[1] ?? it.id;
+      while (ch.inventory.some((i) => i.id === local)) local += '-2';
+      ch.inventory.push({ id: local, item: k(it.id), equipped: true });
+      change();
+    };
+    tr.lastElementChild.append(add);
+    body.append(tr);
+  }
+}
+
+function fillComputed() {
+  for (const el of document.querySelectorAll('[data-total]')) {
+    const c = sheet.copies[el.dataset.total];
+    el.textContent = c?.total ?? '';
+    el.nextElementSibling.textContent = c ? GRADES[c.grade] ?? '' : '';
+  }
+  for (const el of document.querySelectorAll('[data-sec]')) {
+    const s = el.dataset.sec;
+    if (V(`sec.${s}`) !== undefined) el.textContent = `base ${V(`raw.${s}`)} → ${V(`sec.${s}`)}`;
+  }
+}
+
+function render() {
+  const budget = V('points.budget') ?? 0, spent = V('points.spent') ?? 0, rem = V('points.remaining') ?? 0;
+  $('remaining').textContent = rem;
+  $('spent').textContent = `(${spent} spent of ${budget})`;
+  $('budget').classList.toggle('over', rem < 0);
+  $('bar').style.width = `${budget ? Math.min(100, (spent / budget) * 100) : 0}%`;
+
+  const rows = [
+    ['Name', esc(V('identity.name') || '—')],
+    ['Species', esc(V('identity.species') || '—')],
+    ['Profession', esc(V('identity.profession') || '—')],
+    'sep',
+    ...D.secondary.map((s) => [D.fieldNames[`sec.${s.key}`], V(`sec.${s.key}`)]),
+    'sep',
+    ['Physical hit points', V('hp.physical.max')],
+    ['Psychical hit points', V('hp.psychical.max')],
+    ['Physical shock threshold', V('shock.physical')],
+    ['Psychical shock threshold', V('shock.psychical')],
+    ['Strength bonus', V('bonus.str')],
+    ['Presence bonus', V('bonus.pre')],
+    ['Reflex Dodge', V('dodge.reflex')],
+    ['Simultaneous studies', V('study.limit')],
+    'sep',
+    ['Characteristics cost', V('points.chars')],
+    ['Secondary cost', V('points.secondary')],
+    ['Skills cost', V('points.skills')],
+  ];
+  $('summary').innerHTML = rows.map((r) => r === 'sep' ? '<div class="sep"></div>' : `<dt>${esc(r[0])}</dt><dd>${r[1] ?? '—'}</dd>`).join('');
+  const issues = sheet.issues ?? [];
+  $('issues').innerHTML = rem < 0 || issues.length
+    ? `<div class="issues">${rem < 0 ? `Over budget by ${-rem} points.\n` : ''}${issues.map((i) => {
+        const text = D.constraints[(i.id ?? '').split(':')[1]] ?? i.message ?? i.code ?? JSON.stringify(i);
+        return esc(text) + (i.data?.entry ? ` — ${esc(featureName(i.data.entry))}` : '');
+      }).join('\n')}</div>`
+    : '';
+  fillComputed();
+}
+
+// --- Actions ---------------------------------------------------------------------------------
+async function refreshList() {
+  const files = await api('/api/characters');
+  $('loadSelect').innerHTML = '<option value="">Load…</option>' + files.map((f) => `<option>${esc(f)}</option>`).join('');
+}
+
+function bind() {
+  $('charId').onchange = (e) => { ch.id = e.target.value.trim(); };
+  for (const el of document.querySelectorAll('[data-identity]')) {
+    const f = el.dataset.identity;
+    // Text is kept as typed; an empty field (or the default species) is left out of the file.
+    el.oninput = () => setV(`identity.${f}`, el.value, IDENTITY_DEFAULTS[f] ?? '');
+    // The file ID follows the name until it is edited by hand.
+    if (f === 'name') {
+      el.addEventListener('change', () => {
+        const slug = el.value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        if (slug && /^sagas-[a-z0-9]+$/.test(ch.id)) { ch.id = `sagas-${slug}`; $('charId').value = ch.id; }
+      });
+    }
+  }
+  for (const b of $('power').children) b.onclick = () => { setV('creation.points', Number(b.dataset.v)); change(); };
+  $('points').onchange = (e) => {
+    const n = Number(e.target.value);
+    if (Number.isInteger(n) && n >= 0) { setV('creation.points', n); change(); }
+    else e.target.value = getV('creation.points', 150);
+  };
+  $('social').onchange = (e) => { setV('creation.social', Number(e.target.value), 0); change(); };
+  $('skillSearch').oninput = renderSkills;
+  $('skillChar').onchange = renderSkills;
+  $('skillTaken').onchange = renderSkills;
+  $('gearSearch').oninput = renderGear;
+  $('gearKind').onchange = renderGear;
+
+  $('btnReset').onclick = () => { if (confirm('Start over with an empty character?')) { ch = fresh(); change(); } };
+  $('btnRandom').onclick = async () => {
+    ch = await api(`/api/random?points=${getV('creation.points', 150)}&id=${encodeURIComponent(ch.id)}`);
+    change();
+    toast('Random character rolled');
+  };
+  $('loadSelect').onchange = async (e) => {
+    if (!e.target.value) return;
+    const loaded = await api(`/api/load?file=${encodeURIComponent(e.target.value)}`);
+    ch = { features: [], inventory: [], values: {}, ...loaded };
+    for (const f of ch.features) f.state ??= { learning: 0 };
+    e.target.value = '';
+    change();
+    toast(`Loaded: ${ch.id}`);
+  };
+  $('btnYaml').onclick = async () => {
+    const text = await api('/api/yaml', { character: ch });
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([text], { type: 'text/yaml' })), download: `${ch.id}.yaml` });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+  $('btnSave').onclick = async () => {
+    const save = (overwrite) => api('/api/save', { character: ch, overwrite });
+    try {
+      const r = await save(false);
+      toast(`Saved: ${r.file}`);
+    } catch (e) {
+      if (e.status === 409 && confirm(`${ch.id}.yaml already exists. Replace it?`)) {
+        const r = await save(true);
+        toast(`Replaced: ${r.file}`);
+      } else if (e.status !== 409) alert(e.message);
+    }
+    refreshList();
+  };
+}
+
+(async () => {
+  D = await api('/api/data');
+  const chars = [...new Set(D.skills.map((s) => s.fields.characteristic))];
+  $('skillChar').innerHTML += chars.map((c) => `<option value="${esc(c)}">${esc(charName(c))}</option>`).join('');
+  ch = fresh();
+  bind();
+  refreshList();
+  change();
+})();
+</script>
+</body>
+</html>

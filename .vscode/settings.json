@@ -1,0 +1,9 @@
+{
+  "code-runner.executorMap": {
+    "typescript": "cd \"$workspaceRoot\"; node --import tsx --conditions @opencharacter/source \"$fullFileName\""
+  },
+  "code-runner.runInTerminal": true,
+  "code-runner.saveFileBeforeRun": true,
+  // SchemaStore associe tout « dice.yaml » au schéma Erda Runtime : faux positifs sur les tests.
+  "yaml.schemaStore.enable": false
+}
