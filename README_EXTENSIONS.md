@@ -229,23 +229,58 @@ Limits of the universal tools:
 `packs/orc/2e/content/boosts/con.yaml` and `packs/orc/sf-2e/content/boosts/con.yaml` can't exist on
 Windows: `CON` is a reserved device name (like `PRN`, `AUX`, `NUL`, `COM1`…), whatever the
 extension. Git can't check them out, so this clone uses a sparse checkout that leaves out the whole
-`packs/orc/` folder:
+`packs/orc/` folder and the ORC example characters:
 
 ```sh
-git sparse-checkout list    # /*  and  !packs/orc/
+git sparse-checkout list    # /*  !packs/orc/  !examples/characters/orc-*.yaml
 ```
 
 The consequences:
 
 - the ORC packs (`orc-2e`, `orc-sf-2e`) aren't on disk, so `pnpm validate` checks 14 packs;
-- the ORC example characters (`examples/characters/orc-*.yaml`) show as deleted in `git status`.
-  Don't commit those deletions;
+- the ORC example characters (`examples/characters/orc-*.yaml`) aren't on disk either, since their
+  pack is missing. Git knows they are left out on purpose, so `git status` stays clean;
 - the tests that read the ORC packs fail with `ENOENT … packs/orc/2e/pack.yaml`;
 - `git sparse-checkout disable` would bring the folder back, but on Windows the checkout of
   `con.yaml` fails.
 
 The real fix belongs to OCF: renaming `boosts/con.yaml` (to `constitution.yaml`, for instance) would
 make the repository checkable on Windows. It deserves an issue on the OCF repository.
+
+### Cloning this repository on Windows
+
+A plain `git clone` downloads the history, then fails to write the files:
+
+```text
+error: invalid path 'packs/orc/2e/content/boosts/con.yaml'
+fatal: unable to checkout working tree
+warning: Clone succeeded, but checkout failed.
+```
+
+Clone without a checkout, set up the sparse checkout, then check out `main`:
+
+```sh
+git clone --no-checkout https://github.com/AlainPeres/OCF_Extensions.git
+cd OCF_Extensions
+git sparse-checkout set --no-cone '/*' '!packs/orc/' '!examples/characters/orc-*.yaml'
+git checkout main
+```
+
+The ORC packs and the ORC example characters stay out, so `git status` is clean and `pnpm
+validate` doesn't trip over characters whose pack is missing. The consequences listed above
+still apply (tests that read the ORC packs fail). Then install the dependencies as described in
+[Reinstalling dependencies](#reinstalling-dependencies-pnpm-install).
+
+To get the upstream OCF changes, add the OCF repository as a second remote:
+
+```sh
+git remote add upstream https://github.com/pixelqueue/opencharacter.git
+git fetch upstream
+git merge upstream/main
+```
+
+Don't turn `core.protectNTFS` off to force the checkout: it also turns off Git's protections
+against malicious paths on NTFS.
 
 ### pnpm's links to the ORC packs
 
