@@ -36,7 +36,6 @@ clone is on: `git log -1`.
 | `scripts/perso/universal-create.ts` + `.html`    | Character creator for any pack                                  |
 | `scripts/perso/universal-play.ts` + `.html`      | Play sheet for any pack and character                           |
 | `scripts/perso/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                 |
-| `scripts/perso/relink-junctions.ps1`             | Re-points a copied folder's junctions to the copy (Windows)     |
 | `.vscode/launch.json`, `.vscode/settings.json`   | Run and debug the current TS file from VS Code                  |
 
 The other `scripts/perso/sagas-*.ts` files (`damage`, `gear`, `health`, `modif`, `roll`, `sheet`,
@@ -284,23 +283,27 @@ against malicious paths on NTFS.
 
 ### pnpm's links to the ORC packs
 
-pnpm fills `node_modules` with links (junctions) to the workspace packages. The links to the
-missing ORC packs were broken, and Windows Explorer stopped on them when copying the folder. They
-were removed:
+pnpm fills `node_modules` with links (junctions) to the workspace packages.
+`packages/packs/package.json` lists both ORC packs as dependencies (`"@opencharacter/orc-2e":
+"workspace:^"`), so `pnpm install --frozen-lockfile` succeeds but creates two links to the missing
+`packs/orc/` folders:
 
 ```text
-node_modules\.pnpm\node_modules\@opencharacter\orc-2e
-node_modules\.pnpm\node_modules\@opencharacter\orc-sf-2e
-node_modules\.pnpm\node_modules\@opencharacter\packs\node_modules\@opencharacter\orc-2e
-node_modules\.pnpm\node_modules\@opencharacter\packs\node_modules\@opencharacter\orc-sf-2e
+packages\packs\node_modules\@opencharacter\orc-2e
+packages\packs\node_modules\@opencharacter\orc-sf-2e
 ```
 
-`cmd /c rmdir <link>` (without `/s`) removes a junction only, never what it points to.
+They are broken, and Windows Explorer stops on them when copying the folder. Remove them after each
+install; `cmd /c rmdir <link>` (without `/s`) removes a junction only, never what it points to:
 
-`packages/packs/package.json` still lists both packs as dependencies (`"@opencharacter/orc-2e":
-"workspace:^"`), so the next `pnpm install` may recreate the links or fail because it can't find
-those workspace packages. If it fails, remove the two lines locally, then tell git to ignore that
-local change so it is never committed:
+```powershell
+cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-2e
+cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-sf-2e
+```
+
+If an install ever fails because it can't find those workspace packages, remove the two lines from
+`packages/packs/package.json` locally, then tell git to ignore that local change so it is never
+committed:
 
 ```sh
 git update-index --skip-worktree packages/packs/package.json
@@ -378,27 +381,18 @@ original and the copy's `node_modules` is broken (scripts, `tsc` and pnpm fail).
 robocopy copies what each junction points to instead: every package many times over, much bigger
 and slower, and pnpm's layout is lost.
 
-To make such a copy independent, do one of the following.
+To make such a copy independent, rebuild `node_modules` in the copy: remove every `node_modules`
+of the copy with `cmd /c rmdir /s /q`, then reinstall as above:
 
-- **Re-point the junctions to the copy** with `scripts/perso/relink-junctions.ps1`. A junction
-  can't be edited, so the script removes each one whose target starts with the original folder
-  (`rmdir`: the link only) and creates it again under the copy (`mklink /J`). It runs a dry run
-  unless given `-Apply`:
+```powershell
+cd "D:\Developpement\FichiersTypescript\OCF\OCF_Extensions"
+Get-ChildItem . , packages, apps, packs\*\* -Directory -Filter node_modules -Force | % { cmd /c rmdir /s /q "$($_.FullName)" }
+```
 
-  ```powershell
-  powershell -ExecutionPolicy Bypass -File scripts/perso/relink-junctions.ps1 -Root "D:\Developpement\FichiersTypescript\OCF\OCF_Extensions" -OldRoot "D:\Developpement\FichiersTypescript\OCF\opencharacter"
-  powershell -ExecutionPolicy Bypass -File scripts/perso/relink-junctions.ps1 -Root "D:\Developpement\FichiersTypescript\OCF\OCF_Extensions" -OldRoot "D:\Developpement\FichiersTypescript\OCF\opencharacter" -Apply
-  ```
-
-  Listing the junctions (`dir /s /al`) takes a few minutes.
-
-- **Rebuild `node_modules` in the copy.** Remove every `node_modules` of the copy with
-  `cmd /c rmdir /s /q`, then reinstall as above:
-
-  ```powershell
-  cd "D:\Developpement\FichiersTypescript\OCF\OCF_Extensions"
-  Get-ChildItem . , packages, apps, packs\*\* -Directory -Filter node_modules -Force | % { cmd /c rmdir /s /q "$($_.FullName)" }
-  ```
+This was done for this clone on 2026-11-22: its 1,057 junctions all pointed into
+`opencharacter`, and none does after the reinstall. To check, list each link's target without
+following it, for instance with Node (`fs.readdirSync(dir, { withFileTypes: true })`,
+`isSymbolicLink()`, `fs.readlinkSync()`), and look for the original folder's path.
 
 > **Warning.** Never remove a folder holding junctions with `Remove-Item -Recurse` (Windows
 > PowerShell 5) or with Windows Explorer. They can follow a junction and delete what it points to,
