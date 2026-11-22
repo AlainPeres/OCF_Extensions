@@ -1,0 +1,210 @@
+creation:
+  - { id: guided, action: create-character }
+  - { id: random, action: create-character, params: { random: true }, random: true }
+
+constraints:
+  # A new character spends no more than its creation points (section 3.4).
+  - id: creation-within-budget
+    check: '!character.creating || points.remaining >= 0'
+    data: {}
+
+actions:
+  # Both starts, in the book's order: the power level and social class (the creation points), the
+  # universe's technological level, the main and secondary characteristics, the skills, then
+  # weapons and armor. The random start draws the power level, spends three fifths of the points on the
+  # characteristics at random and the rest on skills drawn among those of the universe.
+  # Generic and "Other" skills need a specialty, a text no step can ask: the guided start leaves
+  # the character being created, so the player learns them with learn-specialty, then ends with
+  # finish-creation. The random start, which takes none, finishes the character itself.
+  - id: create-character
+    tags: [creation]
+    available: character.creating
+    params:
+      random: { type: boolean, default: false }
+    results: [created]
+    steps:
+      # Creation points: 150, 250 or 350 by the characters' power (section 3.4).
+      - id: power
+        kind: choice
+        random: params.random
+        options:
+          - { id: power-150, changes: [{ type: set, field: creation.points, value: 150 }] }
+          - { id: power-250, changes: [{ type: set, field: creation.points, value: 250 }] }
+          - { id: power-350, changes: [{ type: set, field: creation.points, value: 350 }] }
+        recommend: "'power-150'"
+      # A privileged social class costs 10 points, a less favored one gives 10.
+      - id: social
+        kind: choice
+        options:
+          - { id: social-privileged, changes: [{ type: set, field: creation.social, value: 1 }] }
+          - { id: social-average, changes: [{ type: set, field: creation.social, value: 0 }] }
+          - { id: social-less-favored, changes: [{ type: set, field: creation.social, value: -1 }] }
+        recommend: "'social-average'"
+      # The universe's technological level (section 13): skills and gear above it don't exist.
+      - id: techLevel
+        kind: choice
+        options: { values: [0, 1, 2, 3, 4, 5, 6, 7, 8] }
+        recommend: "'2'"
+
+      # Main characteristics from 5, at their cost per point. The random start spends three
+      # fifths of the points there, one point at a time on a characteristic drawn at random.
+      - id: characteristics
+        kind: allocate
+        sheet: proposed
+        fields: { type: field, where: "'characteristic' in item.tags" }
+        budget: 'params.random ? floor(points.remaining * 3 / 5) : points.remaining'
+        spend: upTo
+        cost: '(3 * min(field.value + amount, 5) + 6 * max(0, min(field.value + amount, 10) - 5) + 12 * max(0, min(field.value + amount, 15) - 10) + 24 * max(0, min(field.value + amount, 20) - 15) + 48 * max(0, field.value + amount - 20)) - (3 * min(field.value, 5) + 6 * max(0, min(field.value, 10) - 5) + 12 * max(0, min(field.value, 15) - 10) + 24 * max(0, min(field.value, 20) - 15) + 48 * max(0, field.value - 20))'
+        random: params.random
+        recommend: 'points.remaining >= 300 ? 4 : points.remaining >= 200 ? 3 : points.remaining >= 100 ? 2 : points.remaining >= 50 ? 1 : 0'
+      # Secondary characteristics: a +1 costs three times a main characteristic's from the value.
+      - id: secondary
+        kind: allocate
+        sheet: proposed
+        when: '!params.random'
+        fields: { type: field, where: "'secondary-bonus' in item.tags" }
+        budget: points.remaining
+        spend: upTo
+        cost: '3 * ((3 * min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) + amount, 5) + 6 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) + amount, 10) - 5) + 12 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) + amount, 15) - 10) + 24 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) + amount, 20) - 15) + 48 * max(0, ((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) + amount - 20)) - (3 * min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value), 5) + 6 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value), 10) - 5) + 12 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value), 15) - 10) + 24 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value), 20) - 15) + 48 * max(0, ((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) - 20)))'
+        recommend: '0'
+
+      # Skills: which ones to learn (the random start draws 1d6 + 3), then their levels, one step
+      # at a time while the points last.
+      - id: skillCount
+        kind: roll
+        when: params.random
+        parts: [{ dice: 1d6 }]
+      - id: counts
+        kind: branch
+        cases:
+          - when: params.random
+            flags: { learnMin: steps.skillCount.total + 3, learnMax: steps.skillCount.total + 3 }
+        else:
+          flags: { learnMin: 0, learnMax: 40 }
+      - id: learn
+        kind: choice
+        sheet: proposed
+        random: params.random
+        repeat: { max: flags.learnMax, min: flags.learnMin }
+        options:
+          content:
+            type: skill
+            where: >-
+              !item.generic && !item.variableBase && item.techLevel <= steps.techLevel.value
+                && picks == 0 && countCopies(copy.item == item.id) == 0
+        recommend: >-
+          size(filterList([@skills.native-language, @skills.general-culture, @skills.perception, @skills.dodge, @skills.first-aid, @skills.stealth, @skills.brawling], x in options)) > 0
+            ? filterList([@skills.native-language, @skills.general-culture, @skills.perception, @skills.dodge, @skills.first-aid, @skills.stealth, @skills.brawling], x in options)[0] : '#done'
+        changes:
+          - type: addItem
+            entry: { item: picked.id }
+      - id: raise
+        kind: choice
+        sheet: proposed
+        random: params.random
+        repeat: { max: 400 }
+        options:
+          copies:
+            type: skill
+            where: '(self.learning < 5 ? 1 : self.learning < 10 ? 2 : self.learning < 15 ? 4 : self.learning < 20 ? 8 : 16) <= points.remaining'
+        # The lowest learning level first, so an automatic run spreads the points.
+        prefer: -self.learning
+        changes:
+          - type: setState
+            entry: picked
+            key: learning
+            value: 'picked.self.learning < 0 ? picked.self.learning + 5 : picked.self.learning + 1'
+
+      # Gear: weapons and armor of the universe. The random start takes one of each.
+      - id: weapons
+        kind: choice
+        random: params.random
+        repeat: { max: 'params.random ? 1 : 10' }
+        options:
+          content: { type: weapon, where: 'item.techLevel <= steps.techLevel.value && picks == 0' }
+        recommend: "'#done'"
+        changes:
+          - type: addItem
+            entry: { item: picked.id, equipped: true }
+      - id: armor
+        kind: choice
+        random: params.random
+        repeat: { max: 'params.random ? 1 : 5' }
+        options:
+          content: { type: armor, where: 'item.techLevel <= steps.techLevel.value && picks == 0' }
+        recommend: "'#done'"
+        changes:
+          - type: addItem
+            entry: { item: picked.id, equipped: true }
+
+      - id: finish
+        kind: changes
+        sheet: proposed
+        when: params.random
+        changes:
+          - { type: finishCreation }
+      - id: result
+        kind: outcome
+        result: "'created'"
+
+  # A generic skill taken with a specialty (section 3.3), at creation or later: the skill, its
+  # initial level for an "Other" skill (-15, -10, -5 or 0), then its level one step at a time,
+  # within the creation points while the character is being created.
+  - id: learn-specialty
+    tags: [creation]
+    params:
+      specialty: { type: string }
+    results: [learned]
+    steps:
+      - id: skill
+        kind: choice
+        options: { content: { type: skill, where: item.generic } }
+        recommend: options[0]
+      - id: initial
+        kind: choice
+        when: steps.skill.item.variableBase
+        options: { values: [-15, -10, -5, 0] }
+        recommend: "'-15'"
+      - id: add
+        kind: changes
+        changes:
+          - type: addItem
+            entry:
+              item: steps.skill.picked
+              state:
+                specialty: params.specialty
+                initial: 'has(steps.initial) ? steps.initial.value : steps.skill.item.base'
+                learning: 'has(steps.initial) ? steps.initial.value : steps.skill.item.base'
+      - id: raise
+        kind: choice
+        sheet: proposed
+        repeat: { max: 60 }
+        options:
+          copies:
+            type: skill
+            where: >-
+              item.id == steps.skill.picked && self.specialty == params.specialty
+                && (!character.creating || (self.learning < 5 ? 1 : self.learning < 10 ? 2 : self.learning < 15 ? 4 : self.learning < 20 ? 8 : 16) <= points.remaining)
+        recommend: "'#done'"
+        changes:
+          - type: setState
+            entry: picked
+            key: learning
+            value: 'picked.self.learning < 0 ? picked.self.learning + 5 : picked.self.learning + 1'
+      - id: result
+        kind: outcome
+        result: "'learned'"
+
+  # Ends the creation the guided start leaves open, once the rules are met (the points included).
+  - id: finish-creation
+    tags: [creation]
+    available: character.creating
+    results: [finished]
+    steps:
+      - id: finish
+        kind: changes
+        changes:
+          - { type: finishCreation }
+      - id: result
+        kind: outcome
+        result: "'finished'"

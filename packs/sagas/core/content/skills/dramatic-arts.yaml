@@ -1,0 +1,6 @@
+id: skills.dramatic-arts
+type: skill
+fields:
+  characteristic: chars.ins
+  base: -15
+  techLevel: 0

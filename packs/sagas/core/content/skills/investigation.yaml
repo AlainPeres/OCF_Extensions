@@ -1,0 +1,6 @@
+id: skills.investigation
+type: skill
+fields:
+  characteristic: chars.wit
+  base: 0
+  techLevel: 0

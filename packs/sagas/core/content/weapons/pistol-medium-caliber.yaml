@@ -1,0 +1,10 @@
+id: weapons.pistol-medium-caliber
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.pistol
+  damageBonus: 6
+  strReq: 4
+  dmax: 4
+  range: 16
+  techLevel: 3

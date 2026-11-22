@@ -1,0 +1,6 @@
+id: skills.automatic-weapons
+type: skill
+fields:
+  characteristic: sec.rco
+  base: 0
+  techLevel: 4

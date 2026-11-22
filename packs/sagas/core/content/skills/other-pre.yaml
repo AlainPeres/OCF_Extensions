@@ -1,0 +1,7 @@
+id: skills.other-pre
+type: skill
+fields:
+  characteristic: chars.pre
+  base: -15
+  generic: true
+  variableBase: true

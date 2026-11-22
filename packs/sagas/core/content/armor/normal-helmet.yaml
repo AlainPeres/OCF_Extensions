@@ -1,0 +1,6 @@
+id: armor.normal-helmet
+type: armor
+fields:
+  protection: 1
+  helmet: true
+  techLevel: 1

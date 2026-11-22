@@ -1,0 +1,23 @@
+# A SagaS test character: Strength 12, Agility 10, Endurance 9, Dexterity 8, Wit 10, Will 11,
+# Presence 7, Instinct 9. Expected: CCO 10, RCO 8, SPD 10, INI 10, Strength bonus +4,
+# physical shock 14, physical HP 64, psychical HP 54.
+specVersion: 0.4.0
+id: sagas-test
+packs:
+  - { id: sagas-core, version: 0.1.0 }
+values:
+  sagas-core:chars.str: 12
+  sagas-core:chars.agi: 10
+  sagas-core:chars.end: 9
+  sagas-core:chars.dex: 8
+  sagas-core:chars.wit: 10
+  sagas-core:chars.wil: 11
+  sagas-core:chars.pre: 7
+  sagas-core:chars.ins: 9
+features:
+  - { id: dodge, item: sagas-core:skills.dodge, state: { learning: 6 } }
+  - { id: stealth, item: sagas-core:skills.stealth, state: { learning: 2 } }
+inventory:
+  - { id: plate, item: sagas-core:armor.plate-armor, equipped: true }
+  - { id: helmet, item: sagas-core:armor.normal-helmet, equipped: true }
+  - { id: sword, item: sagas-core:weapons.sword-long-sword, equipped: true }

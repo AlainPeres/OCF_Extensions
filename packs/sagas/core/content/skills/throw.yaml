@@ -1,0 +1,6 @@
+id: skills.throw
+type: skill
+fields:
+  characteristic: sec.rco
+  base: 0
+  techLevel: 0

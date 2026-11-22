@@ -1,0 +1,7 @@
+id: skills.other-wit
+type: skill
+fields:
+  characteristic: chars.wit
+  base: -15
+  generic: true
+  variableBase: true

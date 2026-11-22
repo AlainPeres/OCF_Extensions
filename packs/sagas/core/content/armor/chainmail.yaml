@@ -1,0 +1,5 @@
+id: armor.chainmail
+type: armor
+fields:
+  protection: 4
+  techLevel: 2

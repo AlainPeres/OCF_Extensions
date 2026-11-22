@@ -1,0 +1,6 @@
+id: skills.draw-weapon-ranged
+type: skill
+fields:
+  characteristic: sec.rco
+  base: -10
+  techLevel: 0

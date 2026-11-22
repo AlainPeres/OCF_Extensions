@@ -1,0 +1,10 @@
+id: weapons.heavy-weapons-flamethrower
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.heavy-weapons
+  damageBonus: 12
+  dmax: 2
+  range: 4
+  techLevel: 5
+  special: true

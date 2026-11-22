@@ -1,0 +1,9 @@
+id: weapons.none-sawed-off-barrel
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 12
+  strReq: 5
+  dmax: 3
+  range: 4
+  techLevel: 4

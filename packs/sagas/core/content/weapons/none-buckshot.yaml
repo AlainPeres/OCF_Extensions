@@ -1,0 +1,9 @@
+id: weapons.none-buckshot
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 12
+  strReq: 5
+  dmax: 3
+  range: 5
+  techLevel: 4

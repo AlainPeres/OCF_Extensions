@@ -1,0 +1,5 @@
+id: armor.full-plate-armor
+type: armor
+fields:
+  protection: 8
+  techLevel: 2

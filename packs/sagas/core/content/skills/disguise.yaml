@@ -1,0 +1,6 @@
+id: skills.disguise
+type: skill
+fields:
+  characteristic: chars.pre
+  base: -10
+  techLevel: 0

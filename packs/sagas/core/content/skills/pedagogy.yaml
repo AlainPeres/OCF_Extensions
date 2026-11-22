@@ -1,0 +1,6 @@
+id: skills.pedagogy
+type: skill
+fields:
+  characteristic: chars.ins
+  base: 0
+  techLevel: 0

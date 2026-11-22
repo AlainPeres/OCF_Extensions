@@ -1,0 +1,6 @@
+id: skills.axe-thrown
+type: skill
+fields:
+  characteristic: sec.rco
+  base: -5
+  techLevel: 1

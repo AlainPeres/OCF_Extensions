@@ -1,0 +1,10 @@
+id: weapons.bow-shortbow
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.bow
+  damageBonus: 6
+  strReq: 4
+  dmax: 4
+  range: 9
+  techLevel: 1

@@ -1,0 +1,6 @@
+id: skills.dodge
+type: skill
+fields:
+  characteristic: chars.agi
+  base: 0
+  techLevel: 0

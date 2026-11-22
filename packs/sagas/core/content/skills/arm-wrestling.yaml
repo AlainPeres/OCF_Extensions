@@ -1,0 +1,6 @@
+id: skills.arm-wrestling
+type: skill
+fields:
+  characteristic: chars.str
+  base: 0
+  techLevel: 0

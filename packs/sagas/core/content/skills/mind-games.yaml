@@ -1,0 +1,6 @@
+id: skills.mind-games
+type: skill
+fields:
+  characteristic: chars.wit
+  base: -5
+  generic: true

@@ -1,0 +1,5 @@
+id: armor.rigid-leather
+type: armor
+fields:
+  protection: 2
+  techLevel: 1

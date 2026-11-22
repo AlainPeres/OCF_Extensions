@@ -1,0 +1,10 @@
+id: weapons.heavy-weapons-mortar
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.heavy-weapons
+  damageBonus: 18
+  dmax: 3
+  range: 27
+  techLevel: 5
+  special: true

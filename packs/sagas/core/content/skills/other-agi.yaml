@@ -1,0 +1,7 @@
+id: skills.other-agi
+type: skill
+fields:
+  characteristic: chars.agi
+  base: -15
+  generic: true
+  variableBase: true

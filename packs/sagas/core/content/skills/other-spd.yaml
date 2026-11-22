@@ -1,0 +1,7 @@
+id: skills.other-spd
+type: skill
+fields:
+  characteristic: sec.spd
+  base: -15
+  generic: true
+  variableBase: true

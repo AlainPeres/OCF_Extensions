@@ -1,0 +1,10 @@
+id: weapons.flail-flail
+type: weapon
+fields:
+  kind: melee
+  skill: skills.flail
+  damageBonus: 9
+  strReq: 5
+  dmax: 3
+  size: 2
+  techLevel: 2

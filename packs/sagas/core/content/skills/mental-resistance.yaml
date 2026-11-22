@@ -1,0 +1,6 @@
+id: skills.mental-resistance
+type: skill
+fields:
+  characteristic: chars.wil
+  base: 0
+  techLevel: 0

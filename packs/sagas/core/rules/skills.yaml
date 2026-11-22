@@ -1,0 +1,62 @@
+contentTypes:
+  skill:
+    fields:
+      characteristic:
+        { type: id, of: field, where: "'characteristic' in item.tags", required: true }
+      base: { type: integer, default: 0, min: -15, max: 0 }
+      # The technology level from which the skill exists (0 when it always does).
+      techLevel: { type: integer, default: 0, min: 0 }
+      # A generic skill must be specialized.
+      generic: { type: boolean, default: false }
+      # The initial level is chosen when the skill is learned (-15, -10, -5 or 0): the "Other"
+      # skills of each characteristic, whose initial level the rules leave variable.
+      variableBase: { type: boolean, default: false }
+    state:
+      # Learning level; a new skill starts at its initial level.
+      learning: { type: integer, default: item.base, min: -15 }
+      # The copy's initial level: the skill's, or the one chosen for a variable-base skill.
+      initial: { type: integer, default: item.base, min: -15, max: 0 }
+      # The specialization of a generic skill. A generic skill is taken once per specialization,
+      # each copy with its own learning level and cost.
+      specialty: { type: string, default: '' }
+    actions:
+      - use: skill-check
+        params:
+          characteristic: item.characteristic
+          learning: self.learning
+    computed:
+      # Total level = the associated characteristic + the learning level.
+      total:
+        type: integer
+        formula: '(item.characteristic == @chars.str ? chars.str : item.characteristic == @chars.agi ? chars.agi : item.characteristic == @chars.end ? chars.end : item.characteristic == @chars.dex ? chars.dex : item.characteristic == @chars.wit ? chars.wit : item.characteristic == @chars.wil ? chars.wil : item.characteristic == @chars.pre ? chars.pre : item.characteristic == @chars.ins ? chars.ins : item.characteristic == @sec.cco ? sec.cco : item.characteristic == @sec.rco ? sec.rco : item.characteristic == @sec.spd ? sec.spd : 0) + self.learning'
+      # Qualitative level: 0 incompetent, 1 beginner, 2 amateur, 3 professional, 4 expert, 5 master (21 or more).
+      grade:
+        type: integer
+        formula: 'self.total <= 0 ? 0 : self.total <= 5 ? 1 : self.total <= 10 ? 2 : self.total <= 15 ? 3 : self.total <= 20 ? 4 : 5'
+
+constraints:
+  # A skill is never learned below its initial level.
+  - id: learning-above-base
+    copies: { type: skill }
+    check: self.learning >= self.initial
+    data: {}
+  # The initial level is the skill's own, unless it is variable: then -15, -10, -5 or 0.
+  - id: initial-level
+    copies: { type: skill }
+    check: 'item.variableBase ? self.initial in [-15, -10, -5, 0] : self.initial == item.base'
+    data: {}
+  # Below 0 the learning level moves in steps of 5: -15, -10, -5 or 0.
+  - id: learning-steps-below-zero
+    copies: { type: skill }
+    check: self.learning >= 0 || self.learning % 5 == 0
+    data: {}
+  # A generic skill must be specialized (section 3.3).
+  - id: generic-needs-specialty
+    copies: { type: skill }
+    check: "!item.generic || self.specialty != ''"
+    data: {}
+  # Only a generic skill is taken more than once (once per specialization).
+  - id: skill-taken-once
+    copies: { type: skill }
+    check: item.generic || countCopies(copy.item == item.id) <= 1
+    data: {}

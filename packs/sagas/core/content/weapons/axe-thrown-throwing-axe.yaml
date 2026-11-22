@@ -1,0 +1,10 @@
+id: weapons.axe-thrown-throwing-axe
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.axe-thrown
+  damageBonus: 6
+  strReq: 5
+  dmax: 3
+  range: 4
+  techLevel: 0

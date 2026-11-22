@@ -1,0 +1,5 @@
+id: armor.heavy-futuristic-armor
+type: armor
+fields:
+  protection: 25
+  techLevel: 7

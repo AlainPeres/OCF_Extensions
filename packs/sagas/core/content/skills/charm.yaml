@@ -1,0 +1,6 @@
+id: skills.charm
+type: skill
+fields:
+  characteristic: chars.pre
+  base: 0
+  techLevel: 4

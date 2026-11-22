@@ -1,0 +1,10 @@
+id: weapons.pistol-large-caliber
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.pistol
+  damageBonus: 9
+  strReq: 5
+  dmax: 4
+  range: 16
+  techLevel: 4

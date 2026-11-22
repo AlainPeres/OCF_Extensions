@@ -1,0 +1,7 @@
+id: skills.other-end
+type: skill
+fields:
+  characteristic: chars.end
+  base: -15
+  generic: true
+  variableBase: true

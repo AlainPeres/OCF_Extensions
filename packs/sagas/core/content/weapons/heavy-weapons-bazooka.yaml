@@ -1,0 +1,9 @@
+id: weapons.heavy-weapons-bazooka
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.heavy-weapons
+  damageBonus: 27
+  dmax: 3
+  range: 25
+  techLevel: 4

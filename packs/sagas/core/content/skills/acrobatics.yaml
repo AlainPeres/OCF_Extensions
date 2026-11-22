@@ -1,0 +1,6 @@
+id: skills.acrobatics
+type: skill
+fields:
+  characteristic: chars.agi
+  base: -15
+  techLevel: 0

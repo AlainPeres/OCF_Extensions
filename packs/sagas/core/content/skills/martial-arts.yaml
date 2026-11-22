@@ -1,0 +1,5 @@
+id: skills.martial-arts
+type: skill
+fields:
+  characteristic: sec.cco
+  base: -15

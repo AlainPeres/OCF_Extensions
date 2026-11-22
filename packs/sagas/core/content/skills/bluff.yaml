@@ -1,0 +1,6 @@
+id: skills.bluff
+type: skill
+fields:
+  characteristic: chars.pre
+  base: 0
+  techLevel: 5

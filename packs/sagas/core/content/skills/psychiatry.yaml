@@ -1,0 +1,6 @@
+id: skills.psychiatry
+type: skill
+fields:
+  characteristic: chars.wit
+  base: -15
+  techLevel: 5

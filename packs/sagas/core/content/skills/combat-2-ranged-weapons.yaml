@@ -1,0 +1,6 @@
+id: skills.combat-2-ranged-weapons
+type: skill
+fields:
+  characteristic: sec.rco
+  base: -10
+  techLevel: 0

@@ -1,0 +1,10 @@
+id: weapons.gun-rifle-very-large-caliber-i
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.gun-rifle
+  damageBonus: 15
+  strReq: 8
+  dmax: 4
+  range: 21
+  techLevel: 4

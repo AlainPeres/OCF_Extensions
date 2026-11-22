@@ -1,0 +1,5 @@
+id: armor.plate-armor
+type: armor
+fields:
+  protection: 6
+  techLevel: 1

@@ -1,0 +1,6 @@
+id: skills.zoology
+type: skill
+fields:
+  characteristic: chars.wit
+  base: -15
+  techLevel: 1

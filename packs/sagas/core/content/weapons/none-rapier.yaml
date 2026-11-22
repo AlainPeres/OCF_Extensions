@@ -1,0 +1,9 @@
+id: weapons.none-rapier
+type: weapon
+fields:
+  kind: melee
+  damageBonus: 4
+  strReq: 3
+  dmax: 5
+  size: 2
+  techLevel: 3

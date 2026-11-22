@@ -1,0 +1,10 @@
+id: weapons.bow-longbow
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.bow
+  damageBonus: 9
+  strReq: 5
+  dmax: 4
+  range: 9
+  techLevel: 1

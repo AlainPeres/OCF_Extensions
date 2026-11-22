@@ -1,0 +1,7 @@
+id: skills.other-rco
+type: skill
+fields:
+  characteristic: sec.rco
+  base: -15
+  generic: true
+  variableBase: true

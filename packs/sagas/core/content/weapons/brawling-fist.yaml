@@ -1,0 +1,9 @@
+id: weapons.brawling-fist
+type: weapon
+fields:
+  kind: melee
+  skill: skills.brawling
+  damageBonus: 0
+  dmax: 2
+  size: 1
+  techLevel: 0

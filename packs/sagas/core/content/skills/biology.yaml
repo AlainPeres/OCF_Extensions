@@ -1,0 +1,6 @@
+id: skills.biology
+type: skill
+fields:
+  characteristic: chars.wit
+  base: -15
+  techLevel: 4

@@ -1,0 +1,10 @@
+id: weapons.throw-offensive-grenade
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.throw
+  damageBonus: 12
+  dmax: 5
+  range: 5
+  techLevel: 5
+  special: true

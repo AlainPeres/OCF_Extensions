@@ -1,0 +1,6 @@
+id: skills.close-combat-with-2-weapons
+type: skill
+fields:
+  characteristic: sec.cco
+  base: -10
+  techLevel: 0

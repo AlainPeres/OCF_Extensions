@@ -1,0 +1,6 @@
+id: skills.painting
+type: skill
+fields:
+  characteristic: chars.ins
+  base: -15
+  techLevel: 0

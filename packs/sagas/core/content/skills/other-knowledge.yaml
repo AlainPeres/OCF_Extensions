@@ -1,0 +1,6 @@
+id: skills.other-knowledge
+type: skill
+fields:
+  characteristic: chars.wit
+  base: -15
+  generic: true

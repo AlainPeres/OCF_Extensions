@@ -1,0 +1,10 @@
+id: weapons.dagger-thrown-throwing-dagger
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.dagger-thrown
+  damageBonus: 2
+  strReq: 3
+  dmax: 4
+  range: 4
+  techLevel: 0

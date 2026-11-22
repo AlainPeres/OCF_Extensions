@@ -1,0 +1,11 @@
+fields:
+  # Who the character is: free text the player writes, saved in the character file. The rules
+  # leave motives, tastes and purpose to the player (section 3.1) and the profession and social
+  # level to the player and the referee (section 3.3).
+  identity.name: { type: string, input: true, default: '' }
+  identity.species: { type: string, input: true, default: 'Human' }
+  identity.profession: { type: string, input: true, default: '' }
+  identity.description: { type: string, input: true, default: '' }
+  identity.background: { type: string, input: true, default: '' }
+  # Belongings other than the weapons and protections in the inventory, one per line.
+  identity.possessions: { type: string, input: true, default: '' }

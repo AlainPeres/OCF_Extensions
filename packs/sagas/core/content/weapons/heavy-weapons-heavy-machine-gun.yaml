@@ -1,0 +1,10 @@
+id: weapons.heavy-weapons-heavy-machine-gun
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.heavy-weapons
+  damageBonus: 21
+  dmax: 3
+  range: 25
+  techLevel: 5
+  special: true

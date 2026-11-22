@@ -1,0 +1,7 @@
+id: skills.other-cco
+type: skill
+fields:
+  characteristic: sec.cco
+  base: -15
+  generic: true
+  variableBase: true

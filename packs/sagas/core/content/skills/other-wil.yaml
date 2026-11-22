@@ -1,0 +1,7 @@
+id: skills.other-wil
+type: skill
+fields:
+  characteristic: chars.wil
+  base: -15
+  generic: true
+  variableBase: true

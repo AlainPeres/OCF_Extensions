@@ -1,0 +1,10 @@
+id: weapons.2-handed-sword-2-handed-stick-staff
+type: weapon
+fields:
+  kind: melee
+  skill: skills.2-handed-sword
+  damageBonus: 8
+  strReq: 5
+  dmax: 4
+  size: 3
+  techLevel: 2

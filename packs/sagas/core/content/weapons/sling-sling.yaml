@@ -1,0 +1,10 @@
+id: weapons.sling-sling
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.sling
+  damageBonus: 4
+  strReq: 3
+  dmax: 3
+  range: 9
+  techLevel: 0

@@ -1,0 +1,6 @@
+id: armor.full-helmet
+type: armor
+fields:
+  protection: 2
+  helmet: true
+  techLevel: 2

@@ -1,0 +1,6 @@
+id: skills.shield
+type: skill
+fields:
+  characteristic: sec.cco
+  base: 0
+  techLevel: 1

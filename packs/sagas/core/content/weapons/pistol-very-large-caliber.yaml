@@ -1,0 +1,10 @@
+id: weapons.pistol-very-large-caliber
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.pistol
+  damageBonus: 12
+  strReq: 8
+  dmax: 4
+  range: 16
+  techLevel: 4

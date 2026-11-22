@@ -1,0 +1,6 @@
+id: skills.sail
+type: skill
+fields:
+  characteristic: sec.spd
+  base: -10
+  techLevel: 0

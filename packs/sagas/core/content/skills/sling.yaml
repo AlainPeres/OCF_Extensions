@@ -1,0 +1,6 @@
+id: skills.sling
+type: skill
+fields:
+  characteristic: sec.rco
+  base: -5
+  techLevel: 0

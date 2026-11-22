@@ -1,0 +1,5 @@
+id: armor.light-futuristic-armor
+type: armor
+fields:
+  protection: 12
+  techLevel: 6

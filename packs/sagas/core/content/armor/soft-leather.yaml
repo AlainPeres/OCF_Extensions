@@ -1,0 +1,5 @@
+id: armor.soft-leather
+type: armor
+fields:
+  protection: 1
+  techLevel: 1

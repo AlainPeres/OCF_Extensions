@@ -1,0 +1,6 @@
+id: skills.helicopter-piloting
+type: skill
+fields:
+  characteristic: chars.dex
+  base: -10
+  techLevel: 5

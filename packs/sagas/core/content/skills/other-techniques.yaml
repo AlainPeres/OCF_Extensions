@@ -1,0 +1,6 @@
+id: skills.other-techniques
+type: skill
+fields:
+  characteristic: chars.wit
+  base: -10
+  generic: true

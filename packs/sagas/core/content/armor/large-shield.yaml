@@ -1,0 +1,7 @@
+id: armor.large-shield
+type: armor
+fields:
+  protection: 0
+  parryContact: 1
+  parryProjectile: 2
+  techLevel: 1

@@ -1,0 +1,6 @@
+id: armor.lightweight-kevlar-garment
+type: armor
+fields:
+  protection: 3
+  bulletProtection: 6
+  techLevel: 5

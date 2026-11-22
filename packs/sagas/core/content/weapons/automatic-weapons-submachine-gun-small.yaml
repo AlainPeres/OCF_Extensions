@@ -1,0 +1,10 @@
+id: weapons.automatic-weapons-submachine-gun-small
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.automatic-weapons
+  damageBonus: 6
+  strReq: 4
+  dmax: 4
+  range: 18
+  techLevel: 5

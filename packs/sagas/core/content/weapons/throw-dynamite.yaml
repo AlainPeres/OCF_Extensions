@@ -1,0 +1,10 @@
+id: weapons.throw-dynamite
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.throw
+  damageBonus: 24
+  dmax: 5
+  range: 5
+  techLevel: 5
+  special: true

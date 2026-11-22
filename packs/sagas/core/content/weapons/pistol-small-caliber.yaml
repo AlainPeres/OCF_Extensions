@@ -1,0 +1,10 @@
+id: weapons.pistol-small-caliber
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.pistol
+  damageBonus: 3
+  strReq: 3
+  dmax: 4
+  range: 16
+  techLevel: 3

@@ -1,0 +1,49 @@
+contentTypes:
+  weapon:
+    carried: true
+    equippable: true
+    fields:
+      kind: { type: enum, values: [melee, ranged], required: true }
+      skill: { type: id, of: skill }
+      damageBonus: { type: integer, required: true }
+      # Below the required Strength the wielder suffers a degree of -I.
+      strReq: { type: integer, default: 0, min: 0 }
+      # Maximum weapon effect dice.
+      dmax: { type: integer, required: true, min: 1 }
+      size: { type: integer, min: 1 }
+      # Range on the Universal Table (ranged weapons).
+      range: { type: integer, min: 0 }
+      # Armor piercing: the target's armor protection is reduced by this much.
+      ap: { type: integer, default: 0, min: 0 }
+      techLevel: { type: integer, default: 0, min: 0 }
+      # Burst, area or range-dependent damage: read the rules.
+      special: { type: boolean, default: false }
+    actions:
+      - use: damage
+        params:
+          weaponBonus: item.damageBonus
+          melee: "item.kind == 'melee'"
+          dmax: item.dmax
+
+  armor:
+    carried: true
+    equippable: true
+    fields:
+      protection: { type: integer, required: true, min: 0 }
+      # Resilient armor (RA): resists armor piercing by this much.
+      resilient: { type: integer, default: 0, min: 0 }
+      # Protection against bullets and impact, when higher.
+      bulletProtection: { type: integer, min: 0 }
+      helmet: { type: boolean, default: false }
+      # Shield parry, in degrees against a contact attack and a normal projectile.
+      parryContact: { type: integer, default: 0, min: 0 }
+      parryProjectile: { type: integer, default: 0, min: 0 }
+      # A small shield parries one contact attack only.
+      singleContact: { type: boolean, default: false }
+      techLevel: { type: integer, default: 0, min: 0 }
+    effectsWhen: self.equipped
+    effects:
+      - id: protection
+        target: protection
+        op: add
+        value: item.protection

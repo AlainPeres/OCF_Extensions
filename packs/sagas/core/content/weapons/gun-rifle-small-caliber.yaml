@@ -1,0 +1,10 @@
+id: weapons.gun-rifle-small-caliber
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.gun-rifle
+  damageBonus: 6
+  strReq: 4
+  dmax: 4
+  range: 21
+  techLevel: 3

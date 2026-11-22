@@ -1,0 +1,6 @@
+id: armor.heavy-kevlar-garment
+type: armor
+fields:
+  protection: 6
+  bulletProtection: 9
+  techLevel: 5

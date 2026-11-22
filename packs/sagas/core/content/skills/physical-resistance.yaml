@@ -1,0 +1,6 @@
+id: skills.physical-resistance
+type: skill
+fields:
+  characteristic: chars.end
+  base: 0
+  techLevel: 0

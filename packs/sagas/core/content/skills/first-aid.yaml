@@ -1,0 +1,6 @@
+id: skills.first-aid
+type: skill
+fields:
+  characteristic: chars.ins
+  base: -10
+  techLevel: 0

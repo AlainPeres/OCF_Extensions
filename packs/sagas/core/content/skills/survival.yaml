@@ -1,0 +1,6 @@
+id: skills.survival
+type: skill
+fields:
+  characteristic: chars.ins
+  base: -5
+  techLevel: 0

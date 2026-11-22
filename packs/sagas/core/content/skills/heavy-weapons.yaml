@@ -1,0 +1,6 @@
+id: skills.heavy-weapons
+type: skill
+fields:
+  characteristic: sec.rco
+  base: -10
+  techLevel: 4

@@ -1,0 +1,337 @@
+# SagaS roll: two open d6 (a 6 is rerolled and added) rolled under a score.
+# Degree = floor(score / roll) when the roll is at most the score, else 0.
+# More than twice the score is an automatic failure: the degree stays 0.
+resultBands:
+  degree:
+    value: 'roll.total > 2 * flags.score ? 0 : max(0, (roll.total <= flags.score ? floor(flags.score / roll.total) : 0) + flags.modifier)'
+    bands:
+      # A natural 2 (1 and 1 on the first dice) that gives a success.
+      - { id: natural-two, when: 'roll.faces[0] == 1 && roll.faces[1] == 1 && roll.value >= 1' }
+      # A natural 12 (6 and 6 on the first dice) ending in failure: a possible fumble.
+      - { id: natural-twelve, when: 'roll.faces[0] == 6 && roll.faces[1] == 6 && roll.value == 0' }
+      - { id: success, success: true, when: 'roll.value >= 1' }
+      - { id: automatic-failure, when: 'roll.total > 2 * flags.score' }
+      - { id: failure, when: true }
+
+situational:
+  - id: attackInBack
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: surprise
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: calledShot
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: secondaryHand
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: prone
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: opponentBehind
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: helpless
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: strengthBelowMinimum
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: aim
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: singleTargetBurst
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: pointBlank
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: charging
+    type: boolean
+    default: false
+    rolls: [check]
+
+actions:
+  # The 2d6* roll under a score. Degree modifiers (difficulty, situation) are added to the degree.
+  - id: degree-roll
+    listed: false
+    tags: [check]
+    params:
+      score: { type: integer }
+      modifier: { type: integer, default: 0 }
+      difficulty:
+        {
+          type: enum,
+          values:
+            [
+              obvious,
+              very-easy,
+              easy,
+              normal,
+              difficult,
+              very-difficult,
+              extremely-difficult,
+              almost-impossible,
+              theoretically-impossible,
+            ],
+          default: normal,
+        }
+    results: { bands: degree }
+    steps:
+      - id: target
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              score: params.score
+              modifier: "params.modifier + [4, 2, 1, 0, -1, -2, -3, -4, -8][indexOf(['obvious', 'very-easy', 'easy', 'normal', 'difficult', 'very-difficult', 'extremely-difficult', 'almost-impossible', 'theoretically-impossible'], params.difficulty)] + (situational.attackInBack ? 1 : 0) + (situational.surprise ? 1 : 0) + (situational.calledShot ? -1 : 0) + (situational.secondaryHand ? -1 : 0) + (situational.prone ? -1 : 0) + (situational.opponentBehind ? -1 : 0) + (situational.helpless ? 4 : 0) + (situational.strengthBelowMinimum ? -1 : 0) + (situational.aim ? 1 : 0) + (situational.singleTargetBurst ? 1 : 0) + (situational.pointBlank ? 1 : 0) + (situational.charging ? -1 : 0)"
+      - id: check
+        kind: roll
+        tags: [check]
+        better: low
+        bands: degree
+        parts:
+          - dice: 2d6!
+      - id: result
+        kind: outcome
+        result: steps.check.band
+        data:
+          degree: steps.check.bandValue
+
+  - id: characteristic-check
+    tags: [check]
+    params:
+      characteristic: { type: id, of: field, where: "'characteristic' in item.tags" }
+      modifier: { type: integer, default: 0 }
+      difficulty:
+        {
+          type: enum,
+          values:
+            [
+              obvious,
+              very-easy,
+              easy,
+              normal,
+              difficult,
+              very-difficult,
+              extremely-difficult,
+              almost-impossible,
+              theoretically-impossible,
+            ],
+          default: normal,
+        }
+    results: { bands: degree }
+    steps:
+      - id: roll
+        kind: action
+        use: degree-roll
+        params:
+          score: params.characteristic.value
+          modifier: params.modifier
+          difficulty: params.difficulty
+      - id: result
+        kind: outcome
+        result: steps.roll.result
+        data:
+          degree: steps.roll.data.degree
+
+  - id: skill-check
+    tags: [check]
+    params:
+      characteristic: { type: id, of: field, where: "'characteristic' in item.tags" }
+      learning: { type: integer }
+      modifier: { type: integer, default: 0 }
+      difficulty:
+        {
+          type: enum,
+          values:
+            [
+              obvious,
+              very-easy,
+              easy,
+              normal,
+              difficult,
+              very-difficult,
+              extremely-difficult,
+              almost-impossible,
+              theoretically-impossible,
+            ],
+          default: normal,
+        }
+    results: { bands: degree }
+    steps:
+      - id: roll
+        kind: action
+        use: degree-roll
+        params:
+          score: params.characteristic.value + params.learning
+          modifier: params.modifier
+          difficulty: params.difficulty
+      - id: result
+        kind: outcome
+        result: steps.roll.result
+        data:
+          degree: steps.roll.data.degree
+
+  # Opposed action: each side rolls; the degree of success is the difference of degrees. The
+  # winner has a degree of at least I and a strictly positive degree of success.
+  - id: opposed-check
+    tags: [check]
+    params:
+      score: { type: integer }
+      opponentScore: { type: integer }
+      modifier: { type: integer, default: 0 }
+      opponentModifier: { type: integer, default: 0 }
+    results: [won, lost, draw]
+    steps:
+      - id: mine
+        kind: action
+        use: degree-roll
+        params:
+          score: params.score
+          modifier: params.modifier
+      - id: theirs
+        kind: action
+        use: degree-roll
+        params:
+          score: params.opponentScore
+          modifier: params.opponentModifier
+      - id: result
+        kind: outcome
+        result: "steps.mine.data.degree >= 1 && steps.mine.data.degree > steps.theirs.data.degree ? 'won' : steps.theirs.data.degree >= 1 && steps.theirs.data.degree > steps.mine.data.degree ? 'lost' : 'draw'"
+        data:
+          degreeOfSuccess: steps.mine.data.degree - steps.theirs.data.degree
+
+  # Damage = Nd6* + weapon bonus (+ Strength bonus in melee); N is the degree of success, at most
+  # the weapon's maximum effect dice (DMAX; 0 for no limit).
+  - id: damage
+    tags: [damage]
+    params:
+      degree: { type: integer, min: 1 }
+      weaponBonus: { type: integer, default: 0 }
+      melee: { type: boolean, default: true }
+      dmax: { type: integer, default: 0, min: 0 }
+    results: [dealt]
+    steps:
+      - id: roll
+        kind: roll
+        tags: [damage]
+        parts:
+          - dice: '(params.dmax > 0 ? min(params.degree, params.dmax) : params.degree)d6!'
+          - value: params.weaponBonus
+          - value: 'params.melee ? bonus.str : 0'
+      - id: result
+        kind: outcome
+        result: "'dealt'"
+        data:
+          damage: steps.roll.total
+          dice: 'params.dmax > 0 ? min(params.degree, params.dmax) : params.degree'
+
+  # Physical or psychical damage, as injury or as stun. Physical damage is first reduced by the
+  # armor's protection, less the attack's armor piercing (unless the damage ignores armor). Stun
+  # reaching the hit points turns further stun into injury. Damage above the shock threshold
+  # calls for a shock roll (Endurance for physical, Presence for psychical): a degree of 0 faints
+  # or confuses.
+  - id: take-damage
+    tags: [health]
+    params:
+      kind: { type: enum, values: [physical, psychical] }
+      amount: { type: integer, min: 0 }
+      stun: { type: boolean, default: false }
+      armorPiercing: { type: integer, default: 0, min: 0 }
+      ignoreArmor: { type: boolean, default: false }
+    results: [taken, shock-failed]
+    steps:
+      - id: split
+        kind: branch
+        cases:
+          - when: "params.kind == 'physical'"
+            flags:
+              room: hp.physical.max - stun.physical
+              threshold: shock.physical
+              absorbed: 'params.ignoreArmor ? 0 : min(params.amount, max(0, protection - params.armorPiercing))'
+          - when: true
+            flags:
+              room: hp.psychical.max - stun.psychical
+              threshold: shock.psychical
+              absorbed: 0
+      - id: absorb
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              net: params.amount - flags.absorbed
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              toStun: 'params.stun ? min(flags.net, flags.room) : 0'
+      - id: deal
+        kind: changes
+        to: self
+        changes:
+          - {
+              type: adjust,
+              when: "params.kind == 'physical'",
+              field: stun.physical,
+              by: flags.toStun,
+            }
+          - {
+              type: adjust,
+              when: "params.kind == 'physical'",
+              field: injury.physical,
+              by: flags.net - flags.toStun,
+            }
+          - {
+              type: adjust,
+              when: "params.kind == 'psychical'",
+              field: stun.psychical,
+              by: flags.toStun,
+            }
+          - {
+              type: adjust,
+              when: "params.kind == 'psychical'",
+              field: injury.psychical,
+              by: flags.net - flags.toStun,
+            }
+      - id: shock
+        kind: action
+        when: flags.net > flags.threshold
+        use: characteristic-check
+        params:
+          characteristic: "params.kind == 'physical' ? @chars.end : @chars.pre"
+      - id: result
+        kind: outcome
+        result: "has(steps.shock.result) && steps.shock.result != 'success' && steps.shock.result != 'natural-two' ? 'shock-failed' : 'taken'"
+        data:
+          amount: flags.net
+          absorbed: flags.absorbed
+
+  # Ten minutes of rest after damage: stun is cured, and the damage drops by 5 per degree of
+  # an Endurance roll (apply the degree: this action only clears the stun).
+  - id: rest-short
+    tags: [health]
+    results: [rested]
+    steps:
+      - id: clear
+        kind: changes
+        to: self
+        changes:
+          - { type: set, field: stun.physical, value: 0 }
+          - { type: set, field: stun.psychical, value: 0 }
+      - id: result
+        kind: outcome
+        result: "'rested'"

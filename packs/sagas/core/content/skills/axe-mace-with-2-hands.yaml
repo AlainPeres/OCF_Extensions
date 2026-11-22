@@ -1,0 +1,6 @@
+id: skills.axe-mace-with-2-hands
+type: skill
+fields:
+  characteristic: sec.cco
+  base: 0
+  techLevel: 0

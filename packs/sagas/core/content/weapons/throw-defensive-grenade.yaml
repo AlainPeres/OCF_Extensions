@@ -1,0 +1,10 @@
+id: weapons.throw-defensive-grenade
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.throw
+  damageBonus: 20
+  dmax: 5
+  range: 5
+  techLevel: 5
+  special: true

@@ -1,0 +1,108 @@
+﻿fields:
+  # Main characteristics: base 5 for an ordinary person.
+  chars.str: { type: integer, input: true, default: 5, min: 0, tags: [characteristic] }
+  chars.agi: { type: integer, input: true, default: 5, min: 0, tags: [characteristic] }
+  chars.end: { type: integer, input: true, default: 5, min: 0, tags: [characteristic] }
+  chars.dex: { type: integer, input: true, default: 5, min: 0, tags: [characteristic] }
+  chars.wit: { type: integer, input: true, default: 5, min: 0, tags: [characteristic] }
+  chars.wil: { type: integer, input: true, default: 5, min: 0, tags: [characteristic] }
+  chars.pre: { type: integer, input: true, default: 5, min: 0, tags: [characteristic] }
+  chars.ins: { type: integer, input: true, default: 5, min: 0, tags: [characteristic] }
+
+  # Bonuses bought at creation for the secondary characteristics, and the species base of Speed.
+  creation.cco: { type: integer, input: true, default: 0, tags: [secondary-bonus] }
+  creation.rco: { type: integer, input: true, default: 0, tags: [secondary-bonus] }
+  creation.spd: { type: integer, input: true, default: 0, tags: [secondary-bonus] }
+  creation.ini: { type: integer, input: true, default: 0, tags: [secondary-bonus] }
+  species.speed: { type: integer, input: true, default: 6, min: 0 }
+
+  # Secondary characteristics (floor division everywhere).
+  raw.cco:
+    type: integer
+    formula: floor((chars.str + 2 * chars.agi + chars.ins + chars.wil) / 5)
+  sec.cco:
+    type: integer
+    formula: raw.cco + creation.cco
+    tags: [characteristic]
+  raw.rco:
+    type: integer
+    formula: floor((3 * chars.dex + 2 * chars.ins) / 5)
+  sec.rco:
+    type: integer
+    formula: raw.rco + creation.rco
+    tags: [characteristic]
+  raw.spd:
+    type: integer
+    formula: species.speed + floor((chars.end + chars.agi) / 4)
+  sec.spd:
+    type: integer
+    formula: raw.spd + creation.spd
+    tags: [characteristic]
+  raw.ini:
+    type: integer
+    formula: floor((chars.agi + chars.wit) / 2)
+  sec.ini:
+    type: integer
+    formula: raw.ini + creation.ini
+    tags: [characteristic]
+
+  # Characteristic bonus: the Universal Table's effect bonus (0 to 40).
+  bonus.str:
+    type: integer
+    formula: 'min(chars.str, 40) <= 4 ? 2 * min(chars.str, 40) - 10 : min(chars.str, 40) <= 20 ? floor(min(chars.str, 40) / 2) - 2 : min(chars.str, 40) == 21 ? 9 : min(chars.str, 40) <= 28 ? 12 + 3 * (min(chars.str, 40) - 22) : 35 + 5 * (min(chars.str, 40) - 29)'
+  bonus.pre:
+    type: integer
+    formula: 'min(chars.pre, 40) <= 4 ? 2 * min(chars.pre, 40) - 10 : min(chars.pre, 40) <= 20 ? floor(min(chars.pre, 40) / 2) - 2 : min(chars.pre, 40) == 21 ? 9 : min(chars.pre, 40) <= 28 ? 12 + 3 * (min(chars.pre, 40) - 22) : 35 + 5 * (min(chars.pre, 40) - 29)'
+
+  # Thresholds and hit points.
+  shock.physical: { type: integer, formula: 10 + bonus.str }
+  shock.psychical: { type: integer, formula: 10 + bonus.pre }
+  hp.physical.max: { type: integer, formula: 2 * (chars.str + chars.end + chars.wil) }
+  hp.psychical.max: { type: integer, formula: 2 * (chars.pre + chars.wil + chars.ins) }
+  # Injuries last; stun is temporary. A stun total reaching the hit points turns further stun
+  # into injuries (see the take-damage action).
+  injury.physical: { type: integer, input: true, default: 0, min: 0 }
+  stun.physical: { type: integer, input: true, default: 0, min: 0, max: hp.physical.max }
+  injury.psychical: { type: integer, input: true, default: 0, min: 0 }
+  stun.psychical: { type: integer, input: true, default: 0, min: 0, max: hp.psychical.max }
+  damage.physical: { type: integer, formula: injury.physical + stun.physical }
+  damage.psychical: { type: integer, formula: injury.psychical + stun.psychical }
+  # Unconscious and dying (1 physical injury every 4 rounds), dead, confused, mad.
+  state.unconscious: { type: boolean, formula: damage.physical >= hp.physical.max }
+  state.dead: { type: boolean, formula: injury.physical >= hp.physical.max + chars.end }
+  state.confused: { type: boolean, formula: damage.psychical >= hp.psychical.max }
+  state.mad: { type: boolean, formula: injury.psychical >= hp.psychical.max + chars.pre }
+
+  # Armor protection (0 without armor) and the impact bonus it gives.
+  protection: { type: integer, input: true, default: 0, min: 0 }
+  impact.max: { type: integer, formula: 2 * protection + shock.physical }
+
+  # Skills the character studies at once: floor(min(Wit, Will) / 2).
+  study.limit: { type: integer, formula: 'floor(min(chars.wit, chars.wil) / 2)' }
+
+  # Reflex Dodge = 2 + floor(total Dodge level / 2); the Dodge skill is based on Agility.
+  dodge.reflex:
+    type: integer
+    formula: '2 + floor((chars.agi + (countCopies(copy.item == @skills.dodge) > 0 ? sumCopies(copy.state.learning, copy.item == @skills.dodge) : 0)) / 2)'
+
+  # Creation points: 150, 250 or 350 for a character's power level; a privileged social class
+  # costs 10 points (creation.social = 1), a less favored one gives 10 (-1).
+  creation.points: { type: integer, input: true, default: 150, min: 0 }
+  creation.social: { type: integer, input: true, default: 0, min: -1, max: 1 }
+  points.budget: { type: integer, formula: creation.points - 10 * creation.social }
+  # Main characteristics cost per point by the final value (3, 6, 12, 24, 48); 5 is free.
+  points.chars:
+    type: integer
+    formula: '(3 * min(chars.str, 5) + 6 * max(0, min(chars.str, 10) - 5) + 12 * max(0, min(chars.str, 15) - 10) + 24 * max(0, min(chars.str, 20) - 15) + 48 * max(0, chars.str - 20)) + (3 * min(chars.agi, 5) + 6 * max(0, min(chars.agi, 10) - 5) + 12 * max(0, min(chars.agi, 15) - 10) + 24 * max(0, min(chars.agi, 20) - 15) + 48 * max(0, chars.agi - 20)) + (3 * min(chars.end, 5) + 6 * max(0, min(chars.end, 10) - 5) + 12 * max(0, min(chars.end, 15) - 10) + 24 * max(0, min(chars.end, 20) - 15) + 48 * max(0, chars.end - 20)) + (3 * min(chars.dex, 5) + 6 * max(0, min(chars.dex, 10) - 5) + 12 * max(0, min(chars.dex, 15) - 10) + 24 * max(0, min(chars.dex, 20) - 15) + 48 * max(0, chars.dex - 20)) + (3 * min(chars.wit, 5) + 6 * max(0, min(chars.wit, 10) - 5) + 12 * max(0, min(chars.wit, 15) - 10) + 24 * max(0, min(chars.wit, 20) - 15) + 48 * max(0, chars.wit - 20)) + (3 * min(chars.wil, 5) + 6 * max(0, min(chars.wil, 10) - 5) + 12 * max(0, min(chars.wil, 15) - 10) + 24 * max(0, min(chars.wil, 20) - 15) + 48 * max(0, chars.wil - 20)) + (3 * min(chars.pre, 5) + 6 * max(0, min(chars.pre, 10) - 5) + 12 * max(0, min(chars.pre, 15) - 10) + 24 * max(0, min(chars.pre, 20) - 15) + 48 * max(0, chars.pre - 20)) + (3 * min(chars.ins, 5) + 6 * max(0, min(chars.ins, 10) - 5) + 12 * max(0, min(chars.ins, 15) - 10) + 24 * max(0, min(chars.ins, 20) - 15) + 48 * max(0, chars.ins - 20)) - 8 * (3 * min(5, 5) + 6 * max(0, min(5, 10) - 5) + 12 * max(0, min(5, 15) - 10) + 24 * max(0, min(5, 20) - 15) + 48 * max(0, 5 - 20))'
+  # Secondary characteristics: the cost of a +1 from the current value is 3 times that of a main one.
+  points.secondary:
+    type: integer
+    formula: '3 * ((3 * min(raw.cco + creation.cco, 5) + 6 * max(0, min(raw.cco + creation.cco, 10) - 5) + 12 * max(0, min(raw.cco + creation.cco, 15) - 10) + 24 * max(0, min(raw.cco + creation.cco, 20) - 15) + 48 * max(0, raw.cco + creation.cco - 20)) - (3 * min(raw.cco, 5) + 6 * max(0, min(raw.cco, 10) - 5) + 12 * max(0, min(raw.cco, 15) - 10) + 24 * max(0, min(raw.cco, 20) - 15) + 48 * max(0, raw.cco - 20))) + 3 * ((3 * min(raw.rco + creation.rco, 5) + 6 * max(0, min(raw.rco + creation.rco, 10) - 5) + 12 * max(0, min(raw.rco + creation.rco, 15) - 10) + 24 * max(0, min(raw.rco + creation.rco, 20) - 15) + 48 * max(0, raw.rco + creation.rco - 20)) - (3 * min(raw.rco, 5) + 6 * max(0, min(raw.rco, 10) - 5) + 12 * max(0, min(raw.rco, 15) - 10) + 24 * max(0, min(raw.rco, 20) - 15) + 48 * max(0, raw.rco - 20))) + 3 * ((3 * min(raw.spd + creation.spd, 5) + 6 * max(0, min(raw.spd + creation.spd, 10) - 5) + 12 * max(0, min(raw.spd + creation.spd, 15) - 10) + 24 * max(0, min(raw.spd + creation.spd, 20) - 15) + 48 * max(0, raw.spd + creation.spd - 20)) - (3 * min(raw.spd, 5) + 6 * max(0, min(raw.spd, 10) - 5) + 12 * max(0, min(raw.spd, 15) - 10) + 24 * max(0, min(raw.spd, 20) - 15) + 48 * max(0, raw.spd - 20))) + 3 * ((3 * min(raw.ini + creation.ini, 5) + 6 * max(0, min(raw.ini + creation.ini, 10) - 5) + 12 * max(0, min(raw.ini + creation.ini, 15) - 10) + 24 * max(0, min(raw.ini + creation.ini, 20) - 15) + 48 * max(0, raw.ini + creation.ini - 20)) - (3 * min(raw.ini, 5) + 6 * max(0, min(raw.ini, 10) - 5) + 12 * max(0, min(raw.ini, 15) - 10) + 24 * max(0, min(raw.ini, 20) - 15) + 48 * max(0, raw.ini - 20)))'
+  # Skills: below 0 the learning level moves in steps of 5 (-15 to -10, -10 to -5, -5 to 0) at 1
+  # point a step; then 1 per level up to 5, 2 up to 10, 4 up to 15, 8 up to 20, 16 above. The cost
+  # is the cumulative cost of the learning level minus that of the copy's initial level.
+  points.skills:
+    type: integer
+    formula: "sumCopies((floor((min(copy.state.learning, 0) + 15) / 5) + max(0, min(copy.state.learning, 5)) + 2 * max(0, min(copy.state.learning, 10) - 5) + 4 * max(0, min(copy.state.learning, 15) - 10) + 8 * max(0, min(copy.state.learning, 20) - 15) + 16 * max(0, copy.state.learning - 20)) - (floor((min(copy.state.initial, 0) + 15) / 5) + max(0, min(copy.state.initial, 5)) + 2 * max(0, min(copy.state.initial, 10) - 5) + 4 * max(0, min(copy.state.initial, 15) - 10) + 8 * max(0, min(copy.state.initial, 20) - 15) + 16 * max(0, copy.state.initial - 20)), copy.type == 'skill')"
+  points.spent: { type: integer, formula: points.chars + points.secondary + points.skills }
+  points.remaining: { type: integer, formula: points.budget - points.spent }

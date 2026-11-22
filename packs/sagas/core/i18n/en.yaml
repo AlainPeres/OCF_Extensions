@@ -1,0 +1,432 @@
+pack.name: SagaS Core
+tags.characteristic.name: Characteristic
+types.skill.name: Skill
+types.skill.fields.base.name: Initial learning level
+types.skill.fields.characteristic.name: Characteristic
+types.skill.state.learning.name: Learning level
+types.skill.state.specialty.name: Specialty
+types.skill.state.initial.name: Initial level
+types.skill.fields.variableBase.name: Initial level chosen when learned
+
+fields.identity.name.name: Name
+fields.identity.species.name: Species
+fields.identity.profession.name: Profession
+fields.identity.description.name: Description
+fields.identity.background.name: Background
+fields.identity.possessions.name: Possessions
+
+fields.chars.str.name: Strength
+fields.chars.agi.name: Agility
+fields.chars.end.name: Endurance
+fields.chars.dex.name: Dexterity
+fields.chars.wit.name: Wit
+fields.chars.wil.name: Will
+fields.chars.pre.name: Presence
+fields.chars.ins.name: Instinct
+fields.sec.cco.name: Close Combat
+fields.sec.rco.name: Ranged Combat
+fields.sec.spd.name: Speed
+fields.sec.ini.name: Initiative
+fields.creation.cco.name: Close Combat creation bonus
+fields.creation.rco.name: Ranged Combat creation bonus
+fields.creation.spd.name: Speed creation bonus
+fields.creation.ini.name: Initiative creation bonus
+fields.species.speed.name: Species base Speed
+fields.bonus.str.name: Strength bonus
+fields.bonus.pre.name: Presence bonus
+fields.shock.physical.name: Physical shock threshold
+fields.shock.psychical.name: Psychical shock threshold
+fields.hp.physical.max.name: Maximum physical hit points
+fields.hp.psychical.max.name: Maximum psychical hit points
+fields.protection.name: Protection
+fields.impact.max.name: Maximum impact bonus
+fields.study.limit.name: Simultaneous studies
+
+tags.check.name: Check
+actions.characteristic-check.name: Characteristic check
+actions.characteristic-check.params.characteristic.name: Characteristic
+bands.degree.natural-two.name: Natural 2
+bands.degree.natural-twelve.name: Natural 12
+bands.degree.success.name: Success
+bands.degree.automatic-failure.name: Automatic failure
+bands.degree.failure.name: Failure
+bands.degree.success.condition: 'Roll {value} or less: degree = score / roll, rounded down'
+
+actions.skill-check.name: Skill check
+actions.skill-check.params.characteristic.name: Characteristic
+actions.skill-check.params.learning.name: Learning level
+fields.dodge.reflex.name: Reflex Dodge
+actions.damage.name: Damage
+actions.damage.params.degree.name: Degree of success
+actions.damage.params.weaponBonus.name: Weapon bonus
+actions.damage.params.melee.name: Melee attack
+actions.damage.params.dmax.name: Maximum effect dice (DMAX)
+actions.damage.results.dealt.name: Damage dealt
+tags.damage.name: Damage
+
+skills.arm-wrestling.name: 'Arm wrestling'
+skills.weight-lifting.name: 'Weight lifting'
+skills.weight-throwing.name: 'Weight throwing'
+skills.climb.name: 'Climb'
+skills.acrobatics.name: 'Acrobatics'
+skills.stealth.name: 'Stealth'
+skills.dodge.name: 'Dodge'
+skills.dance.name: 'Dance'
+skills.lock-picking.name: 'Lock picking'
+skills.sleight-of-hand.name: 'Sleight of hand'
+skills.driving-car.name: 'Driving car'
+skills.motorcycle-driving.name: 'Motorcycle driving'
+skills.airplane-piloting.name: 'Airplane piloting'
+skills.helicopter-piloting.name: 'Helicopter piloting'
+skills.driving-aquatic-machine.name: 'Driving aquatic machine'
+skills.driving-heavy-vehicle.name: 'Driving heavy vehicle'
+skills.pilot-spacecraft.name: 'Pilot spacecraft'
+skills.battle-armor.name: 'Battle Armor'
+skills.games-of-accuracy.name: 'Games of accuracy'
+skills.physical-resistance.name: 'Physical resistance'
+skills.general-culture.name: 'General culture'
+skills.native-language.name: 'Native language'
+skills.investigation.name: 'Investigation'
+skills.computer-science.name: 'Computer science'
+skills.security-systems.name: 'Security systems'
+skills.explosives.name: 'Explosives'
+skills.electricity.name: 'Electricity'
+skills.electronics.name: 'Electronics'
+skills.mechanical.name: 'Mechanical'
+skills.physics.name: 'Physics'
+skills.chemistry.name: 'Chemistry'
+skills.astronomy.name: 'Astronomy'
+skills.zoology.name: 'Zoology'
+skills.botany.name: 'Botany'
+skills.biology.name: 'Biology'
+skills.geology.name: 'Geology'
+skills.archeology.name: 'Archeology'
+skills.history.name: 'History'
+skills.paleontology.name: 'Paleontology'
+skills.law.name: 'Law'
+skills.medicine.name: 'Medicine'
+skills.psychiatry.name: 'Psychiatry'
+skills.occultism.name: 'Occultism'
+skills.handcrafts.name: 'Handcrafts'
+skills.other-knowledge.name: 'Other knowledge'
+skills.other-str.name: 'Other (Strength)'
+skills.other-agi.name: 'Other (Agility)'
+skills.other-dex.name: 'Other (Dexterity)'
+skills.other-end.name: 'Other (Endurance)'
+skills.other-wit.name: 'Other (Wit)'
+skills.other-wil.name: 'Other (Will)'
+skills.other-pre.name: 'Other (Presence)'
+skills.other-ins.name: 'Other (Instinct)'
+skills.other-cco.name: 'Other (Close Combat)'
+skills.other-rco.name: 'Other (Ranged Combat)'
+skills.other-spd.name: 'Other (Speed)'
+skills.foreign-languages.name: 'Foreign languages'
+skills.other-sciences.name: 'Other sciences'
+skills.other-techniques.name: 'Other techniques'
+skills.mind-games.name: 'Mind games'
+skills.mental-resistance.name: 'Mental Resistance'
+skills.persuasion.name: 'Persuasion'
+skills.intimidation.name: 'Intimidation'
+skills.interrogation.name: 'Interrogation'
+skills.command.name: 'Command'
+skills.disguise.name: 'Disguise'
+skills.bluff.name: 'Bluff'
+skills.charm.name: 'Charm'
+skills.eloquence.name: 'Eloquence'
+skills.perception.name: 'Perception'
+skills.psychology.name: 'Psychology'
+skills.pedagogy.name: 'Pedagogy'
+skills.first-aid.name: 'First aid'
+skills.animal-handling.name: 'Animal Handling'
+skills.tracking.name: 'Tracking'
+skills.survival.name: 'Survival'
+skills.horse-riding.name: 'Horse riding'
+skills.painting.name: 'Painting'
+skills.music.name: 'Music'
+skills.writing.name: 'Writing'
+skills.sculpture.name: 'Sculpture'
+skills.dramatic-arts.name: 'Dramatic Arts'
+skills.other-arts.name: 'Other Arts'
+skills.brawling.name: 'Brawling'
+skills.axe-mace.name: 'Axe / Mace'
+skills.dagger.name: 'Dagger'
+skills.sword.name: 'Sword'
+skills.2-handed-sword.name: '2-handed sword'
+skills.axe-mace-with-2-hands.name: 'Axe / Mace with 2 hands'
+skills.flail.name: 'Flail'
+skills.spear.name: 'Spear'
+skills.long-weapon.name: 'Long weapon'
+skills.shield.name: 'Shield'
+skills.cavalry-spear.name: 'Cavalry Spear'
+skills.close-combat-with-2-weapons.name: 'Close Combat with 2 weapons'
+skills.draw-weapon-close.name: 'Draw weapon (close)'
+skills.martial-arts.name: 'Martial Arts'
+skills.bow.name: 'Bow'
+skills.crossbow.name: 'Crossbow'
+skills.dagger-thrown.name: 'Dagger (thrown)'
+skills.axe-thrown.name: 'Axe (thrown)'
+skills.sling.name: 'Sling'
+skills.throw.name: 'Throw'
+skills.javelin.name: 'Javelin'
+skills.gun-rifle.name: 'Gun (Rifle)'
+skills.pistol.name: 'Pistol'
+skills.automatic-weapons.name: 'Automatic weapons'
+skills.draw-weapon-ranged.name: 'Draw weapon (ranged)'
+skills.combat-2-ranged-weapons.name: 'Combat 2 ranged weapons'
+skills.heavy-weapons.name: 'Heavy weapons'
+skills.run.name: 'Run'
+skills.jump.name: 'Jump'
+skills.swimming.name: 'Swimming'
+skills.skiing.name: 'Skiing'
+skills.tennis.name: 'Tennis'
+skills.hang-glider.name: 'Hang-glider'
+skills.sail.name: 'Sail'
+skills.skydiving.name: 'Skydiving'
+skills.diving.name: 'Diving'
+types.skill.fields.techLevel.name: Technology level
+types.skill.fields.generic.name: Generic (to specialize)
+
+types.weapon.name: Weapon
+types.armor.name: Armor
+types.weapon.fields.kind.name: Kind
+types.weapon.fields.skill.name: Skill
+types.weapon.fields.damageBonus.name: Damage bonus
+types.weapon.fields.strReq.name: Required Strength
+types.weapon.fields.dmax.name: Maximum weapon effect dice (DMAX)
+types.weapon.fields.size.name: Size
+types.weapon.fields.range.name: Range (Universal Table)
+types.weapon.fields.ap.name: Armor piercing
+types.weapon.fields.techLevel.name: Technology level
+types.weapon.fields.special.name: Special damage
+types.weapon.fields.kind.values.melee.name: Melee
+types.weapon.fields.kind.values.ranged.name: Ranged
+types.armor.fields.protection.name: Protection
+types.armor.fields.resilient.name: Resilient armor (RA)
+types.armor.fields.bulletProtection.name: Protection against bullets and impact
+types.armor.fields.helmet.name: Helmet
+types.armor.fields.parryContact.name: Parry degree, contact attack
+types.armor.fields.parryProjectile.name: Parry degree, projectile
+types.armor.fields.singleContact.name: Parries one contact attack only
+types.armor.fields.techLevel.name: Technology level
+armor.soft-leather.name: 'Soft leather'
+armor.rigid-leather.name: 'Rigid leather'
+armor.chainmail.name: 'Chainmail'
+armor.plate-armor.name: 'Plate armor'
+armor.full-plate-armor.name: 'Full plate armor'
+armor.normal-helmet.name: 'Normal helmet'
+armor.full-helmet.name: 'Full helmet'
+armor.lightweight-kevlar-garment.name: 'Lightweight Kevlar garment / small bulletproof vest'
+armor.heavy-kevlar-garment.name: 'Heavy Kevlar garment / large bulletproof vest'
+armor.light-futuristic-armor.name: 'Light futuristic armor'
+armor.heavy-futuristic-armor.name: 'Heavy futuristic armor'
+armor.small-shield.name: 'Small shield'
+armor.medium-shield.name: 'Medium shield'
+armor.large-shield.name: 'Large shield'
+weapons.brawling-fist.name: 'Fist'
+weapons.dagger-knife.name: 'Knife'
+weapons.dagger-dagger.name: 'Dagger'
+weapons.dagger-short-sword.name: 'Short sword'
+weapons.sword-long-sword.name: 'Long sword'
+weapons.sword-broadsword-wide-sword.name: 'Broadsword (wide sword)'
+weapons.sword-saber.name: 'Saber'
+weapons.sword-scimitar.name: 'Scimitar'
+weapons.sword-short-sword.name: 'Short sword'
+weapons.sword-rapier.name: 'Rapier'
+weapons.sword-stick-club.name: 'Stick / Club'
+weapons.none-rapier.name: 'Rapier'
+weapons.axe-mace-axe.name: 'Axe'
+weapons.axe-mace-mace.name: 'Mace'
+weapons.flail-flail.name: 'Flail'
+weapons.flail-whip.name: 'Whip'
+weapons.2-handed-sword-2-handed-sword.name: '2-handed sword'
+weapons.2-handed-sword-2-handed-stick-staff.name: '2-handed stick / staff'
+weapons.axe-mace-with-2-hands-2-handed-axe.name: '2-handed axe'
+weapons.axe-mace-with-2-hands-2-handed-mace.name: '2-handed mace'
+weapons.long-weapon-pike.name: 'Pike'
+weapons.long-weapon-halberd.name: 'Halberd'
+weapons.long-weapon-2-handed-spear.name: '2-handed spear'
+weapons.spear-1-handed-spear.name: '1-handed spear'
+weapons.spear-2-handed-spear.name: '2-handed spear'
+weapons.spear-1-handed-stick.name: '1-handed stick'
+weapons.spear-2-handed-stick.name: '2-handed stick'
+weapons.shield-small-shield.name: 'Small shield'
+weapons.shield-medium-shield.name: 'Medium shield'
+weapons.shield-large-shield.name: 'Large shield'
+weapons.crossbow-light-crossbow.name: 'Light crossbow'
+weapons.crossbow-heavy-crossbow.name: 'Heavy crossbow'
+weapons.bow-longbow.name: 'Longbow'
+weapons.bow-shortbow.name: 'Shortbow'
+weapons.sling-sling.name: 'Sling'
+weapons.dagger-thrown-throwing-dagger.name: 'Throwing dagger'
+weapons.axe-thrown-throwing-axe.name: 'Throwing axe'
+weapons.axe-thrown-small-throwing-axe.name: 'Small throwing axe'
+weapons.javelin-javelin.name: 'Javelin'
+weapons.pistol-small-caliber.name: 'Small caliber'
+weapons.pistol-medium-caliber.name: 'Medium caliber'
+weapons.pistol-large-caliber.name: 'Large caliber'
+weapons.pistol-very-large-caliber.name: 'Very large caliber'
+weapons.gun-rifle-small-caliber.name: 'Small caliber'
+weapons.gun-rifle-medium-caliber.name: 'Medium caliber'
+weapons.gun-rifle-large-caliber.name: 'Large caliber'
+weapons.gun-rifle-very-large-caliber-i.name: 'Very large caliber (I)'
+weapons.gun-rifle-very-large-caliber-ii.name: 'Very large caliber (II)'
+weapons.gun-rifle-very-large-caliber-iii.name: 'Very large caliber (III)'
+weapons.none-buckshot.name: 'Buckshot'
+weapons.none-sawed-off-barrel.name: 'Sawed-off barrel'
+weapons.automatic-weapons-submachine-gun-small.name: 'Submachine gun (small)'
+weapons.automatic-weapons-submachine-gun-medium.name: 'Submachine gun (medium)'
+weapons.automatic-weapons-assault-rifle-machine-gun.name: 'Assault rifle / Machine gun'
+weapons.heavy-weapons-cannon-gun.name: 'Cannon / Gun'
+weapons.heavy-weapons-mortar.name: 'Mortar'
+weapons.heavy-weapons-heavy-machine-gun.name: 'Heavy machine gun'
+weapons.heavy-weapons-bazooka.name: 'Bazooka'
+weapons.heavy-weapons-flamethrower.name: 'Flamethrower'
+weapons.throw-defensive-grenade.name: 'Defensive grenade'
+weapons.throw-offensive-grenade.name: 'Offensive grenade'
+weapons.throw-dynamite.name: 'Dynamite'
+
+fields.raw.cco.name: Close Combat before the creation bonus
+fields.raw.rco.name: Ranged Combat before the creation bonus
+fields.raw.spd.name: Speed before the creation bonus
+fields.raw.ini.name: Initiative before the creation bonus
+fields.creation.points.name: Creation points
+fields.creation.social.name: Social class (1 privileged, -1 less favored)
+fields.points.budget.name: Points available
+fields.points.chars.name: Points spent on characteristics
+fields.points.secondary.name: Points spent on secondary characteristics
+fields.points.skills.name: Points spent on skills
+fields.points.spent.name: Points spent
+fields.points.remaining.name: Points remaining
+
+fields.injury.physical.name: Physical injuries
+fields.stun.physical.name: Physical stun
+fields.injury.psychical.name: Psychical injuries
+fields.stun.psychical.name: Psychical stun
+fields.damage.physical.name: Physical damage
+fields.damage.psychical.name: Psychical damage
+fields.state.unconscious.name: Unconscious and dying
+fields.state.dead.name: Dead
+fields.state.confused.name: Confused
+fields.state.mad.name: Mad
+tags.health.name: Health
+actions.take-damage.name: Take damage
+actions.take-damage.params.kind.name: Kind
+actions.take-damage.params.amount.name: Damage
+actions.take-damage.params.armorPiercing.name: Armor piercing
+actions.take-damage.params.ignoreArmor.name: Ignores armor
+actions.take-damage.params.stun.name: Stun instead of injury
+actions.take-damage.results.taken.name: Damage taken
+actions.take-damage.results.shock-failed.name: Shock roll failed
+actions.rest-short.name: Rest 10 minutes
+actions.rest-short.results.rested.name: Rested
+actions.take-damage.params.kind.values.physical.name: Physical
+actions.take-damage.params.kind.values.psychical.name: Psychical
+
+situational.attackInBack.name: 'Attack in the back [+1]'
+situational.surprise.name: 'Attack by surprise [+1]'
+situational.calledShot.name: 'Called shot [-1]'
+situational.secondaryHand.name: 'Using the secondary hand [-1]'
+situational.prone.name: 'On the ground (prone) [-1]'
+situational.opponentBehind.name: 'Opponent in the back [-1]'
+situational.helpless.name: 'Totally helpless opponent [+4]'
+situational.strengthBelowMinimum.name: 'Strength below the weapon minimum [-1]'
+situational.aim.name: 'Aim carefully (ranged) [+1]'
+situational.singleTargetBurst.name: 'Shoot at a single target (burst or auto) [+1]'
+situational.pointBlank.name: 'Point blank (ranged) [+1]'
+situational.charging.name: 'Parry or dodge while charging [-1]'
+actions.degree-roll.params.modifier.name: Degree modifier
+actions.degree-roll.params.difficulty.name: Difficulty
+actions.degree-roll.params.difficulty.values.obvious.name: 'Obvious (+IV)'
+actions.degree-roll.params.difficulty.values.very-easy.name: 'Very easy (+II)'
+actions.degree-roll.params.difficulty.values.easy.name: 'Easy (+I)'
+actions.degree-roll.params.difficulty.values.normal.name: 'Normal'
+actions.degree-roll.params.difficulty.values.difficult.name: 'Difficult (-I)'
+actions.degree-roll.params.difficulty.values.very-difficult.name: 'Very difficult (-II)'
+actions.degree-roll.params.difficulty.values.extremely-difficult.name: 'Extremely difficult (-III)'
+actions.degree-roll.params.difficulty.values.almost-impossible.name: 'Almost impossible (-IV)'
+actions.degree-roll.params.difficulty.values.theoretically-impossible.name: 'Theoretically impossible (-VIII)'
+actions.characteristic-check.params.modifier.name: Degree modifier
+actions.characteristic-check.params.difficulty.name: Difficulty
+actions.characteristic-check.params.difficulty.values.obvious.name: 'Obvious (+IV)'
+actions.characteristic-check.params.difficulty.values.very-easy.name: 'Very easy (+II)'
+actions.characteristic-check.params.difficulty.values.easy.name: 'Easy (+I)'
+actions.characteristic-check.params.difficulty.values.normal.name: 'Normal'
+actions.characteristic-check.params.difficulty.values.difficult.name: 'Difficult (-I)'
+actions.characteristic-check.params.difficulty.values.very-difficult.name: 'Very difficult (-II)'
+actions.characteristic-check.params.difficulty.values.extremely-difficult.name: 'Extremely difficult (-III)'
+actions.characteristic-check.params.difficulty.values.almost-impossible.name: 'Almost impossible (-IV)'
+actions.characteristic-check.params.difficulty.values.theoretically-impossible.name: 'Theoretically impossible (-VIII)'
+actions.skill-check.params.modifier.name: Degree modifier
+actions.skill-check.params.difficulty.name: Difficulty
+actions.skill-check.params.difficulty.values.obvious.name: 'Obvious (+IV)'
+actions.skill-check.params.difficulty.values.very-easy.name: 'Very easy (+II)'
+actions.skill-check.params.difficulty.values.easy.name: 'Easy (+I)'
+actions.skill-check.params.difficulty.values.normal.name: 'Normal'
+actions.skill-check.params.difficulty.values.difficult.name: 'Difficult (-I)'
+actions.skill-check.params.difficulty.values.very-difficult.name: 'Very difficult (-II)'
+actions.skill-check.params.difficulty.values.extremely-difficult.name: 'Extremely difficult (-III)'
+actions.skill-check.params.difficulty.values.almost-impossible.name: 'Almost impossible (-IV)'
+actions.skill-check.params.difficulty.values.theoretically-impossible.name: 'Theoretically impossible (-VIII)'
+actions.degree-roll.name: Roll under a score
+actions.degree-roll.params.score.name: Score
+actions.degree-roll.steps.check.name: Roll 2d6*
+actions.opposed-check.name: Opposed action
+actions.opposed-check.params.score.name: Your score
+actions.opposed-check.params.opponentScore.name: Opponent's score
+actions.opposed-check.params.modifier.name: Your degree modifier
+actions.opposed-check.params.opponentModifier.name: Opponent's degree modifier
+actions.opposed-check.results.won.name: Won
+actions.opposed-check.results.lost.name: Lost
+actions.opposed-check.results.draw.name: No winner
+
+types.skill.computed.total.name: Total level
+types.skill.computed.grade.name: Qualitative level
+constraints.learning-above-base: Learning level below the skill's initial level
+constraints.initial-level: Initial level must be the skill's own, or -15, -10, -5 or 0 for an Other skill
+constraints.learning-steps-below-zero: A negative learning level must be -15, -10 or -5
+constraints.generic-needs-specialty: A generic skill must be specialized
+constraints.skill-taken-once: Only a generic skill can be taken more than once
+
+tags.secondary-bonus.name: Secondary characteristic creation bonus
+constraints.creation-within-budget: More creation points spent than available
+creation.guided.name: 'Guided creation'
+creation.guided.description: 'Choose the power level, buy characteristics and skills with the creation points and pick weapons and armor; then learn generic skills with a specialty and finish the creation.'
+creation.random.name: 'Random character'
+creation.random.description: 'Draws the power level, spreads the points over the characteristics and over 4 to 9 skills, and takes a weapon and an armor.'
+actions.create-character.name: 'Create a character'
+actions.create-character.params.random.name: 'Random'
+actions.create-character.results.created.name: 'Created'
+actions.create-character.steps.power.prompt: 'Power level'
+actions.create-character.options.power-150.name: 'A little more powerful than normal (150 points)'
+actions.create-character.options.power-250.name: 'More powerful than normal (250 points)'
+actions.create-character.options.power-350.name: 'Much more powerful than normal (350 points)'
+actions.create-character.steps.social.prompt: 'Social class'
+actions.create-character.options.social-privileged.name: 'Privileged (costs 10 points)'
+actions.create-character.options.social-average.name: 'Average'
+actions.create-character.options.social-less-favored.name: 'Less favored (gives 10 points)'
+actions.create-character.steps.techLevel.prompt: 'Technological level of the universe'
+actions.create-character.options.0.name: 'TL0: the Stone Age'
+actions.create-character.options.1.name: 'TL1: the Bronze Age'
+actions.create-character.options.2.name: 'TL2: the Middle Ages (before gunpowder)'
+actions.create-character.options.3.name: 'TL3: late Middle Ages (gunpowder)'
+actions.create-character.options.4.name: 'TL4: the Industrial Revolution'
+actions.create-character.options.5.name: 'TL5: the 20th century'
+actions.create-character.options.6.name: 'TL6: the 21st century'
+actions.create-character.options.7.name: 'TL7: futuristic I'
+actions.create-character.options.8.name: 'TL8: futuristic II'
+actions.create-character.steps.characteristics.prompt: 'Buy main characteristics'
+actions.create-character.steps.secondary.prompt: 'Buy secondary characteristic bonuses'
+actions.create-character.steps.skillCount.name: 'Number of skills (1d6 + 3)'
+actions.create-character.steps.learn.prompt: 'Learn a skill'
+actions.create-character.steps.raise.prompt: 'Raise a skill one step'
+actions.create-character.steps.weapons.prompt: 'Take a weapon'
+actions.create-character.steps.armor.prompt: 'Take an armor'
+actions.learn-specialty.name: 'Learn a generic skill'
+actions.learn-specialty.params.specialty.name: 'Specialty'
+actions.learn-specialty.results.learned.name: 'Learned'
+actions.learn-specialty.steps.skill.prompt: 'Generic skill'
+actions.learn-specialty.steps.initial.prompt: 'Initial level'
+actions.learn-specialty.steps.raise.prompt: 'Raise the skill one step'
+actions.finish-creation.name: 'Finish the creation'
+actions.finish-creation.results.finished.name: 'Finished'
+tags.creation.name: Creation

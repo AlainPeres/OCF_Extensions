@@ -1,0 +1,6 @@
+id: skills.sleight-of-hand
+type: skill
+fields:
+  characteristic: chars.dex
+  base: -15
+  techLevel: 0

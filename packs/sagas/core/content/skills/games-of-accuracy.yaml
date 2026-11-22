@@ -1,0 +1,6 @@
+id: skills.games-of-accuracy
+type: skill
+fields:
+  characteristic: chars.dex
+  base: -5
+  generic: true

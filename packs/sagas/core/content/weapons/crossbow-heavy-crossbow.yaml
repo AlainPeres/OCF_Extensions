@@ -1,0 +1,10 @@
+id: weapons.crossbow-heavy-crossbow
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.crossbow
+  damageBonus: 12
+  strReq: 5
+  dmax: 4
+  range: 16
+  techLevel: 2

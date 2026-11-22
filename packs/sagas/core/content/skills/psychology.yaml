@@ -1,0 +1,6 @@
+id: skills.psychology
+type: skill
+fields:
+  characteristic: chars.ins
+  base: -5
+  techLevel: 0

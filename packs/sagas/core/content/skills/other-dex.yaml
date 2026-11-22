@@ -1,0 +1,7 @@
+id: skills.other-dex
+type: skill
+fields:
+  characteristic: chars.dex
+  base: -15
+  generic: true
+  variableBase: true

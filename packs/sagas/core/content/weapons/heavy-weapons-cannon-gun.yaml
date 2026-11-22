@@ -1,0 +1,10 @@
+id: weapons.heavy-weapons-cannon-gun
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.heavy-weapons
+  damageBonus: 50
+  dmax: 3
+  range: 30
+  techLevel: 3
+  special: true

@@ -1,0 +1,6 @@
+id: skills.intimidation
+type: skill
+fields:
+  characteristic: chars.pre
+  base: 0
+  techLevel: 0

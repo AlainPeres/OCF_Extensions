@@ -1,0 +1,6 @@
+id: skills.draw-weapon-close
+type: skill
+fields:
+  characteristic: sec.cco
+  base: -10
+  techLevel: 0

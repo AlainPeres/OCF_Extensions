@@ -1,0 +1,7 @@
+id: skills.other-ins
+type: skill
+fields:
+  characteristic: chars.ins
+  base: -15
+  generic: true
+  variableBase: true

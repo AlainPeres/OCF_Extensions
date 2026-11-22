@@ -1,0 +1,6 @@
+id: skills.computer-science
+type: skill
+fields:
+  characteristic: chars.wit
+  base: -10
+  techLevel: 5

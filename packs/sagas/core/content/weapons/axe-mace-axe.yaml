@@ -1,0 +1,10 @@
+id: weapons.axe-mace-axe
+type: weapon
+fields:
+  kind: melee
+  skill: skills.axe-mace
+  damageBonus: 8
+  strReq: 5
+  dmax: 3
+  size: 2
+  techLevel: 0

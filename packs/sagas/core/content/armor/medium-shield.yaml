@@ -1,0 +1,7 @@
+id: armor.medium-shield
+type: armor
+fields:
+  protection: 0
+  parryContact: 1
+  parryProjectile: 1
+  techLevel: 1

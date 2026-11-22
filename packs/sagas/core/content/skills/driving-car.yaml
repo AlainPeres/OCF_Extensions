@@ -1,0 +1,6 @@
+id: skills.driving-car
+type: skill
+fields:
+  characteristic: chars.dex
+  base: -5
+  techLevel: 4

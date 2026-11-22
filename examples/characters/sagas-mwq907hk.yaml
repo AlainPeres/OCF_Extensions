@@ -1,0 +1,28 @@
+specVersion: 0.4.0
+id: sagas-mwq907hk
+packs:
+  - id: sagas-core
+    version: 0.1.0
+values:
+  sagas-core:creation.points: 150
+  sagas-core:chars.str: 5
+  sagas-core:chars.agi: 10
+  sagas-core:chars.end: 10
+  sagas-core:chars.dex: 10
+  sagas-core:chars.wit: 8
+  sagas-core:chars.wil: 8
+  sagas-core:chars.pre: 8
+  sagas-core:chars.ins: 5
+features:
+  - id: dodge
+    item: sagas-core:skills.dodge
+    state:
+      learning: 3
+  - id: stealth
+    item: sagas-core:skills.stealth
+    state:
+      learning: 3
+inventory:
+  - id: dagger-short-sword
+    item: sagas-core:weapons.dagger-short-sword
+    equipped: true

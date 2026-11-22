@@ -1,0 +1,6 @@
+id: skills.native-language
+type: skill
+fields:
+  characteristic: chars.wit
+  base: 0
+  techLevel: 0

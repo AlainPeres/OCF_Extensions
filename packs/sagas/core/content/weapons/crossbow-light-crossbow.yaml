@@ -1,0 +1,10 @@
+id: weapons.crossbow-light-crossbow
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.crossbow
+  damageBonus: 6
+  strReq: 4
+  dmax: 4
+  range: 9
+  techLevel: 2

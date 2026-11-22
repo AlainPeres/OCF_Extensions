@@ -1,0 +1,10 @@
+id: weapons.long-weapon-2-handed-spear
+type: weapon
+fields:
+  kind: melee
+  skill: skills.long-weapon
+  damageBonus: 12
+  strReq: 8
+  dmax: 3
+  size: 3
+  techLevel: 0

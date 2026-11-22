@@ -1,0 +1,6 @@
+id: skills.diving
+type: skill
+fields:
+  characteristic: sec.spd
+  base: -5
+  techLevel: 5
