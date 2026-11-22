@@ -218,6 +218,41 @@ Limits of the universal tools:
   `yaml.schemaStore.enable: false` stops SchemaStore from validating every `dice.yaml` against an
   unrelated schema.
 
+## GitHub setup
+
+This repository (`origin`, <https://github.com/AlainPeres/OCF_Extensions>) keeps OCF's history,
+with the OCF repository as `upstream`. It inherits OCF's workflows, and they don't fit a fork
+that adds a pack:
+
+- **CI is disabled** (Actions → CI → Disable workflow). OCF's tests treat every pack under
+  `packs/` as an official one: `build.test.ts` and `validate.test.ts` expect an exact list of
+  packs, `packages.test.ts` expects 19 published packages, and `licenses.test.ts` expects the
+  `@opencharacter/packs` bundle's LICENSE to name every pack. With `packs/sagas/core` they fail.
+  Adapting them would mean changing OCF's files and conflicts on every merge from `upstream`.
+- **Release is disabled** too. On every push to `main` it would try to publish to npm, under the
+  `@opencharacter` scope, every package not yet there, `@opencharacter/sagas-core` included.
+- **Website** (`pages.yml`) runs only by hand; it stays as is.
+- **Dependabot is off**: `.github/dependabot.yml` is removed and its settings are off (Settings →
+  Code security). Dependency updates come with the merges from `upstream`.
+
+Disabling a workflow changes no file, so merges from `upstream` aren't affected. Re-enable one
+from the same menu.
+
+Without CI, check locally before pushing:
+
+```sh
+npx oxlint --deny-warnings
+npx oxfmt --check packs/sagas scripts/perso README_EXTENSIONS.md
+pnpm typecheck
+pnpm validate
+```
+
+`pnpm lint` runs `oxfmt --check` on every file. With `core.autocrlf`, OCF's files are CRLF on
+disk, so on Windows it flags almost all of them; check only the files you changed, as above.
+
+On Windows, `pnpm test` fails in many places that have nothing to do with SagaS: the ORC packs
+are missing, paths use `\`, symlinks need rights, and `git archive` stops on `con.yaml`.
+
 ## Windows notes
 
 ### The ORC packs are left out
