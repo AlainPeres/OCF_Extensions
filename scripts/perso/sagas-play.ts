@@ -6,7 +6,12 @@
 // A small local server (127.0.0.1 only) serves sagas-play.html and runs the pack's actions with the
 // engine (startAction, random dice); changes an action proposes for the character (injuries, stun)
 // are applied with applyChanges. The page saves the character back to examples/characters/.
-import { applyChanges, computeSheet, loadRuleset, startAction } from '../../packages/engine/src/index.ts';
+import {
+  applyChanges,
+  computeSheet,
+  loadRuleset,
+  startAction,
+} from '../../packages/engine/src/index.ts';
 import { readPack } from '../../packages/engine/test/packs.ts';
 import { parse, stringify } from 'yaml';
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -41,7 +46,9 @@ const readContent = (folder: string): Item[] =>
 
 const CHARS = ['str', 'agi', 'end', 'dex', 'wit', 'wil', 'pre', 'ins'];
 const SECONDARY = ['cco', 'rco', 'spd', 'ini'];
-const SITUATIONAL = (parse(readFileSync(join(packDir, 'rules', 'checks.yaml'), 'utf8')).situational as { id: string }[]).map((s) => ({
+const SITUATIONAL = (
+  parse(readFileSync(join(packDir, 'rules', 'checks.yaml'), 'utf8')).situational as { id: string }[]
+).map((s) => ({
   id: s.id,
   name: nameOf(`situational.${s.id}`),
 }));
@@ -50,8 +57,18 @@ const data = {
   chars: CHARS.map((c) => ({ key: `chars.${c}`, name: nameOf(`fields.chars.${c}`) })),
   secondary: SECONDARY.map((c) => ({ key: `sec.${c}`, name: nameOf(`fields.sec.${c}`) })),
   situational: SITUATIONAL,
-  bands: Object.fromEntries(['natural-two', 'natural-twelve', 'success', 'automatic-failure', 'failure'].map((b) => [b, nameOf(`bands.degree.${b}`)])),
-  items: Object.fromEntries([...readContent('skills'), ...readContent('weapons'), ...readContent('armor')].map((i) => [`${PACK}:${i.id}`, i])),
+  bands: Object.fromEntries(
+    ['natural-two', 'natural-twelve', 'success', 'automatic-failure', 'failure'].map((b) => [
+      b,
+      nameOf(`bands.degree.${b}`),
+    ]),
+  ),
+  items: Object.fromEntries(
+    [...readContent('skills'), ...readContent('weapons'), ...readContent('armor')].map((i) => [
+      `${PACK}:${i.id}`,
+      i,
+    ]),
+  ),
 };
 
 // --- Engine ------------------------------------------------------------------------------------
@@ -89,7 +106,8 @@ const act = (ch: Character, input: unknown) => {
     errors?: unknown[];
     needs?: unknown;
   };
-  if (res.status !== 'finished') return { result: { status: res.status, errors: res.errors, needs: res.needs }, character: ch };
+  if (res.status !== 'finished')
+    return { result: { status: res.status, errors: res.errors, needs: res.needs }, character: ch };
   const rolls = (res.log ?? [])
     .filter((l) => l.kind === 'dice')
     .map((l) => ({
@@ -99,17 +117,28 @@ const act = (ch: Character, input: unknown) => {
       degree: l.bandValue,
       score: l.summary?.flags?.score,
       modifier: l.summary?.flags?.modifier,
-      parts: (l.items ?? []).map((i) => (i.kind === 'dice' ? { dice: (i.faces ?? []).map((f) => ({ v: f.value, x: !!f.exploded })) } : { flat: i.value })),
+      parts: (l.items ?? []).map((i) =>
+        i.kind === 'dice'
+          ? { dice: (i.faces ?? []).map((f) => ({ v: f.value, x: !!f.exploded })) }
+          : { flat: i.value },
+      ),
     }));
   let character = ch;
   const changes = (res.proposedChanges ?? []).filter((c) => c.to === 'self').map((c) => c.change);
   let applyErrors: unknown;
   if (changes.length) {
-    const applied = applyChanges(ruleset, ch as never, changes as never) as unknown as { ok: boolean; character?: Character; errors?: unknown };
+    const applied = applyChanges(ruleset, ch as never, changes as never) as unknown as {
+      ok: boolean;
+      character?: Character;
+      errors?: unknown;
+    };
     if (applied.ok && applied.character) character = applied.character;
     else applyErrors = applied.errors;
   }
-  return { result: { status: res.status, outcome: res.outcome, rolls, changes, applyErrors }, character };
+  return {
+    result: { status: res.status, outcome: res.outcome, rolls, changes, applyErrors },
+    character,
+  };
 };
 
 // --- HTTP --------------------------------------------------------------------------------------
@@ -137,7 +166,11 @@ const server = createServer(async (req, res) => {
     if (url.pathname === '/') return send(res, 200, readFileSync(pagePath, 'utf8'), 'text/html');
     if (url.pathname === '/api/data') return send(res, 200, data);
     if (url.pathname === '/api/characters') {
-      return send(res, 200, readdirSync(charDir).filter((f) => f.startsWith('sagas') && FILE.test(f)));
+      return send(
+        res,
+        200,
+        readdirSync(charDir).filter((f) => f.startsWith('sagas') && FILE.test(f)),
+      );
     }
     if (url.pathname === '/api/load') {
       const file = url.searchParams.get('file') ?? '';
@@ -145,7 +178,8 @@ const server = createServer(async (req, res) => {
       const character = parse(readFileSync(join(charDir, file), 'utf8'));
       return send(res, 200, { character, sheet: sheetOf(character) });
     }
-    if (url.pathname === '/api/sheet' && req.method === 'POST') return send(res, 200, sheetOf((await body(req)).character));
+    if (url.pathname === '/api/sheet' && req.method === 'POST')
+      return send(res, 200, sheetOf((await body(req)).character));
     if (url.pathname === '/api/act' && req.method === 'POST') {
       const { character, input } = await body(req);
       const out = act(character, input);
@@ -167,6 +201,11 @@ const server = createServer(async (req, res) => {
 server.listen(port, '127.0.0.1', () => {
   const url = `http://127.0.0.1:${port}/`;
   console.log(`SagaS play: ${url}  (Ctrl+C or the terminal's trash icon to stop)`);
-  const open = process.platform === 'win32' ? `start "" "${url}"` : process.platform === 'darwin' ? `open ${url}` : `xdg-open ${url}`;
+  const open =
+    process.platform === 'win32'
+      ? `start "" "${url}"`
+      : process.platform === 'darwin'
+        ? `open ${url}`
+        : `xdg-open ${url}`;
   if (!process.argv.includes('--no-open')) exec(open);
 });

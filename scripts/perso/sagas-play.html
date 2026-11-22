@@ -1,597 +1,1243 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SagaS Play</title>
-<style>
-  :root {
-    --bg: #f6f5f2; --panel: #ffffff; --text: #1d1c1a; --muted: #6b675f; --line: #e2dfd8;
-    --accent: #2f6f5e; --accent-soft: #e3f0eb; --bad: #b3261e; --bad-soft: #fbe9e7;
-    --stun: #c98a1b; --stun-soft: #fbf1dd; --good: #2f7d32; --good-soft: #e6f2e6;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #161614; --panel: #1f1f1c; --text: #ecebe6; --muted: #a29e94; --line: #34332e;
-      --accent: #6cc4a8; --accent-soft: #1f3530; --bad: #f2867c; --bad-soft: #3a1f1c;
-      --stun: #e0b45c; --stun-soft: #3a2f1a; --good: #8bd28f; --good-soft: #1e3320;
-    }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, "Segoe UI", sans-serif; }
-  header {
-    position: sticky; top: 0; z-index: 5; background: var(--panel); border-bottom: 1px solid var(--line);
-    padding: 10px 20px; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
-  }
-  header h1 { font-size: 17px; margin: 0; }
-  header .who { color: var(--muted); }
-  header .spacer { flex: 1; }
-  .dirty { color: var(--stun); font-size: 12px; }
-  .combat { display: inline-flex; gap: 6px; flex-wrap: wrap; }
-  .combat .pill { display: inline-flex; gap: 5px; align-items: baseline; padding: 2px 10px; border-radius: 12px; background: var(--accent-soft); font-size: 12px; }
-  .combat .pill b { font-size: 15px; color: var(--accent); font-variant-numeric: tabular-nums; }
-  main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto; }
-  @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
-  section, .log { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
-  .log { position: sticky; top: 72px; max-height: calc(100vh - 92px); overflow: auto; }
-  h2 { font-size: 15px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-  h2 small { font-weight: normal; color: var(--muted); font-size: 12px; }
-  button, select, input { font: inherit; color: inherit; }
-  button { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
-  button:hover { border-color: var(--accent); }
-  button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
-  button.roll { padding: 2px 9px; }
-  button.bad { border-color: var(--bad); color: var(--bad); }
-  input, select { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; }
-  input[type=number] { width: 70px; text-align: right; }
-  .ident { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
-  .ident dt { color: var(--muted); }
-  .ident dd { margin: 0; }
-  .text { white-space: pre-wrap; }
-  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-  .seg button { border: 0; border-radius: 0; border-right: 1px solid var(--line); }
-  .seg button:last-child { border-right: 0; }
-  .seg button.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
-  tr.muted td:first-child { color: var(--muted); }
-  tr.group th { background: var(--bg); color: var(--text); font-size: 13px; padding: 8px 6px 4px; }
-  .row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
-  label { display: inline-flex; gap: 6px; align-items: center; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
-  .stat { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; }
-  .stat .name { flex: 1; }
-  .stat .val { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 24px; text-align: right; }
-  table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--line); padding: 4px 6px; }
-  td { border-bottom: 1px solid var(--line); padding: 4px 6px; }
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  .muted { color: var(--muted); }
-  details summary { cursor: pointer; color: var(--muted); }
-  .checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 4px 12px; margin-top: 8px; }
-  .health { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
-  .hcard { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
-  .hcard h3 { margin: 0 0 6px; font-size: 14px; display: flex; justify-content: space-between; }
-  .bar { position: relative; height: 12px; border-radius: 6px; background: var(--line); overflow: hidden; margin: 6px 0; display: flex; }
-  .bar .inj { background: var(--bad); }
-  .bar .stn { background: var(--stun); }
-  .legend { font-size: 12px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
-  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: -1px; margin-right: 4px; }
-  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 10px; }
-  .badge.ok { background: var(--good-soft); color: var(--good); }
-  .badge.warn { background: var(--stun-soft); color: var(--stun); }
-  .badge.bad { background: var(--bad-soft); color: var(--bad); }
-  .form { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 12px; border: 1px dashed var(--line); border-radius: 8px; margin-top: 12px; }
-  .entry { border-bottom: 1px solid var(--line); padding: 8px 0; }
-  .entry:first-child { padding-top: 0; }
-  .entry .title { font-weight: 600; display: flex; justify-content: space-between; gap: 8px; }
-  .entry .title time { font-weight: normal; color: var(--muted); font-size: 11px; }
-  .entry .line { margin-top: 3px; }
-  .die { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--line); font-weight: 700; font-size: 12px; margin-right: 2px; }
-  .die.six { border-color: var(--accent); color: var(--accent); }
-  .die.x { border-style: dashed; }
-  .result { font-weight: 700; }
-  .result.success, .result.natural-two { color: var(--good); }
-  .result.failure, .result.automatic-failure, .result.natural-twelve, .result.shock-failed { color: var(--bad); }
-  .empty { color: var(--muted); font-style: italic; }
-  #toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 8px 14px; border-radius: 8px; opacity: 0; transition: opacity .2s; pointer-events: none; }
-  #toast.show { opacity: 1; }
-</style>
-</head>
-<body>
-<header>
-  <h1 id="title">SagaS Play</h1>
-  <span class="who" id="who"></span>
-  <span class="combat" id="combat"></span>
-  <span class="spacer"></span>
-  <span class="dirty" id="dirty"></span>
-  <select id="loadSelect"><option value="">Load a character…</option></select>
-  <button id="btnSave" class="primary">Save</button>
-</header>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SagaS Play</title>
+    <style>
+      :root {
+        --bg: #f6f5f2;
+        --panel: #ffffff;
+        --text: #1d1c1a;
+        --muted: #6b675f;
+        --line: #e2dfd8;
+        --accent: #2f6f5e;
+        --accent-soft: #e3f0eb;
+        --bad: #b3261e;
+        --bad-soft: #fbe9e7;
+        --stun: #c98a1b;
+        --stun-soft: #fbf1dd;
+        --good: #2f7d32;
+        --good-soft: #e6f2e6;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #161614;
+          --panel: #1f1f1c;
+          --text: #ecebe6;
+          --muted: #a29e94;
+          --line: #34332e;
+          --accent: #6cc4a8;
+          --accent-soft: #1f3530;
+          --bad: #f2867c;
+          --bad-soft: #3a1f1c;
+          --stun: #e0b45c;
+          --stun-soft: #3a2f1a;
+          --good: #8bd28f;
+          --good-soft: #1e3320;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.45 system-ui,
+          'Segoe UI',
+          sans-serif;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+        padding: 10px 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        align-items: center;
+      }
+      header h1 {
+        font-size: 17px;
+        margin: 0;
+      }
+      header .who {
+        color: var(--muted);
+      }
+      header .spacer {
+        flex: 1;
+      }
+      .dirty {
+        color: var(--stun);
+        font-size: 12px;
+      }
+      .combat {
+        display: inline-flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .combat .pill {
+        display: inline-flex;
+        gap: 5px;
+        align-items: baseline;
+        padding: 2px 10px;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        font-size: 12px;
+      }
+      .combat .pill b {
+        font-size: 15px;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 360px;
+        gap: 20px;
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      @media (max-width: 1000px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+      section,
+      .log {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+      }
+      .log {
+        position: sticky;
+        top: 72px;
+        max-height: calc(100vh - 92px);
+        overflow: auto;
+      }
+      h2 {
+        font-size: 15px;
+        margin: 0 0 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 10px;
+      }
+      h2 small {
+        font-weight: normal;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      button,
+      select,
+      input {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 4px 10px;
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--accent);
+      }
+      button.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--panel);
+      }
+      button.roll {
+        padding: 2px 9px;
+      }
+      button.bad {
+        border-color: var(--bad);
+        color: var(--bad);
+      }
+      input,
+      select {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 4px 8px;
+      }
+      input[type='number'] {
+        width: 70px;
+        text-align: right;
+      }
+      .ident {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 6px 16px;
+        margin: 0;
+      }
+      .ident dt {
+        color: var(--muted);
+      }
+      .ident dd {
+        margin: 0;
+      }
+      .text {
+        white-space: pre-wrap;
+      }
+      .seg {
+        display: inline-flex;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      .seg button {
+        border: 0;
+        border-radius: 0;
+        border-right: 1px solid var(--line);
+      }
+      .seg button:last-child {
+        border-right: 0;
+      }
+      .seg button.on {
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 600;
+      }
+      tr.muted td:first-child {
+        color: var(--muted);
+      }
+      tr.group th {
+        background: var(--bg);
+        color: var(--text);
+        font-size: 13px;
+        padding: 8px 6px 4px;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        align-items: center;
+      }
+      label {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 8px;
+      }
+      .stat {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .stat .name {
+        flex: 1;
+      }
+      .stat .val {
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        min-width: 24px;
+        text-align: right;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 12px;
+        border-bottom: 1px solid var(--line);
+        padding: 4px 6px;
+      }
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 4px 6px;
+      }
+      td.num,
+      th.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      details summary {
+        cursor: pointer;
+        color: var(--muted);
+      }
+      .checks {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 4px 12px;
+        margin-top: 8px;
+      }
+      .health {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 12px;
+      }
+      .hcard {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 12px;
+      }
+      .hcard h3 {
+        margin: 0 0 6px;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .bar {
+        position: relative;
+        height: 12px;
+        border-radius: 6px;
+        background: var(--line);
+        overflow: hidden;
+        margin: 6px 0;
+        display: flex;
+      }
+      .bar .inj {
+        background: var(--bad);
+      }
+      .bar .stn {
+        background: var(--stun);
+      }
+      .legend {
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .sw {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        vertical-align: -1px;
+        margin-right: 4px;
+      }
+      .badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 1px 8px;
+        border-radius: 10px;
+      }
+      .badge.ok {
+        background: var(--good-soft);
+        color: var(--good);
+      }
+      .badge.warn {
+        background: var(--stun-soft);
+        color: var(--stun);
+      }
+      .badge.bad {
+        background: var(--bad-soft);
+        color: var(--bad);
+      }
+      .form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        align-items: center;
+        padding: 10px 12px;
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        margin-top: 12px;
+      }
+      .entry {
+        border-bottom: 1px solid var(--line);
+        padding: 8px 0;
+      }
+      .entry:first-child {
+        padding-top: 0;
+      }
+      .entry .title {
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .entry .title time {
+        font-weight: normal;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .entry .line {
+        margin-top: 3px;
+      }
+      .die {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        border: 1px solid var(--line);
+        font-weight: 700;
+        font-size: 12px;
+        margin-right: 2px;
+      }
+      .die.six {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .die.x {
+        border-style: dashed;
+      }
+      .result {
+        font-weight: 700;
+      }
+      .result.success,
+      .result.natural-two {
+        color: var(--good);
+      }
+      .result.failure,
+      .result.automatic-failure,
+      .result.natural-twelve,
+      .result.shock-failed {
+        color: var(--bad);
+      }
+      .empty {
+        color: var(--muted);
+        font-style: italic;
+      }
+      #toast {
+        position: fixed;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--text);
+        color: var(--bg);
+        padding: 8px 14px;
+        border-radius: 8px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+      }
+      #toast.show {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 id="title">SagaS Play</h1>
+      <span class="who" id="who"></span>
+      <span class="combat" id="combat"></span>
+      <span class="spacer"></span>
+      <span class="dirty" id="dirty"></span>
+      <select id="loadSelect">
+        <option value="">Load a character…</option>
+      </select>
+      <button id="btnSave" class="primary">Save</button>
+    </header>
 
-<main>
-  <div id="sheet">
-    <section>
-      <h2>Identity</h2>
-      <dl class="ident">
-        <dt>Name</dt><dd id="idName"></dd>
-        <dt>Species</dt><dd id="idSpecies"></dd>
-        <dt>Profession</dt><dd id="idProfession"></dd>
-        <dt>Description</dt><dd id="idDescription" class="text"></dd>
-      </dl>
-    </section>
+    <main>
+      <div id="sheet">
+        <section>
+          <h2>Identity</h2>
+          <dl class="ident">
+            <dt>Name</dt>
+            <dd id="idName"></dd>
+            <dt>Species</dt>
+            <dd id="idSpecies"></dd>
+            <dt>Profession</dt>
+            <dd id="idProfession"></dd>
+            <dt>Description</dt>
+            <dd id="idDescription" class="text"></dd>
+          </dl>
+        </section>
 
-    <section>
-      <h2>Roll options <small>apply to every check</small></h2>
-      <div class="row">
-        <label>Difficulty
-          <select id="difficulty">
-            <option value="obvious">Obvious (+IV)</option>
-            <option value="very-easy">Very easy (+II)</option>
-            <option value="easy">Easy (+I)</option>
-            <option value="normal" selected>Normal (0)</option>
-            <option value="difficult">Difficult (−I)</option>
-            <option value="very-difficult">Very difficult (−II)</option>
-            <option value="extremely-difficult">Extremely difficult (−III)</option>
-            <option value="almost-impossible">Almost impossible (−IV)</option>
-            <option value="theoretically-impossible">Theoretically impossible (−VIII)</option>
-          </select>
-        </label>
-        <label>Degree modifier <input type="number" id="modifier" value="0"></label>
-        <button id="btnClearOptions" title="Back to Normal, 0 and no situation">Reset</button>
+        <section>
+          <h2>Roll options <small>apply to every check</small></h2>
+          <div class="row">
+            <label
+              >Difficulty
+              <select id="difficulty">
+                <option value="obvious">Obvious (+IV)</option>
+                <option value="very-easy">Very easy (+II)</option>
+                <option value="easy">Easy (+I)</option>
+                <option value="normal" selected>Normal (0)</option>
+                <option value="difficult">Difficult (−I)</option>
+                <option value="very-difficult">Very difficult (−II)</option>
+                <option value="extremely-difficult">Extremely difficult (−III)</option>
+                <option value="almost-impossible">Almost impossible (−IV)</option>
+                <option value="theoretically-impossible">Theoretically impossible (−VIII)</option>
+              </select>
+            </label>
+            <label>Degree modifier <input type="number" id="modifier" value="0" /></label>
+            <button id="btnClearOptions" title="Back to Normal, 0 and no situation">Reset</button>
+          </div>
+          <details>
+            <summary>Situation modifiers <span id="sitCount"></span></summary>
+            <div class="checks" id="situational"></div>
+          </details>
+        </section>
+
+        <section>
+          <h2>Characteristics</h2>
+          <div class="grid" id="chars"></div>
+          <h2 style="margin-top: 14px">Secondary characteristics</h2>
+          <div class="grid" id="secondary"></div>
+        </section>
+
+        <section>
+          <h2>Skills <small id="skillCount">total = characteristic + learning level</small></h2>
+          <div class="row" style="margin-bottom: 8px">
+            <span class="seg" id="skillFilter">
+              <button
+                data-f="all"
+                title="Every skill of the pack, unlearned ones at their initial level"
+              >
+                All skills
+              </button>
+              <button
+                data-f="spent"
+                title="Skills with points spent: learning level above the initial level"
+              >
+                Points spent
+              </button>
+              <button data-f="positive" title="Skills whose total level is above 0, learned or not">
+                Total &gt; 0
+              </button>
+            </span>
+            <input type="search" id="skillSearch" placeholder="Search…" />
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Skill</th>
+                <th>Characteristic</th>
+                <th class="num">Learning</th>
+                <th class="num">Total</th>
+                <th>Grade</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="skills"></tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>
+            Weapons
+            <small
+              >damage = degree × d6* (at most DMAX) + weapon bonus (+ Strength bonus in
+              melee)</small
+            >
+          </h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Weapon</th>
+                <th>Skill</th>
+                <th class="num">Total</th>
+                <th class="num">Bonus</th>
+                <th class="num" title="Maximum effect dice">DMAX</th>
+                <th class="num" title="Range on the Universal Table, and its distance">Range</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="weapons"></tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>Health <small id="protection"></small></h2>
+          <div class="health">
+            <div class="hcard" id="hp-physical"></div>
+            <div class="hcard" id="hp-psychical"></div>
+          </div>
+          <div class="form">
+            <strong>Take damage</strong>
+            <label><input type="radio" name="kind" value="physical" checked /> Physical</label>
+            <label><input type="radio" name="kind" value="psychical" /> Psychical</label>
+            <label>Amount <input type="number" id="dmgAmount" value="10" min="0" /></label>
+            <label title="Temporary: stun beyond the hit points turns into injuries"
+              ><input type="checkbox" id="dmgStun" /> As stun</label
+            >
+            <span id="protLabel" class="row">
+              <label title="The attack's armor piercing reduces the protection"
+                >Armor piercing <input type="number" id="dmgAp" value="0" min="0"
+              /></label>
+              <label title="The protection does not apply"
+                ><input type="checkbox" id="dmgIgnore" /> Ignores armor</label
+              >
+            </span>
+            <button class="bad" id="btnTake">Take damage</button>
+          </div>
+          <div class="form">
+            <strong>Recovery</strong>
+            <button id="btnRest" title="Ten minutes of rest: all stun is cured">
+              Short rest (clear stun)
+            </button>
+            <label>Heal <input type="number" id="healAmount" value="5" min="1" /></label>
+            <button id="btnHealPhys">physical injuries</button>
+            <button id="btnHealPsy">psychical injuries</button>
+          </div>
+        </section>
+
+        <section>
+          <h2>Possessions <small>besides weapons and protections</small></h2>
+          <div id="idPossessions" class="text"></div>
+        </section>
+
+        <section>
+          <h2>Background</h2>
+          <div id="idBackground" class="text"></div>
+        </section>
       </div>
-      <details>
-        <summary>Situation modifiers <span id="sitCount"></span></summary>
-        <div class="checks" id="situational"></div>
-      </details>
-    </section>
 
-    <section>
-      <h2>Characteristics</h2>
-      <div class="grid" id="chars"></div>
-      <h2 style="margin-top:14px">Secondary characteristics</h2>
-      <div class="grid" id="secondary"></div>
-    </section>
+      <aside>
+        <div class="log">
+          <h2>Roll log <button id="btnClearLog" class="roll">Clear</button></h2>
+          <div id="log"><div class="empty">Rolls appear here.</div></div>
+        </div>
+      </aside>
+    </main>
+    <div id="toast"></div>
 
-    <section>
-      <h2>Skills <small id="skillCount">total = characteristic + learning level</small></h2>
-      <div class="row" style="margin-bottom:8px">
-        <span class="seg" id="skillFilter">
-          <button data-f="all" title="Every skill of the pack, unlearned ones at their initial level">All skills</button>
-          <button data-f="spent" title="Skills with points spent: learning level above the initial level">Points spent</button>
-          <button data-f="positive" title="Skills whose total level is above 0, learned or not">Total &gt; 0</button>
-        </span>
-        <input type="search" id="skillSearch" placeholder="Search…">
-      </div>
-      <table>
-        <thead><tr><th>Skill</th><th>Characteristic</th><th class="num">Learning</th><th class="num">Total</th><th>Grade</th><th></th></tr></thead>
-        <tbody id="skills"></tbody>
-      </table>
-    </section>
+    <script>
+      // Distance column of the Universal Table (section 10), by score 0 to 40.
+      const UT_DISTANCE = [
+        '0.2 m',
+        '0.6 m',
+        '1.2 m',
+        '3 m',
+        '6 m',
+        '12 m',
+        '14 m',
+        '16 m',
+        '18 m',
+        '20 m',
+        '22 m',
+        '24 m',
+        '26 m',
+        '29 m',
+        '32 m',
+        '36 m',
+        '40 m',
+        '45 m',
+        '50 m',
+        '55 m',
+        '60 m',
+        '80 m',
+        '100 m',
+        '150 m',
+        '200 m',
+        '300 m',
+        '500 m',
+        '750 m',
+        '1 km',
+        '2 km',
+        '4 km',
+        '8 km',
+        '15 km',
+        '50 km',
+        '200 km',
+        '800 km',
+        '3,500 km',
+        '14,000 km',
+        '63,000 km',
+        '225,000 km',
+        '900,000 km',
+      ];
+      /** A ranged weapon's range: its UT score and the distance ("9 (20 m)"); a dash in melee. */
+      const rangeText = (f) =>
+        f.kind === 'ranged' && f.range !== undefined
+          ? `${f.range} (${UT_DISTANCE[f.range] ?? '?'})`
+          : '—';
+      const GRADES = ['incompetent', 'beginner', 'amateur', 'professional', 'expert', 'master'];
+      const ROMAN = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+      const $ = (id) => document.getElementById(id);
+      const esc = (s) =>
+        String(s ?? '').replace(
+          /[&<>"]/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c],
+        );
+      const toast = (msg) => {
+        const t = $('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(t._h);
+        t._h = setTimeout(() => t.classList.remove('show'), 2500);
+      };
+      const api = async (path, payload) => {
+        const r = await fetch(
+          path,
+          payload === undefined
+            ? {}
+            : {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify(payload),
+              },
+        );
+        const out = await r.json();
+        if (!r.ok) throw new Error(out.error ?? r.statusText);
+        return out;
+      };
+      const roman = (n) => (n < 0 ? '−' + (ROMAN[-n] ?? -n) : (ROMAN[n] ?? String(n)));
 
-    <section>
-      <h2>Weapons <small>damage = degree × d6* (at most DMAX) + weapon bonus (+ Strength bonus in melee)</small></h2>
-      <table>
-        <thead><tr><th>Weapon</th><th>Skill</th><th class="num">Total</th><th class="num">Bonus</th><th class="num" title="Maximum effect dice">DMAX</th><th class="num" title="Range on the Universal Table, and its distance">Range</th><th></th></tr></thead>
-        <tbody id="weapons"></tbody>
-      </table>
-    </section>
+      let D; // pack data
+      let ch; // character
+      let file; // the file it was loaded from
+      let sheet = { values: {}, copies: {}, issues: [] };
+      let dirty = false;
 
-    <section>
-      <h2>Health <small id="protection"></small></h2>
-      <div class="health">
-        <div class="hcard" id="hp-physical"></div>
-        <div class="hcard" id="hp-psychical"></div>
-      </div>
-      <div class="form">
-        <strong>Take damage</strong>
-        <label><input type="radio" name="kind" value="physical" checked> Physical</label>
-        <label><input type="radio" name="kind" value="psychical"> Psychical</label>
-        <label>Amount <input type="number" id="dmgAmount" value="10" min="0"></label>
-        <label title="Temporary: stun beyond the hit points turns into injuries"><input type="checkbox" id="dmgStun"> As stun</label>
-        <span id="protLabel" class="row">
-          <label title="The attack's armor piercing reduces the protection">Armor piercing <input type="number" id="dmgAp" value="0" min="0"></label>
-          <label title="The protection does not apply"><input type="checkbox" id="dmgIgnore"> Ignores armor</label>
-        </span>
-        <button class="bad" id="btnTake">Take damage</button>
-      </div>
-      <div class="form">
-        <strong>Recovery</strong>
-        <button id="btnRest" title="Ten minutes of rest: all stun is cured">Short rest (clear stun)</button>
-        <label>Heal <input type="number" id="healAmount" value="5" min="1"></label>
-        <button id="btnHealPhys">physical injuries</button>
-        <button id="btnHealPsy">psychical injuries</button>
-      </div>
-    </section>
+      const P = (id) => `${D.pack}:${id}`;
+      const V = (f) => sheet.values[f];
+      const itemOf = (id) => D.items[id];
+      const setDirty = (d) => {
+        dirty = d;
+        $('dirty').textContent = d ? 'Unsaved changes' : '';
+      };
 
-    <section>
-      <h2>Possessions <small>besides weapons and protections</small></h2>
-      <div id="idPossessions" class="text"></div>
-    </section>
+      // --- Rolling ---------------------------------------------------------------------------------
+      function rollOptions() {
+        const situational = {};
+        for (const el of document.querySelectorAll('[data-sit]'))
+          if (el.checked) situational[P(el.dataset.sit)] = true;
+        return {
+          difficulty: $('difficulty').value,
+          modifier: Number($('modifier').value) || 0,
+          situational,
+        };
+      }
+      function optionsLabel(extra = {}) {
+        const o = rollOptions();
+        const parts = [];
+        if (o.difficulty !== 'normal') parts.push($('difficulty').selectedOptions[0].textContent);
+        if (o.modifier) parts.push(`modifier ${o.modifier > 0 ? '+' : ''}${o.modifier}`);
+        for (const id of Object.keys({ ...o.situational, ...extra }))
+          parts.push(D.situational.find((s) => P(s.id) === id)?.name ?? id);
+        return parts.join(', ');
+      }
 
-    <section>
-      <h2>Background</h2>
-      <div id="idBackground" class="text"></div>
-    </section>
-  </div>
+      async function act(title, input, opts = {}) {
+        const out = await api('/api/act', { character: ch, input });
+        if (out.result.status !== 'finished') {
+          logEntry(
+            title,
+            `<div class="line result failure">Not run: ${esc(JSON.stringify(out.result.errors ?? out.result.needs ?? out.result.status))}</div>`,
+          );
+          return undefined;
+        }
+        if (out.result.changes?.length) {
+          ch = out.character;
+          setDirty(true);
+        }
+        sheet = out.sheet;
+        render();
+        logResult(title, out.result, opts);
+        return out.result;
+      }
 
-  <aside>
-    <div class="log">
-      <h2>Roll log <button id="btnClearLog" class="roll">Clear</button></h2>
-      <div id="log"><div class="empty">Rolls appear here.</div></div>
-    </div>
-  </aside>
-</main>
-<div id="toast"></div>
+      function check(title, input, extraSituational = {}) {
+        const o = rollOptions();
+        return act(
+          title,
+          {
+            ...input,
+            params: { ...(input.params ?? {}), difficulty: o.difficulty, modifier: o.modifier },
+            situational: { ...o.situational, ...extraSituational },
+          },
+          { options: optionsLabel(extraSituational) },
+        );
+      }
 
-<script>
-// Distance column of the Universal Table (section 10), by score 0 to 40.
-const UT_DISTANCE = ['0.2 m', '0.6 m', '1.2 m', '3 m', '6 m', '12 m', '14 m', '16 m', '18 m', '20 m', '22 m', '24 m', '26 m', '29 m', '32 m', '36 m', '40 m', '45 m', '50 m', '55 m', '60 m', '80 m', '100 m', '150 m', '200 m', '300 m', '500 m', '750 m', '1 km', '2 km', '4 km', '8 km', '15 km', '50 km', '200 km', '800 km', '3,500 km', '14,000 km', '63,000 km', '225,000 km', '900,000 km'];
-/** A ranged weapon's range: its UT score and the distance ("9 (20 m)"); a dash in melee. */
-const rangeText = (f) => (f.kind === 'ranged' && f.range !== undefined ? `${f.range} (${UT_DISTANCE[f.range] ?? '?'})` : '—');
-const GRADES = ['incompetent', 'beginner', 'amateur', 'professional', 'expert', 'master'];
-const ROMAN = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-const toast = (msg) => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2500); };
-const api = async (path, payload) => {
-  const r = await fetch(path, payload === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
-  const out = await r.json();
-  if (!r.ok) throw new Error(out.error ?? r.statusText);
-  return out;
-};
-const roman = (n) => (n < 0 ? '−' + (ROMAN[-n] ?? -n) : ROMAN[n] ?? String(n));
+      const rollCharacteristic = (key, name) =>
+        check(`${name} roll`, {
+          action: { id: P('characteristic-check') },
+          params: { characteristic: P(key) },
+        });
 
-let D; // pack data
-let ch; // character
-let file; // the file it was loaded from
-let sheet = { values: {}, copies: {}, issues: [] };
-let dirty = false;
+      /** Rolls a skill: the given copy (a generic skill's specialty), else the character's copy, else unlearned. */
+      function rollSkill(skillId, extraSituational = {}, label, copy) {
+        const feat = copy ?? (ch.features ?? []).find((f) => f.item === skillId);
+        const item = itemOf(skillId);
+        const name = label ?? `${item?.name ?? skillId} roll`;
+        if (feat)
+          return check(
+            name,
+            { action: { id: P('skill-check'), entry: feat.id } },
+            extraSituational,
+          );
+        // Not learned: the engine only offers skill-check for a learned skill, so the base roll is used
+        // with the score the skill would have at its initial learning level.
+        const score = (V(item.fields.characteristic) ?? 0) + (item.fields.base ?? 0);
+        return check(
+          `${name} (unlearned, initial level ${item.fields.base ?? 0})`,
+          {
+            action: { id: P('degree-roll') },
+            params: { score },
+          },
+          extraSituational,
+        );
+      }
 
-const P = (id) => `${D.pack}:${id}`;
-const V = (f) => sheet.values[f];
-const itemOf = (id) => D.items[id];
-const setDirty = (d) => { dirty = d; $('dirty').textContent = d ? 'Unsaved changes' : ''; };
+      // The pack caps the dice at the weapon's DMAX.
+      const dealDamage = (gear, degree) => {
+        const w = itemOf(gear.item);
+        return act(
+          `${w.name}: damage, degree ${roman(degree)}`,
+          { action: { id: P('damage'), entry: gear.id }, params: { degree } },
+          { degree, dmax: w.fields.dmax },
+        );
+      };
 
-// --- Rolling ---------------------------------------------------------------------------------
-function rollOptions() {
-  const situational = {};
-  for (const el of document.querySelectorAll('[data-sit]')) if (el.checked) situational[P(el.dataset.sit)] = true;
-  return { difficulty: $('difficulty').value, modifier: Number($('modifier').value) || 0, situational };
-}
-function optionsLabel(extra = {}) {
-  const o = rollOptions();
-  const parts = [];
-  if (o.difficulty !== 'normal') parts.push($('difficulty').selectedOptions[0].textContent);
-  if (o.modifier) parts.push(`modifier ${o.modifier > 0 ? '+' : ''}${o.modifier}`);
-  for (const id of Object.keys({ ...o.situational, ...extra })) parts.push(D.situational.find((s) => P(s.id) === id)?.name ?? id);
-  return parts.join(', ');
-}
+      async function attack(gear) {
+        const w = itemOf(gear.item);
+        const extra =
+          (V('chars.str') ?? 0) < (w.fields.strReq ?? 0)
+            ? { [P('strengthBelowMinimum')]: true }
+            : {};
+        const r = await rollSkill(P(w.fields.skill), extra, `${w.name}: attack`);
+        const degree = r?.outcome?.data?.degree ?? 0;
+        if (degree >= 1) await dealDamage(gear, degree);
+      }
 
-async function act(title, input, opts = {}) {
-  const out = await api('/api/act', { character: ch, input });
-  if (out.result.status !== 'finished') {
-    logEntry(title, `<div class="line result failure">Not run: ${esc(JSON.stringify(out.result.errors ?? out.result.needs ?? out.result.status))}</div>`);
-    return undefined;
-  }
-  if (out.result.changes?.length) { ch = out.character; setDirty(true); }
-  sheet = out.sheet;
-  render();
-  logResult(title, out.result, opts);
-  return out.result;
-}
+      // --- Log -------------------------------------------------------------------------------------
+      function logEntry(title, html) {
+        const log = $('log');
+        log.querySelector('.empty')?.remove();
+        const div = document.createElement('div');
+        div.className = 'entry';
+        div.innerHTML = `<div class="title"><span>${esc(title)}</span><time>${new Date().toLocaleTimeString()}</time></div>${html}`;
+        log.prepend(div);
+      }
 
-function check(title, input, extraSituational = {}) {
-  const o = rollOptions();
-  return act(title, {
-    ...input,
-    params: { ...(input.params ?? {}), difficulty: o.difficulty, modifier: o.modifier },
-    situational: { ...o.situational, ...extraSituational },
-  }, { options: optionsLabel(extraSituational) });
-}
+      const diceHtml = (dice) =>
+        dice
+          .map(
+            (d) =>
+              `<span class="die${d.v === 6 ? ' six' : ''}${d.x ? ' x' : ''}" title="${d.x ? 'reroll after a 6' : ''}">${d.v}</span>`,
+          )
+          .join('');
 
-const rollCharacteristic = (key, name) => check(`${name} roll`, { action: { id: P('characteristic-check') }, params: { characteristic: P(key) } });
+      function logResult(title, result, opts) {
+        const lines = [];
+        if (opts.options) lines.push(`<div class="line muted">${esc(opts.options)}</div>`);
+        for (const r of result.rolls ?? []) {
+          const dice = r.parts.filter((p) => p.dice).flatMap((p) => p.dice);
+          const flats = r.parts.filter((p) => p.flat !== undefined).map((p) => p.flat);
+          const label = r.step.startsWith('shock') ? 'Shock roll: ' : '';
+          if (r.band) {
+            // A 2d6* roll under a score.
+            const deg = r.degree ?? 0;
+            const band =
+              D.bands[r.band] && D.bands[r.band] !== `bands.degree.${r.band}`
+                ? D.bands[r.band]
+                : r.band.replace(/-/g, ' ');
+            const mod = r.modifier ? ` (modifiers ${r.modifier > 0 ? '+' : ''}${r.modifier})` : '';
+            lines.push(
+              `<div class="line">${label}${diceHtml(dice)} = <b>${r.total}</b> under ${r.score}${mod}</div>`,
+            );
+            lines.push(
+              `<div class="line"><span class="result ${r.band}">${esc(band)}</span> · degree <b>${roman(deg)}</b></div>`,
+            );
+          } else {
+            const sum = dice.reduce((a, d) => a + d.v, 0);
+            lines.push(
+              `<div class="line">${diceHtml(dice)} = ${sum}${flats.map((f) => ` ${f < 0 ? '−' : '+'} ${Math.abs(f)}`).join('')} = <b>${r.total}</b></div>`,
+            );
+          }
+        }
+        const o = result.outcome;
+        if (o?.result === 'dealt') {
+          const capped =
+            opts.degree && o.data.dice < opts.degree
+              ? ` <span class="muted">(${o.data.dice}d6*: capped at DMAX ${opts.dmax})</span>`
+              : ` <span class="muted">(${o.data.dice}d6*)</span>`;
+          lines.push(
+            `<div class="line">Damage dealt: <span class="result">${o.data.damage}</span>${capped}</div>`,
+          );
+        }
+        if (o?.result === 'taken' || o?.result === 'shock-failed') {
+          if (o.data.absorbed)
+            lines.push(`<div class="line muted">Protection absorbed ${o.data.absorbed}</div>`);
+          lines.push(
+            `<div class="line">${o.data.amount} damage taken${o.result === 'shock-failed' ? ' · <span class="result shock-failed">shock failed</span>' : result.rolls?.length ? ' · <span class="result success">shock resisted</span>' : ''}</div>`,
+          );
+        }
+        if (o?.result === 'rested') lines.push('<div class="line">Stun cleared.</div>');
+        if (result.applyErrors)
+          lines.push(
+            `<div class="line result failure">${esc(JSON.stringify(result.applyErrors))}</div>`,
+          );
+        logEntry(title, lines.join(''));
+      }
 
-/** Rolls a skill: the given copy (a generic skill's specialty), else the character's copy, else unlearned. */
-function rollSkill(skillId, extraSituational = {}, label, copy) {
-  const feat = copy ?? (ch.features ?? []).find((f) => f.item === skillId);
-  const item = itemOf(skillId);
-  const name = label ?? `${item?.name ?? skillId} roll`;
-  if (feat) return check(name, { action: { id: P('skill-check'), entry: feat.id } }, extraSituational);
-  // Not learned: the engine only offers skill-check for a learned skill, so the base roll is used
-  // with the score the skill would have at its initial learning level.
-  const score = (V(item.fields.characteristic) ?? 0) + (item.fields.base ?? 0);
-  return check(`${name} (unlearned, initial level ${item.fields.base ?? 0})`, {
-    action: { id: P('degree-roll') },
-    params: { score },
-  }, extraSituational);
-}
+      // --- Rendering -------------------------------------------------------------------------------
+      function rollButton(onclick, title = 'Roll 2d6* under this score') {
+        const b = Object.assign(document.createElement('button'), {
+          className: 'roll',
+          textContent: '🎲 Roll',
+          title,
+        });
+        b.onclick = onclick;
+        return b;
+      }
 
-// The pack caps the dice at the weapon's DMAX.
-const dealDamage = (gear, degree) => {
-  const w = itemOf(gear.item);
-  return act(`${w.name}: damage, degree ${roman(degree)}`, { action: { id: P('damage'), entry: gear.id }, params: { degree } }, { degree, dmax: w.fields.dmax });
-};
+      function render() {
+        if (!ch) return;
+        const name = V('identity.name');
+        $('title').textContent = name || ch.id;
+        $('who').textContent = [V('identity.species'), V('identity.profession')]
+          .filter(Boolean)
+          .join(' · ');
+        // Always in view during a fight.
+        $('combat').innerHTML = [
+          ['Initiative', 'sec.ini'],
+          ['Speed', 'sec.spd'],
+          ['Reflex Dodge', 'dodge.reflex'],
+        ]
+          .map(
+            ([label, f]) =>
+              `<span class="pill" title="${label}">${label} <b>${V(f) ?? '—'}</b></span>`,
+          )
+          .join('');
+        // Free text from the character file; an empty field shows a dash.
+        for (const [id, field] of [
+          ['idName', 'name'],
+          ['idSpecies', 'species'],
+          ['idProfession', 'profession'],
+          ['idDescription', 'description'],
+          ['idPossessions', 'possessions'],
+          ['idBackground', 'background'],
+        ]) {
+          const text = V(`identity.${field}`);
+          $(id).textContent = text || '—';
+          $(id).classList.toggle('muted', !text);
+        }
 
-async function attack(gear) {
-  const w = itemOf(gear.item);
-  const extra = (V('chars.str') ?? 0) < (w.fields.strReq ?? 0) ? { [P('strengthBelowMinimum')]: true } : {};
-  const r = await rollSkill(P(w.fields.skill), extra, `${w.name}: attack`);
-  const degree = r?.outcome?.data?.degree ?? 0;
-  if (degree >= 1) await dealDamage(gear, degree);
-}
+        for (const [boxId, list] of [
+          ['chars', D.chars],
+          ['secondary', D.secondary],
+        ]) {
+          const box = $(boxId);
+          box.replaceChildren();
+          for (const c of list) {
+            const div = document.createElement('div');
+            div.className = 'stat';
+            div.innerHTML = `<span class="name">${esc(c.name)}</span><span class="val">${V(c.key) ?? ''}</span>`;
+            div.append(rollButton(() => rollCharacteristic(c.key, c.name)));
+            box.append(div);
+          }
+        }
 
-// --- Log -------------------------------------------------------------------------------------
-function logEntry(title, html) {
-  const log = $('log');
-  log.querySelector('.empty')?.remove();
-  const div = document.createElement('div');
-  div.className = 'entry';
-  div.innerHTML = `<div class="title"><span>${esc(title)}</span><time>${new Date().toLocaleTimeString()}</time></div>${html}`;
-  log.prepend(div);
-}
+        renderSkills();
 
-const diceHtml = (dice) => dice.map((d) => `<span class="die${d.v === 6 ? ' six' : ''}${d.x ? ' x' : ''}" title="${d.x ? 'reroll after a 6' : ''}">${d.v}</span>`).join('');
+        const weapons = $('weapons');
+        weapons.replaceChildren();
+        const gear = (ch.inventory ?? []).filter((g) => itemOf(g.item)?.fields.dmax);
+        if (!gear.length)
+          weapons.innerHTML = '<tr><td colspan="7" class="empty">No weapon.</td></tr>';
+        for (const g of gear) {
+          const w = itemOf(g.item);
+          const skill = itemOf(P(w.fields.skill));
+          const feat = (ch.features ?? []).find((f) => f.item === P(w.fields.skill));
+          const total = feat ? sheet.copies[feat.id]?.total : undefined;
+          const tr = document.createElement('tr');
+          const weak =
+            (V('chars.str') ?? 0) < (w.fields.strReq ?? 0)
+              ? ` <span class="badge warn" title="Strength below the weapon's minimum: −I">STR ${w.fields.strReq}</span>`
+              : '';
+          tr.innerHTML = `<td>${esc(w.name)}${g.equipped === false ? ' <span class="muted">(not equipped)</span>' : ''}${weak}</td><td>${esc(skill?.name ?? '—')}${feat ? '' : ' <span class="muted">(unlearned)</span>'}</td><td class="num"><b>${total ?? ''}</b></td><td class="num">+${w.fields.damageBonus}${w.fields.kind === 'melee' ? ` +${V('bonus.str')}` : ''}</td><td class="num">${w.fields.dmax}</td><td class="num">${rangeText(w.fields)}</td><td></td>`;
+          const cell = tr.lastElementChild;
+          const atk = Object.assign(document.createElement('button'), {
+            className: 'roll',
+            textContent: '⚔ Attack',
+            title: 'Skill roll, then damage with the degree obtained',
+          });
+          atk.onclick = () => attack(g);
+          const deg = Object.assign(document.createElement('input'), {
+            type: 'number',
+            value: 1,
+            min: 1,
+            max: w.fields.dmax,
+            title: 'Degree of success',
+          });
+          deg.style.width = '52px';
+          const dmg = Object.assign(document.createElement('button'), {
+            className: 'roll',
+            textContent: 'Damage',
+            title: 'Roll damage for this degree of success',
+          });
+          dmg.onclick = () => dealDamage(g, Math.max(1, Number(deg.value) || 1));
+          cell.style.whiteSpace = 'nowrap';
+          cell.append(atk, ' ', deg, ' ', dmg);
+          weapons.append(tr);
+        }
 
-function logResult(title, result, opts) {
-  const lines = [];
-  if (opts.options) lines.push(`<div class="line muted">${esc(opts.options)}</div>`);
-  for (const r of result.rolls ?? []) {
-    const dice = r.parts.filter((p) => p.dice).flatMap((p) => p.dice);
-    const flats = r.parts.filter((p) => p.flat !== undefined).map((p) => p.flat);
-    const label = r.step.startsWith('shock') ? 'Shock roll: ' : '';
-    if (r.band) {
-      // A 2d6* roll under a score.
-      const deg = r.degree ?? 0;
-      const band = D.bands[r.band] && D.bands[r.band] !== `bands.degree.${r.band}` ? D.bands[r.band] : r.band.replace(/-/g, ' ');
-      const mod = r.modifier ? ` (modifiers ${r.modifier > 0 ? '+' : ''}${r.modifier})` : '';
-      lines.push(`<div class="line">${label}${diceHtml(dice)} = <b>${r.total}</b> under ${r.score}${mod}</div>`);
-      lines.push(`<div class="line"><span class="result ${r.band}">${esc(band)}</span> · degree <b>${roman(deg)}</b></div>`);
-    } else {
-      const sum = dice.reduce((a, d) => a + d.v, 0);
-      lines.push(`<div class="line">${diceHtml(dice)} = ${sum}${flats.map((f) => ` ${f < 0 ? '−' : '+'} ${Math.abs(f)}`).join('')} = <b>${r.total}</b></div>`);
-    }
-  }
-  const o = result.outcome;
-  if (o?.result === 'dealt') {
-    const capped = opts.degree && o.data.dice < opts.degree ? ` <span class="muted">(${o.data.dice}d6*: capped at DMAX ${opts.dmax})</span>` : ` <span class="muted">(${o.data.dice}d6*)</span>`;
-    lines.push(`<div class="line">Damage dealt: <span class="result">${o.data.damage}</span>${capped}</div>`);
-  }
-  if (o?.result === 'taken' || o?.result === 'shock-failed') {
-    if (o.data.absorbed) lines.push(`<div class="line muted">Protection absorbed ${o.data.absorbed}</div>`);
-    lines.push(`<div class="line">${o.data.amount} damage taken${o.result === 'shock-failed' ? ' · <span class="result shock-failed">shock failed</span>' : (result.rolls?.length ? ' · <span class="result success">shock resisted</span>' : '')}</div>`);
-  }
-  if (o?.result === 'rested') lines.push('<div class="line">Stun cleared.</div>');
-  if (result.applyErrors) lines.push(`<div class="line result failure">${esc(JSON.stringify(result.applyErrors))}</div>`);
-  logEntry(title, lines.join(''));
-}
+        const prot = V('protection') ?? 0;
+        $('protection').textContent = `protection ${prot} (subtracted from physical damage)`;
+        healthCard(
+          'hp-physical',
+          'Physical',
+          V('hp.physical.max'),
+          V('injury.physical'),
+          V('stun.physical'),
+          V('shock.physical'),
+          [
+            [V('state.dead'), 'dead', 'bad'],
+            [V('state.unconscious'), 'unconscious and dying', 'bad'],
+          ],
+        );
+        healthCard(
+          'hp-psychical',
+          'Psychical',
+          V('hp.psychical.max'),
+          V('injury.psychical'),
+          V('stun.psychical'),
+          V('shock.psychical'),
+          [
+            [V('state.mad'), 'mad', 'bad'],
+            [V('state.confused'), 'confused', 'bad'],
+          ],
+        );
+      }
 
-// --- Rendering -------------------------------------------------------------------------------
-function rollButton(onclick, title = 'Roll 2d6* under this score') {
-  const b = Object.assign(document.createElement('button'), { className: 'roll', textContent: '🎲 Roll', title });
-  b.onclick = onclick;
-  return b;
-}
+      // --- Skills ----------------------------------------------------------------------------------
+      let skillFilter = 'spent';
+      try {
+        skillFilter = localStorage.getItem('sagas-play.skillFilter') ?? skillFilter;
+      } catch {}
 
-function render() {
-  if (!ch) return;
-  const name = V('identity.name');
-  $('title').textContent = name || ch.id;
-  $('who').textContent = [V('identity.species'), V('identity.profession')].filter(Boolean).join(' · ');
-  // Always in view during a fight.
-  $('combat').innerHTML = [['Initiative', 'sec.ini'], ['Speed', 'sec.spd'], ['Reflex Dodge', 'dodge.reflex']]
-    .map(([label, f]) => `<span class="pill" title="${label}">${label} <b>${V(f) ?? '—'}</b></span>`).join('');
-  // Free text from the character file; an empty field shows a dash.
-  for (const [id, field] of [['idName', 'name'], ['idSpecies', 'species'], ['idProfession', 'profession'], ['idDescription', 'description'], ['idPossessions', 'possessions'], ['idBackground', 'background']]) {
-    const text = V(`identity.${field}`);
-    $(id).textContent = text || '—';
-    $(id).classList.toggle('muted', !text);
-  }
+      // Same bands as the pack's grade: 0 or less incompetent, then 5 by 5, 21 and up master.
+      const gradeOf = (total) =>
+        total <= 0 ? 0 : total <= 5 ? 1 : total <= 10 ? 2 : total <= 15 ? 3 : total <= 20 ? 4 : 5;
 
-  for (const [boxId, list] of [['chars', D.chars], ['secondary', D.secondary]]) {
-    const box = $(boxId);
-    box.replaceChildren();
-    for (const c of list) {
-      const div = document.createElement('div');
-      div.className = 'stat';
-      div.innerHTML = `<span class="name">${esc(c.name)}</span><span class="val">${V(c.key) ?? ''}</span>`;
-      div.append(rollButton(() => rollCharacteristic(c.key, c.name)));
-      box.append(div);
-    }
-  }
+      /** Every skill of the pack, with the character's learning level, or its initial level if unlearned. */
+      function skillRows() {
+        // A generic skill has one row per specialty learned.
+        return (
+          Object.entries(D.items)
+            .filter(([, it]) => it.fields.characteristic)
+            .flatMap(([id, it]) => {
+              const feats = (ch.features ?? []).filter((f) => f.item === id);
+              return (feats.length ? feats : [undefined]).map((feat) => {
+                // The copy's initial level (chosen for an "Other" skill), else the skill's.
+                const base = feat?.state?.initial ?? it.fields.base ?? 0;
+                const learning = feat?.state?.learning ?? base;
+                // Learned skills come from the engine; unlearned ones are characteristic + initial level.
+                const copy = feat ? sheet.copies[feat.id] : undefined;
+                const total = copy?.total ?? (V(it.fields.characteristic) ?? 0) + base;
+                const name = `${it.name}${feat?.state?.specialty ? ` (${feat.state.specialty})` : ''}`;
+                return {
+                  id,
+                  it,
+                  feat,
+                  name,
+                  base,
+                  learning,
+                  total,
+                  grade: copy?.grade ?? gradeOf(total),
+                };
+              });
+            })
+            // Grouped by characteristic, in the sheet's order; "Other" skills last in each group.
+            .sort(
+              (a, b) =>
+                groupIndex(a) - groupIndex(b) ||
+                (a.it.fields.variableBase ? 1 : 0) - (b.it.fields.variableBase ? 1 : 0) ||
+                a.name.localeCompare(b.name),
+            )
+        );
+      }
+      const groupIndex = (r) =>
+        [...D.chars, ...D.secondary].findIndex((x) => x.key === r.it.fields.characteristic);
 
-  renderSkills();
+      function renderSkills() {
+        for (const b of $('skillFilter').children)
+          b.classList.toggle('on', b.dataset.f === skillFilter);
+        const q = $('skillSearch').value.trim().toLowerCase();
+        const all = skillRows();
+        const rows = all.filter(
+          (r) =>
+            (skillFilter === 'all' ||
+              (skillFilter === 'spent' ? r.feat && r.learning > r.base : r.total > 0)) &&
+            (!q || r.name.toLowerCase().includes(q)),
+        );
+        $('skillCount').textContent =
+          `${rows.length} of ${all.length} · total = characteristic + learning level`;
+        const body = $('skills');
+        body.replaceChildren();
+        if (!rows.length)
+          body.innerHTML = '<tr><td colspan="6" class="empty">No skill matches.</td></tr>';
+        let group;
+        for (const r of rows) {
+          const charName =
+            [...D.chars, ...D.secondary].find((x) => x.key === r.it.fields.characteristic)?.name ??
+            r.it.fields.characteristic;
+          if (r.it.fields.characteristic !== group) {
+            group = r.it.fields.characteristic;
+            const head = document.createElement('tr');
+            head.className = 'group';
+            head.innerHTML = `<th colspan="6">${esc(charName)}</th>`;
+            body.append(head);
+          }
+          const tr = document.createElement('tr');
+          if (!r.feat) tr.className = 'muted';
+          const learning = r.feat
+            ? r.learning
+            : `<span title="Not learned: initial level">${r.base}</span>`;
+          tr.innerHTML = `<td>${esc(r.name)}${r.feat ? '' : ' <span class="muted">(unlearned)</span>'}</td><td class="muted">${esc(charName)}</td><td class="num">${learning}</td><td class="num"><b>${r.total}</b></td><td>${GRADES[r.grade] ?? ''}</td><td></td>`;
+          tr.lastElementChild.append(
+            rollButton(() => rollSkill(r.id, {}, `${r.name} roll`, r.feat)),
+          );
+          body.append(tr);
+        }
+      }
 
-  const weapons = $('weapons');
-  weapons.replaceChildren();
-  const gear = (ch.inventory ?? []).filter((g) => itemOf(g.item)?.fields.dmax);
-  if (!gear.length) weapons.innerHTML = '<tr><td colspan="7" class="empty">No weapon.</td></tr>';
-  for (const g of gear) {
-    const w = itemOf(g.item);
-    const skill = itemOf(P(w.fields.skill));
-    const feat = (ch.features ?? []).find((f) => f.item === P(w.fields.skill));
-    const total = feat ? sheet.copies[feat.id]?.total : undefined;
-    const tr = document.createElement('tr');
-    const weak = (V('chars.str') ?? 0) < (w.fields.strReq ?? 0) ? ` <span class="badge warn" title="Strength below the weapon's minimum: −I">STR ${w.fields.strReq}</span>` : '';
-    tr.innerHTML = `<td>${esc(w.name)}${g.equipped === false ? ' <span class="muted">(not equipped)</span>' : ''}${weak}</td><td>${esc(skill?.name ?? '—')}${feat ? '' : ' <span class="muted">(unlearned)</span>'}</td><td class="num"><b>${total ?? ''}</b></td><td class="num">+${w.fields.damageBonus}${w.fields.kind === 'melee' ? ` +${V('bonus.str')}` : ''}</td><td class="num">${w.fields.dmax}</td><td class="num">${rangeText(w.fields)}</td><td></td>`;
-    const cell = tr.lastElementChild;
-    const atk = Object.assign(document.createElement('button'), { className: 'roll', textContent: '⚔ Attack', title: 'Skill roll, then damage with the degree obtained' });
-    atk.onclick = () => attack(g);
-    const deg = Object.assign(document.createElement('input'), { type: 'number', value: 1, min: 1, max: w.fields.dmax, title: 'Degree of success' });
-    deg.style.width = '52px';
-    const dmg = Object.assign(document.createElement('button'), { className: 'roll', textContent: 'Damage', title: 'Roll damage for this degree of success' });
-    dmg.onclick = () => dealDamage(g, Math.max(1, Number(deg.value) || 1));
-    cell.style.whiteSpace = 'nowrap';
-    cell.append(atk, ' ', deg, ' ', dmg);
-    weapons.append(tr);
-  }
-
-  const prot = V('protection') ?? 0;
-  $('protection').textContent = `protection ${prot} (subtracted from physical damage)`;
-  healthCard('hp-physical', 'Physical', V('hp.physical.max'), V('injury.physical'), V('stun.physical'), V('shock.physical'),
-    [[V('state.dead'), 'dead', 'bad'], [V('state.unconscious'), 'unconscious and dying', 'bad']]);
-  healthCard('hp-psychical', 'Psychical', V('hp.psychical.max'), V('injury.psychical'), V('stun.psychical'), V('shock.psychical'),
-    [[V('state.mad'), 'mad', 'bad'], [V('state.confused'), 'confused', 'bad']]);
-}
-
-// --- Skills ----------------------------------------------------------------------------------
-let skillFilter = 'spent';
-try { skillFilter = localStorage.getItem('sagas-play.skillFilter') ?? skillFilter; } catch {}
-
-// Same bands as the pack's grade: 0 or less incompetent, then 5 by 5, 21 and up master.
-const gradeOf = (total) => (total <= 0 ? 0 : total <= 5 ? 1 : total <= 10 ? 2 : total <= 15 ? 3 : total <= 20 ? 4 : 5);
-
-/** Every skill of the pack, with the character's learning level, or its initial level if unlearned. */
-function skillRows() {
-  // A generic skill has one row per specialty learned.
-  return Object.entries(D.items)
-    .filter(([, it]) => it.fields.characteristic)
-    .flatMap(([id, it]) => {
-      const feats = (ch.features ?? []).filter((f) => f.item === id);
-      return (feats.length ? feats : [undefined]).map((feat) => {
-        // The copy's initial level (chosen for an "Other" skill), else the skill's.
-        const base = feat?.state?.initial ?? it.fields.base ?? 0;
-        const learning = feat?.state?.learning ?? base;
-        // Learned skills come from the engine; unlearned ones are characteristic + initial level.
-        const copy = feat ? sheet.copies[feat.id] : undefined;
-        const total = copy?.total ?? (V(it.fields.characteristic) ?? 0) + base;
-        const name = `${it.name}${feat?.state?.specialty ? ` (${feat.state.specialty})` : ''}`;
-        return { id, it, feat, name, base, learning, total, grade: copy?.grade ?? gradeOf(total) };
-      });
-    })
-    // Grouped by characteristic, in the sheet's order; "Other" skills last in each group.
-    .sort((a, b) => groupIndex(a) - groupIndex(b) || (a.it.fields.variableBase ? 1 : 0) - (b.it.fields.variableBase ? 1 : 0) || a.name.localeCompare(b.name));
-}
-const groupIndex = (r) => [...D.chars, ...D.secondary].findIndex((x) => x.key === r.it.fields.characteristic);
-
-function renderSkills() {
-  for (const b of $('skillFilter').children) b.classList.toggle('on', b.dataset.f === skillFilter);
-  const q = $('skillSearch').value.trim().toLowerCase();
-  const all = skillRows();
-  const rows = all.filter((r) =>
-    (skillFilter === 'all' || (skillFilter === 'spent' ? r.feat && r.learning > r.base : r.total > 0)) &&
-    (!q || r.name.toLowerCase().includes(q)));
-  $('skillCount').textContent = `${rows.length} of ${all.length} · total = characteristic + learning level`;
-  const body = $('skills');
-  body.replaceChildren();
-  if (!rows.length) body.innerHTML = '<tr><td colspan="6" class="empty">No skill matches.</td></tr>';
-  let group;
-  for (const r of rows) {
-    const charName = [...D.chars, ...D.secondary].find((x) => x.key === r.it.fields.characteristic)?.name ?? r.it.fields.characteristic;
-    if (r.it.fields.characteristic !== group) {
-      group = r.it.fields.characteristic;
-      const head = document.createElement('tr');
-      head.className = 'group';
-      head.innerHTML = `<th colspan="6">${esc(charName)}</th>`;
-      body.append(head);
-    }
-    const tr = document.createElement('tr');
-    if (!r.feat) tr.className = 'muted';
-    const learning = r.feat ? r.learning : `<span title="Not learned: initial level">${r.base}</span>`;
-    tr.innerHTML = `<td>${esc(r.name)}${r.feat ? '' : ' <span class="muted">(unlearned)</span>'}</td><td class="muted">${esc(charName)}</td><td class="num">${learning}</td><td class="num"><b>${r.total}</b></td><td>${GRADES[r.grade] ?? ''}</td><td></td>`;
-    tr.lastElementChild.append(rollButton(() => rollSkill(r.id, {}, `${r.name} roll`, r.feat)));
-    body.append(tr);
-  }
-}
-
-function healthCard(id, label, max, inj, stun, shock, states) {
-  inj ??= 0; stun ??= 0; max ??= 0;
-  const pct = (n) => (max ? Math.min(100, (n / max) * 100) : 0);
-  const state = states.find(([on]) => on);
-  const badge = state ? `<span class="badge ${state[2]}">${state[1]}</span>` : inj + stun ? '<span class="badge warn">hurt</span>' : '<span class="badge ok">unharmed</span>';
-  $(id).innerHTML = `
+      function healthCard(id, label, max, inj, stun, shock, states) {
+        inj ??= 0;
+        stun ??= 0;
+        max ??= 0;
+        const pct = (n) => (max ? Math.min(100, (n / max) * 100) : 0);
+        const state = states.find(([on]) => on);
+        const badge = state
+          ? `<span class="badge ${state[2]}">${state[1]}</span>`
+          : inj + stun
+            ? '<span class="badge warn">hurt</span>'
+            : '<span class="badge ok">unharmed</span>';
+        $(id).innerHTML = `
     <h3><span>${label}</span>${badge}</h3>
     <div><b>${max - inj - stun}</b> / ${max} hit points left</div>
     <div class="bar"><div class="inj" style="width:${pct(inj)}%"></div><div class="stn" style="width:${pct(stun)}%"></div></div>
     <div class="legend"><span><span class="sw" style="background:var(--bad)"></span>injuries ${inj}</span><span><span class="sw" style="background:var(--stun)"></span>stun ${stun}</span><span>shock threshold ${shock ?? ''}</span></div>`;
-}
+      }
 
-// --- Actions ---------------------------------------------------------------------------------
-async function loadFile(f) {
-  const out = await api(`/api/load?file=${encodeURIComponent(f)}`);
-  ch = out.character; sheet = out.sheet; file = f;
-  setDirty(false);
-  render();
-  toast(`Loaded ${f}`);
-}
+      // --- Actions ---------------------------------------------------------------------------------
+      async function loadFile(f) {
+        const out = await api(`/api/load?file=${encodeURIComponent(f)}`);
+        ch = out.character;
+        sheet = out.sheet;
+        file = f;
+        setDirty(false);
+        render();
+        toast(`Loaded ${f}`);
+      }
 
-async function heal(kind) {
-  const n = Math.max(1, Number($('healAmount').value) || 1);
-  const key = P(`injury.${kind}`);
-  const before = Number(ch.values?.[key] ?? 0);
-  ch.values = { ...(ch.values ?? {}), [key]: Math.max(0, before - n) };
-  if (!ch.values[key]) delete ch.values[key];
-  sheet = await api('/api/sheet', { character: ch });
-  setDirty(true);
-  render();
-  logEntry(`Heal ${kind} injuries`, `<div class="line">${before} → ${Math.max(0, before - n)}</div>`);
-}
+      async function heal(kind) {
+        const n = Math.max(1, Number($('healAmount').value) || 1);
+        const key = P(`injury.${kind}`);
+        const before = Number(ch.values?.[key] ?? 0);
+        ch.values = { ...(ch.values ?? {}), [key]: Math.max(0, before - n) };
+        if (!ch.values[key]) delete ch.values[key];
+        sheet = await api('/api/sheet', { character: ch });
+        setDirty(true);
+        render();
+        logEntry(
+          `Heal ${kind} injuries`,
+          `<div class="line">${before} → ${Math.max(0, before - n)}</div>`,
+        );
+      }
 
-function bind() {
-  $('loadSelect').onchange = async (e) => {
-    const f = e.target.value;
-    e.target.value = '';
-    if (!f) return;
-    if (dirty && !confirm('Discard the unsaved changes?')) return;
-    await loadFile(f);
-  };
-  $('btnSave').onclick = async () => {
-    if (!ch || !file) return toast('Load a character first');
-    const r = await api('/api/save', { character: ch, file });
-    setDirty(false);
-    toast(`Saved: ${r.file}`);
-  };
-  $('btnClearOptions').onclick = () => {
-    $('difficulty').value = 'normal'; $('modifier').value = 0;
-    for (const el of document.querySelectorAll('[data-sit]')) el.checked = false;
-    updateSitCount();
-  };
-  for (const b of $('skillFilter').children) {
-    b.onclick = () => {
-      skillFilter = b.dataset.f;
-      try { localStorage.setItem('sagas-play.skillFilter', skillFilter); } catch {}
-      if (ch) renderSkills();
-    };
-  }
-  $('skillSearch').oninput = () => ch && renderSkills();
-  $('btnClearLog').onclick =() => { $('log').innerHTML = '<div class="empty">Rolls appear here.</div>'; };
-  for (const r of document.querySelectorAll('input[name=kind]')) r.onchange = () => { $('protLabel').style.visibility = r.value === 'physical' && r.checked ? 'visible' : 'hidden'; };
-  $('btnTake').onclick = () => {
-    if (!ch) return toast('Load a character first');
-    const kind = document.querySelector('input[name=kind]:checked').value;
-    // The pack subtracts the protection (less the armor piercing) from physical damage.
-    const amount = Math.max(0, Number($('dmgAmount').value) || 0);
-    const stun = $('dmgStun').checked;
-    const params = { kind, amount, stun };
-    const notes = [];
-    if (kind === 'physical') {
-      params.armorPiercing = Math.max(0, Number($('dmgAp').value) || 0);
-      params.ignoreArmor = $('dmgIgnore').checked;
-      if (params.ignoreArmor) notes.push('ignores armor');
-      else if (params.armorPiercing) notes.push(`armor piercing ${params.armorPiercing}`);
-    }
-    if (stun) notes.push('stun');
-    act(`Takes ${amount} ${kind} damage${notes.length ? ` (${notes.join(', ')})` : ''}`, { action: { id: P('take-damage') }, params });
-  };
-  $('btnRest').onclick = () => ch ? act('Short rest', { action: { id: P('rest-short') } }) : toast('Load a character first');
-  $('btnHealPhys').onclick = () => ch ? heal('physical') : toast('Load a character first');
-  $('btnHealPsy').onclick = () => ch ? heal('psychical') : toast('Load a character first');
-  window.addEventListener('beforeunload', (e) => { if (dirty) e.preventDefault(); });
-}
+      function bind() {
+        $('loadSelect').onchange = async (e) => {
+          const f = e.target.value;
+          e.target.value = '';
+          if (!f) return;
+          if (dirty && !confirm('Discard the unsaved changes?')) return;
+          await loadFile(f);
+        };
+        $('btnSave').onclick = async () => {
+          if (!ch || !file) return toast('Load a character first');
+          const r = await api('/api/save', { character: ch, file });
+          setDirty(false);
+          toast(`Saved: ${r.file}`);
+        };
+        $('btnClearOptions').onclick = () => {
+          $('difficulty').value = 'normal';
+          $('modifier').value = 0;
+          for (const el of document.querySelectorAll('[data-sit]')) el.checked = false;
+          updateSitCount();
+        };
+        for (const b of $('skillFilter').children) {
+          b.onclick = () => {
+            skillFilter = b.dataset.f;
+            try {
+              localStorage.setItem('sagas-play.skillFilter', skillFilter);
+            } catch {}
+            if (ch) renderSkills();
+          };
+        }
+        $('skillSearch').oninput = () => ch && renderSkills();
+        $('btnClearLog').onclick = () => {
+          $('log').innerHTML = '<div class="empty">Rolls appear here.</div>';
+        };
+        for (const r of document.querySelectorAll('input[name=kind]'))
+          r.onchange = () => {
+            $('protLabel').style.visibility =
+              r.value === 'physical' && r.checked ? 'visible' : 'hidden';
+          };
+        $('btnTake').onclick = () => {
+          if (!ch) return toast('Load a character first');
+          const kind = document.querySelector('input[name=kind]:checked').value;
+          // The pack subtracts the protection (less the armor piercing) from physical damage.
+          const amount = Math.max(0, Number($('dmgAmount').value) || 0);
+          const stun = $('dmgStun').checked;
+          const params = { kind, amount, stun };
+          const notes = [];
+          if (kind === 'physical') {
+            params.armorPiercing = Math.max(0, Number($('dmgAp').value) || 0);
+            params.ignoreArmor = $('dmgIgnore').checked;
+            if (params.ignoreArmor) notes.push('ignores armor');
+            else if (params.armorPiercing) notes.push(`armor piercing ${params.armorPiercing}`);
+          }
+          if (stun) notes.push('stun');
+          act(`Takes ${amount} ${kind} damage${notes.length ? ` (${notes.join(', ')})` : ''}`, {
+            action: { id: P('take-damage') },
+            params,
+          });
+        };
+        $('btnRest').onclick = () =>
+          ch
+            ? act('Short rest', { action: { id: P('rest-short') } })
+            : toast('Load a character first');
+        $('btnHealPhys').onclick = () => (ch ? heal('physical') : toast('Load a character first'));
+        $('btnHealPsy').onclick = () => (ch ? heal('psychical') : toast('Load a character first'));
+        window.addEventListener('beforeunload', (e) => {
+          if (dirty) e.preventDefault();
+        });
+      }
 
-function updateSitCount() {
-  const n = document.querySelectorAll('[data-sit]:checked').length;
-  $('sitCount').textContent = n ? `(${n} active)` : '';
-}
+      function updateSitCount() {
+        const n = document.querySelectorAll('[data-sit]:checked').length;
+        $('sitCount').textContent = n ? `(${n} active)` : '';
+      }
 
-(async () => {
-  D = await api('/api/data');
-  $('situational').innerHTML = D.situational.map((s) => `<label><input type="checkbox" data-sit="${esc(s.id)}"> ${esc(s.name)}</label>`).join('');
-  for (const el of document.querySelectorAll('[data-sit]')) el.onchange = updateSitCount;
-  bind();
-  const files = await api('/api/characters');
-  $('loadSelect').innerHTML = '<option value="">Load a character…</option>' + files.map((f) => `<option>${esc(f)}</option>`).join('');
-  const first = files.find((f) => f !== 'sagas-test.yaml') ?? files[0];
-  if (first) await loadFile(first);
-})();
-</script>
-</body>
+      (async () => {
+        D = await api('/api/data');
+        $('situational').innerHTML = D.situational
+          .map(
+            (s) => `<label><input type="checkbox" data-sit="${esc(s.id)}"> ${esc(s.name)}</label>`,
+          )
+          .join('');
+        for (const el of document.querySelectorAll('[data-sit]')) el.onchange = updateSitCount;
+        bind();
+        const files = await api('/api/characters');
+        $('loadSelect').innerHTML =
+          '<option value="">Load a character…</option>' +
+          files.map((f) => `<option>${esc(f)}</option>`).join('');
+        const first = files.find((f) => f !== 'sagas-test.yaml') ?? files[0];
+        if (first) await loadFile(first);
+      })();
+    </script>
+  </body>
 </html>

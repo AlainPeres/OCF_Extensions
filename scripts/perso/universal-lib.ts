@@ -16,7 +16,12 @@ import {
   startAction,
 } from '../../packages/engine/src/index.ts';
 import { readPack } from '../../packages/engine/test/packs.ts';
-import { createText, describeNeed, type Messages, type Text } from '../../packages/text/src/index.ts';
+import {
+  createText,
+  describeNeed,
+  type Messages,
+  type Text,
+} from '../../packages/text/src/index.ts';
 import { parse, stringify } from 'yaml';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
@@ -27,7 +32,9 @@ import { randomUUID } from 'node:crypto';
 const root = join(import.meta.dirname, '..', '..');
 const packsDir = join(root, 'packs');
 const charsDir = join(root, 'examples', 'characters');
-const specText = parse(readFileSync(join(root, 'packages', 'spec', 'i18n', 'en.yaml'), 'utf8')) as Messages;
+const specText = parse(
+  readFileSync(join(root, 'packages', 'spec', 'i18n', 'en.yaml'), 'utf8'),
+) as Messages;
 
 type Any = any; // engine data is plain JSON; the page only reads it
 
@@ -38,7 +45,13 @@ const yamlFiles = (dir: string): string[] =>
   existsSync(dir)
     ? readdirSync(dir)
         .toSorted()
-        .flatMap((n) => (statSync(join(dir, n)).isDirectory() ? yamlFiles(join(dir, n)) : n.endsWith('.yaml') ? [join(dir, n)] : []))
+        .flatMap((n) =>
+          statSync(join(dir, n)).isDirectory()
+            ? yamlFiles(join(dir, n))
+            : n.endsWith('.yaml')
+              ? [join(dir, n)]
+              : [],
+        )
     : [];
 const readYaml = (file: string): Any => parse(readFileSync(file, 'utf8'));
 
@@ -54,7 +67,12 @@ for (const game of readdirSync(packsDir)) {
 
 /** A pack's English text: i18n/en.yaml and i18n/en/*.yaml, merged. */
 const english = (dir: string): Messages =>
-  Object.assign({}, ...[join(dir, 'i18n', 'en.yaml'), ...yamlFiles(join(dir, 'i18n', 'en'))].filter(existsSync).map(readYaml));
+  Object.assign(
+    {},
+    ...[join(dir, 'i18n', 'en.yaml'), ...yamlFiles(join(dir, 'i18n', 'en'))]
+      .filter(existsSync)
+      .map(readYaml),
+  );
 
 interface Loaded {
   id: string;
@@ -79,7 +97,8 @@ function loadPack(id: string): Loaded {
   visit(id);
   const releases = order.map((p) => readPack(packDirs.get(p)!));
   const result: Any = loadRuleset(releases);
-  if (!result.ok) throw new Error(`cannot load ${id}: ${JSON.stringify(result.errors).slice(0, 500)}`);
+  if (!result.ok)
+    throw new Error(`cannot load ${id}: ${JSON.stringify(result.errors).slice(0, 500)}`);
   const ruleset = result.ruleset;
   const text = createText({
     languages: ['en'],
@@ -102,14 +121,19 @@ const packOf = (qid: string) => qid.slice(0, qid.indexOf(':'));
 
 /** A message from the pack that owns a qualified ID, else from any loaded pack. */
 function packMessage(L: Loaded, owner: string, key: string): string | undefined {
-  return L.text.message(owner, key) ?? L.releases.map((r) => L.text.message(r.manifest.id, key)).find((m) => m !== undefined);
+  return (
+    L.text.message(owner, key) ??
+    L.releases.map((r) => L.text.message(r.manifest.id, key)).find((m) => m !== undefined)
+  );
 }
 
 function packList() {
   return [...packDirs.entries()]
     .map(([id, dir]) => {
       // Whether the pack declares creation starts (read without loading the pack).
-      const creation = yamlFiles(join(dir, 'rules')).some((f) => /^creation:/m.test(readFileSync(f, 'utf8')));
+      const creation = yamlFiles(join(dir, 'rules')).some((f) =>
+        /^creation:/m.test(readFileSync(f, 'utf8')),
+      );
       return { id, name: (english(dir)['pack.name'] as string | undefined) ?? id, creation };
     })
     .toSorted((a, b) => a.name.localeCompare(b.name));
@@ -150,14 +174,24 @@ function newCharacter(L: Loaded, id: string) {
 }
 
 const show = (v: unknown): string =>
-  v === undefined || v === null ? '' : typeof v === 'object' ? ((v as Any).text ?? (v as Any).notation ?? JSON.stringify(v)) : String(v);
-const errorText = (L: Loaded, errors: Any[]) => errors.map((e: Any) => L.text.error(e) || e.code).join('; ');
-const allCopies = (character: Any): Any[] => [...(character.features ?? []), ...(character.inventory ?? [])];
+  v === undefined || v === null
+    ? ''
+    : typeof v === 'object'
+      ? ((v as Any).text ?? (v as Any).notation ?? JSON.stringify(v))
+      : String(v);
+const errorText = (L: Loaded, errors: Any[]) =>
+  errors.map((e: Any) => L.text.error(e) || e.code).join('; ');
+const allCopies = (character: Any): Any[] => [
+  ...(character.features ?? []),
+  ...(character.inventory ?? []),
+];
 
 /** A copy's name: its item's (or nameFrom's), with its text state (a specialty…) when it has one. */
 function copyName(L: Loaded, sheet: Any, c: Any) {
   const name = sheet?.copyNames?.[c.id] || L.text.copy({ item: c.item, templates: c.templates });
-  const extra = Object.values(c.state ?? {}).find((v) => typeof v === 'string' && v !== '' && v !== name);
+  const extra = Object.values(c.state ?? {}).find(
+    (v) => typeof v === 'string' && v !== '' && v !== name,
+  );
   return extra ? `${name} (${extra})` : name;
 }
 
@@ -179,16 +213,31 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
   const fieldRow = (id: string) => {
     const def = R.fields[id] ?? {};
     const v = values[id]?.value;
-    return { id, label: t.field(id), value: def.type === 'enum' && typeof v === 'string' ? t.fieldValue(id, v) : show(v) };
+    return {
+      id,
+      label: t.field(id),
+      value: def.type === 'enum' && typeof v === 'string' ? t.fieldValue(id, v) : show(v),
+    };
   };
   // Field groups from the display hints; without them, every shown field in ruleset order.
-  const fieldGroups = (sheet.groups ?? []).filter((g: Any) => g.shown !== false && g.fields?.length);
+  const fieldGroups = (sheet.groups ?? []).filter(
+    (g: Any) => g.shown !== false && g.fields?.length,
+  );
   const groups = fieldGroups.length
     ? fieldGroups.map((g: Any) => ({
-        label: L.releases.map((r) => t.message(r.manifest.id, `groups.${g.id}.label`)).find(Boolean) ?? g.id,
+        label:
+          L.releases.map((r) => t.message(r.manifest.id, `groups.${g.id}.label`)).find(Boolean) ??
+          g.id,
         fields: g.fields.map(fieldRow),
       }))
-    : [{ label: 'Fields', fields: Object.keys(values).filter((id) => values[id]?.shown !== false && R.fields[id]).map(fieldRow) }];
+    : [
+        {
+          label: 'Fields',
+          fields: Object.keys(values)
+            .filter((id) => values[id]?.shown !== false && R.fields[id])
+            .map(fieldRow),
+        },
+      ];
   const copy = (c: Any, where: string) => {
     const type = R.content[c.item]?.type;
     return {
@@ -198,17 +247,30 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
       label: sheet.copyNames?.[c.id] || t.copy({ item: c.item, templates: c.templates }),
       equipped: !!c.equipped,
       quantity: c.quantity,
-      state: Object.entries(c.state ?? {}).map(([k, v]) => ({ label: t.state(c.item, k, type), value: show(v) })),
-      computed: Object.entries(sheet.copies?.[c.id] ?? {}).map(([k, v]) => ({ key: k, value: show(v) })),
+      state: Object.entries(c.state ?? {}).map(([k, v]) => ({
+        label: t.state(c.item, k, type),
+        value: show(v),
+      })),
+      computed: Object.entries(sheet.copies?.[c.id] ?? {}).map(([k, v]) => ({
+        key: k,
+        value: show(v),
+      })),
     };
   };
-  const copies = [...(S.character.features ?? []).map((c: Any) => copy(c, 'features')), ...(S.character.inventory ?? []).map((c: Any) => copy(c, 'inventory'))];
+  const copies = [
+    ...(S.character.features ?? []).map((c: Any) => copy(c, 'features')),
+    ...(S.character.inventory ?? []).map((c: Any) => copy(c, 'inventory')),
+  ];
   // The actions available now, the rules' and the items' (`entry`, the copy).
   // `start`: run from a creation start; `forCreation`: tagged `creation` (local or qualified).
   const actions = (sheet.actions ?? [])
     .filter((a: Any) => a.listed !== false)
     .map((a: Any) => {
-      const ref = { id: a.action, ...(a.entry ? { entry: a.entry } : {}), ...(a.source ? { source: a.source } : {}) };
+      const ref = {
+        id: a.action,
+        ...(a.entry ? { entry: a.entry } : {}),
+        ...(a.source ? { source: a.source } : {}),
+      };
       const d: Any = describeAction(R, S.character, ref as Any);
       const tags: string[] = d.action?.tags ?? [];
       return {
@@ -220,13 +282,19 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
       };
     });
   const inputs = Object.entries(R.fields)
-    .filter(([, d]: Any) => d.input && ['string', 'integer', 'boolean', 'enum', 'decimal'].includes(d.type))
+    .filter(
+      ([, d]: Any) =>
+        d.input && ['string', 'integer', 'boolean', 'enum', 'decimal'].includes(d.type),
+    )
     .map(([id, d]: Any) => ({
       id,
       label: t.field(id),
       type: d.type,
       value: S.character.values?.[id] ?? d.default ?? '',
-      values: d.type === 'enum' ? (d.values ?? []).map((v: string) => ({ id: v, label: t.fieldValue(id, v) })) : undefined,
+      values:
+        d.type === 'enum'
+          ? (d.values ?? []).map((v: string) => ({ id: v, label: t.fieldValue(id, v) }))
+          : undefined,
       min: typeof d.min === 'number' ? d.min : undefined,
       max: typeof d.max === 'number' ? d.max : undefined,
     }));
@@ -239,7 +307,11 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
     params: o.params,
     changes: o.changes,
     forOther: !!o.character || (o.to && o.to !== 'self'),
-    label: o.action ? actionLabel(L, S.character, sheet, o.action) : t.message(packOf(o.followUp ?? ''), `followUps.${local(o.followUp ?? '')}.name`) ?? o.followUp ?? o.id,
+    label: o.action
+      ? actionLabel(L, S.character, sheet, o.action)
+      : (t.message(packOf(o.followUp ?? ''), `followUps.${local(o.followUp ?? '')}.name`) ??
+        o.followUp ??
+        o.id),
   }));
   return {
     sid,
@@ -288,7 +360,10 @@ function pauseView(L: Loaded, S: Session) {
     allocate: needs.allocate
       ? {
           ...needs.allocate,
-          fields: needs.allocate.fields.map((f: Any) => ({ ...f, label: described.fields?.find((x: Any) => x.id === f.id)?.label ?? L.text.field(f.id) })),
+          fields: needs.allocate.fields.map((f: Any) => ({
+            ...f,
+            label: described.fields?.find((x: Any) => x.id === f.id)?.label ?? L.text.field(f.id),
+          })),
         }
       : undefined,
     dice: described.dice,
@@ -335,7 +410,9 @@ function settle(sid: string, result: Any) {
   const proposed: Any[] = result.proposedChanges ?? [];
   const mine = proposed.filter((p) => p.to === 'self' && !p.character).map((p) => p.change);
   // Changes for a target, a role or a link belong to other characters: listed, not applied.
-  const others = proposed.filter((p) => !(p.to === 'self' && !p.character)).map((p) => ({ to: typeof p.to === 'string' ? p.to : JSON.stringify(p.to), change: p.change }));
+  const others = proposed
+    .filter((p) => !(p.to === 'self' && !p.character))
+    .map((p) => ({ to: typeof p.to === 'string' ? p.to : JSON.stringify(p.to), change: p.change }));
   const before = computeSheet(L.ruleset, S.character) as Any;
   if (mine.length) {
     const applied: Any = applyChanges(L.ruleset, S.character, mine);
@@ -345,11 +422,20 @@ function settle(sid: string, result: Any) {
   const after = computeSheet(L.ruleset, S.character) as Any;
   // What the changes did to the character's fields, as the page shows them.
   const changed = Object.keys(after.values ?? {})
-    .filter((id) => L.ruleset.fields[id] && show(before.values?.[id]?.value) !== show(after.values[id].value))
-    .map((id) => ({ label: L.text.field(id), from: show(before.values?.[id]?.value), to: show(after.values[id].value) }));
+    .filter(
+      (id) =>
+        L.ruleset.fields[id] && show(before.values?.[id]?.value) !== show(after.values[id].value),
+    )
+    .map((id) => ({
+      label: L.text.field(id),
+      from: show(before.values?.[id]?.value),
+      to: show(after.values[id].value),
+    }));
   const action = S.action ?? { id: '' };
   const res = result.outcome?.result;
-  const resultText = res ? (packMessage(L, packOf(action.id), `actions.${local(action.id)}.results.${res}.name`) ?? res) : '';
+  const resultText = res
+    ? (packMessage(L, packOf(action.id), `actions.${local(action.id)}.results.${res}.name`) ?? res)
+    : '';
   const outcome = {
     action: actionLabel(L, S.character, after, action),
     result: resultText,
@@ -362,11 +448,20 @@ function settle(sid: string, result: Any) {
 }
 
 /** describeAction, with labels for the parameters, their values and the IDs they take. */
-function describe(L: Loaded, character: Any, action: { id: string; entry?: string; source?: string }) {
+function describe(
+  L: Loaded,
+  character: Any,
+  action: { id: string; entry?: string; source?: string },
+) {
   const d: Any = describeAction(L.ruleset, character, action as Any);
   if (!d.action) return { error: errorText(L, d.errors ?? []) };
   const a = d.action;
-  const nameOf = (id: string) => (L.ruleset.content[id] ? L.text.content(id) : L.ruleset.fields[id] ? L.text.field(id) : L.text.tag(id));
+  const nameOf = (id: string) =>
+    L.ruleset.content[id]
+      ? L.text.content(id)
+      : L.ruleset.fields[id]
+        ? L.text.field(id)
+        : L.text.tag(id);
   return {
     ...action,
     label: actionLabel(L, character, computeSheet(L.ruleset, character), action),
@@ -375,7 +470,10 @@ function describe(L: Loaded, character: Any, action: { id: string; entry?: strin
       .map((p: Any) => ({
         ...p,
         label: p.addedBy ? L.text.addedParam(p.addedBy, p.name) : L.text.param(a.definedBy, p.name),
-        values: p.values?.map((v: string) => ({ id: v, label: L.text.paramValue(a.definedBy, p.name, v) })),
+        values: p.values?.map((v: string) => ({
+          id: v,
+          label: L.text.paramValue(a.definedBy, p.name, v),
+        })),
         options: p.options?.map((id: string) => ({ id, label: nameOf(id) })),
       })),
   };
@@ -384,7 +482,12 @@ function describe(L: Loaded, character: Any, action: { id: string; entry?: strin
 // ---------------------------------------------------------------------------------------------
 // HTTP
 
-const send = (res: ServerResponse, status: number, body: unknown, type = 'application/json; charset=utf-8') => {
+const send = (
+  res: ServerResponse,
+  status: number,
+  body: unknown,
+  type = 'application/json; charset=utf-8',
+) => {
   res.writeHead(status, { 'content-type': type });
   res.end(typeof body === 'string' ? body : JSON.stringify(body));
 };
@@ -417,7 +520,8 @@ export function serve(title: string, page: string, defaultPort: number) {
     try {
       const url = new URL(req.url ?? '/', 'http://localhost');
       const p = url.pathname;
-      if (p === '/' || p === '/index.html') return send(res, 200, readFileSync(pagePath, 'utf8'), 'text/html; charset=utf-8');
+      if (p === '/' || p === '/index.html')
+        return send(res, 200, readFileSync(pagePath, 'utf8'), 'text/html; charset=utf-8');
       if (p === '/api/packs') return send(res, 200, packList());
       if (p === '/api/characters') {
         const pack = url.searchParams.get('pack');
@@ -425,7 +529,9 @@ export function serve(title: string, page: string, defaultPort: number) {
           .filter((f) => f.endsWith('.yaml'))
           .filter((f) => {
             try {
-              return !pack || (readYaml(join(charsDir, f)).packs ?? []).some((x: Any) => x.id === pack);
+              return (
+                !pack || (readYaml(join(charsDir, f)).packs ?? []).some((x: Any) => x.id === pack)
+              );
             } catch {
               return false;
             }
@@ -438,7 +544,10 @@ export function serve(title: string, page: string, defaultPort: number) {
       if (p === '/api/new') {
         const L = loadPack(b.pack);
         const sid = randomUUID();
-        sessions.set(sid, { pack: b.pack, character: newCharacter(L, safeName(b.id || `${b.pack}-${Date.now().toString(36)}`)) });
+        sessions.set(sid, {
+          pack: b.pack,
+          character: newCharacter(L, safeName(b.id || `${b.pack}-${Date.now().toString(36)}`)),
+        });
         return send(res, 200, view(sid));
       }
       if (p === '/api/load') {
@@ -459,25 +568,56 @@ export function serve(title: string, page: string, defaultPort: number) {
         // A creation start: its action and params; a random start runs on its own.
         const S = session(b.sid);
         const L = loadPack(S.pack);
-        const start = (L.ruleset.creation ?? []).find((s: Any) => s.id === b.start && (!b.startPack || s.pack === b.startPack));
+        const start = (L.ruleset.creation ?? []).find(
+          (s: Any) => s.id === b.start && (!b.startPack || s.pack === b.startPack),
+        );
         if (!start) return send(res, 400, { error: `no creation start ${b.start}` });
         S.action = { id: start.action };
         S.policy = start.random ? {} : PAUSE;
-        return send(res, 200, settle(b.sid, startAction(L.ruleset, S.character, { action: { id: start.action }, params: start.params ?? {}, policy: S.policy } as Any)));
+        return send(
+          res,
+          200,
+          settle(
+            b.sid,
+            startAction(L.ruleset, S.character, {
+              action: { id: start.action },
+              params: start.params ?? {},
+              policy: S.policy,
+            } as Any),
+          ),
+        );
       }
       if (p === '/api/describe') {
         const S = session(b.sid);
-        return send(res, 200, describe(loadPack(S.pack), S.character, { id: b.action, ...(b.entry ? { entry: b.entry } : {}), ...(b.source ? { source: b.source } : {}) }));
+        return send(
+          res,
+          200,
+          describe(loadPack(S.pack), S.character, {
+            id: b.action,
+            ...(b.entry ? { entry: b.entry } : {}),
+            ...(b.source ? { source: b.source } : {}),
+          }),
+        );
       }
       if (p === '/api/run') {
         // An action: the rules' or an item's (`entry`), an offer's (`followUp`), with params and
         // situational choices; `auto` takes every recommendation.
         const S = session(b.sid);
         const L = loadPack(S.pack);
-        const ref = { id: b.action, ...(b.entry ? { entry: b.entry } : {}), ...(b.source ? { source: b.source } : {}), ...(b.followUp ? { followUp: b.followUp } : {}) };
+        const ref = {
+          id: b.action,
+          ...(b.entry ? { entry: b.entry } : {}),
+          ...(b.source ? { source: b.source } : {}),
+          ...(b.followUp ? { followUp: b.followUp } : {}),
+        };
         S.action = { id: b.action, ...(b.entry ? { entry: b.entry } : {}) };
         S.policy = b.auto ? {} : PAUSE;
-        const input = { action: ref, params: b.params ?? {}, situational: b.situational ?? {}, policy: S.policy };
+        const input = {
+          action: ref,
+          params: b.params ?? {},
+          situational: b.situational ?? {},
+          policy: S.policy,
+        };
         return send(res, 200, settle(b.sid, startAction(L.ruleset, S.character, input as Any)));
       }
       if (p === '/api/answer') {
@@ -486,7 +626,11 @@ export function serve(title: string, page: string, defaultPort: number) {
         if (!S.paused) return send(res, 400, { error: 'nothing is paused' });
         const L = loadPack(S.pack);
         if (b.auto) S.policy = {};
-        return send(res, 200, settle(b.sid, continueAction(L.ruleset, S.paused, b.answer, S.policy)));
+        return send(
+          res,
+          200,
+          settle(b.sid, continueAction(L.ruleset, S.paused, b.answer, S.policy)),
+        );
       }
       if (p === '/api/cancel') {
         session(b.sid).paused = undefined;
@@ -496,18 +640,22 @@ export function serve(title: string, page: string, defaultPort: number) {
         // A field's input value, or any changes (an offer's, dismissing a follow-up…).
         const S = session(b.sid);
         const L = loadPack(S.pack);
-        const changes = p === '/api/set' ? [{ type: 'set', field: b.field, value: b.value }] : b.changes;
+        const changes =
+          p === '/api/set' ? [{ type: 'set', field: b.field, value: b.value }] : b.changes;
         const applied: Any = applyChanges(L.ruleset, S.character, changes as Any);
-        if (!applied.ok) return send(res, 200, view(b.sid, { error: errorText(L, applied.errors) }));
+        if (!applied.ok)
+          return send(res, 200, view(b.sid, { error: errorText(L, applied.errors) }));
         S.character = applied.character;
         return send(res, 200, view(b.sid, b.message ? { message: b.message } : {}));
       }
-      if (p === '/api/yaml') return send(res, 200, stringify(session(b.sid).character), 'text/yaml; charset=utf-8');
+      if (p === '/api/yaml')
+        return send(res, 200, stringify(session(b.sid).character), 'text/yaml; charset=utf-8');
       if (p === '/api/save') {
         const S = session(b.sid);
         const file = safeName(b.file || `${S.character.id}.yaml`).replace(/(\.yaml)?$/, '.yaml');
         const path = join(charsDir, file);
-        if (existsSync(path) && !b.overwrite && file !== S.file) return send(res, 409, { error: `${file} already exists` });
+        if (existsSync(path) && !b.overwrite && file !== S.file)
+          return send(res, 409, { error: `${file} already exists` });
         writeFileSync(path, stringify(S.character));
         S.file = file;
         return send(res, 200, { saved: `examples/characters/${file}` });
@@ -521,6 +669,13 @@ export function serve(title: string, page: string, defaultPort: number) {
   server.listen(port, '127.0.0.1', () => {
     const url = `http://127.0.0.1:${port}/`;
     console.log(`${title}: ${url}  (Ctrl+C to stop)`);
-    if (!argv.includes('--no-open')) exec(process.platform === 'win32' ? `start "" "${url}"` : process.platform === 'darwin' ? `open "${url}"` : `xdg-open "${url}"`);
+    if (!argv.includes('--no-open'))
+      exec(
+        process.platform === 'win32'
+          ? `start "" "${url}"`
+          : process.platform === 'darwin'
+            ? `open "${url}"`
+            : `xdg-open "${url}"`,
+      );
   });
 }

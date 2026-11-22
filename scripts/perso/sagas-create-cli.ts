@@ -54,7 +54,11 @@ const SECONDARY = ['cco', 'rco', 'spd', 'ini'];
 
 // --- Character ---------------------------------------------------------------------------------
 const id = opt('id') ?? `sagas-${Date.now().toString(36)}`;
-type Feature = { id: string; item: string; state: { learning: number; specialty?: string; initial?: number } };
+type Feature = {
+  id: string;
+  item: string;
+  state: { learning: number; specialty?: string; initial?: number };
+};
 type Gear = { id: string; item: string; equipped: boolean };
 const ch = {
   specVersion: '0.4.0',
@@ -75,19 +79,27 @@ const remaining = () => value(sheet(), 'points.remaining') as number;
 /** A generic skill is learned once per specialty; any other skill once. */
 const addSkill = (item: Item, learning: number, specialty = '', initial?: number) => {
   const local = item.id.replace('skills.', '');
-  const slug = specialty.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  const existing = ch.features.find((f) => f.item === `${PACK}:${item.id}` && (f.state.specialty ?? '') === specialty);
+  const slug = specialty
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+  const existing = ch.features.find(
+    (f) => f.item === `${PACK}:${item.id}` && (f.state.specialty ?? '') === specialty,
+  );
   if (existing) {
     existing.state.learning = learning;
     if (initial !== undefined) existing.state.initial = initial;
     return;
   }
-  let id = slug ? `${local}-${slug}` : local;
-  for (let n = 2; ch.features.some((f) => f.id === id); n++) id = `${slug ? `${local}-${slug}` : local}-${n}`;
+  let featureId = slug ? `${local}-${slug}` : local;
+  for (let n = 2; ch.features.some((f) => f.id === featureId); n++)
+    featureId = `${slug ? `${local}-${slug}` : local}-${n}`;
   const state: Feature['state'] = { learning };
   if (specialty) state.specialty = specialty;
   if (initial !== undefined) state.initial = initial;
-  ch.features.push({ id, item: `${PACK}:${item.id}`, state });
+  ch.features.push({ id: featureId, item: `${PACK}:${item.id}`, state });
 };
 const addGear = (item: Item) => {
   let local = item.id.split('.')[1] ?? item.id;
@@ -99,18 +111,32 @@ const addGear = (item: Item) => {
 const summary = () => {
   const s = sheet();
   const v = (f: string) => value(s, f);
-  const who = [v('identity.name'), v('identity.species'), v('identity.profession')].filter(Boolean).join(', ');
-  console.log(`\n=== ${who || id}: ${v('points.spent')} points spent of ${v('points.budget')}, ${v('points.remaining')} left ===`);
+  const who = [v('identity.name'), v('identity.species'), v('identity.profession')]
+    .filter(Boolean)
+    .join(', ');
+  console.log(
+    `\n=== ${who || id}: ${v('points.spent')} points spent of ${v('points.budget')}, ${v('points.remaining')} left ===`,
+  );
   console.log(CHARS.map((c) => `${nameOf(`fields.chars.${c}`)} ${v(`chars.${c}`)}`).join(' | '));
   console.log(SECONDARY.map((c) => `${nameOf(`fields.sec.${c}`)} ${v(`sec.${c}`)}`).join(' | '));
   console.log(
     `Hit points: physical ${v('hp.physical.max')}, psychical ${v('hp.psychical.max')} | shock ${v('shock.physical')}/${v('shock.psychical')} | Reflex Dodge ${v('dodge.reflex')}`,
   );
   if (ch.features.length) {
-    console.log('Skills: ' + ch.features.map((f) => `${nameOf(f.item.replace(`${PACK}:`, ''))}${f.state.specialty ? ` (${f.state.specialty})` : ''} ${f.state.learning}`).join(', '));
+    console.log(
+      'Skills: ' +
+        ch.features
+          .map(
+            (f) =>
+              `${nameOf(f.item.replace(`${PACK}:`, ''))}${f.state.specialty ? ` (${f.state.specialty})` : ''} ${f.state.learning}`,
+          )
+          .join(', '),
+    );
   }
   if (ch.inventory.length) {
-    console.log('Equipment: ' + ch.inventory.map((i) => nameOf(i.item.replace(`${PACK}:`, ''))).join(', '));
+    console.log(
+      'Equipment: ' + ch.inventory.map((i) => nameOf(i.item.replace(`${PACK}:`, ''))).join(', '),
+    );
   }
   const issues = [...(s.errors ?? []), ...(s.issues ?? [])];
   if (issues.length) console.log('Issues:', JSON.stringify(issues, null, 1));
@@ -140,7 +166,10 @@ const randomCharacter = () => {
   }
   // The rest in 4 to 8 skills.
   // Generic skills are left out: they need a specialty, which only the player can name.
-  const chosen = skills.filter((s) => !s.fields.generic).sort(() => Math.random() - 0.5).slice(0, 4 + Math.floor(Math.random() * 5));
+  const chosen = skills
+    .filter((s) => !s.fields.generic)
+    .toSorted(() => Math.random() - 0.5)
+    .slice(0, 4 + Math.floor(Math.random() * 5));
   for (const sk of chosen) addSkill(sk, sk.fields.base ?? 0);
   fails = 0;
   while (fails < 50) {
@@ -154,14 +183,18 @@ const randomCharacter = () => {
     }
   }
   // A weapon of a chosen skill (if any) and a light protection.
-  const usable = weapons.filter((w) => ch.features.some((f) => f.item === `${PACK}:${w.fields.skill}`));
+  const usable = weapons.filter((w) =>
+    ch.features.some((f) => f.item === `${PACK}:${w.fields.skill}`),
+  );
   addGear(pick(usable.length ? usable : weapons));
   addGear(pick(armors.filter((a) => /leather|kevlar/.test(a.id))));
 };
 
 // --- Interactive mode --------------------------------------------------------------------------
 // Lines read are queued, so nothing is lost when the input is piped.
-const rl = random ? undefined : createInterface({ input: stdin, output: stdout, terminal: stdin.isTTY });
+const rl = random
+  ? undefined
+  : createInterface({ input: stdin, output: stdout, terminal: stdin.isTTY });
 const lines: string[] = [];
 const waiting: ((l: string | undefined) => void)[] = [];
 let closed = false;
@@ -179,7 +212,11 @@ rl?.on('close', () => {
 });
 const ask = async (q: string, def?: string) => {
   stdout.write(def !== undefined && def !== '' ? `${q} [${def}] ` : `${q} `);
-  const l = lines.length ? lines.shift() : closed ? undefined : await new Promise<string | undefined>((res) => waiting.push(res));
+  const l = lines.length
+    ? lines.shift()
+    : closed
+      ? undefined
+      : await new Promise<string | undefined>((res) => waiting.push(res));
   if (l === undefined) {
     console.log('\nInput ended, giving up.');
     process.exit(1);
@@ -212,7 +249,12 @@ const search = async (label: string, list: Item[]): Promise<Item | undefined> =>
     }
     found.slice(0, 20).forEach((i, n) => console.log(`  ${n + 1}. ${i.name} (${i.id})`));
     if (found.length > 20) console.log(`  … ${found.length - 20} more, narrow the search.`);
-    const n = await askInt('  Number (0 to search again):', found.length === 1 ? 1 : 0, 0, Math.min(found.length, 20));
+    const n = await askInt(
+      '  Number (0 to search again):',
+      found.length === 1 ? 1 : 0,
+      0,
+      Math.min(found.length, 20),
+    );
     if (n > 0) return found[n - 1];
   }
 };
@@ -226,13 +268,19 @@ const interactiveCharacter = async () => {
   await askText('background');
   const possessions: string[] = [];
   for (;;) {
-    const p = await ask(possessions.length ? '  Another possession (empty to finish):' : 'Possessions besides weapons and protections, one at a time (empty to finish):');
+    const p = await ask(
+      possessions.length
+        ? '  Another possession (empty to finish):'
+        : 'Possessions besides weapons and protections, one at a time (empty to finish):',
+    );
     if (!p) break;
     possessions.push(p);
   }
   if (possessions.length) set('identity.possessions', possessions.join('\n'));
 
-  console.log('\n--- Characteristics (5 is free; cost per point 3/6/12/24/48 by the final value) ---');
+  console.log(
+    '\n--- Characteristics (5 is free; cost per point 3/6/12/24/48 by the final value) ---',
+  );
   for (const c of CHARS) {
     set(`chars.${c}`, await askInt(`${nameOf(`fields.chars.${c}`)}:`, get(`chars.${c}`, 5), 0, 40));
     console.log(`  ${remaining()} points left`);
@@ -241,7 +289,11 @@ const interactiveCharacter = async () => {
   console.log('\n--- Secondary characteristic bonuses (cost x3) ---');
   const s = sheet();
   for (const c of SECONDARY) {
-    const b = await askInt(`${nameOf(`fields.sec.${c}`)} (base ${value(s, `raw.${c}`)}), bonus:`, get(`creation.${c}`), 0);
+    const b = await askInt(
+      `${nameOf(`fields.sec.${c}`)} (base ${value(s, `raw.${c}`)}), bonus:`,
+      get(`creation.${c}`),
+      0,
+    );
     if (b) set(`creation.${c}`, b);
     console.log(`  ${remaining()} points left`);
   }
@@ -263,7 +315,11 @@ const interactiveCharacter = async () => {
         break;
       }
     }
-    let lvl = await askInt(`  Learning level (initial ${base}; below 0 only -15, -10 or -5):`, base, base);
+    let lvl = await askInt(
+      `  Learning level (initial ${base}; below 0 only -15, -10 or -5):`,
+      base,
+      base,
+    );
     while (lvl < 0 && lvl % 5 !== 0) {
       console.log('  Below 0 the learning level moves in steps of 5: -15, -10, -5 or 0.');
       lvl = await askInt(`  Learning level (initial ${base}):`, base, base);
@@ -288,8 +344,16 @@ const main = async () => {
     randomCharacter();
   } else {
     console.log(`SagaS character creation (${id}). Type q at any time to quit.`);
-    set('creation.points', await askInt('Creation points (150, 250 or 350):', Number(opt('points') ?? 150), 0));
-    const social = await askInt('Social class: -1 less favored (+10 pts), 0 middle class, 1 privileged (-10 pts):', 0, -1, 1);
+    set(
+      'creation.points',
+      await askInt('Creation points (150, 250 or 350):', Number(opt('points') ?? 150), 0),
+    );
+    const social = await askInt(
+      'Social class: -1 less favored (+10 pts), 0 middle class, 1 privileged (-10 pts):',
+      0,
+      -1,
+      1,
+    );
     if (social) set('creation.social', social);
     await interactiveCharacter();
   }
@@ -299,7 +363,10 @@ const main = async () => {
 
   const out = opt('out') ?? join('examples', 'characters', `${id}.yaml`);
   if (rl) {
-    const ok = await ask(`\nSave to ${out}?${existsSync(out) ? ' (the file exists and will be replaced)' : ''} (y/n)`, 'y');
+    const ok = await ask(
+      `\nSave to ${out}?${existsSync(out) ? ' (the file exists and will be replaced)' : ''} (y/n)`,
+      'y',
+    );
     rl.close();
     if (!/^y/i.test(ok)) return;
   }

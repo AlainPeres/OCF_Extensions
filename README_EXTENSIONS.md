@@ -38,9 +38,6 @@ clone is on: `git log -1`.
 | `scripts/perso/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                 |
 | `.vscode/launch.json`, `.vscode/settings.json`   | Run and debug the current TS file from VS Code                  |
 
-The other `scripts/perso/sagas-*.ts` files (`damage`, `gear`, `health`, `modif`, `roll`, `sheet`,
-`skill`, `total`) are small probes used while building the pack; they aren't needed.
-
 ## Running the tools
 
 Each tool is a TypeScript file run with `tsx` and the repo's source condition, from the repo root:

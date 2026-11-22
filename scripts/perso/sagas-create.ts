@@ -37,7 +37,7 @@ const readContent = (folder: string): Item[] =>
     .filter((f) => f.endsWith('.yaml'))
     .map((f) => parse(readFileSync(join(packDir, 'content', folder, f), 'utf8')))
     .map((c) => ({ id: c.id, name: nameOf(c.id), fields: c.fields ?? {} }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .toSorted((a, b) => a.name.localeCompare(b.name));
 
 const CHARS = ['str', 'agi', 'end', 'dex', 'wit', 'wil', 'pre', 'ins'];
 const SECONDARY = ['cco', 'rco', 'spd', 'ini'];
@@ -55,7 +55,10 @@ const data = {
       .map(([k, v]) => [k.slice('constraints.'.length), v]),
   ),
   fieldNames: Object.fromEntries(
-    [...CHARS.map((c) => `chars.${c}`), ...SECONDARY.map((c) => `sec.${c}`)].map((k) => [k, nameOf(`fields.${k}`)]),
+    [...CHARS.map((c) => `chars.${c}`), ...SECONDARY.map((c) => `sec.${c}`)].map((k) => [
+      k,
+      nameOf(`fields.${k}`),
+    ]),
   ),
 };
 
@@ -119,9 +122,16 @@ const randomCharacter = (points: number, id: string): Character => {
     }
   }
   // Generic skills are left out: they need a specialty, which only the player can name.
-  const chosen = data.skills.filter((s) => !s.fields.generic).sort(() => Math.random() - 0.5).slice(0, 4 + Math.floor(Math.random() * 5));
+  const chosen = data.skills
+    .filter((s) => !s.fields.generic)
+    .toSorted(() => Math.random() - 0.5)
+    .slice(0, 4 + Math.floor(Math.random() * 5));
   for (const sk of chosen) {
-    ch.features.push({ id: sk.id.replace('skills.', ''), item: key(sk.id), state: { learning: Number(sk.fields.base ?? 0) } });
+    ch.features.push({
+      id: sk.id.replace('skills.', ''),
+      item: key(sk.id),
+      state: { learning: Number(sk.fields.base ?? 0) },
+    });
   }
   fails = 0;
   while (fails < 50) {
@@ -134,7 +144,9 @@ const randomCharacter = (points: number, id: string): Character => {
       fails++;
     }
   }
-  const usable = data.weapons.filter((w) => ch.features.some((f) => f.item === key(String(w.fields.skill))));
+  const usable = data.weapons.filter((w) =>
+    ch.features.some((f) => f.item === key(String(w.fields.skill))),
+  );
   addGear(ch, pick(usable.length ? usable : data.weapons));
   addGear(ch, pick(data.armors.filter((a) => /leather|kevlar/.test(a.id))));
   return ch;
@@ -164,16 +176,25 @@ const server = createServer(async (req, res) => {
   try {
     if (url.pathname === '/') return send(res, 200, readFileSync(pagePath, 'utf8'), 'text/html');
     if (url.pathname === '/api/data') return send(res, 200, data);
-    if (url.pathname === '/api/compute' && req.method === 'POST') return send(res, 200, compute((await body(req)).character));
+    if (url.pathname === '/api/compute' && req.method === 'POST')
+      return send(res, 200, compute((await body(req)).character));
     if (url.pathname === '/api/yaml' && req.method === 'POST') {
       return send(res, 200, stringify((await body(req)).character), 'text/plain');
     }
     if (url.pathname === '/api/random') {
       const points = Number(url.searchParams.get('points') ?? 150);
-      return send(res, 200, randomCharacter(points, url.searchParams.get('id') || `sagas-${Date.now().toString(36)}`));
+      return send(
+        res,
+        200,
+        randomCharacter(points, url.searchParams.get('id') || `sagas-${Date.now().toString(36)}`),
+      );
     }
     if (url.pathname === '/api/characters') {
-      return send(res, 200, readdirSync(charDir).filter((f) => f.startsWith('sagas') && f.endsWith('.yaml')));
+      return send(
+        res,
+        200,
+        readdirSync(charDir).filter((f) => f.startsWith('sagas') && f.endsWith('.yaml')),
+      );
     }
     if (url.pathname === '/api/load') {
       const file = url.searchParams.get('file') ?? '';
@@ -182,7 +203,8 @@ const server = createServer(async (req, res) => {
     }
     if (url.pathname === '/api/save' && req.method === 'POST') {
       const { character, overwrite } = await body(req);
-      if (!ID.test(character?.id ?? '')) return send(res, 400, { error: 'invalid ID (lowercase letters, digits, hyphens)' });
+      if (!ID.test(character?.id ?? ''))
+        return send(res, 400, { error: 'invalid ID (lowercase letters, digits, hyphens)' });
       const file = join(charDir, `${character.id}.yaml`);
       if (existsSync(file) && !overwrite) return send(res, 409, { error: 'exists', file });
       writeFileSync(file, stringify(character));
@@ -198,6 +220,11 @@ const server = createServer(async (req, res) => {
 server.listen(port, '127.0.0.1', () => {
   const url = `http://127.0.0.1:${port}/`;
   console.log(`SagaS creation: ${url}  (Ctrl+C or the terminal's trash icon to stop)`);
-  const open = process.platform === 'win32' ? `start "" "${url}"` : process.platform === 'darwin' ? `open ${url}` : `xdg-open ${url}`;
+  const open =
+    process.platform === 'win32'
+      ? `start "" "${url}"`
+      : process.platform === 'darwin'
+        ? `open ${url}`
+        : `xdg-open ${url}`;
   if (!process.argv.includes('--no-open')) exec(open);
 });

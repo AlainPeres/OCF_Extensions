@@ -1,404 +1,839 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Universal Play Sheet</title>
-<style>
-  :root { --bg: #f6f5f2; --card: #fff; --ink: #1d1d1f; --muted: #6b6b70; --line: #deddd8; --accent: #2f5d8a; --accent-ink: #fff; --rec: #e6f0f9; --bad: #a3271f; --ok: #2c6e3f; }
-  @media (prefers-color-scheme: dark) { :root { --bg: #17181a; --card: #222326; --ink: #ececee; --muted: #a0a0a6; --line: #38393d; --accent: #6ea4d8; --accent-ink: #111; --rec: #233447; --bad: #f08a80; --ok: #7fcf95; } }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, sans-serif; }
-  header { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 2; }
-  header h1 { font-size: 16px; margin: 0 12px 0 0; }
-  #who { font-weight: 600; margin-left: auto; }
-  main { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; padding: 16px; max-width: 1500px; margin: 0 auto; }
-  @media (max-width: 950px) { main { grid-template-columns: 1fr; } }
-  section { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; }
-  h2 { font-size: 14px; margin: 0 0 8px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
-  h3 { font-size: 15px; margin: 10px 0 6px; }
-  button { font: inherit; padding: 4px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer; }
-  button:hover { border-color: var(--accent); }
-  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-  button.rec { background: var(--rec); border-color: var(--accent); }
-  button.small { padding: 1px 7px; font-size: 12px; }
-  button:disabled { opacity: .5; cursor: default; }
-  input, select { font: inherit; padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--ink); }
-  input[type=number] { width: 5em; }
-  table { border-collapse: collapse; width: 100%; }
-  td, th { padding: 3px 6px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  .muted { color: var(--muted); }
-  .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 6px 0; }
-  .options { display: flex; flex-direction: column; gap: 4px; max-height: 380px; overflow: auto; }
-  .options button { text-align: left; }
-  .msg { padding: 6px 10px; border-radius: 6px; margin-bottom: 8px; }
-  .msg.err { background: color-mix(in srgb, var(--bad) 15%, transparent); color: var(--bad); }
-  .msg.ok { background: color-mix(in srgb, var(--ok) 15%, transparent); color: var(--ok); }
-  ul.issues { margin: 0 0 8px; padding-left: 18px; color: var(--bad); }
-  .badge { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 9px; border: 1px solid var(--line); color: var(--muted); }
-  .copy { padding: 5px 0; border-bottom: 1px solid var(--line); }
-  .copy .state { color: var(--muted); font-size: 12px; }
-  .copy .acts { display: inline-flex; gap: 4px; margin-left: 6px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0 18px; }
-  .outcome { border-left: 3px solid var(--accent); padding: 4px 10px; margin-bottom: 10px; }
-  .outcome .head { font-weight: 600; }
-  .outcome .res { color: var(--accent); }
-  .outcome .line { font-size: 13px; }
-  .faces { font-family: ui-monospace, monospace; }
-  .situ label { display: inline-flex; gap: 4px; align-items: center; margin: 2px 10px 2px 0; font-size: 13px; }
-  #filter { width: 100%; margin-bottom: 6px; }
-  details > summary { cursor: pointer; }
-  .hidden { display: none; }
-</style>
-</head>
-<body>
-<header>
-  <h1>Universal Play Sheet</h1>
-  <select id="pack" title="Pack"></select>
-  <select id="charList" title="Character"></select>
-  <button class="primary" id="btnLoad">Load</button>
-  <button id="btnSave" disabled>Save</button>
-  <span id="who"></span>
-</header>
-<main>
-  <div>
-    <div id="messages"></div>
-    <section id="secPause" class="hidden">
-      <h2 id="pauseAction"></h2>
-      <h3 id="pauseTitle"></h3>
-      <div id="pauseBody"></div>
-    </section>
-    <section id="secForm" class="hidden">
-      <h2>Action</h2>
-      <h3 id="formTitle"></h3>
-      <div id="formBody"></div>
-    </section>
-    <section id="secOffers" class="hidden">
-      <h2>The rules offer</h2>
-      <div id="offers"></div>
-    </section>
-    <section id="secSituation" class="hidden">
-      <details>
-        <summary><h2 style="display:inline">Situation</h2> <span id="situCount" class="muted"></span></summary>
-        <p class="muted" style="margin:4px 0">Applied to the next action you run, then cleared.</p>
-        <div class="situ" id="situational"></div>
-      </details>
-    </section>
-    <section id="secActions" class="hidden">
-      <h2>Actions</h2>
-      <div class="row" id="actions"></div>
-    </section>
-    <section id="secSheet" class="hidden">
-      <h2>Sheet <span id="status" class="badge"></span></h2>
-      <div id="issues"></div>
-      <div id="groups" class="grid"></div>
-    </section>
-    <section id="secCopies" class="hidden">
-      <h2>Content</h2>
-      <input id="filter" placeholder="filter…">
-      <div id="copies"></div>
-    </section>
-    <section id="secInputs" class="hidden">
-      <details>
-        <summary><h2 style="display:inline">Edit input fields</h2></summary>
-        <table id="inputs"></table>
-      </details>
-    </section>
-  </div>
-  <div>
-    <section>
-      <h2>Log <button class="small" id="btnClear" style="float:right">Clear</button></h2>
-      <div id="log"><p class="muted">Rolls and outcomes appear here.</p></div>
-    </section>
-  </div>
-</main>
-<script>
-const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-const store = { get: (k) => { try { return localStorage.getItem('up.' + k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem('up.' + k, v); } catch {} } };
-let state = null;
-const log = [];
-const situ = {}; // situational choices for the next action
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Universal Play Sheet</title>
+    <style>
+      :root {
+        --bg: #f6f5f2;
+        --card: #fff;
+        --ink: #1d1d1f;
+        --muted: #6b6b70;
+        --line: #deddd8;
+        --accent: #2f5d8a;
+        --accent-ink: #fff;
+        --rec: #e6f0f9;
+        --bad: #a3271f;
+        --ok: #2c6e3f;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #17181a;
+          --card: #222326;
+          --ink: #ececee;
+          --muted: #a0a0a6;
+          --line: #38393d;
+          --accent: #6ea4d8;
+          --accent-ink: #111;
+          --rec: #233447;
+          --bad: #f08a80;
+          --ok: #7fcf95;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.45 system-ui,
+          sans-serif;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--line);
+        background: var(--card);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+      header h1 {
+        font-size: 16px;
+        margin: 0 12px 0 0;
+      }
+      #who {
+        font-weight: 600;
+        margin-left: auto;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: 16px;
+        padding: 16px;
+        max-width: 1500px;
+        margin: 0 auto;
+      }
+      @media (max-width: 950px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+      section {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin-bottom: 16px;
+      }
+      h2 {
+        font-size: 14px;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+      h3 {
+        font-size: 15px;
+        margin: 10px 0 6px;
+      }
+      button {
+        font: inherit;
+        padding: 4px 9px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--card);
+        color: var(--ink);
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--accent);
+      }
+      button.primary {
+        background: var(--accent);
+        color: var(--accent-ink);
+        border-color: var(--accent);
+      }
+      button.rec {
+        background: var(--rec);
+        border-color: var(--accent);
+      }
+      button.small {
+        padding: 1px 7px;
+        font-size: 12px;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      input,
+      select {
+        font: inherit;
+        padding: 3px 6px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--card);
+        color: var(--ink);
+      }
+      input[type='number'] {
+        width: 5em;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td,
+      th {
+        padding: 3px 6px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+      td.num,
+      th.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        margin: 6px 0;
+      }
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        max-height: 380px;
+        overflow: auto;
+      }
+      .options button {
+        text-align: left;
+      }
+      .msg {
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+      }
+      .msg.err {
+        background: color-mix(in srgb, var(--bad) 15%, transparent);
+        color: var(--bad);
+      }
+      .msg.ok {
+        background: color-mix(in srgb, var(--ok) 15%, transparent);
+        color: var(--ok);
+      }
+      ul.issues {
+        margin: 0 0 8px;
+        padding-left: 18px;
+        color: var(--bad);
+      }
+      .badge {
+        display: inline-block;
+        font-size: 11px;
+        padding: 0 6px;
+        border-radius: 9px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+      }
+      .copy {
+        padding: 5px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .copy .state {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .copy .acts {
+        display: inline-flex;
+        gap: 4px;
+        margin-left: 6px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0 18px;
+      }
+      .outcome {
+        border-left: 3px solid var(--accent);
+        padding: 4px 10px;
+        margin-bottom: 10px;
+      }
+      .outcome .head {
+        font-weight: 600;
+      }
+      .outcome .res {
+        color: var(--accent);
+      }
+      .outcome .line {
+        font-size: 13px;
+      }
+      .faces {
+        font-family: ui-monospace, monospace;
+      }
+      .situ label {
+        display: inline-flex;
+        gap: 4px;
+        align-items: center;
+        margin: 2px 10px 2px 0;
+        font-size: 13px;
+      }
+      #filter {
+        width: 100%;
+        margin-bottom: 6px;
+      }
+      details > summary {
+        cursor: pointer;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Universal Play Sheet</h1>
+      <select id="pack" title="Pack"></select>
+      <select id="charList" title="Character"></select>
+      <button class="primary" id="btnLoad">Load</button>
+      <button id="btnSave" disabled>Save</button>
+      <span id="who"></span>
+    </header>
+    <main>
+      <div>
+        <div id="messages"></div>
+        <section id="secPause" class="hidden">
+          <h2 id="pauseAction"></h2>
+          <h3 id="pauseTitle"></h3>
+          <div id="pauseBody"></div>
+        </section>
+        <section id="secForm" class="hidden">
+          <h2>Action</h2>
+          <h3 id="formTitle"></h3>
+          <div id="formBody"></div>
+        </section>
+        <section id="secOffers" class="hidden">
+          <h2>The rules offer</h2>
+          <div id="offers"></div>
+        </section>
+        <section id="secSituation" class="hidden">
+          <details>
+            <summary>
+              <h2 style="display: inline">Situation</h2>
+              <span id="situCount" class="muted"></span>
+            </summary>
+            <p class="muted" style="margin: 4px 0">
+              Applied to the next action you run, then cleared.
+            </p>
+            <div class="situ" id="situational"></div>
+          </details>
+        </section>
+        <section id="secActions" class="hidden">
+          <h2>Actions</h2>
+          <div class="row" id="actions"></div>
+        </section>
+        <section id="secSheet" class="hidden">
+          <h2>Sheet <span id="status" class="badge"></span></h2>
+          <div id="issues"></div>
+          <div id="groups" class="grid"></div>
+        </section>
+        <section id="secCopies" class="hidden">
+          <h2>Content</h2>
+          <input id="filter" placeholder="filter…" />
+          <div id="copies"></div>
+        </section>
+        <section id="secInputs" class="hidden">
+          <details>
+            <summary><h2 style="display: inline">Edit input fields</h2></summary>
+            <table id="inputs"></table>
+          </details>
+        </section>
+      </div>
+      <div>
+        <section>
+          <h2>Log <button class="small" id="btnClear" style="float: right">Clear</button></h2>
+          <div id="log"><p class="muted">Rolls and outcomes appear here.</p></div>
+        </section>
+      </div>
+    </main>
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const esc = (s) =>
+        String(s ?? '').replace(
+          /[&<>"']/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+        );
+      const store = {
+        get: (k) => {
+          try {
+            return localStorage.getItem('up.' + k);
+          } catch {
+            return null;
+          }
+        },
+        set: (k, v) => {
+          try {
+            localStorage.setItem('up.' + k, v);
+          } catch {}
+        },
+      };
+      let state = null;
+      const log = [];
+      const situ = {}; // situational choices for the next action
 
-async function api(path, body) {
-  const res = await fetch(path, body === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
-  const type = res.headers.get('content-type') || '';
-  const data = type.includes('json') ? await res.json() : await res.text();
-  if (!res.ok) throw new Error(data.error || data || res.statusText);
-  return data;
-}
-function flash(text, kind = 'ok') { $('messages').innerHTML = text ? `<div class="msg ${kind}">${esc(text)}</div>` : ''; }
-async function call(path, body) {
-  try { const v = await api(path, body); render(v); return v; } catch (e) { flash(e.message, 'err'); }
-}
+      async function api(path, body) {
+        const res = await fetch(
+          path,
+          body === undefined
+            ? {}
+            : {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify(body),
+              },
+        );
+        const type = res.headers.get('content-type') || '';
+        const data = type.includes('json') ? await res.json() : await res.text();
+        if (!res.ok) throw new Error(data.error || data || res.statusText);
+        return data;
+      }
+      function flash(text, kind = 'ok') {
+        $('messages').innerHTML = text ? `<div class="msg ${kind}">${esc(text)}</div>` : '';
+      }
+      async function call(path, body) {
+        try {
+          const v = await api(path, body);
+          render(v);
+          return v;
+        } catch (e) {
+          flash(e.message, 'err');
+        }
+      }
 
-// ---- Loading
-async function init() {
-  const packs = await api('/api/packs');
-  $('pack').innerHTML = '<option value="">All packs</option>' + packs.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
-  $('pack').value = store.get('pack') || '';
-  await listCharacters();
-}
-async function listCharacters() {
-  const list = await api('/api/characters?pack=' + encodeURIComponent($('pack').value));
-  $('charList').innerHTML = list.length ? list.map((f) => `<option>${esc(f)}</option>`).join('') : '<option value="">(none)</option>';
-  const last = store.get('file');
-  if (last && list.includes(last)) $('charList').value = last;
-}
-$('pack').onchange = () => { store.set('pack', $('pack').value); listCharacters(); };
-$('btnLoad').onclick = async () => {
-  if (!$('charList').value) return;
-  store.set('file', $('charList').value);
-  log.length = 0;
-  renderLog();
-  await call('/api/load', { pack: $('pack').value, file: $('charList').value });
-};
-$('btnSave').onclick = async () => {
-  try { const r = await api('/api/save', { sid: state.sid, file: state.file }); flash('Saved: ' + r.saved); } catch (e) { flash(e.message, 'err'); }
-};
-$('btnClear').onclick = () => { log.length = 0; renderLog(); };
+      // ---- Loading
+      async function init() {
+        const packs = await api('/api/packs');
+        $('pack').innerHTML =
+          '<option value="">All packs</option>' +
+          packs.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+        $('pack').value = store.get('pack') || '';
+        await listCharacters();
+      }
+      async function listCharacters() {
+        const list = await api('/api/characters?pack=' + encodeURIComponent($('pack').value));
+        $('charList').innerHTML = list.length
+          ? list.map((f) => `<option>${esc(f)}</option>`).join('')
+          : '<option value="">(none)</option>';
+        const last = store.get('file');
+        if (last && list.includes(last)) $('charList').value = last;
+      }
+      $('pack').onchange = () => {
+        store.set('pack', $('pack').value);
+        listCharacters();
+      };
+      $('btnLoad').onclick = async () => {
+        if (!$('charList').value) return;
+        store.set('file', $('charList').value);
+        log.length = 0;
+        renderLog();
+        await call('/api/load', { pack: $('pack').value, file: $('charList').value });
+      };
+      $('btnSave').onclick = async () => {
+        try {
+          const r = await api('/api/save', { sid: state.sid, file: state.file });
+          flash('Saved: ' + r.saved);
+        } catch (e) {
+          flash(e.message, 'err');
+        }
+      };
+      $('btnClear').onclick = () => {
+        log.length = 0;
+        renderLog();
+      };
 
-// ---- Rendering
-function render(v) {
-  state = v;
-  $('btnSave').disabled = false;
-  $('who').textContent = `${v.character.id}${v.file ? ` — ${v.file}` : ''}`;
-  $('secForm').classList.add('hidden');
-  flash(v.error || '', 'err');
-  if (v.outcome) { log.unshift(v.outcome); renderLog(); }
-  const busy = !!v.paused;
-  renderPause(v);
-  renderOffers(v, busy);
-  renderSituation(v, busy);
-  // The rules' actions; the items' are on their copies below.
-  const rulesActs = v.actions.filter((a) => !a.entry && !a.start);
-  $('secActions').classList.toggle('hidden', busy || !rulesActs.length);
-  $('actions').innerHTML = rulesActs.map((a, i) => actionButtons(a, `r${i}`)).join('');
-  bindActions($('actions'), rulesActs, 'r');
-  renderSheet(v, busy);
-  renderInputs(v, busy);
-}
+      // ---- Rendering
+      function render(v) {
+        state = v;
+        $('btnSave').disabled = false;
+        $('who').textContent = `${v.character.id}${v.file ? ` — ${v.file}` : ''}`;
+        $('secForm').classList.add('hidden');
+        flash(v.error || '', 'err');
+        if (v.outcome) {
+          log.unshift(v.outcome);
+          renderLog();
+        }
+        const busy = !!v.paused;
+        renderPause(v);
+        renderOffers(v, busy);
+        renderSituation(v, busy);
+        // The rules' actions; the items' are on their copies below.
+        const rulesActs = v.actions.filter((a) => !a.entry && !a.start);
+        $('secActions').classList.toggle('hidden', busy || !rulesActs.length);
+        $('actions').innerHTML = rulesActs.map((a, i) => actionButtons(a, `r${i}`)).join('');
+        bindActions($('actions'), rulesActs, 'r');
+        renderSheet(v, busy);
+        renderInputs(v, busy);
+      }
 
-/** A run button (with the defaults) and a "…" button that opens the action's form. */
-const actionButtons = (a, key, label = a.label) =>
-  `<span class="acts"><button class="small" data-run="${key}" title="Run with the defaults">${esc(label)}</button><button class="small" data-form="${key}" title="Parameters">…</button></span>`;
-function bindActions(box, list, prefix) {
-  box.querySelectorAll('[data-run]').forEach((b) => (b.onclick = () => quickRun(list[Number(b.dataset.run.slice(prefix.length))])));
-  box.querySelectorAll('[data-form]').forEach((b) => (b.onclick = () => openForm(list[Number(b.dataset.form.slice(prefix.length))])));
-}
-function takeSituational() {
-  const s = { ...situ };
-  for (const k of Object.keys(situ)) delete situ[k];
-  return s;
-}
-/** Runs at once unless a parameter has to be given; then opens the form. */
-async function quickRun(a) {
-  let d;
-  try { d = await api('/api/describe', { sid: state.sid, action: a.id, entry: a.entry, source: a.source }); } catch (e) { return flash(e.message, 'err'); }
-  if (d.error) return flash(d.error, 'err');
-  if (d.params.some((p) => p.required)) return openForm(a, d);
-  call('/api/run', { sid: state.sid, action: a.id, entry: a.entry, source: a.source, params: {}, situational: takeSituational() });
-}
+      /** A run button (with the defaults) and a "…" button that opens the action's form. */
+      const actionButtons = (a, key, label = a.label) =>
+        `<span class="acts"><button class="small" data-run="${key}" title="Run with the defaults">${esc(label)}</button><button class="small" data-form="${key}" title="Parameters">…</button></span>`;
+      function bindActions(box, list, prefix) {
+        box
+          .querySelectorAll('[data-run]')
+          .forEach(
+            (b) => (b.onclick = () => quickRun(list[Number(b.dataset.run.slice(prefix.length))])),
+          );
+        box
+          .querySelectorAll('[data-form]')
+          .forEach(
+            (b) => (b.onclick = () => openForm(list[Number(b.dataset.form.slice(prefix.length))])),
+          );
+      }
+      function takeSituational() {
+        const s = { ...situ };
+        for (const k of Object.keys(situ)) delete situ[k];
+        return s;
+      }
+      /** Runs at once unless a parameter has to be given; then opens the form. */
+      async function quickRun(a) {
+        let d;
+        try {
+          d = await api('/api/describe', {
+            sid: state.sid,
+            action: a.id,
+            entry: a.entry,
+            source: a.source,
+          });
+        } catch (e) {
+          return flash(e.message, 'err');
+        }
+        if (d.error) return flash(d.error, 'err');
+        if (d.params.some((p) => p.required)) return openForm(a, d);
+        call('/api/run', {
+          sid: state.sid,
+          action: a.id,
+          entry: a.entry,
+          source: a.source,
+          params: {},
+          situational: takeSituational(),
+        });
+      }
 
-function renderOffers(v, busy) {
-  $('secOffers').classList.toggle('hidden', busy || !v.offers.length);
-  $('offers').innerHTML = v.offers
-    .map((o, i) => `<div class="row"><b>${esc(o.label)}</b>${o.required ? ' <span class="badge">required</span>' : ''}${o.forOther ? ' <span class="badge">for another character</span>' : ''}
+      function renderOffers(v, busy) {
+        $('secOffers').classList.toggle('hidden', busy || !v.offers.length);
+        $('offers').innerHTML = v.offers
+          .map(
+            (
+              o,
+              i,
+            ) => `<div class="row"><b>${esc(o.label)}</b>${o.required ? ' <span class="badge">required</span>' : ''}${o.forOther ? ' <span class="badge">for another character</span>' : ''}
       ${o.action || o.changes ? `<button class="small primary" data-o="${i}">${o.action ? 'Run' : 'Apply'}</button>` : ''}
-      ${o.kind === 'ephemeral' ? `<button class="small" data-d="${i}">Dismiss</button>` : ''}</div>`)
-    .join('');
-  $('offers').querySelectorAll('[data-o]').forEach((b) => (b.onclick = () => {
-    const o = v.offers[b.dataset.o];
-    if (o.action) call('/api/run', { sid: v.sid, action: o.action.id, entry: o.action.entry, source: o.action.source, followUp: o.action.followUp, params: o.params ?? {}, situational: takeSituational() });
-    else call('/api/changes', { sid: v.sid, changes: o.changes, message: `${o.label}: applied` });
-  }));
-  $('offers').querySelectorAll('[data-d]').forEach((b) => (b.onclick = () => {
-    const o = v.offers[b.dataset.d];
-    call('/api/changes', { sid: v.sid, changes: [{ type: 'dismissFollowUp', id: o.id }], message: `${o.label}: dismissed` });
-  }));
-}
+      ${o.kind === 'ephemeral' ? `<button class="small" data-d="${i}">Dismiss</button>` : ''}</div>`,
+          )
+          .join('');
+        $('offers')
+          .querySelectorAll('[data-o]')
+          .forEach(
+            (b) =>
+              (b.onclick = () => {
+                const o = v.offers[b.dataset.o];
+                if (o.action)
+                  call('/api/run', {
+                    sid: v.sid,
+                    action: o.action.id,
+                    entry: o.action.entry,
+                    source: o.action.source,
+                    followUp: o.action.followUp,
+                    params: o.params ?? {},
+                    situational: takeSituational(),
+                  });
+                else
+                  call('/api/changes', {
+                    sid: v.sid,
+                    changes: o.changes,
+                    message: `${o.label}: applied`,
+                  });
+              }),
+          );
+        $('offers')
+          .querySelectorAll('[data-d]')
+          .forEach(
+            (b) =>
+              (b.onclick = () => {
+                const o = v.offers[b.dataset.d];
+                call('/api/changes', {
+                  sid: v.sid,
+                  changes: [{ type: 'dismissFollowUp', id: o.id }],
+                  message: `${o.label}: dismissed`,
+                });
+              }),
+          );
+      }
 
-function renderSituation(v, busy) {
-  $('secSituation').classList.toggle('hidden', busy || !v.situational.length);
-  for (const k of Object.keys(situ)) if (!v.situational.some((s) => s.id === k)) delete situ[k];
-  $('situational').innerHTML = v.situational
-    .map((s, i) => `<label><input type="checkbox" data-s="${i}" ${situ[s.id] ? 'checked' : ''}>${esc(s.label)}</label>`)
-    .join('');
-  const count = () => { const n = Object.keys(situ).length; $('situCount').textContent = n ? `(${n} selected)` : ''; };
-  $('situational').querySelectorAll('[data-s]').forEach((c) => (c.onchange = () => {
-    const s = v.situational[c.dataset.s];
-    if (c.checked) situ[s.id] = true; else delete situ[s.id];
-    count();
-  }));
-  count();
-}
+      function renderSituation(v, busy) {
+        $('secSituation').classList.toggle('hidden', busy || !v.situational.length);
+        for (const k of Object.keys(situ))
+          if (!v.situational.some((s) => s.id === k)) delete situ[k];
+        $('situational').innerHTML = v.situational
+          .map(
+            (s, i) =>
+              `<label><input type="checkbox" data-s="${i}" ${situ[s.id] ? 'checked' : ''}>${esc(s.label)}</label>`,
+          )
+          .join('');
+        const count = () => {
+          const n = Object.keys(situ).length;
+          $('situCount').textContent = n ? `(${n} selected)` : '';
+        };
+        $('situational')
+          .querySelectorAll('[data-s]')
+          .forEach(
+            (c) =>
+              (c.onchange = () => {
+                const s = v.situational[c.dataset.s];
+                if (c.checked) situ[s.id] = true;
+                else delete situ[s.id];
+                count();
+              }),
+          );
+        count();
+      }
 
-function renderSheet(v, busy) {
-  $('secSheet').classList.remove('hidden');
-  $('status').textContent = v.creating ? 'being created' : '';
-  $('status').classList.toggle('hidden', !v.creating);
-  $('issues').innerHTML =
-    (v.issues.length ? `<ul class="issues">${v.issues.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : '') +
-    (v.pending ? `<p class="muted">${v.pending} choice(s) still pending.</p>` : '');
-  $('groups').innerHTML = v.groups
-    .map((g) => `<div><h3>${esc(g.label)}</h3><table>${g.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td></tr>`).join('')}</table></div>`)
-    .join('');
-  // Content, each copy with its own actions.
-  $('secCopies').classList.toggle('hidden', !v.copies.length);
-  const itemActs = v.actions.filter((a) => a.entry);
-  $('copies').innerHTML = v.copies
-    .map((c) => {
-      const acts = itemActs.map((a, i) => [a, i]).filter(([a]) => a.entry === c.id);
-      const extra = [...c.state.map((s) => `${esc(s.label)}: ${esc(s.value)}`), ...c.computed.map((s) => `${esc(s.key)}: ${esc(s.value)}`)];
-      return `<div class="copy" data-text="${esc((c.label + ' ' + c.type + ' ' + extra.join(' ')).toLowerCase())}"><b>${esc(c.label)}</b> <span class="badge">${esc(c.type)}</span>${c.equipped ? ' <span class="badge">equipped</span>' : ''}${c.quantity !== undefined ? ` ×${esc(c.quantity)}` : ''}
+      function renderSheet(v, busy) {
+        $('secSheet').classList.remove('hidden');
+        $('status').textContent = v.creating ? 'being created' : '';
+        $('status').classList.toggle('hidden', !v.creating);
+        $('issues').innerHTML =
+          (v.issues.length
+            ? `<ul class="issues">${v.issues.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`
+            : '') + (v.pending ? `<p class="muted">${v.pending} choice(s) still pending.</p>` : '');
+        $('groups').innerHTML = v.groups
+          .map(
+            (g) =>
+              `<div><h3>${esc(g.label)}</h3><table>${g.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td></tr>`).join('')}</table></div>`,
+          )
+          .join('');
+        // Content, each copy with its own actions.
+        $('secCopies').classList.toggle('hidden', !v.copies.length);
+        const itemActs = v.actions.filter((a) => a.entry);
+        $('copies').innerHTML = v.copies
+          .map((c) => {
+            const acts = itemActs.map((a, i) => [a, i]).filter(([a]) => a.entry === c.id);
+            const extra = [
+              ...c.state.map((s) => `${esc(s.label)}: ${esc(s.value)}`),
+              ...c.computed.map((s) => `${esc(s.key)}: ${esc(s.value)}`),
+            ];
+            return `<div class="copy" data-text="${esc((c.label + ' ' + c.type + ' ' + extra.join(' ')).toLowerCase())}"><b>${esc(c.label)}</b> <span class="badge">${esc(c.type)}</span>${c.equipped ? ' <span class="badge">equipped</span>' : ''}${c.quantity !== undefined ? ` ×${esc(c.quantity)}` : ''}
         ${busy ? '' : acts.map(([a, i]) => actionButtons(a, `c${i}`, a.name)).join('')}
         ${extra.length ? `<div class="state">${extra.join(' · ')}</div>` : ''}</div>`;
-    })
-    .join('');
-  bindActions($('copies'), itemActs, 'c');
-  applyFilter();
-}
-function applyFilter() {
-  const q = $('filter').value.toLowerCase();
-  $('copies').querySelectorAll('.copy').forEach((d) => d.classList.toggle('hidden', !!q && !d.dataset.text.includes(q)));
-}
-$('filter').oninput = applyFilter;
+          })
+          .join('');
+        bindActions($('copies'), itemActs, 'c');
+        applyFilter();
+      }
+      function applyFilter() {
+        const q = $('filter').value.toLowerCase();
+        $('copies')
+          .querySelectorAll('.copy')
+          .forEach((d) => d.classList.toggle('hidden', !!q && !d.dataset.text.includes(q)));
+      }
+      $('filter').oninput = applyFilter;
 
-function renderLog() {
-  if (!log.length) { $('log').innerHTML = '<p class="muted">Rolls and outcomes appear here.</p>'; return; }
-  $('log').innerHTML = log
-    .slice(0, 60)
-    .map((o) => `<div class="outcome">
+      function renderLog() {
+        if (!log.length) {
+          $('log').innerHTML = '<p class="muted">Rolls and outcomes appear here.</p>';
+          return;
+        }
+        $('log').innerHTML = log
+          .slice(0, 60)
+          .map(
+            (o) => `<div class="outcome">
       <div class="head">${esc(o.action)}${o.result ? ` — <span class="res">${esc(o.result)}</span>` : ''}</div>
       ${o.rolls.map((r) => `<div class="line">${esc(r.label)}: ${r.roll ? `${esc(r.roll)} ` : ''}<span class="faces">[${esc((r.faces || []).join(', '))}]</span>${r.total !== undefined ? ` = <b>${esc(r.total)}</b>` : ''}${r.band ? ` → <b>${esc(r.band)}</b>` : ''}</div>`).join('')}
       ${o.data.length ? `<div class="line muted">${o.data.map((d) => `${esc(d.key)}: <b>${esc(d.value)}</b>`).join(' · ')}</div>` : ''}
       ${o.changed.length ? `<div class="line">${o.changed.map((c) => `${esc(c.label)}: ${esc(c.from)} → <b>${esc(c.to)}</b>`).join(' · ')}</div>` : ''}
       ${o.others.length ? `<div class="line muted">${o.others.length} change(s) for ${esc([...new Set(o.others.map((x) => x.to))].join(', '))}, not applied here.</div>` : ''}
-    </div>`)
-    .join('');
-}
+    </div>`,
+          )
+          .join('');
+      }
 
-// ---- Pauses (a choice or an allocation during an action)
-function renderPause(v) {
-  const p = v.paused;
-  $('secPause').classList.toggle('hidden', !p);
-  if (!p) return;
-  $('pauseAction').textContent = p.action;
-  $('pauseTitle').textContent = p.title;
-  const body = $('pauseBody');
-  const footer = (rec) => `<div class="row" style="margin-top:10px">${rec ? '<button id="pAuto">Finish automatically</button>' : ''}<button id="pCancel">Cancel action</button></div>`;
-  const answer = (a, auto = false) => call('/api/answer', { sid: v.sid, answer: a, auto });
-  if (p.unsupported) {
-    body.innerHTML = `<p class="msg err">This page cannot answer a ${esc(p.kind)} pause.</p>` + footer(false);
-  } else if (p.kind === 'choice') {
-    const many = p.options.length > 12;
-    body.innerHTML = `${many ? '<input id="pFilter" placeholder="filter…" style="width:100%;margin-bottom:6px">' : ''}
-      <div class="options" id="pOptions">${p.options.map((o) => `<button data-id="${esc(o.id)}" class="${o.id === p.recommended ? 'rec' : ''}">${esc(o.label)}${o.id === p.recommended ? ' <span class="badge">recommended</span>' : ''}</button>`).join('')}</div>` + footer(p.recommended !== undefined);
-    body.querySelectorAll('#pOptions button').forEach((b) => (b.onclick = () => answer({ option: b.dataset.id })));
-    if (many) $('pFilter').oninput = (e) => { const q = e.target.value.toLowerCase(); body.querySelectorAll('#pOptions button').forEach((b) => b.classList.toggle('hidden', !b.textContent.toLowerCase().includes(q))); };
-    if (p.recommended !== undefined) $('pAuto').onclick = () => answer({ option: p.recommended }, true);
-  } else if (p.kind === 'allocate') {
-    renderAllocate(p, body, footer, answer);
-  } else {
-    body.innerHTML = `<p>${esc(p.dice || '')}</p>` + footer(false);
-  }
-  $('pCancel').onclick = () => call('/api/cancel', { sid: v.sid });
-}
-function renderAllocate(p, body, footer, answer) {
-  const a = p.allocate;
-  const rec = a.recommended || {};
-  if (a.values) {
-    const used = new Set();
-    const pre = {};
-    for (const f of a.fields) if (rec[f.id] !== undefined) { const i = a.values.findIndex((x, j) => x === rec[f.id] && !used.has(j)); if (i >= 0) { used.add(i); pre[f.id] = i; } }
-    const opts = (sel) => '<option value=""></option>' + a.values.map((x, i) => `<option value="${i}" ${sel === i ? 'selected' : ''}>${esc(x)}</option>`).join('');
-    body.innerHTML = `<p class="muted">Give each value to a different field: ${a.values.map(esc).join(', ')}.</p>
+      // ---- Pauses (a choice or an allocation during an action)
+      function renderPause(v) {
+        const p = v.paused;
+        $('secPause').classList.toggle('hidden', !p);
+        if (!p) return;
+        $('pauseAction').textContent = p.action;
+        $('pauseTitle').textContent = p.title;
+        const body = $('pauseBody');
+        const footer = (rec) =>
+          `<div class="row" style="margin-top:10px">${rec ? '<button id="pAuto">Finish automatically</button>' : ''}<button id="pCancel">Cancel action</button></div>`;
+        const answer = (a, auto = false) => call('/api/answer', { sid: v.sid, answer: a, auto });
+        if (p.unsupported) {
+          body.innerHTML =
+            `<p class="msg err">This page cannot answer a ${esc(p.kind)} pause.</p>` +
+            footer(false);
+        } else if (p.kind === 'choice') {
+          const many = p.options.length > 12;
+          body.innerHTML =
+            `${many ? '<input id="pFilter" placeholder="filter…" style="width:100%;margin-bottom:6px">' : ''}
+      <div class="options" id="pOptions">${p.options.map((o) => `<button data-id="${esc(o.id)}" class="${o.id === p.recommended ? 'rec' : ''}">${esc(o.label)}${o.id === p.recommended ? ' <span class="badge">recommended</span>' : ''}</button>`).join('')}</div>` +
+            footer(p.recommended !== undefined);
+          body
+            .querySelectorAll('#pOptions button')
+            .forEach((b) => (b.onclick = () => answer({ option: b.dataset.id })));
+          if (many)
+            $('pFilter').oninput = (e) => {
+              const q = e.target.value.toLowerCase();
+              body
+                .querySelectorAll('#pOptions button')
+                .forEach((b) =>
+                  b.classList.toggle('hidden', !b.textContent.toLowerCase().includes(q)),
+                );
+            };
+          if (p.recommended !== undefined)
+            $('pAuto').onclick = () => answer({ option: p.recommended }, true);
+        } else if (p.kind === 'allocate') {
+          renderAllocate(p, body, footer, answer);
+        } else {
+          body.innerHTML = `<p>${esc(p.dice || '')}</p>` + footer(false);
+        }
+        $('pCancel').onclick = () => call('/api/cancel', { sid: v.sid });
+      }
+      function renderAllocate(p, body, footer, answer) {
+        const a = p.allocate;
+        const rec = a.recommended || {};
+        if (a.values) {
+          const used = new Set();
+          const pre = {};
+          for (const f of a.fields)
+            if (rec[f.id] !== undefined) {
+              const i = a.values.findIndex((x, j) => x === rec[f.id] && !used.has(j));
+              if (i >= 0) {
+                used.add(i);
+                pre[f.id] = i;
+              }
+            }
+          const opts = (sel) =>
+            '<option value=""></option>' +
+            a.values
+              .map(
+                (x, i) => `<option value="${i}" ${sel === i ? 'selected' : ''}>${esc(x)}</option>`,
+              )
+              .join('');
+          body.innerHTML =
+            `<p class="muted">Give each value to a different field: ${a.values.map(esc).join(', ')}.</p>
       <table>${a.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td><td><select data-id="${esc(f.id)}">${opts(pre[f.id])}</select></td></tr>`).join('')}</table>
-      <div class="row"><button class="primary" id="aOk">Confirm</button></div>` + footer(a.recommended !== undefined);
-    const read = () => { const amounts = {}; const seen = new Set(); let ok = true; body.querySelectorAll('select').forEach((s) => { if (s.value === '') return; if (seen.has(s.value)) ok = false; seen.add(s.value); amounts[s.dataset.id] = a.values[Number(s.value)]; }); return { amounts, ok: ok && seen.size === a.values.length }; };
-    const check = () => ($('aOk').disabled = !read().ok);
-    body.querySelectorAll('select').forEach((s) => (s.onchange = check));
-    check();
-    $('aOk').onclick = () => answer({ amounts: read().amounts });
-  } else {
-    body.innerHTML = `<table><tr><th></th><th class="num">Now</th><th class="num">Add</th><th class="num">Cost</th></tr>${a.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td><td class="num"><input type="number" min="0" ${f.limit !== undefined ? `max="${f.limit}"` : ''} value="${rec[f.id] ?? 0}" data-id="${esc(f.id)}"></td><td class="num" data-cost="${esc(f.id)}"></td></tr>`).join('')}</table>
-      <div class="row"><b id="aSpent"></b><span class="muted">/ ${esc(a.budget)}</span><button class="primary" id="aOk">Confirm</button></div>` + footer(a.recommended !== undefined);
-    const fields = Object.fromEntries(a.fields.map((f) => [f.id, f]));
-    const check = () => {
-      let spent = 0;
-      body.querySelectorAll('input[data-id]').forEach((i) => { const f = fields[i.dataset.id]; const n = Math.max(0, Math.floor(Number(i.value) || 0)); const c = n <= 0 ? 0 : f.costs && n < f.costs.length ? f.costs[n] : NaN; spent += c; body.querySelector(`[data-cost="${CSS.escape(f.id)}"]`).textContent = n ? c : ''; });
-      const fits = !Number.isNaN(spent) && (a.spend === 'upTo' ? spent <= a.budget : spent === a.budget);
-      $('aSpent').textContent = `Spent: ${Number.isNaN(spent) ? '?' : spent}`;
-      $('aOk').disabled = !fits;
-    };
-    body.querySelectorAll('input[data-id]').forEach((i) => (i.oninput = check));
-    check();
-    $('aOk').onclick = () => { const amounts = {}; body.querySelectorAll('input[data-id]').forEach((i) => { const n = Math.floor(Number(i.value) || 0); if (n > 0) amounts[i.dataset.id] = n; }); answer({ amounts }); };
-  }
-  if (a.recommended !== undefined && $('pAuto')) $('pAuto').onclick = () => answer({ amounts: a.recommended }, true);
-}
+      <div class="row"><button class="primary" id="aOk">Confirm</button></div>` +
+            footer(a.recommended !== undefined);
+          const read = () => {
+            const amounts = {};
+            const seen = new Set();
+            let ok = true;
+            body.querySelectorAll('select').forEach((s) => {
+              if (s.value === '') return;
+              if (seen.has(s.value)) ok = false;
+              seen.add(s.value);
+              amounts[s.dataset.id] = a.values[Number(s.value)];
+            });
+            return { amounts, ok: ok && seen.size === a.values.length };
+          };
+          const check = () => ($('aOk').disabled = !read().ok);
+          body.querySelectorAll('select').forEach((s) => (s.onchange = check));
+          check();
+          $('aOk').onclick = () => answer({ amounts: read().amounts });
+        } else {
+          body.innerHTML =
+            `<table><tr><th></th><th class="num">Now</th><th class="num">Add</th><th class="num">Cost</th></tr>${a.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td><td class="num"><input type="number" min="0" ${f.limit !== undefined ? `max="${f.limit}"` : ''} value="${rec[f.id] ?? 0}" data-id="${esc(f.id)}"></td><td class="num" data-cost="${esc(f.id)}"></td></tr>`).join('')}</table>
+      <div class="row"><b id="aSpent"></b><span class="muted">/ ${esc(a.budget)}</span><button class="primary" id="aOk">Confirm</button></div>` +
+            footer(a.recommended !== undefined);
+          const fields = Object.fromEntries(a.fields.map((f) => [f.id, f]));
+          const check = () => {
+            let spent = 0;
+            body.querySelectorAll('input[data-id]').forEach((i) => {
+              const f = fields[i.dataset.id];
+              const n = Math.max(0, Math.floor(Number(i.value) || 0));
+              const c = n <= 0 ? 0 : f.costs && n < f.costs.length ? f.costs[n] : NaN;
+              spent += c;
+              body.querySelector(`[data-cost="${CSS.escape(f.id)}"]`).textContent = n ? c : '';
+            });
+            const fits =
+              !Number.isNaN(spent) && (a.spend === 'upTo' ? spent <= a.budget : spent === a.budget);
+            $('aSpent').textContent = `Spent: ${Number.isNaN(spent) ? '?' : spent}`;
+            $('aOk').disabled = !fits;
+          };
+          body.querySelectorAll('input[data-id]').forEach((i) => (i.oninput = check));
+          check();
+          $('aOk').onclick = () => {
+            const amounts = {};
+            body.querySelectorAll('input[data-id]').forEach((i) => {
+              const n = Math.floor(Number(i.value) || 0);
+              if (n > 0) amounts[i.dataset.id] = n;
+            });
+            answer({ amounts });
+          };
+        }
+        if (a.recommended !== undefined && $('pAuto'))
+          $('pAuto').onclick = () => answer({ amounts: a.recommended }, true);
+      }
 
-// ---- Action forms, from describeAction
-async function openForm(a, described) {
-  let d = described;
-  if (!d) {
-    try { d = await api('/api/describe', { sid: state.sid, action: a.id, entry: a.entry, source: a.source }); } catch (e) { return flash(e.message, 'err'); }
-    if (d.error) return flash(d.error, 'err');
-  }
-  $('secForm').classList.remove('hidden');
-  $('formTitle').textContent = d.label;
-  const input = (p) => {
-    const name = `data-name="${esc(p.name)}"`;
-    const list = p.options || p.values;
-    if (list) return `<select ${name}>${p.required ? '' : '<option value=""></option>'}${list.map((o) => `<option value="${esc(o.id)}" ${o.id === p.default ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select>`;
-    if (p.type === 'boolean') return `<input type="checkbox" ${name} ${p.default ? 'checked' : ''}>`;
-    if (p.type === 'integer' || p.type === 'decimal') return `<input type="number" ${name} ${p.min !== undefined ? `min="${p.min}"` : ''} ${p.max !== undefined ? `max="${p.max}"` : ''} ${p.type === 'decimal' ? 'step="any"' : ''} value="${p.default ?? ''}">`;
-    return `<input ${name} value="${esc(p.default ?? '')}" size="28">`;
-  };
-  $('formBody').innerHTML = `<table>${d.params.map((p) => `<tr><td>${esc(p.label)}${p.required ? ' *' : ''}</td><td>${input(p)}</td></tr>`).join('') || '<tr><td class="muted">No parameters.</td></tr>'}</table>
+      // ---- Action forms, from describeAction
+      async function openForm(a, described) {
+        let d = described;
+        if (!d) {
+          try {
+            d = await api('/api/describe', {
+              sid: state.sid,
+              action: a.id,
+              entry: a.entry,
+              source: a.source,
+            });
+          } catch (e) {
+            return flash(e.message, 'err');
+          }
+          if (d.error) return flash(d.error, 'err');
+        }
+        $('secForm').classList.remove('hidden');
+        $('formTitle').textContent = d.label;
+        const input = (p) => {
+          const name = `data-name="${esc(p.name)}"`;
+          const list = p.options || p.values;
+          if (list)
+            return `<select ${name}>${p.required ? '' : '<option value=""></option>'}${list.map((o) => `<option value="${esc(o.id)}" ${o.id === p.default ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select>`;
+          if (p.type === 'boolean')
+            return `<input type="checkbox" ${name} ${p.default ? 'checked' : ''}>`;
+          if (p.type === 'integer' || p.type === 'decimal')
+            return `<input type="number" ${name} ${p.min !== undefined ? `min="${p.min}"` : ''} ${p.max !== undefined ? `max="${p.max}"` : ''} ${p.type === 'decimal' ? 'step="any"' : ''} value="${p.default ?? ''}">`;
+          return `<input ${name} value="${esc(p.default ?? '')}" size="28">`;
+        };
+        $('formBody').innerHTML =
+          `<table>${d.params.map((p) => `<tr><td>${esc(p.label)}${p.required ? ' *' : ''}</td><td>${input(p)}</td></tr>`).join('') || '<tr><td class="muted">No parameters.</td></tr>'}</table>
     <div class="row"><button class="primary" id="fRun">Run</button><button id="fAuto">Run automatically</button><button id="fClose">Close</button></div>`;
-  const read = () => {
-    const params = {};
-    for (const p of d.params) {
-      const el = $('formBody').querySelector(`[data-name="${CSS.escape(p.name)}"]`);
-      if (p.type === 'boolean') params[p.name] = el.checked;
-      else if (el.value === '') continue;
-      else if (p.type === 'integer') params[p.name] = Math.trunc(Number(el.value));
-      else if (p.type === 'decimal') params[p.name] = Number(el.value);
-      else params[p.name] = el.value;
-    }
-    return params;
-  };
-  const run = (auto) => call('/api/run', { sid: state.sid, action: a.id, entry: a.entry, source: a.source, params: read(), situational: takeSituational(), auto });
-  $('fRun').onclick = () => run(false);
-  $('fAuto').onclick = () => run(true);
-  $('fClose').onclick = () => $('secForm').classList.add('hidden');
-  $('secForm').scrollIntoView({ block: 'nearest' });
-}
+        const read = () => {
+          const params = {};
+          for (const p of d.params) {
+            const el = $('formBody').querySelector(`[data-name="${CSS.escape(p.name)}"]`);
+            if (p.type === 'boolean') params[p.name] = el.checked;
+            else if (el.value === '') continue;
+            else if (p.type === 'integer') params[p.name] = Math.trunc(Number(el.value));
+            else if (p.type === 'decimal') params[p.name] = Number(el.value);
+            else params[p.name] = el.value;
+          }
+          return params;
+        };
+        const run = (auto) =>
+          call('/api/run', {
+            sid: state.sid,
+            action: a.id,
+            entry: a.entry,
+            source: a.source,
+            params: read(),
+            situational: takeSituational(),
+            auto,
+          });
+        $('fRun').onclick = () => run(false);
+        $('fAuto').onclick = () => run(true);
+        $('fClose').onclick = () => $('secForm').classList.add('hidden');
+        $('secForm').scrollIntoView({ block: 'nearest' });
+      }
 
-// ---- Input fields: a `set` change each
-function renderInputs(v, busy) {
-  $('secInputs').classList.toggle('hidden', busy || !v.inputs.length);
-  $('inputs').innerHTML = v.inputs
-    .map((f, i) => {
-      const id = `data-i="${i}"`;
-      let el;
-      if (f.values) el = `<select ${id}>${f.values.map((o) => `<option value="${esc(o.id)}" ${o.id === f.value ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select>`;
-      else if (f.type === 'boolean') el = `<input type="checkbox" ${id} ${f.value ? 'checked' : ''}>`;
-      else if (f.type === 'integer' || f.type === 'decimal') el = `<input type="number" ${id} ${f.min !== undefined ? `min="${f.min}"` : ''} ${f.max !== undefined ? `max="${f.max}"` : ''} value="${esc(f.value)}">`;
-      else el = `<input ${id} value="${esc(f.value)}" size="40">`;
-      return `<tr><td>${esc(f.label)}</td><td>${el}</td></tr>`;
-    })
-    .join('');
-  $('inputs').querySelectorAll('[data-i]').forEach((el) => (el.onchange = () => {
-    const f = v.inputs[el.dataset.i];
-    const value = f.type === 'boolean' ? el.checked : f.type === 'integer' ? Math.trunc(Number(el.value)) : f.type === 'decimal' ? Number(el.value) : el.value;
-    call('/api/set', { sid: v.sid, field: f.id, value });
-  }));
-}
+      // ---- Input fields: a `set` change each
+      function renderInputs(v, busy) {
+        $('secInputs').classList.toggle('hidden', busy || !v.inputs.length);
+        $('inputs').innerHTML = v.inputs
+          .map((f, i) => {
+            const id = `data-i="${i}"`;
+            let el;
+            if (f.values)
+              el = `<select ${id}>${f.values.map((o) => `<option value="${esc(o.id)}" ${o.id === f.value ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select>`;
+            else if (f.type === 'boolean')
+              el = `<input type="checkbox" ${id} ${f.value ? 'checked' : ''}>`;
+            else if (f.type === 'integer' || f.type === 'decimal')
+              el = `<input type="number" ${id} ${f.min !== undefined ? `min="${f.min}"` : ''} ${f.max !== undefined ? `max="${f.max}"` : ''} value="${esc(f.value)}">`;
+            else el = `<input ${id} value="${esc(f.value)}" size="40">`;
+            return `<tr><td>${esc(f.label)}</td><td>${el}</td></tr>`;
+          })
+          .join('');
+        $('inputs')
+          .querySelectorAll('[data-i]')
+          .forEach(
+            (el) =>
+              (el.onchange = () => {
+                const f = v.inputs[el.dataset.i];
+                const value =
+                  f.type === 'boolean'
+                    ? el.checked
+                    : f.type === 'integer'
+                      ? Math.trunc(Number(el.value))
+                      : f.type === 'decimal'
+                        ? Number(el.value)
+                        : el.value;
+                call('/api/set', { sid: v.sid, field: f.id, value });
+              }),
+          );
+      }
 
-init().catch((e) => flash(e.message, 'err'));
-</script>
-</body>
+      init().catch((e) => flash(e.message, 'err'));
+    </script>
+  </body>
 </html>
