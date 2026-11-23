@@ -11,19 +11,31 @@ Everything runs from the repo's TypeScript sources, so nothing needs a build: th
 
 ## Getting the repository
 
+| System           | Procedure                             | What you get                                      | Tested                             |
+| ---------------- | ------------------------------------- | ------------------------------------------------- | ---------------------------------- |
+| Linux            | [Linux](#linux)                       | Everything: 16 packs, ORC included                | Not yet                            |
+| macOS            | [macOS](#macos)                       | Everything: 16 packs, ORC included                | Not yet                            |
+| Windows          | [Windows](#windows)                   | 14 packs on disk; ORC only in the universal tools | Yes, clone from GitHub, 2026-11-23 |
+| Windows with WSL | [Windows with WSL](#windows-with-wsl) | Everything, as on Linux                           | Not yet                            |
+
+Linux, macOS and WSL take the same commands. Windows needs a few more (no checkout at first,
+`core.protectNTFS`, a sparse checkout, two links to remove) because of `boosts/con.yaml` ([The ORC packs are left out](#the-orc-packs-are-left-out)).
+
 ### Requirements
 
-- **Git.** On Windows, Git for Windows; on macOS, the Xcode command-line tools
-  (`xcode-select --install`) or Homebrew's `git`.
+- **Git**: see each system below.
 - **Node 26** (`.nvmrc`; the root `package.json` asks for `>=26`). A version manager is the easy
-  way: in the repo folder, `nvm install` (nvm, on macOS and Linux) or `fnm use --install-if-missing`
+  way: in the repo folder, `nvm install` (nvm, on Linux and macOS) or `fnm use --install-if-missing`
   (fnm, anywhere) read `.nvmrc`; with nvm-windows, `nvm install 26` then `nvm use 26`.
 - **pnpm 10** (`packageManager: pnpm@10.20.0`): `npm install -g pnpm@10.20.0`. Node 25 and later
   no longer ship Corepack, so `corepack enable` isn't there with Node 26.
 
-### macOS and Linux
+Check them: `git --version`, `node --version` (v26…), `pnpm --version` (10.20.0).
 
-Nothing special: every file can be written, the ORC packs included.
+### Linux
+
+Git from the distribution (`sudo apt install git` on Debian and Ubuntu, `sudo dnf install git` on
+Fedora). Then, in the folder that will hold the clone:
 
 ```sh
 git clone https://github.com/AlainPeres/OCF_Extensions.git
@@ -33,27 +45,38 @@ pnpm install --frozen-lockfile
 pnpm validate
 ```
 
-`pnpm validate` checks all 16 packs and every example character. The macOS file system ignores
-case, but no two paths in the repository differ only by case, so that doesn't matter here.
+What you should get:
+
+- `pnpm install` ends with `Done in …`;
+- `pnpm validate` ends with `Validated 16 pack(s) […] 49 character file(s) and 1 export(s): 0
+  error(s), 0 warning(s)` (the 16 packs include `orc-2e` and `orc-sf-2e`; the 49 characters, OCF's
+  examples, the 19 ORC ones and ours in `extensions/`);
+- `git status` says `nothing to commit, working tree clean`.
+
+No sparse checkout and no `core.protectNTFS`: every file is on disk, and the universal tools read
+the ORC packs from it. `pnpm test` runs, but a few OCF tests that list the official packs fail
+because of `packs/sagas/core` ([GitHub setup](#github-setup)).
+
+### macOS
+
+Git from the Xcode command-line tools (`xcode-select --install`) or Homebrew (`brew install git`),
+Node from nvm, fnm or Homebrew (`brew install node@26`). Then the same commands and results as
+[Linux](#linux).
+
+The macOS file system ignores case by default (`a.yaml` and `A.yaml` would be one file), but no two
+paths in the repository differ only by case, so nothing clashes. The tools open the browser with
+`open`.
 
 ### Windows
 
-`packs/orc/2e/content/boosts/con.yaml` and its twin in `sf-2e` can't exist on Windows (`CON` is a
-reserved name: [The ORC packs are left out](#the-orc-packs-are-left-out)). A plain `git clone`
-downloads the history, then fails to write the files:
+Git for Windows (<https://git-scm.com/download/win>), with its defaults. Node from the installer at
+<https://nodejs.org> or a version manager. PowerShell, in the folder that will hold the clone (here
+`D:\Developpement\FichiersTypescript\OCF_Test`, for instance):
 
-```text
-error: invalid path 'packs/orc/2e/content/boosts/con.yaml'
-fatal: unable to checkout working tree
-warning: Clone succeeded, but checkout failed.
-```
-
-Clone without a checkout, set up a sparse checkout that leaves out the ORC packs and their example
-characters, then check out `main` (PowerShell or Git Bash):
-
-```sh
+```powershell
 git clone --no-checkout https://github.com/AlainPeres/OCF_Extensions.git
 cd OCF_Extensions
+git config core.protectNTFS false
 git sparse-checkout set --no-cone '/*' '!packs/orc/' '!examples/characters/orc-*.yaml'
 git checkout main
 git remote add upstream https://github.com/pixelqueue/opencharacter.git
@@ -63,15 +86,70 @@ cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-sf-2e
 pnpm validate
 ```
 
-The two `rmdir` remove the links pnpm makes to the missing ORC packs
-([pnpm's links to the ORC packs](#pnpms-links-to-the-orc-packs)); in Git Bash, write them
-`cmd //c rmdir 'packages\packs\node_modules\@opencharacter\orc-2e'`. `pnpm validate` then checks 14
-packs, and `git status` stays clean. The SagaS tools and the universal tools work; the universal
-tools even load the ORC packs, from git ([PF2 in the universal tools](#pf2-in-the-universal-tools)).
-What doesn't: `pnpm validate` and `pnpm test` on the ORC packs, editing them, and `pnpm lint` on
-OCF's files ([GitHub setup](#github-setup)). Don't turn `core.protectNTFS` off to force the
-checkout: Windows still can't create the file, and the setting also guards against malicious
-paths.
+Step by step:
+
+1. **`git clone --no-checkout`** downloads the history (about 15 MB) and writes no file yet: a plain
+   clone would stop on `error: invalid path 'packs/orc/2e/content/boosts/con.yaml'`.
+2. **`git config core.protectNTFS false`**, in the clone's folder: lets git hold `con.yaml` in its
+   index. It is never written to disk, but without this git refuses it even there
+   ([`core.protectNTFS`](#coreprotectntfs) below).
+3. **`git sparse-checkout set`** leaves out `packs/orc/` and the 19 `orc-*.yaml` example
+   characters, whose pack is missing.
+4. **`git checkout main`** writes the files: `Updating files: 100% (19702/19702), done.`, then
+   `Already on 'main'`.
+5. **`git remote add upstream`**: OCF's repository, to keep up with it
+   ([After cloning](#after-cloning)).
+6. **`pnpm install --frozen-lockfile`** ends with `Done in …`. Its warning `Ignored build scripts:
+   esbuild` is pnpm 10's default and harmless.
+7. **The two `rmdir`** remove the links pnpm makes to the missing ORC packs
+   ([pnpm's links to the ORC packs](#pnpms-links-to-the-orc-packs)). They print nothing.
+8. **`pnpm validate`** takes a few seconds, then ends with `Validated 14 pack(s) […] 30 character
+   file(s) and 1 export(s): 0 error(s), 0 warning(s)`.
+
+`git status` then says `nothing to commit, working tree clean`, with `You are in a sparse checkout
+with 74% of tracked files present`.
+
+In Git Bash instead of PowerShell, the commands are the same except the two `rmdir`:
+`cmd //c rmdir 'packages\packs\node_modules\@opencharacter\orc-2e'` (and the same for
+`orc-sf-2e`). To delete a clone later, use `cmd /c rmdir /s /q <folder>` from PowerShell, never
+Windows Explorer or `Remove-Item` ([Copying the repository folder](#copying-the-repository-folder)).
+
+What works: the SagaS tools, the universal tools (which even load the ORC packs, from git: [PF2 in
+the universal tools](#pf2-in-the-universal-tools)), `pnpm validate` on the 14 packs on disk,
+`pnpm typecheck`, and merges from `upstream`. What doesn't: `pnpm validate` and `pnpm test` on the
+ORC packs, editing them, and `pnpm lint` on OCF's files ([GitHub setup](#github-setup)).
+
+#### `core.protectNTFS`
+
+On Windows, git refuses paths NTFS would treat specially: reserved names (`CON`, `PRN`, `AUX`,
+`NUL`, `COM1`…), 8.3 short names (`GIT~1` can stand for `.git`), names ending in a dot or a space,
+alternate data streams (`file:stream`). It is a security check: a crafted repository could
+otherwise write into `.git` (a hook git then runs). Without `--global`,
+`git config core.protectNTFS false` writes to this clone's `.git/config` only; other repositories
+keep the check, and a clone never inherits it, so every Windows clone sets it again. The risk is
+limited to what this repository fetches, its own `origin` and OCF's `upstream`; don't use the
+setting to clone unknown repositories. `git config core.protectNTFS true` undoes it, but then any
+command that reads the whole tree (`checkout` of another commit, `merge`, `restore`) fails on
+`con.yaml` and can leave the index broken.
+
+- **Without it,** `git checkout main` stops on `error: invalid path '…/boosts/con.yaml'` and writes
+  nothing (`pnpm install` then finds no `package.json`).
+- **If it was turned back on and the index broke** (`git status` showing `pnpm-lock.yaml` and
+  `pnpm-workspace.yaml` deleted although they are on disk): set it to `false` again, then rebuild
+  the index from `HEAD` and reapply the sparse checkout. Neither touches the files on disk:
+
+  ```sh
+  git config core.protectNTFS false
+  git read-tree HEAD
+  git sparse-checkout reapply
+  git status    # clean
+  ```
+
+- **To keep the check on,** a cone-mode sparse checkout with a sparse index works
+  (`git sparse-checkout set --cone --sparse-index` with every folder but `packs/orc`): `packs/orc/`
+  stays one folder entry in the index, so `con.yaml` never shows up. But cone mode can't leave out
+  single files: the 19 `orc-*.yaml` example characters come back on disk, and `pnpm validate` then
+  reports some 300 errors about them. WSL avoids all of this.
 
 ### Windows with WSL
 
@@ -82,11 +160,20 @@ Linux inside Windows), in its own file system:
 wsl --install -d Ubuntu      # once, in an administrator PowerShell; then restart
 ```
 
-Then, in the Ubuntu terminal, install Node with nvm (`nvm install 26`) and follow
-[macOS and Linux](#macos-and-linux), in the Linux home folder (`cd ~`). Not under `/mnt/c` or
-`/mnt/d`: that is the Windows disk, much slower from WSL, and Windows' naming rules may still
-apply there. Open the folder in VS Code with `code .` (the WSL extension). The tools print their
-address (`http://127.0.0.1:5176/` …); WSL can't always open a Windows browser itself, so open
+Then, in the Ubuntu terminal:
+
+```sh
+sudo apt update && sudo apt install -y git curl
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash   # then reopen the terminal
+nvm install 26
+npm install -g pnpm@10.20.0
+cd ~
+```
+
+and follow [Linux](#linux), with the same results. Clone in the Linux home folder (`~`), not under
+`/mnt/c` or `/mnt/d`: that is the Windows disk, much slower from WSL, and Windows' naming rules may
+still apply there. Open the folder in VS Code with `code .` (the WSL extension). The tools print
+their address (`http://127.0.0.1:5176/` …); WSL can't always open a Windows browser itself, so open
 that address in the browser if it doesn't open, or pass `--no-open`.
 
 ### After cloning
@@ -100,7 +187,8 @@ git merge upstream/main
 pnpm install --frozen-lockfile           # if the merge changed pnpm-lock.yaml
 ```
 
-Then run the checks of [GitHub setup](#github-setup) before pushing, and restart a running tool.
+On Windows, remove the two ORC links again after the install. Then run the checks of [GitHub
+setup](#github-setup) before pushing, and restart a running tool.
 
 ## OCF version
 
@@ -377,7 +465,9 @@ The consequences:
 - the tests that read the ORC packs fail with `ENOENT … packs/orc/2e/pack.yaml`;
 - `git sparse-checkout disable` would bring the folder back, but on Windows the checkout of
   `con.yaml` fails;
-- the universal tools still load both packs, from git (next section).
+- the universal tools still load both packs, from git (next section);
+- the clone has `core.protectNTFS` set to `false`, or git couldn't even hold `con.yaml` in its
+  index ([Windows](#windows)).
 
 The real fix belongs to OCF. The file exists because each attribute boost is a content item, one
 file per attribute (`content/boosts/str.yaml` … `con.yaml`). The 5e packs model the same need
