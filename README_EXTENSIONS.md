@@ -1,15 +1,110 @@
 # SagaS extensions
 
-Local additions to this Open Character Format clone: a pack for the _Rules of SagaS 0.995 LLL (OGL)_
-and browser and terminal tools to create and play characters. None of it is part of the official
-OCF repository; the rest of the repo (spec, engine, other packs) is unchanged.
+Additions to the Open Character Format (OCF) repository: a pack for the _Rules of SagaS 0.995 LLL
+(OGL)_ and browser and terminal tools to create and play characters. This repository
+(<https://github.com/AlainPeres/OCF_Extensions>, the `origin` remote) keeps OCF's whole history,
+with OCF's repository as the `upstream` remote. None of the additions is part of OCF; the rest of
+the repo (spec, engine, other packs) is OCF's, unchanged.
 
 Everything runs from the repo's TypeScript sources, so nothing needs a build: the scripts import
 `packages/engine/src` and `packages/text/src` directly.
 
+## Getting the repository
+
+### Requirements
+
+- **Git.** On Windows, Git for Windows; on macOS, the Xcode command-line tools
+  (`xcode-select --install`) or Homebrew's `git`.
+- **Node 26** (`.nvmrc`; the root `package.json` asks for `>=26`). A version manager is the easy
+  way: in the repo folder, `nvm install` (nvm, on macOS and Linux) or `fnm use --install-if-missing`
+  (fnm, anywhere) read `.nvmrc`; with nvm-windows, `nvm install 26` then `nvm use 26`.
+- **pnpm 10** (`packageManager: pnpm@10.20.0`): `npm install -g pnpm@10.20.0`. Node 25 and later
+  no longer ship Corepack, so `corepack enable` isn't there with Node 26.
+
+### macOS and Linux
+
+Nothing special: every file can be written, the ORC packs included.
+
+```sh
+git clone https://github.com/AlainPeres/OCF_Extensions.git
+cd OCF_Extensions
+git remote add upstream https://github.com/pixelqueue/opencharacter.git
+pnpm install --frozen-lockfile
+pnpm validate
+```
+
+`pnpm validate` checks all 16 packs and every example character. The macOS file system ignores
+case, but no two paths in the repository differ only by case, so that doesn't matter here.
+
+### Windows
+
+`packs/orc/2e/content/boosts/con.yaml` and its twin in `sf-2e` can't exist on Windows (`CON` is a
+reserved name: [The ORC packs are left out](#the-orc-packs-are-left-out)). A plain `git clone`
+downloads the history, then fails to write the files:
+
+```text
+error: invalid path 'packs/orc/2e/content/boosts/con.yaml'
+fatal: unable to checkout working tree
+warning: Clone succeeded, but checkout failed.
+```
+
+Clone without a checkout, set up a sparse checkout that leaves out the ORC packs and their example
+characters, then check out `main` (PowerShell or Git Bash):
+
+```sh
+git clone --no-checkout https://github.com/AlainPeres/OCF_Extensions.git
+cd OCF_Extensions
+git sparse-checkout set --no-cone '/*' '!packs/orc/' '!examples/characters/orc-*.yaml'
+git checkout main
+git remote add upstream https://github.com/pixelqueue/opencharacter.git
+pnpm install --frozen-lockfile
+cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-2e
+cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-sf-2e
+pnpm validate
+```
+
+The two `rmdir` remove the links pnpm makes to the missing ORC packs
+([pnpm's links to the ORC packs](#pnpms-links-to-the-orc-packs)); in Git Bash, write them
+`cmd //c rmdir 'packages\packs\node_modules\@opencharacter\orc-2e'`. `pnpm validate` then checks 14
+packs, and `git status` stays clean. The SagaS tools and the universal tools work; the universal
+tools even load the ORC packs, from git ([PF2 in the universal tools](#pf2-in-the-universal-tools)).
+What doesn't: `pnpm validate` and `pnpm test` on the ORC packs, editing them, and `pnpm lint` on
+OCF's files ([GitHub setup](#github-setup)). Don't turn `core.protectNTFS` off to force the
+checkout: Windows still can't create the file, and the setting also guards against malicious
+paths.
+
+### Windows with WSL
+
+For the whole repository on a Windows machine, ORC packs and `pnpm test` included, work in WSL (a
+Linux inside Windows), in its own file system:
+
+```powershell
+wsl --install -d Ubuntu      # once, in an administrator PowerShell; then restart
+```
+
+Then, in the Ubuntu terminal, install Node with nvm (`nvm install 26`) and follow
+[macOS and Linux](#macos-and-linux), in the Linux home folder (`cd ~`). Not under `/mnt/c` or
+`/mnt/d`: that is the Windows disk, much slower from WSL, and Windows' naming rules may still
+apply there. Open the folder in VS Code with `code .` (the WSL extension). The tools print their
+address (`http://127.0.0.1:5176/` …); WSL can't always open a Windows browser itself, so open
+that address in the browser if it doesn't open, or pass `--no-open`.
+
+### After cloning
+
+Keep up with OCF:
+
+```sh
+git fetch upstream
+git log --oneline HEAD..upstream/main    # what OCF has that this repository doesn't
+git merge upstream/main
+pnpm install --frozen-lockfile           # if the merge changed pnpm-lock.yaml
+```
+
+Then run the checks of [GitHub setup](#github-setup) before pushing, and restart a running tool.
+
 ## OCF version
 
-Built and tested against this commit of the OCF repository:
+Built and tested against this commit of the OCF repository, still `upstream/main` on 2026-11-23:
 
 |                 |                                                               |
 | --------------- | ------------------------------------------------------------- |
@@ -195,7 +290,8 @@ text (`@opencharacter/text`, `describeNeed`).
     built from the action's parameters.
   - **Input fields** can be edited, and the character is shown and saved.
 
-  The guided and random starts of all 14 packs were tested.
+  The guided and random starts of the 14 packs on disk were tested, and the random starts of the
+  two ORC packs (PF2, read from git on Windows: [PF2 in the universal tools](#pf2-in-the-universal-tools)).
 
 - **`universal-play.ts`**: load any example character and play it:
   - **Sheet**: fields by display group, content with its state and computed values, rules issues.
@@ -207,7 +303,7 @@ text (`@opencharacter/text`, `describeNeed`).
   - **Offers**: the rules' follow-ups can be run or dismissed.
   - **Input fields** can be edited, and the character is saved back.
 
-  Tested on the 30 example characters.
+  Tested on the 30 example characters on disk, and the 19 ORC ones read from git on Windows.
 
 Limits of the universal tools:
 
@@ -280,45 +376,47 @@ The consequences:
   pack is missing. Git knows they are left out on purpose, so `git status` stays clean;
 - the tests that read the ORC packs fail with `ENOENT … packs/orc/2e/pack.yaml`;
 - `git sparse-checkout disable` would bring the folder back, but on Windows the checkout of
-  `con.yaml` fails.
+  `con.yaml` fails;
+- the universal tools still load both packs, from git (next section).
 
-The real fix belongs to OCF: renaming `boosts/con.yaml` (to `constitution.yaml`, for instance) would
-make the repository checkable on Windows. It deserves an issue on the OCF repository.
+The real fix belongs to OCF. The file exists because each attribute boost is a content item, one
+file per attribute (`content/boosts/str.yaml` … `con.yaml`). The 5e packs model the same need
+without one: `ability` is a family (`[str, dex, con, …]`), and a choice picks plain values
+(`from: { values: [int, wis, cha] }` in `packs/5e/srd-5.2/content/backgrounds/acolyte.yaml`) with
+an effect on the matching field. Modelling boosts that way, or renaming the six boost items,
+would make the repository checkable on Windows; either needs upgrade scripts for saved
+characters, so it is OCF's to do. An issue proposing both goes on the OCF repository (Issues, or
+Discussions: there is no other forum).
 
-### Cloning this repository on Windows
+### PF2 in the universal tools
 
-A plain `git clone` downloads the history, then fails to write the files:
+The ORC packs are the rules of Pathfinder Second Edition and Starfinder Second Edition, as Paizo
+released them under the ORC License:
 
-```text
-error: invalid path 'packs/orc/2e/content/boosts/con.yaml'
-fatal: unable to checkout working tree
-warning: Clone succeeded, but checkout failed.
-```
+| Pack        | Name in the tools                          | Game                                                                            |
+| ----------- | ------------------------------------------ | ------------------------------------------------------------------------------- |
+| `orc-2e`    | Second Edition fantasy rules (ORC)         | Pathfinder 2e, the Remaster: Player Core, Player Core 2, GM Core's player rules |
+| `orc-sf-2e` | Second Edition science-fantasy rules (ORC) | Starfinder 2e: Starfinder Player Core                                           |
 
-Clone without a checkout, set up the sparse checkout, then check out `main`:
+The ORC License covers the game mechanics, not the Reserved Material: the "Pathfinder" and
+"Starfinder" trademarks and the setting. So the packs carry generic names, the books' credit line
+in `pack.yaml`, and none of the world (Golarion, deities, nations, planes, characters).
 
-```sh
-git clone --no-checkout https://github.com/AlainPeres/OCF_Extensions.git
-cd OCF_Extensions
-git sparse-checkout set --no-cone '/*' '!packs/orc/' '!examples/characters/orc-*.yaml'
-git checkout main
-```
+On Windows they aren't on disk, so `universal-lib.ts` reads them from git instead. At start, it
+lists what `HEAD` holds under `packs/` and `examples/characters/` but the disk doesn't, reads that
+YAML into memory with one `git cat-file --batch`, and builds each pack as `readPack` does (rules
+and content in path order). Nothing is written to disk, and nothing in the code names the ORC
+packs: any pack a sparse checkout leaves out is read the same way. On macOS, Linux or WSL the
+files are on disk and this doesn't kick in.
 
-The ORC packs and the ORC example characters stay out, so `git status` is clean and `pnpm
-validate` doesn't trip over characters whose pack is missing. The consequences listed above
-still apply (tests that read the ORC packs fail). Then install the dependencies as described in
-[Reinstalling dependencies](#reinstalling-dependencies-pnpm-install).
-
-To get the upstream OCF changes, add the OCF repository as a second remote:
-
-```sh
-git remote add upstream https://github.com/pixelqueue/opencharacter.git
-git fetch upstream
-git merge upstream/main
-```
-
-Don't turn `core.protectNTFS` off to force the checkout: it also turns off Git's protections
-against malicious paths on NTFS.
+- Both packs are listed with their two creation starts, guided and random.
+- The 19 ORC example characters (`orc-*.yaml`: 17 for `orc-2e`, 2 for `orc-sf-2e`) are listed and load. Saving one writes it to
+  `examples/characters/extensions/`, since its own place is left out of the checkout.
+- The version read is the commit checked out (`HEAD`): after `git merge upstream/main`, restart the
+  tool to get the new one.
+- The first load of `orc-2e` takes about 6 seconds (over 4,600 content files).
+- Only the universal tools do this: `pnpm validate` and `pnpm test` still skip the ORC packs, and
+  the packs can't be edited on Windows.
 
 ### pnpm's links to the ORC packs
 
@@ -352,20 +450,23 @@ git update-index --skip-worktree packages/packs/package.json
 
 ### Reinstalling dependencies (`pnpm install`)
 
-`packs/sagas/core/package.json` makes the SagaS pack a workspace package, like every pack, but
-OCF's `pnpm-lock.yaml` doesn't know it. So a frozen install stops with `ERR_PNPM_OUTDATED_LOCKFILE`.
-A plain `pnpm install` would rewrite `pnpm-lock.yaml`, a file OCF tracks, and may trip over the
-missing ORC packs. Set the pack's `package.json` aside for the install instead, so the lockfile
-stays as it is:
+`packs/sagas/core/package.json` makes the SagaS pack a workspace package, like every pack, and
+`pnpm-lock.yaml` has its entry (`packs/sagas/core`, a dev dependency on the engine, added by hand
+like the other packs'). So `pnpm install --frozen-lockfile` works as is, then remove the two ORC
+links ([above](#pnpms-links-to-the-orc-packs)).
 
-```powershell
-Rename-Item packs/sagas/core/package.json package.json.off
-pnpm install --frozen-lockfile
-Rename-Item packs/sagas/core/package.json.off package.json
+Don't run a plain `pnpm install` on Windows: it would rewrite `pnpm-lock.yaml` without the ORC
+packs, which aren't on disk. If a merge from `upstream` ever drops the `packs/sagas/core` entry
+(a frozen install then stops with `ERR_PNPM_OUTDATED_LOCKFILE`), add it back next to
+`packs/swn/revised`:
+
+```yaml
+packs/sagas/core:
+  devDependencies:
+    '@opencharacter/engine':
+      specifier: workspace:*
+      version: link:../../../packages/engine
 ```
-
-The pack's `package.json` only serves to publish it to npm. The scripts don't need it, so deleting
-it is another way out.
 
 Reinstall when VS Code or `tsc` can't find a dependency's types, for instance "Cannot find type
 definition file for 'vite/client'" in `apps/web-editor/tsconfig.json`. An interrupted copy of
@@ -374,6 +475,10 @@ definition file for 'vite/client'" in `apps/web-editor/tsconfig.json`. An interr
 reload the VS Code window (Ctrl+Shift+P, "Developer: Reload Window") if the error stays.
 
 ### Copying the repository folder
+
+To get the repository on another machine or folder, clone it ([Getting the
+repository](#getting-the-repository)). This section is for copying a working folder as it is, as
+this one was first made from an earlier local folder, `opencharacter`.
 
 Windows Explorer stops on the first broken link and can't leave a folder out. Use `robocopy`,
 Windows' command-line copy tool. It takes two folders, `robocopy <source> <destination> [options]`,
@@ -401,9 +506,7 @@ into the original folder. Leave it out and let pnpm build a fresh one in the cop
 ```powershell
 robocopy "D:\Developpement\FichiersTypescript\OCF\opencharacter" "D:\Developpement\FichiersTypescript\OCF\OCF_Extensions" /E /XD node_modules /XJ /MT:16 /R:1 /W:1 /NFL /NDL /NP
 cd "D:\Developpement\FichiersTypescript\OCF\OCF_Extensions"
-Rename-Item packs/sagas/core/package.json package.json.off
 pnpm install --frozen-lockfile
-Rename-Item packs/sagas/core/package.json.off package.json
 ```
 
 `.git` is copied, sparse checkout included. The copy is complete and independent of the original.
