@@ -16,6 +16,7 @@ import {
   loadRuleset,
   startAction,
 } from '../../packages/engine/src/index.ts';
+import { buildRelease } from '../../packages/engine/src/index.ts';
 import { readPack } from '../../packages/engine/test/packs.ts';
 import {
   createText,
@@ -26,8 +27,8 @@ import {
 import { parse, stringify } from 'yaml';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
-import { join } from 'node:path';
-import { exec } from 'node:child_process';
+import { join, sep } from 'node:path';
+import { exec, execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 
 const root = join(import.meta.dirname, '..', '..');
@@ -38,6 +39,55 @@ const specText = parse(
 ) as Messages;
 
 type Any = any; // engine data is plain JSON; the page only reads it
+
+// ---------------------------------------------------------------------------------------------
+// Files git has but the disk doesn't: the packs and example characters a sparse checkout leaves
+// out (packs/orc/ on Windows, where its boosts/con.yaml can't exist: CON is a reserved name).
+// Their YAML is read from HEAD into memory, never written to disk, so those packs still load.
+
+const fromGit = new Map<string, string>(); // absolute path → text
+const git = (args: string[], input?: string) =>
+  execFileSync('git', ['-C', root, ...args], { input, maxBuffer: 1 << 30 });
+function readFromGit() {
+  let paths: string[];
+  try {
+    paths = git(['ls-tree', '-r', '--name-only', 'HEAD', '--', 'packs', 'examples/characters'])
+      .toString('utf8')
+      .split('\n')
+      .filter(Boolean);
+  } catch {
+    return; // not a git clone: only the disk counts
+  }
+  const missingPacks = paths
+    .map((p) => /^(packs\/[^/]+\/[^/]+)\/pack\.yaml$/.exec(p)?.[1])
+    .filter((d): d is string => !!d && !existsSync(join(root, d)));
+  const wanted = paths.filter(
+    (p) =>
+      p.endsWith('.yaml') &&
+      (missingPacks.some((d) => p.startsWith(`${d}/`)) ||
+        (/^examples\/characters\/[^/]+\.yaml$/.test(p) && !existsSync(join(root, p)))),
+  );
+  if (!wanted.length) return;
+  // One `git cat-file --batch` for all: each answer is "<sha> blob <size>\n<content>\n".
+  const out = git(['cat-file', '--batch'], wanted.map((p) => `HEAD:${p}`).join('\n') + '\n');
+  let at = 0;
+  for (const p of wanted) {
+    const nl = out.indexOf(10, at);
+    const header = out.toString('utf8', at, nl);
+    at = nl + 1;
+    if (header.endsWith(' missing')) continue;
+    const size = Number(header.split(' ')[2]);
+    fromGit.set(join(root, ...p.split('/')), out.toString('utf8', at, at + size));
+    at += size + 1;
+  }
+}
+readFromGit();
+
+const has = (path: string) => fromGit.has(path) || existsSync(path);
+const readText = (path: string) => fromGit.get(path) ?? readFileSync(path, 'utf8');
+/** The YAML files git holds under a folder the disk doesn't have, in path order. */
+const gitYamlUnder = (dir: string) =>
+  [...fromGit.keys()].filter((k) => k.startsWith(dir + sep)).toSorted();
 
 // ---------------------------------------------------------------------------------------------
 // Packs: every packs/<game>/<pack>/pack.yaml, loaded on demand with its dependencies.
@@ -53,8 +103,8 @@ const yamlFiles = (dir: string): string[] =>
               ? [join(dir, n)]
               : [],
         )
-    : [];
-const readYaml = (file: string): Any => parse(readFileSync(file, 'utf8'));
+    : gitYamlUnder(dir);
+const readYaml = (file: string): Any => parse(readText(file));
 
 const packDirs = new Map<string, string>();
 for (const game of readdirSync(packsDir)) {
@@ -65,13 +115,28 @@ for (const game of readdirSync(packsDir)) {
     if (existsSync(file)) packDirs.set(readYaml(file).id as string, join(g, pack));
   }
 }
+for (const file of fromGit.keys()) {
+  const dir = file.slice(0, -`${sep}pack.yaml`.length);
+  if (file.endsWith(`${sep}pack.yaml`) && join(dir, '..', '..') === packsDir)
+    packDirs.set(readYaml(file).id as string, dir);
+}
+
+/** A pack's release, as readPack builds it: rules and content in path order. */
+const readRelease = (dir: string) =>
+  existsSync(dir)
+    ? readPack(dir)
+    : buildRelease({
+        manifest: readYaml(join(dir, 'pack.yaml')),
+        rules: gitYamlUnder(join(dir, 'rules')).map(readYaml),
+        content: gitYamlUnder(join(dir, 'content')).map(readYaml),
+      });
 
 /** A pack's English text: i18n/en.yaml and i18n/en/*.yaml, merged. */
 const english = (dir: string): Messages =>
   Object.assign(
     {},
     ...[join(dir, 'i18n', 'en.yaml'), ...yamlFiles(join(dir, 'i18n', 'en'))]
-      .filter(existsSync)
+      .filter(has)
       .map(readYaml),
   );
 
@@ -96,7 +161,7 @@ function loadPack(id: string): Loaded {
     order.push(p);
   };
   visit(id);
-  const releases = order.map((p) => readPack(packDirs.get(p)!));
+  const releases = order.map((p) => readRelease(packDirs.get(p)!));
   const result: Any = loadRuleset(releases);
   if (!result.ok)
     throw new Error(`cannot load ${id}: ${JSON.stringify(result.errors).slice(0, 500)}`);
@@ -133,7 +198,7 @@ function packList() {
     .map(([id, dir]) => {
       // Whether the pack declares creation starts (read without loading the pack).
       const creation = yamlFiles(join(dir, 'rules')).some((f) =>
-        /^creation:/m.test(readFileSync(f, 'utf8')),
+        /^creation:/m.test(readText(f)),
       );
       return { id, name: (english(dir)['pack.name'] as string | undefined) ?? id, creation };
     })
@@ -160,7 +225,7 @@ interface Session {
   policy?: Any;
   /** The running action, for the outcome's text. */
   action?: { id: string; entry?: string };
-  file?: string;
+  file?: string | undefined;
 }
 const sessions = new Map<string, Session>();
 const PAUSE = { choices: 'pause', allocations: 'pause' }; // dice are rolled by the engine
@@ -534,12 +599,19 @@ const charFile = (s: string) => {
   return m ? `${EXT}/${safeName(m[1] ?? '')}` : safeName(String(s ?? ''));
 };
 const charPath = (file: string) => join(charsDir, ...file.split('/'));
+// A folder's characters, with those git has there but the disk doesn't (the ORC examples).
 const yamlIn = (dir: string, prefix = '') =>
-  existsSync(dir)
-    ? readdirSync(dir)
-        .filter((f) => f.endsWith('.yaml'))
-        .map((f) => prefix + f)
-    : [];
+  [
+    ...new Set([
+      ...(existsSync(dir) ? readdirSync(dir) : []),
+      ...gitYamlUnder(dir)
+        .map((k) => k.slice(dir.length + 1))
+        .filter((f) => !f.includes(sep)),
+    ]),
+  ]
+    .filter((f) => f.endsWith('.yaml'))
+    .toSorted()
+    .map((f) => prefix + f);
 
 /** Serves `page` (next to this file) and the API on 127.0.0.1; `--port` and `--no-open` from argv. */
 export function serve(title: string, page: string, defaultPort: number) {
@@ -588,7 +660,12 @@ export function serve(title: string, page: string, defaultPort: number) {
         if (!pack) throw new Error(`${file} names no pack`);
         loadPack(pack);
         const sid = randomUUID();
-        sessions.set(sid, { pack, character, file });
+        // One read from git (not on disk) is saved as a new file, so to extensions/.
+        sessions.set(sid, {
+          pack,
+          character,
+          file: fromGit.has(charPath(file)) ? undefined : file,
+        });
         return send(res, 200, view(sid));
       }
       if (p === '/api/view') return send(res, 200, view((session(b.sid), b.sid)));
