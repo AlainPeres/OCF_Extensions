@@ -22,6 +22,12 @@ features:
     item: sagas-core:skills.stealth
     state:
       learning: 3
+  - id: skills-foreign-languages-1
+    item: sagas-core:skills.foreign-languages
+    state:
+      specialty: German
+      initial: -15
+      learning: -15
 inventory:
   - id: dagger-short-sword
     item: sagas-core:weapons.dagger-short-sword
