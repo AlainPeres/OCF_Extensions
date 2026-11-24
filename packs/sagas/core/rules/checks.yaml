@@ -320,18 +320,75 @@ actions:
           amount: flags.net
           absorbed: flags.absorbed
 
-  # Ten minutes of rest after damage: stun is cured, and the damage drops by 5 per degree of
-  # an Endurance roll (apply the degree: this action only clears the stun).
+  # Ten minutes of rest after damage (section 5.6): stun is fully cured (an unconscious character
+  # wakes up, a confused one recovers), and physical injuries drop by 5 per degree of an
+  # Endurance roll: some apparent injuries were only scratches. The book allows it after damage
+  # was taken: the referee's call, as the sheet doesn't track it.
   - id: rest-short
     tags: [health]
     results: [rested]
     steps:
+      - id: endurance
+        kind: action
+        use: degree-roll
+        params:
+          score: chars.end
+      - id: amount
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              physical: 'min(injury.physical, 5 * steps.endurance.data.degree)'
       - id: clear
         kind: changes
         to: self
         changes:
+          - { type: adjust, field: injury.physical, by: -flags.physical }
           - { type: set, field: stun.physical, value: 0 }
           - { type: set, field: stun.psychical, value: 0 }
       - id: result
         kind: outcome
         result: "'rested'"
+        data: { physical: flags.physical }
+
+  # Once a day after a sleep (section 5.6): stun is fully cured, physical injuries drop by the
+  # degree of an Endurance roll (+I with complete rest), psychical injuries by the degree of a
+  # Presence roll. In a medical institution, with complete rest, the recovery is doubled. Madness
+  # isn't cured here: the referee's call once the psychical injuries are gone.
+  - id: rest-day
+    tags: [health]
+    params:
+      completeRest: { type: boolean, default: false }
+      medical: { type: boolean, default: false }
+    results: [rested]
+    steps:
+      - id: endurance
+        kind: action
+        use: degree-roll
+        params:
+          score: chars.end
+          modifier: 'params.completeRest || params.medical ? 1 : 0'
+      - id: presence
+        kind: action
+        use: degree-roll
+        params:
+          score: chars.pre
+      - id: amounts
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              physical: 'min(injury.physical, steps.endurance.data.degree * (params.medical ? 2 : 1))'
+              psychical: 'min(injury.psychical, steps.presence.data.degree * (params.medical ? 2 : 1))'
+      - id: heal
+        kind: changes
+        to: self
+        changes:
+          - { type: adjust, field: injury.physical, by: -flags.physical }
+          - { type: adjust, field: injury.psychical, by: -flags.psychical }
+          - { type: set, field: stun.physical, value: 0 }
+          - { type: set, field: stun.psychical, value: 0 }
+      - id: result
+        kind: outcome
+        result: "'rested'"
+        data: { physical: flags.physical, psychical: flags.psychical }

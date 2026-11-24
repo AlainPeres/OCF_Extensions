@@ -11,7 +11,8 @@ From the _Rules of SagaS 0.995 LLL (OGL)_:
 - actions: `characteristic-check`, `skill-check`, `opposed-check` (2d6* roll under, degree, natural 2 / 12,
   automatic failure, difficulty and situation degree modifiers), `damage` (dice capped at the weapon's
   DMAX), `take-damage` (protection less armor piercing, stun, shock),
-  `rest-short`;
+  `rest-short` (10 minutes: stun, 5 injuries per degree of Endurance) and `rest-day` (after a sleep:
+  Endurance and Presence degrees in injuries, complete rest, medical institution);
 - creation starts (`create-character`), guided and random: power level, social class and the
   universe's technological level, then main and secondary characteristics bought with the
   points, skills raised one step at a time, weapons and armor. Generic and "Other"
@@ -26,5 +27,5 @@ From the _Rules of SagaS 0.995 LLL (OGL)_:
 
 Licensed under OGL 1.0a; see `pack.yaml`.
 
-Not yet modelled: long-term actions, help and neighboring skills, daily recovery, combat options,
+Not yet modelled: long-term actions, help and neighboring skills, first aid, combat options,
 martial arts, TL 4/5 weapon examples, structures, the French translation.

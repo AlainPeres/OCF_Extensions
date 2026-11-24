@@ -319,6 +319,10 @@ actions.take-damage.results.taken.name: Damage taken
 actions.take-damage.results.shock-failed.name: Shock roll failed
 actions.rest-short.name: Rest 10 minutes
 actions.rest-short.results.rested.name: Rested
+actions.rest-day.name: Rest a day (after a sleep)
+actions.rest-day.params.completeRest.name: Complete rest (+I on Endurance)
+actions.rest-day.params.medical.name: In a medical institution (complete rest, recovery doubled)
+actions.rest-day.results.rested.name: Rested
 actions.take-damage.params.kind.values.physical.name: Physical
 actions.take-damage.params.kind.values.psychical.name: Psychical
 
