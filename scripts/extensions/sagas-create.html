@@ -372,6 +372,30 @@
       #toast.show {
         opacity: 1;
       }
+      /* Folding sections: the title is the toggle, kept between sessions. */
+      h2.fold {
+        cursor: pointer;
+        user-select: none;
+        /* The arrow and the title on the left; a note (small) still pushed to the right. */
+        justify-content: flex-start;
+      }
+      h2.fold > small {
+        margin-left: auto;
+      }
+      h2.fold::before {
+        content: '▾';
+        margin-right: 6px;
+        color: var(--muted);
+      }
+      section.folded > h2.fold::before {
+        content: '▸';
+      }
+      section.folded > :not(:first-child) {
+        display: none;
+      }
+      section.folded > h2.fold {
+        margin-bottom: 0;
+      }
     </style>
   </head>
   <body>
@@ -1193,6 +1217,30 @@
           refreshList();
         };
       }
+
+      // Folding sections: a click on a section's title (not on a button or field in it) folds or
+      // unfolds it; the state is kept between sessions, by title.
+      function foldSections(prefix) {
+        for (const sec of document.querySelectorAll('section')) {
+          const h = sec.firstElementChild;
+          if (h?.tagName !== 'H2') continue;
+          const key = `${prefix}.fold.${(h.firstChild?.textContent || h.textContent).trim()}`;
+          let saved = null;
+          try {
+            saved = localStorage.getItem(key);
+          } catch {}
+          sec.classList.toggle('folded', saved === 'closed');
+          h.classList.add('fold');
+          h.addEventListener('click', (e) => {
+            if (e.target.closest('button, input, select, label, a')) return;
+            sec.classList.toggle('folded');
+            try {
+              localStorage.setItem(key, sec.classList.contains('folded') ? 'closed' : 'open');
+            } catch {}
+          });
+        }
+      }
+      foldSections('sagas-create');
 
       (async () => {
         D = await api('/api/data');

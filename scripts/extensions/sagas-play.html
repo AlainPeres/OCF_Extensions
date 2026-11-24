@@ -440,6 +440,30 @@
       #toast.show {
         opacity: 1;
       }
+      /* Folding sections: the title is the toggle, kept between sessions. */
+      h2.fold {
+        cursor: pointer;
+        user-select: none;
+        /* The arrow and the title on the left; a note (small) still pushed to the right. */
+        justify-content: flex-start;
+      }
+      h2.fold > small {
+        margin-left: auto;
+      }
+      h2.fold::before {
+        content: '▾';
+        margin-right: 6px;
+        color: var(--muted);
+      }
+      section.folded > h2.fold::before {
+        content: '▸';
+      }
+      section.folded > :not(:first-child) {
+        display: none;
+      }
+      section.folded > h2.fold {
+        margin-bottom: 0;
+      }
     </style>
   </head>
   <body>
@@ -495,6 +519,31 @@
             <summary>Situation modifiers <span id="sitCount"></span></summary>
             <div class="checks" id="situational"></div>
           </details>
+          <details>
+            <summary>Skill rolls: help, neighboring or simultaneous skill</summary>
+            <div class="row" style="margin-top: 6px">
+              <label title="The first helper adds half of their skill total"
+                >Helper 1 <input type="number" id="help1" value="0" min="0" style="width: 60px"
+              /></label>
+              <label title="The second adds a quarter"
+                >Helper 2 <input type="number" id="help2" value="0" min="0" style="width: 60px"
+              /></label>
+              <label title="The third adds an eighth"
+                >Helper 3 <input type="number" id="help3" value="0" min="0" style="width: 60px"
+              /></label>
+              <label
+                title="A neighboring skill's total, for a skill not learned: half of it is used"
+                >Neighboring skill
+                <input type="number" id="neighbor" value="0" min="0" style="width: 60px"
+              /></label>
+              <label
+                title="Two skills used at once (two weapons, on a mount, driving): the weaker total"
+                >With skill
+                <input type="number" id="together" value="0" min="0" style="width: 60px"
+              /></label>
+              <span class="muted">0: none</span>
+            </div>
+          </details>
         </section>
 
         <section>
@@ -548,6 +597,16 @@
               melee)</small
             >
           </h2>
+          <div class="row" style="margin-bottom: 8px">
+            <label
+              title="Bursts fired at the target (automatic), or bullets beyond the first (semi-automatic, 3 at most): +1d6* each, within the DMAX"
+              >Extra dice <input type="number" id="extraDice" value="0" min="0" style="width: 52px"
+            /></label>
+            <label
+              title="Melee: +2 × Speed bonus to the Strength bonus, up to the Maximum Impact Bonus; −I to your defenses this round (Charging, in the situations)"
+              ><input type="checkbox" id="charge" /> Charge</label
+            >
+          </div>
           <table>
             <thead>
               <tr>
@@ -556,12 +615,58 @@
                 <th class="num">Total</th>
                 <th class="num">Bonus</th>
                 <th class="num" title="Maximum effect dice">DMAX</th>
+                <th
+                  class="num"
+                  title="Armor piercing: each point above the armor's resilience halves it"
+                >
+                  AP
+                </th>
                 <th class="num" title="Range on the Universal Table, and its distance">Range</th>
                 <th></th>
               </tr>
             </thead>
             <tbody id="weapons"></tbody>
           </table>
+        </section>
+
+        <section>
+          <h2>Combat <small id="combatInfo"></small></h2>
+          <div class="form">
+            <strong>Initiative</strong>
+            <label title="+10 after a round passed doing nothing"
+              ><input type="checkbox" id="iniWaited" /> passed the last round</label
+            >
+            <button id="btnInitiative">Roll 1d6* + Initiative</button>
+          </div>
+          <div class="form">
+            <strong>Defense</strong>
+            <button id="btnReflex" title="Always available against a perceived attack">
+              Reflex Dodge
+            </button>
+            <button id="btnDodge" title="The Dodge skill">Dodge</button>
+            <span class="muted"
+              >Parry: the weapon's row. Tell the attacker the degree to subtract; parry modifiers
+              and shield are in the situations.</span
+            >
+          </div>
+          <div class="form">
+            <strong>Martial arts</strong>
+            <select id="martialStyle"></select>
+            <span id="martialInfo" class="muted"></span>
+            <label
+              >Degree <input type="number" id="martialDegree" value="1" min="1" style="width: 52px"
+            /></label>
+            <button id="btnMartialStrike" title="Damage of a successful strike">
+              Strike damage
+            </button>
+            <label title="Meters the opponent is thrown"
+              >Meters <input type="number" id="projMeters" value="0" min="0" style="width: 52px"
+            /></label>
+            <label title="Degree of the victim's Acrobatics or Martial Arts (Projection) roll"
+              >Less <input type="number" id="projLess" value="0" min="0" style="width: 52px"
+            /></label>
+            <button id="btnProjection">Projection damage</button>
+          </div>
         </section>
 
         <section>
@@ -579,9 +684,14 @@
               ><input type="checkbox" id="dmgStun" /> As stun</label
             >
             <span id="protLabel" class="row">
-              <label title="The attack's armor piercing reduces the protection"
+              <label
+                title="Each point of armor piercing above the armor's resilience (RA) halves the protection"
                 >Armor piercing <input type="number" id="dmgAp" value="0" min="0"
               /></label>
+              <label
+                title="Against bullets or impact, an armor's bullet protection counts when higher"
+                ><input type="checkbox" id="dmgBullets" /> Bullets or impact</label
+              >
               <label title="The protection does not apply"
                 ><input type="checkbox" id="dmgIgnore" /> Ignores armor</label
               >
@@ -642,6 +752,81 @@
             >
               Resist
             </button>
+          </div>
+        </section>
+
+        <section>
+          <h2>Dangers <small>damage taken directly, armor ignored but for explosions</small></h2>
+          <div class="form">
+            <strong>Fall</strong>
+            <label
+              >Meters <input type="number" id="fallMeters" value="6" min="0" style="width: 60px"
+            /></label>
+            <label title="The ground: soft takes dice away, hard and rugged adds some"
+              >Dice ± <input type="number" id="fallDice" value="0" style="width: 52px"
+            /></label>
+            <button id="btnFall" class="bad" title="1d6* per 3 m, 20d6* at most">Fall</button>
+          </div>
+          <div class="form">
+            <strong>Breath</strong>
+            <span class="muted" id="breathInfo"></span>
+            <label title="Each further period of 2 × Endurance rounds: −I more"
+              >Period <input type="number" id="breathPeriod" value="1" min="1" style="width: 52px"
+            /></label>
+            <button id="btnBreath">Endurance roll</button>
+            <button id="btnSuffocate" class="bad" title="1d6* of physical stun">
+              Suffocate (a round)
+            </button>
+          </div>
+          <div class="form">
+            <strong>Flames</strong>
+            <label><input type="checkbox" id="burnBig" /> big fire (2d6*)</label>
+            <button
+              id="btnBurn"
+              class="bad"
+              title="1d6* of physical injuries a round, 2d6* for a big fire"
+            >
+              Burn (a round)
+            </button>
+          </div>
+          <div class="form">
+            <strong>Explosion</strong>
+            <label
+              >Base <input type="number" id="expBase" value="16" min="0" style="width: 60px"
+            /></label>
+            <label
+              title="The thrower's degree less your Dodge or Reflex Dodge degree (may be negative)"
+              >Relative degree <input type="number" id="expDegree" value="0" style="width: 52px"
+            /></label>
+            <label
+              >AP <input type="number" id="expAp" value="0" min="0" style="width: 52px"
+            /></label>
+            <button id="btnExplosion" class="bad" title="Base damage + relative degree × 1d6*">
+              Take the blast
+            </button>
+          </div>
+        </section>
+
+        <section>
+          <h2>Long-term action <small id="longInfo"></small></h2>
+          <div class="form">
+            <strong>Start</strong>
+            <label title="Set by the referee"
+              >Degrees to reach
+              <input type="number" id="longTarget" value="5" min="1" style="width: 60px"
+            /></label>
+            <label title="Negative; 0 for none"
+              >Fails at <input type="number" id="longFail" value="0" max="0" style="width: 60px"
+            /></label>
+            <button id="btnLongStart">Start</button>
+          </div>
+          <div class="form">
+            <strong>Roll a step</strong>
+            <select id="longSkill" title="The skill rolled (its total)"></select>
+            <label title="The opposition's score, given by the referee; 0 for none"
+              >Opposition <input type="number" id="longOpp" value="0" min="0" style="width: 60px"
+            /></label>
+            <button id="btnLongStep">Roll</button>
           </div>
         </section>
 
@@ -873,6 +1058,21 @@
         );
       }
 
+      // A skill roll's help, neighboring and simultaneous skills (section 4), from the options;
+      // 0 is none.
+      const SKILL_EXTRAS = ['help1', 'help2', 'help3', 'neighbor', 'together'];
+      const skillExtras = () =>
+        Object.fromEntries(SKILL_EXTRAS.map((k) => [k, Math.max(0, Number($(k).value) || 0)]));
+      const skillExtrasLabel = () => {
+        const e = skillExtras();
+        const parts = [];
+        const helpers = [e.help1, e.help2, e.help3].filter(Boolean);
+        if (helpers.length) parts.push(`helped by ${helpers.join(', ')}`);
+        if (e.neighbor) parts.push(`neighboring skill ${e.neighbor}`);
+        if (e.together) parts.push(`with a skill at ${e.together}`);
+        return parts.length ? ` (${parts.join('; ')})` : '';
+      };
+
       const rollCharacteristic = (key, name) =>
         check(`${name} roll`, {
           action: { id: P('characteristic-check') },
@@ -894,8 +1094,8 @@
         const name = label ?? `${item?.name ?? skillId} roll`;
         if (feat)
           return check(
-            name,
-            { action: { id: P('skill-check'), entry: feat.id } },
+            name + skillExtrasLabel(),
+            { action: { id: P('skill-check'), entry: feat.id }, params: skillExtras() },
             extraSituational,
           );
         // A generic skill with no specialty learned has no copy: the base roll is used with the
@@ -911,13 +1111,22 @@
         );
       }
 
-      // The pack caps the dice at the weapon's DMAX.
+      // The pack caps the dice at the weapon's DMAX; extra dice (bursts, bullets) and a charge
+      // come from the options above the weapons.
       const dealDamage = (gear, degree) => {
         const w = itemOf(gear.item);
+        const extraDice = Math.max(0, Number($('extraDice').value) || 0);
+        const charge = $('charge').checked && w.fields.kind === 'melee';
+        const notes = [extraDice ? `+${extraDice} dice` : '', charge ? 'charge' : '']
+          .filter(Boolean)
+          .join(', ');
         return act(
-          `${w.name}: damage, degree ${roman(degree)}`,
-          { action: { id: P('damage'), entry: gear.id }, params: { degree } },
-          { degree, dmax: w.fields.dmax },
+          `${w.name}: damage, degree ${roman(degree)}${notes ? ` (${notes})` : ''}`,
+          {
+            action: { id: P('damage'), entry: gear.id },
+            params: { degree, extraDice, charge },
+          },
+          { degree: degree + extraDice, dmax: w.fields.dmax },
         );
       };
 
@@ -1106,8 +1315,9 @@
         if (o?.result === 'taken' || o?.result === 'shock-failed') {
           if (o.data.absorbed)
             lines.push(`<div class="line muted">Protection absorbed ${o.data.absorbed}</div>`);
+          // A fall, flames…: their damage roll comes first; a shock roll is one with a band.
           lines.push(
-            `<div class="line">${o.data.amount} damage taken${o.result === 'shock-failed' ? ' · <span class="result shock-failed">shock failed</span>' : result.rolls?.length ? ' · <span class="result success">shock resisted</span>' : ''}</div>`,
+            `<div class="line">${o.data.amount ?? o.data.damage} damage taken${o.result === 'shock-failed' ? ' · <span class="result shock-failed">shock failed</span>' : result.rolls?.some((r) => r.band) ? ' · <span class="result success">shock resisted</span>' : ''}</div>`,
           );
         }
         // First aid, dying and poison outcomes.
@@ -1122,6 +1332,15 @@
             `<span class="result success">Resisted</span> · final degree ${roman(d.degree)}`,
           affected: (d) =>
             `<span class="result failure">Affected</span> · final degree ${d.degree < 0 ? '−' : ''}${roman(Math.abs(d.degree))}`,
+          rolled: (d) => `Initiative <b>${d.initiative}</b>, kept for the fight.`,
+          unhurt: () => 'Unhurt.',
+          started: () => `Started: ${V('long.target')} degrees to reach.`,
+          ongoing: (d) =>
+            `Net degree ${d.net >= 0 ? '+' : '−'}${roman(Math.abs(d.net))} · total <b>${d.total}</b> of ${d.target}`,
+          succeeded: (d) =>
+            `<span class="result success">Succeeded</span> · total <b>${d.total}</b> after ${d.steps} roll(s)`,
+          failed: (d) =>
+            `<span class="result failure">Failed</span> · total <b>${d.total}</b> after ${d.steps} roll(s)`,
         }[o?.result];
         if (health) lines.push(`<div class="line">${health(o.data ?? {})}</div>`);
         if (o?.result === 'rested') {
@@ -1221,7 +1440,7 @@
         weapons.replaceChildren();
         const gear = (ch.inventory ?? []).filter((g) => itemOf(g.item)?.fields.dmax);
         if (!gear.length)
-          weapons.innerHTML = '<tr><td colspan="7" class="empty">No weapon.</td></tr>';
+          weapons.innerHTML = '<tr><td colspan="8" class="empty">No weapon.</td></tr>';
         for (const g of gear) {
           const w = itemOf(g.item);
           const skill = itemOf(P(w.fields.skill));
@@ -1233,7 +1452,7 @@
             (V('chars.str') ?? 0) < (w.fields.strReq ?? 0)
               ? ` <span class="badge warn" title="Strength below the weapon's minimum: −I">STR ${w.fields.strReq}</span>`
               : '';
-          tr.innerHTML = `<td>${esc(w.name)}${g.equipped === false ? ' <span class="muted">(not equipped)</span>' : ''}${weak}</td><td>${esc(skill?.name ?? '—')}${raised ? '' : ' <span class="muted">(initial level)</span>'}</td><td class="num"><b>${total ?? ''}</b></td><td class="num">+${w.fields.damageBonus}${w.fields.kind === 'melee' ? ` +${V('bonus.str')}` : ''}</td><td class="num">${w.fields.dmax}</td><td class="num">${rangeText(w.fields)}</td><td></td>`;
+          tr.innerHTML = `<td>${esc(w.name)}${g.equipped === false ? ' <span class="muted">(not equipped)</span>' : ''}${weak}</td><td>${esc(skill?.name ?? '—')}${raised ? '' : ' <span class="muted">(initial level)</span>'}</td><td class="num"><b>${total ?? ''}</b></td><td class="num">+${w.fields.damageBonus}${w.fields.kind === 'melee' ? ` +${V('bonus.str')}` : ''}</td><td class="num">${w.fields.dmax}</td><td class="num">${w.fields.ap || ''}</td><td class="num">${rangeText(w.fields)}</td><td></td>`;
           const cell = tr.lastElementChild;
           const atk = Object.assign(document.createElement('button'), {
             className: 'roll',
@@ -1256,7 +1475,15 @@
           });
           dmg.onclick = () => dealDamage(g, Math.max(1, Number(deg.value) || 1));
           cell.style.whiteSpace = 'nowrap';
-          cell.append(atk, ' ', deg, ' ', dmg);
+          // A parry with the weapon: its skill roll; the parry modifiers (bare hands, larger
+          // weapon, shield…) are in the situations.
+          const parry = Object.assign(document.createElement('button'), {
+            className: 'roll',
+            textContent: '🛡 Parry',
+            title: "The weapon's skill roll: tell the attacker the degree to subtract",
+          });
+          parry.onclick = () => rollSkill(P(w.fields.skill), {}, `${w.name}: parry`);
+          cell.append(atk, ' ', deg, ' ', dmg, ' ', parry);
           weapons.append(tr);
         }
 
@@ -1294,6 +1521,49 @@
         $('btnAidStab').disabled = !V('state.dying');
         $('btnAidFumble').disabled = !V('state.dying');
         $('btnBleed').disabled = !V('state.dying');
+        renderCombat();
+      }
+
+      // --- Combat, dangers, long-term action ------------------------------------------------------
+      const MARTIAL_STYLES = [
+        ['none', 'Martial arts: no style (all domains)'],
+        ['karate', 'Karate, Taekwondo (strikes, DMAX 3)'],
+        ['boxing', 'Boxing (strikes as two weapons)'],
+        ['kung-fu-dmax', 'Kung Fu (strikes, DMAX 3)'],
+        ['kung-fu-two-weapons', 'Kung Fu (strikes as two weapons)'],
+        ['aikido', 'Aikido (projections −5, holds)'],
+        ['wrestling', 'Wrestling, Sumo (projections −5, holds)'],
+        ['judo', 'Judo, Jiu-Jitsu (projections, holds −5)'],
+        ['krav-maga', 'Krav Maga (all, projections and holds −5)'],
+      ];
+      function renderCombat() {
+        const ini = V('combat.initiative');
+        $('combatInfo').textContent =
+          `initiative ${ini || '—'} · Initiative ${V('sec.ini')} · Reflex Dodge ${V('dodge.reflex')} · shield +${V('shield.contact') ?? 0} / +${V('shield.missile') ?? 0} · Speed bonus ${V('bonus.spd')}`;
+        const sel = $('martialStyle');
+        if (!sel.options.length)
+          sel.innerHTML = MARTIAL_STYLES.map(
+            ([v, l]) => `<option value="${v}">${esc(l)}</option>`,
+          ).join('');
+        sel.value = V('martial.style') ?? 'none';
+        $('martialInfo').textContent =
+          `learning ${V('martial.learning')}: strikes ${V('martial.strike')} (Strength ${V('martial.strength.strike')}, bonus +${V('bonus.martial')}, DMAX ${V('martial.dmax')}${V('martial.twoWeapons') ? ', two weapons' : ''}), projections ${V('martial.projection')} (Strength ${V('martial.strength.projection')}), holds ${V('martial.hold')} (Strength ${V('martial.strength.hold')})`;
+        $('breathInfo').textContent = `${V('breath.rounds')} rounds held without a roll (prepared)`;
+        $('longInfo').textContent = V('long.active')
+          ? `under way: ${V('long.total')} of ${V('long.target')} degrees${V('long.failAt') < 0 ? `, fails at ${V('long.failAt')}` : ''}, ${V('long.steps')} roll(s)`
+          : V('long.steps')
+            ? `ended at ${V('long.total')} after ${V('long.steps')} roll(s)`
+            : 'none under way';
+        $('btnLongStep').disabled = !V('long.active');
+        // The skills to roll a step with: those shown in the skills table, by name.
+        const ls = $('longSkill');
+        const before = ls.value;
+        ls.innerHTML = skillRows()
+          .filter((r) => r.feat)
+          .toSorted((a, b) => a.name.localeCompare(b.name))
+          .map((r) => `<option value="${r.total}">${esc(r.name)} (${r.total})</option>`)
+          .join('');
+        if ([...ls.options].some((o) => o.value === before)) ls.value = before;
       }
 
       // --- Skills ----------------------------------------------------------------------------------
@@ -1592,6 +1862,8 @@
           if (kind === 'physical') {
             params.armorPiercing = Math.max(0, Number($('dmgAp').value) || 0);
             params.ignoreArmor = $('dmgIgnore').checked;
+            params.bullets = $('dmgBullets').checked;
+            if (params.bullets && !params.ignoreArmor) notes.push('bullets');
             if (params.ignoreArmor) notes.push('ignores armor');
             else if (params.armorPiercing) notes.push(`armor piercing ${params.armorPiercing}`);
           }
@@ -1617,6 +1889,90 @@
         };
         $('btnHealPhys').onclick = () => (ch ? heal('physical') : toast('Load a character first'));
         $('btnHealPsy').onclick = () => (ch ? heal('psychical') : toast('Load a character first'));
+        // Combat.
+        const needChar = (f) => () => (ch ? f() : toast('Load a character first'));
+        const num = (id, min = -Infinity) => Math.max(min, Number($(id).value) || 0);
+        $('btnInitiative').onclick = needChar(() =>
+          act('Initiative', {
+            action: { id: P('roll-initiative') },
+            params: { waited: $('iniWaited').checked },
+          }),
+        );
+        $('btnReflex').onclick = needChar(() =>
+          check('Reflex Dodge', { action: { id: P('reflex-dodge') } }),
+        );
+        $('btnDodge').onclick = needChar(() => rollSkill(P('skills.dodge'), {}, 'Dodge'));
+        $('martialStyle').onchange = needChar(async () => {
+          const key = P('martial.style');
+          ch.values = { ...(ch.values ?? {}), [key]: $('martialStyle').value };
+          if (ch.values[key] === 'none') delete ch.values[key];
+          sheet = await api('/api/sheet', { character: ch });
+          setDirty(true);
+          render();
+        });
+        $('btnMartialStrike').onclick = needChar(() => {
+          const degree = num('martialDegree', 1);
+          return act(`Martial arts strike, degree ${roman(degree)}`, {
+            action: { id: P('martial-strike-damage') },
+            params: { degree },
+          });
+        });
+        $('btnProjection').onclick = needChar(() =>
+          act('Projection', {
+            action: { id: P('projection-damage') },
+            params: { meters: num('projMeters', 0), reduction: num('projLess', 0) },
+          }),
+        );
+        // Dangers.
+        $('btnFall').onclick = needChar(() =>
+          act(`Fall of ${num('fallMeters', 0)} m`, {
+            action: { id: P('fall') },
+            params: { meters: num('fallMeters', 0), extraDice: num('fallDice') },
+          }),
+        );
+        $('btnBreath').onclick = needChar(() =>
+          act(`Hold breath, period ${num('breathPeriod', 1)}`, {
+            action: { id: P('hold-breath') },
+            params: { period: num('breathPeriod', 1) },
+          }),
+        );
+        $('btnSuffocate').onclick = needChar(() =>
+          act('Suffocating', { action: { id: P('suffocate') } }),
+        );
+        $('btnBurn').onclick = needChar(() =>
+          act($('burnBig').checked ? 'Big fire' : 'Small fire', {
+            action: { id: P('burn') },
+            params: { big: $('burnBig').checked },
+          }),
+        );
+        $('btnExplosion').onclick = needChar(() =>
+          act('Explosion', {
+            action: { id: P('explosion') },
+            params: {
+              base: num('expBase', 0),
+              relativeDegree: num('expDegree'),
+              armorPiercing: num('expAp', 0),
+            },
+          }),
+        );
+        // Long-term action.
+        $('btnLongStart').onclick = needChar(() =>
+          act('Long-term action: start', {
+            action: { id: P('long-start') },
+            params: { target: num('longTarget', 1), failAt: Math.min(0, num('longFail')) },
+          }),
+        );
+        $('btnLongStep').onclick = needChar(() =>
+          act(`Long-term action: ${$('longSkill').selectedOptions[0]?.textContent ?? ''}`, {
+            action: { id: P('long-step') },
+            params: {
+              score: num('longSkill', 0),
+              opposition: num('longOpp', 0),
+              modifier: Number($('modifier').value) || 0,
+            },
+          }),
+        );
+
         // First aid as received: the outcome of the helper's roll, reported by the player.
         const aid = (outcome, title) =>
           ch
@@ -1647,6 +2003,30 @@
         const n = document.querySelectorAll('[data-sit]:checked').length;
         $('sitCount').textContent = n ? `(${n} active)` : '';
       }
+
+      // Folding sections: a click on a section's title (not on a button or field in it) folds or
+      // unfolds it; the state is kept between sessions, by title.
+      function foldSections(prefix) {
+        for (const sec of document.querySelectorAll('section')) {
+          const h = sec.firstElementChild;
+          if (h?.tagName !== 'H2') continue;
+          const key = `${prefix}.fold.${(h.firstChild?.textContent || h.textContent).trim()}`;
+          let saved = null;
+          try {
+            saved = localStorage.getItem(key);
+          } catch {}
+          sec.classList.toggle('folded', saved === 'closed');
+          h.classList.add('fold');
+          h.addEventListener('click', (e) => {
+            if (e.target.closest('button, input, select, label, a')) return;
+            sec.classList.toggle('folded');
+            try {
+              localStorage.setItem(key, sec.classList.contains('folded') ? 'closed' : 'open');
+            } catch {}
+          });
+        }
+      }
+      foldSections('sagas-play');
 
       (async () => {
         D = await api('/api/data');
