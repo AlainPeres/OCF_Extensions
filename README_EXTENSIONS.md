@@ -111,8 +111,9 @@ with 74% of tracked files present`.
 
 In Git Bash instead of PowerShell, the commands are the same except the two `rmdir`:
 `cmd //c rmdir 'packages\packs\node_modules\@opencharacter\orc-2e'` (and the same for
-`orc-sf-2e`). To delete a clone later, use `cmd /c rmdir /s /q <folder>` from PowerShell, never
-Windows Explorer or `Remove-Item` ([Copying the repository folder](#copying-the-repository-folder)).
+`orc-sf-2e`). To delete a clone later, `cmd /c rmdir /s /q <folder>` from PowerShell is the
+fastest; Windows Explorer works too, with Shift+Delete
+([Deleting a folder that holds junctions](#deleting-a-folder-that-holds-junctions)).
 
 What works: the SagaS tools, the universal tools (which even load the ORC packs, from git: [PF2 in
 the universal tools](#pf2-in-the-universal-tools)), `pnpm validate` on the 14 packs on disk,
@@ -261,8 +262,8 @@ The copy is then an ordinary Windows clone: everything in [Windows](#windows) ap
   outside the folder). If kept, don't work in both: push from the Windows copy, and
   `git pull` in WSL before copying again.
 - **To copy again from scratch,** delete the Windows copy first: `cmd /c rmdir /s /q <folder>` from
-  PowerShell, never Windows Explorer or `Remove-Item` (pnpm's junctions;
-  [Copying the repository folder](#copying-the-repository-folder)).
+  PowerShell, or Windows Explorer with Shift+Delete, slower
+  ([Deleting a folder that holds junctions](#deleting-a-folder-that-holds-junctions)).
 - **WSL itself,** if it served only for this: `wsl --unregister Ubuntu-22.04` deletes the
   distribution and **everything** in it.
 
@@ -717,9 +718,29 @@ This was done for this clone on 2026-11-22: its 1,057 junctions all pointed into
 following it, for instance with Node (`fs.readdirSync(dir, { withFileTypes: true })`,
 `isSymbolicLink()`, `fs.readlinkSync()`), and look for the original folder's path.
 
-> **Warning.** Never remove a folder holding junctions with `Remove-Item -Recurse` (Windows
-> PowerShell 5) or with Windows Explorer. They can follow a junction and delete what it points to,
-> here the **original** folder's files. `cmd /c rmdir /s /q` removes the link without entering it.
+#### Deleting a folder that holds junctions
+
+The risk is a tool that enters a junction while deleting and empties what it points to. How much
+that matters depends on where the junctions point:
+
+- **A clone** (`git clone`, then `pnpm install`): every junction pnpm makes points inside the clone
+  itself (`node_modules\.pnpm\…`, the workspace packages), and the files from pnpm's global store
+  are hard links, which can be deleted without touching the store. Deleting the clone, by any
+  means, deletes nothing else.
+- **A copy made with `robocopy /SJ`** (above): its junctions point into the **original** folder.
+  A tool that follows them would delete the original's files.
+
+The tools:
+
+| Tool                                  | Behaviour                                                                                 |
+| ------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `cmd /c rmdir /s /q <folder>`         | Removes each junction without entering it. Safe in every case, and the fastest            |
+| Windows Explorer                      | Removes a junction as a link (since Windows Vista). Fine for a clone, but slow; see below |
+| `Remove-Item -Recurse` (PowerShell 5) | Can follow junctions: never on a folder whose junctions point elsewhere                   |
+
+With Windows Explorer, use Shift+Delete: a plain Delete sends the folder to the Recycle Bin, often
+too small for it. It may stop on paths too long in `node_modules\.pnpm` or on broken links (the two
+ORC links, if still there); finish then with `cmd /c rmdir /s /q`.
 
 #### Before deleting the original
 
