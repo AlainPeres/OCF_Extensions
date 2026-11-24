@@ -388,7 +388,7 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
   (attack in the back, aim…). `characteristic-check`, `skill-check` and `opposed-check` use it.
   `damage` rolls the degree's dice, capped at the weapon's DMAX. `take-damage` subtracts the
   protection less the armor piercing (or none for an attack that ignores armor), then deals stun
-  or injuries and rolls shock. Recovery (section 5.6): `rest-short` (10 minutes after damage: stun cured, 5 physical injuries healed per degree of an Endurance roll) and `rest-day` (once a day after a sleep: stun cured, the degree of an Endurance roll in physical injuries, +I with complete rest, and of a Presence roll in psychical ones; doubled in a medical institution).
+  or injuries and rolls shock. Recovery (section 5.6): `rest-short` (10 minutes after damage: stun cured, 5 physical injuries healed per degree of an Endurance roll) and `rest-day` (once a day after a sleep: stun cured, the degree of an Endurance roll in physical injuries, +I with complete rest, and of a Presence roll in psychical ones; doubled in a medical institution). A failed shock roll faints (`state.fainted`, physical) or confuses (`state.shaken`, psychical); the rests clear both. A character at its hit points is dying (`state.dying`): `bleed` loses 1 injury every 4 rounds. First aid is rolled by the helper on their own sheet (a skill check), and the patient's player reports it with `first-aid-received`: woken, stabilized (`state.stabilized`, ended by new physical damage), or a fumble (an Endurance shock roll; failed, the injuries go to the death threshold). `resist-poison`: Physical Resistance against the virulence, plus first aid's degree as reported; a final degree of I resists. No sheet acts on another: what one character does to another goes through the players.
 - **`gear.yaml`**: weapons (kind, skill, damage bonus, required Strength, DMAX, range on the
   Universal Table, armor piercing, technological level) with their damage action; armor and
   shields, whose protection counts while equipped.
@@ -469,7 +469,7 @@ when they load it (`sagas-core-skills-dodge`); the two characters in `extensions
 
 ### Not yet modelled
 
-Long-term actions, help and neighboring skills, first aid, combat options, martial arts,
+Long-term actions, help and neighboring skills, combat options, martial arts,
 TL 4/5 weapon examples, structures, the French translation.
 
 ## The SagaS tools
@@ -505,7 +505,7 @@ TL 4/5 weapon examples, structures, the French translation.
   - characteristic and skill rolls with difficulty, modifier and situation. Skills are grouped by
     characteristic and filtered (all, points spent, total > 0), with one row per specialty;
   - weapons with attack and damage, DMAX and range;
-  - taking damage with armor piercing or ignoring armor; recovery: 10 minutes of rest, a day's rest (complete rest, medical institution), healing by hand;
+  - taking damage with armor piercing or ignoring armor; recovery: 10 minutes of rest, a day's rest (complete rest, medical institution), healing by hand; first aid received (woken, stabilized, fumble), bleeding while dying, resisting a poison; badges for fainted, dying, stabilized and confused by a shock;
   - progression, with the pack's advancement actions: experience points at the end of a
     scenario (plus a bonus), a main or secondary characteristic raised (its cost in each option,
     marked when the XP can't pay), a skill raised one step with ▲ in the skills table (with a

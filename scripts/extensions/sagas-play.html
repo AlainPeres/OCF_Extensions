@@ -612,6 +612,37 @@
             <button id="btnHealPhys">physical injuries</button>
             <button id="btnHealPsy">psychical injuries</button>
           </div>
+          <div class="form">
+            <strong>First aid received</strong>
+            <span class="muted"
+              >the helper rolls First Aid on their own sheet; report it here:</span
+            >
+            <button id="btnAidWake" title="Out of a faint">Woken</button>
+            <button id="btnAidStab" title="No longer dying">Stabilized</button>
+            <button
+              id="btnAidFumble"
+              class="bad"
+              title="Complications: an Endurance shock roll, death if it fails"
+            >
+              Fumble
+            </button>
+            <button id="btnBleed" class="bad" title="While dying: 1 physical injury every 4 rounds">
+              Bleed (4 rounds)
+            </button>
+          </div>
+          <div class="form">
+            <strong>Poison or disease</strong>
+            <label>Virulence <input type="number" id="poisonVirulence" value="10" min="0" /></label>
+            <label title="The degree of the helper's First Aid roll, added to the final degree"
+              >First aid degree <input type="number" id="poisonAid" value="0" min="0"
+            /></label>
+            <button
+              id="btnPoison"
+              title="At inoculation and at the end of each period: Physical Resistance against the virulence"
+            >
+              Resist
+            </button>
+          </div>
         </section>
 
         <section>
@@ -1079,6 +1110,20 @@
             `<div class="line">${o.data.amount} damage taken${o.result === 'shock-failed' ? ' · <span class="result shock-failed">shock failed</span>' : result.rolls?.length ? ' · <span class="result success">shock resisted</span>' : ''}</div>`,
           );
         }
+        // First aid, dying and poison outcomes.
+        const health = {
+          woken: () => 'Out of the faint.',
+          stabilized: () => 'Stabilized: no longer dying.',
+          survived: () =>
+            '<span class="result success">Shock resisted</span>: survived the complications.',
+          died: () => '<span class="result failure">Dead.</span>',
+          bled: (d) => `1 physical injury lost (${d.injuries} in all).`,
+          resisted: (d) =>
+            `<span class="result success">Resisted</span> · final degree ${roman(d.degree)}`,
+          affected: (d) =>
+            `<span class="result failure">Affected</span> · final degree ${d.degree < 0 ? '−' : ''}${roman(Math.abs(d.degree))}`,
+        }[o?.result];
+        if (health) lines.push(`<div class="line">${health(o.data ?? {})}</div>`);
         if (o?.result === 'rested') {
           // The rolls above are Endurance, then Presence for a day's rest.
           const healed = [
@@ -1226,7 +1271,9 @@
           V('shock.physical'),
           [
             [V('state.dead'), 'dead', 'bad'],
-            [V('state.unconscious'), 'unconscious and dying', 'bad'],
+            [V('state.dying'), 'unconscious and dying', 'bad'],
+            [V('state.unconscious'), 'unconscious, stabilized', 'warn'],
+            [V('state.fainted'), 'fainted', 'warn'],
           ],
         );
         healthCard(
@@ -1239,8 +1286,14 @@
           [
             [V('state.mad'), 'mad', 'bad'],
             [V('state.confused'), 'confused', 'bad'],
+            [V('state.shaken'), 'confused (shock)', 'warn'],
           ],
         );
+        // First aid applies to a faint or a dying character only.
+        $('btnAidWake').disabled = !V('state.fainted');
+        $('btnAidStab').disabled = !V('state.dying');
+        $('btnAidFumble').disabled = !V('state.dying');
+        $('btnBleed').disabled = !V('state.dying');
       }
 
       // --- Skills ----------------------------------------------------------------------------------
@@ -1564,6 +1617,27 @@
         };
         $('btnHealPhys').onclick = () => (ch ? heal('physical') : toast('Load a character first'));
         $('btnHealPsy').onclick = () => (ch ? heal('psychical') : toast('Load a character first'));
+        // First aid as received: the outcome of the helper's roll, reported by the player.
+        const aid = (outcome, title) =>
+          ch
+            ? act(title, { action: { id: P('first-aid-received') }, params: { outcome } })
+            : toast('Load a character first');
+        $('btnAidWake').onclick = () => aid('woken', 'First aid: woken');
+        $('btnAidStab').onclick = () => aid('stabilized', 'First aid: stabilized');
+        $('btnAidFumble').onclick = () => aid('fumble', 'First aid: fumble (complications)');
+        $('btnBleed').onclick = () =>
+          ch
+            ? act('Dying: 4 rounds', { action: { id: P('bleed') } })
+            : toast('Load a character first');
+        $('btnPoison').onclick = () => {
+          if (!ch) return toast('Load a character first');
+          const virulence = Math.max(0, Number($('poisonVirulence').value) || 0);
+          const aidDegree = Math.max(0, Number($('poisonAid').value) || 0);
+          act(
+            `Resist a poison (virulence ${virulence}${aidDegree ? `, first aid ${roman(aidDegree)}` : ''})`,
+            { action: { id: P('resist-poison') }, params: { virulence, aid: aidDegree } },
+          );
+        };
         window.addEventListener('beforeunload', (e) => {
           if (dirty) e.preventDefault();
         });
