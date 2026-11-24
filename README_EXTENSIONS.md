@@ -283,20 +283,27 @@ setup](#github-setup) before pushing, and restart a running tool.
 
 ## OCF version
 
-Built and tested against this commit of the OCF repository, still `upstream/main` on 2026-11-23:
+Merged with this commit of the OCF repository, `upstream/main` on 2026-11-24:
 
-|                 |                                                               |
-| --------------- | ------------------------------------------------------------- |
-| Repository      | <https://github.com/pixelqueue/opencharacter> (branch `main`) |
-| Commit          | `c3a1de41e056caae88ca471359a8a530e6208478`                    |
-| Date            | 2026-11-02                                                    |
-| Message         | Version Packages (#209)                                       |
-| Release tag     | `@opencharacter/5e-srd-5.1@0.4.0`                             |
-| Spec and engine | 0.4.0                                                         |
+|                 |                                                                                           |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| Repository      | <https://github.com/pixelqueue/opencharacter> (branch `main`)                             |
+| Commit          | `48b479696591feabe321fdfc03a1ef07d291861e`                                                |
+| Date            | 2026-11-23                                                                                |
+| Message         | Build(deps-dev): Bump the dev-dependencies group across 1 directory with 5 updates (#278) |
+| Release tag     | `@opencharacter/5e-srd-5.1@0.4.0` (the latest; no release since)                          |
+| Spec and engine | 0.4.0                                                                                     |
 
-A later OCF commit may change the spec or the engine and break the pack or the tools. To work on
-this exact version: `git checkout c3a1de41e056caae88ca471359a8a530e6208478`. To see which commit a
-clone is on: `git log -1`.
+History of the merges:
+
+| Date       | OCF commit | What it brought                                                                                         |
+| ---------- | ---------- | ------------------------------------------------------------------------------------------------------- |
+| 2026-11-02 | `c3a1de41` | The base: Version Packages (#209)                                                                       |
+| 2026-11-24 | `48b47969` | Dependency updates only: semver, intl-messageformat, astro, starlight, oxfmt 0.79, oxlint, vitest, vite |
+
+A later OCF commit may change the spec or the engine and break the pack or the tools: merge as in
+[After cloning](#after-cloning), then run the checks and the tools. To see which OCF commit a clone
+holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 
 ## What was added
 

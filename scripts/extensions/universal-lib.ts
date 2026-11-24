@@ -197,9 +197,7 @@ function packList() {
   return [...packDirs.entries()]
     .map(([id, dir]) => {
       // Whether the pack declares creation starts (read without loading the pack).
-      const creation = yamlFiles(join(dir, 'rules')).some((f) =>
-        /^creation:/m.test(readText(f)),
-      );
+      const creation = yamlFiles(join(dir, 'rules')).some((f) => /^creation:/m.test(readText(f)));
       return { id, name: (english(dir)['pack.name'] as string | undefined) ?? id, creation };
     })
     .toSorted((a, b) => a.name.localeCompare(b.name));
