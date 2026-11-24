@@ -390,8 +390,11 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
   protection less the armor piercing (or none for an attack that ignores armor), then deals stun
   or injuries and rolls shock. Recovery (section 5.6): `rest-short` (10 minutes after damage: stun cured, 5 physical injuries healed per degree of an Endurance roll) and `rest-day` (once a day after a sleep: stun cured, the degree of an Endurance roll in physical injuries, +I with complete rest, and of a Presence roll in psychical ones; doubled in a medical institution). A failed shock roll faints (`state.fainted`, physical) or confuses (`state.shaken`, psychical); the rests clear both. A character at its hit points is dying (`state.dying`): `bleed` loses 1 injury every 4 rounds. First aid is rolled by the helper on their own sheet (a skill check), and the patient's player reports it with `first-aid-received`: woken, stabilized (`state.stabilized`, ended by new physical damage), or a fumble (an Endurance shock roll; failed, the injuries go to the death threshold). `resist-poison`: Physical Resistance against the virulence, plus first aid's degree as reported; a final degree of I resists. No sheet acts on another: what one character does to another goes through the players.
 - **`gear.yaml`**: weapons (kind, skill, damage bonus, required Strength, DMAX, range on the
-  Universal Table, armor piercing, technological level) with their damage action; armor and
-  shields, whose protection counts while equipped.
+  Universal Table, armor piercing (AP), technological level; for the examples of 14.3, shots,
+  rate of fire, weight, tripod) with their damage action: extra dice for bursts and bullets, a
+  charge's speed bonus; armor and shields: protection, bullet protection, resilient armor (RA)
+  and shield parry bonuses count while equipped. `take-damage` halves the protection for each
+  point of AP above the RA (7.4), using the bullet protection against bullets or impact.
 - **`creation.yaml`**: the creation starts and their actions (below).
 - **`advancement.yaml`**: the evolution of the characters ([below](#advancement-rulesadvancementyaml)).
 - **`display.yaml`**: display hints (never part of the calculations). Content groups keep to the
@@ -399,8 +402,27 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
   armor of that level; what lies above goes to hidden groups (`showWhen: 'false'`), so an app
   doesn't show it. A carried weapon above the level still shows: a group holding a copy that
   isn't standard always does.
-- **`tags.yaml`**: the tags `advancement`, `characteristic`, `check`, `creation`, `damage`,
-  `health` and `secondary-bonus`.
+- **`combat.yaml`**: the fight (7): `roll-initiative` (1d6* + Initiative, kept in
+  `combat.initiative`, +10 after a round passed), `reflex-dodge`, shield parry bonuses, the
+  Speed bonus of a charge, and the martial arts (7.5): a style (`martial.style`) giving each domain
+  (strikes, projections, holds) its learning level and equivalent Strength, a strike's damage
+  (`martial-strike-damage`: DMAX 2 or 3, the equivalent Strength's bonus), a projection's
+  (`projection-damage`), and Dodge and Initiative at least the martial arts learning level. The
+  combat modifiers of section 12 are situations (range, concealment, invisible opponent, parry
+  modifiers, shield, stun instead of injury, move-by attack, shotgun). Parry and dodge are skill
+  rolls; the degree is reported to the attacker.
+- **`dangers.yaml`**: falls (1d6* per 3 m), holding one's breath (2 x Endurance rounds, then
+  Endurance rolls at -I more each period), suffocation (1d6* stun a round), flames (1d6* or
+  2d6*) and explosions (base + relative degree x 1d6*, with armor piercing), each taken with
+  `take-damage`. The book doesn't say whether armor protects from falls, suffocation and flames:
+  it doesn't here.
+- **`long-term.yaml`**: long-term actions (4.3): `long-start` (degrees to reach, failure
+  threshold), `long-step` (a roll less the opposition's, added to the total).
+- **`checks.yaml`** also gives skill rolls help (4.4: the first helper adds half their total,
+  the second a quarter, the third an eighth), a neighboring skill (4.5: half its total) and a
+  skill used at the same time (4.6: the weaker total).
+- **`tags.yaml`**: the tags `advancement`, `characteristic`, `check`, `combat`, `creation`,
+  `damage`, `danger`, `health` and `secondary-bonus`.
 
 ### Content (`content/`)
 
@@ -408,8 +430,10 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
   (Strength) … Other (Speed)) whose initial level is chosen when learned. Generic skills, to be
   specialized: Foreign languages, Handcrafts, Mind games, Games of accuracy, Other arts, Other
   knowledge, Other sciences, Other techniques, and the eleven "Other" skills.
-- **Weapons (62)**: sections 14.1 and 14.2, each with its DMAX, plus its range for the 32 ranged
-  ones.
+- **Weapons (98)**: sections 14.1 and 14.2, each with its DMAX, plus its range and AP for the
+  ranged ones; and the 36 TL4/TL5 examples of 14.3 (`weapons.example-…`: pistols, revolvers,
+  rifles, assault rifles, submachine guns, shotguns, a machine gun, heavy weapons), TL4 before
+  1900 and TL5 after.
 - **Armor (14)**: section 15, shields included.
 
 ### Creation (`rules/creation.yaml`)
@@ -469,8 +493,10 @@ when they load it (`sagas-core-skills-dodge`); the two characters in `extensions
 
 ### Not yet modelled
 
-Long-term actions, help and neighboring skills, combat options, martial arts,
-TL 4/5 weapon examples, structures, the French translation.
+Grappling and two-weapon rolls (rolls the players make with the skills as they are), a mount's
+charge, weapon size modifiers, the number of bullets of a burst (1d6* + 1, rolled at the table),
+social interactions and chases (oppositions and long-term actions), structures, the French
+translation.
 
 ## The SagaS tools
 
@@ -504,8 +530,13 @@ TL 4/5 weapon examples, structures, the French translation.
   - identity, with Initiative, Speed and Reflex Dodge in the header;
   - characteristic and skill rolls with difficulty, modifier and situation. Skills are grouped by
     characteristic and filtered (all, points spent, total > 0), with one row per specialty;
-  - weapons with attack and damage, DMAX and range;
-  - taking damage with armor piercing or ignoring armor; recovery: 10 minutes of rest, a day's rest (complete rest, medical institution), healing by hand; first aid received (woken, stabilized, fumble), bleeding while dying, resisting a poison; badges for fainted, dying, stabilized and confused by a shock;
+  - weapons with attack, damage and parry, DMAX, AP and range; extra dice (bursts, bullets) and
+    charge for the damage; help, neighboring and simultaneous skills for skill rolls;
+  - combat: initiative (kept for the fight), Reflex Dodge, Dodge, martial arts (style, strike and
+    projection damage), the combat modifiers among the situations;
+  - dangers: fall, holding one's breath and suffocation, flames, explosion; a long-term action
+    (start, then a roll a step with a skill, against an opposition);
+  - taking damage with armor piercing, bullets or impact, or ignoring armor; recovery: 10 minutes of rest, a day's rest (complete rest, medical institution), healing by hand; first aid received (woken, stabilized, fumble), bleeding while dying, resisting a poison; badges for fainted, dying, stabilized and confused by a shock;
   - progression, with the pack's advancement actions: experience points at the end of a
     scenario (plus a bonus), a main or secondary characteristic raised (its cost in each option,
     marked when the XP can't pay), a skill raised one step with ▲ in the skills table (with a
