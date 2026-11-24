@@ -34,6 +34,14 @@ contentTypes:
         type: integer
         formula: 'self.total <= 0 ? 0 : self.total <= 5 ? 1 : self.total <= 10 ? 2 : self.total <= 15 ? 3 : self.total <= 20 ? 4 : 5'
 
+# Every character knows every skill at its initial level at least: an unlearned skill can still
+# be rolled (section 3.3). So each skill that isn't generic is a standard copy, on every sheet and
+# saved in the file only once raised. Generic and "Other" skills, one copy per specialty, are
+# added with learn-specialty. The list can't depend on the universe's technological level (it is
+# fixed when the pack loads): the actions only raise skills of the universe.
+standardCopies:
+  - { type: skill, where: '!item.generic && !item.variableBase' }
+
 constraints:
   # A skill is never learned below its initial level.
   - id: learning-above-base

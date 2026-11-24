@@ -1,0 +1,188 @@
+# Evolution of the characters (section 3.4): experience points the referee awards after each
+# scenario, spent at the creation costs; unspent points stay. The referee's agreement on each
+# choice isn't modelled, nor the limit on simultaneous studies (study.limit, shown as a reminder).
+families:
+  characteristic: [str, agi, end, dex, wit, wil, pre, ins]
+  secondary: [cco, rco, spd, ini]
+
+fields:
+  # Experience points not yet spent, and every point awarded (a record for the referee).
+  xp.current: { type: integer, input: true, default: 0, min: 0 }
+  xp.earned: { type: integer, input: true, default: 0, min: 0 }
+  # The universe's technological level, chosen at creation: skills above it don't exist.
+  universe.techLevel: { type: integer, input: true, default: 2, min: 0, max: 8 }
+
+actions:
+  # The referee's award: 5 points after a scenario, up to 5 more for exceptional role-playing.
+  - id: gain-experience
+    tags: [advancement]
+    available: '!character.creating'
+    params:
+      bonus: { type: integer, default: 0, min: 0, max: 5 }
+    results: [gained]
+    steps:
+      - id: add
+        kind: changes
+        changes:
+          - { type: adjust, field: xp.current, by: 5 + params.bonus }
+          - { type: adjust, field: xp.earned, by: 5 + params.bonus }
+      - id: result
+        kind: outcome
+        result: "'gained'"
+        data: { points: 5 + params.bonus }
+
+  # +1 to a main characteristic at the creation price of the new value: 3 up to 5, 6 up to 10,
+  # 12 up to 15, 24 up to 20, 48 above.
+  # Offered as soon as the creation is finished, so a sheet shows it; without enough points it
+  # ends with not-enough-points.
+  - id: improve-characteristic
+    tags: [advancement]
+    available: '!character.creating'
+    params:
+      characteristic: { type: enum, values: [str, agi, end, dex, wit, wil, pre, ins] }
+    results: [improved, not-enough-points]
+    steps:
+      - id: value
+        kind: branch
+        cases:
+          - when: true
+            flags: { value: "fieldOf('chars.{characteristic}', params.characteristic)" }
+      - id: price
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              cost: 'flags.value + 1 <= 5 ? 3 : flags.value + 1 <= 10 ? 6 : flags.value + 1 <= 15 ? 12 : flags.value + 1 <= 20 ? 24 : 48'
+      - { id: short, kind: outcome, when: xp.current < flags.cost, result: "'not-enough-points'" }
+      - id: buy
+        kind: changes
+        changes:
+          - type: adjust
+            field: { formula: "fieldId('chars.{characteristic}', params.characteristic)" }
+            by: 1
+          - { type: adjust, field: xp.current, by: -flags.cost }
+      - id: result
+        kind: outcome
+        result: "'improved'"
+        data: { value: flags.value + 1, cost: flags.cost }
+
+  # +1 to a secondary characteristic: three times a main one's price for its new value. The +1
+  # goes to the bought bonus (creation.cco…), so it stays when the main characteristics change.
+  - id: improve-secondary
+    tags: [advancement]
+    available: '!character.creating'
+    params:
+      secondary: { type: enum, values: [cco, rco, spd, ini] }
+    results: [improved, not-enough-points]
+    steps:
+      - id: value
+        kind: branch
+        cases:
+          - when: true
+            flags: { value: "fieldOf('sec.{secondary}', params.secondary)" }
+      - id: price
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              cost: '3 * (flags.value + 1 <= 5 ? 3 : flags.value + 1 <= 10 ? 6 : flags.value + 1 <= 15 ? 12 : flags.value + 1 <= 20 ? 24 : 48)'
+      - { id: short, kind: outcome, when: xp.current < flags.cost, result: "'not-enough-points'" }
+      - id: buy
+        kind: changes
+        changes:
+          - type: adjust
+            field: { formula: "fieldId('creation.{secondary}', params.secondary)" }
+            by: 1
+          - { type: adjust, field: xp.current, by: -flags.cost }
+      - id: result
+        kind: outcome
+        result: "'improved'"
+        data: { value: flags.value + 1, cost: flags.cost }
+
+  # One step of a skill, at the creation price: below 0 a step of 5 for 1 point, then 1 per
+  # level up to 5, 2 up to 10, 4 up to 15, 8 up to 20, 16 above ([1, 2, 4, 8, 16] by the level's
+  # band of 5). Halved, rounded up, with a trainer (total level at least 5 above the
+  # character's). Every skill of the universe is on the sheet (a standard copy, from its initial
+  # level), and each specialty of a generic one is its own copy: the choice is among them. A new
+  # generic one goes through learn-specialty, which asks its specialty.
+  - id: improve-skill
+    tags: [advancement]
+    available: '!character.creating'
+    params:
+      trainer: { type: boolean, default: false }
+    results: [improved, not-enough-points]
+    steps:
+      - id: short
+        kind: outcome
+        when: >-
+          countCopies(copy.type == 'skill' && copy.fields.techLevel <= universe.techLevel
+            && ceil([1, 2, 4, 8, 16][min(4, floor(max(copy.state.learning, 0) / 5))]
+              / (params.trainer ? 2 : 1)) <= xp.current) == 0
+        result: "'not-enough-points'"
+      - id: skill
+        kind: choice
+        options:
+          copies:
+            type: skill
+            where: >-
+              item.techLevel <= universe.techLevel
+                && ceil([1, 2, 4, 8, 16][min(4, floor(max(self.learning, 0) / 5))]
+                  / (params.trainer ? 2 : 1)) <= xp.current
+        prefer: -self.learning
+        changes:
+          - type: setState
+            entry: picked
+            key: learning
+            value: 'picked.self.learning < 0 ? picked.self.learning + 5 : picked.self.learning + 1'
+          - type: adjust
+            field: xp.current
+            by: '-ceil([1, 2, 4, 8, 16][min(4, floor(max(picked.self.learning, 0) / 5))] / (params.trainer ? 2 : 1))'
+      - id: result
+        kind: outcome
+        result: "'improved'"
+
+  # The universe's technological level, for a character made before it was recorded or moved to
+  # another universe. Skills that don't exist at the new level lose their points (not given
+  # back): the standard ones go back to their initial level, a generic one's specialties are
+  # removed.
+  - id: set-tech-level
+    tags: [advancement]
+    available: '!character.creating'
+    results: [set]
+    steps:
+      - id: level
+        kind: choice
+        options: { values: [0, 1, 2, 3, 4, 5, 6, 7, 8] }
+        recommend: string(universe.techLevel)
+      - id: count
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              reset: >-
+                countCopies(copy.type == 'skill' && copy.fields.techLevel > steps.level.value
+                  && !copy.fields.generic && !copy.fields.variableBase
+                  && copy.state.learning != copy.state.initial)
+              removed: >-
+                countCopies(copy.type == 'skill' && copy.fields.techLevel > steps.level.value
+                  && (copy.fields.generic || copy.fields.variableBase))
+      - id: apply
+        kind: changes
+        changes:
+          - { type: set, field: universe.techLevel, value: steps.level.value }
+          - type: setState
+            copies:
+              type: skill
+              where: >-
+                item.techLevel > steps.level.value && !item.generic && !item.variableBase
+                  && self.learning != self.initial
+            key: learning
+            value: self.initial
+          - type: removeItem
+            copies:
+              type: skill
+              where: 'item.techLevel > steps.level.value && (item.generic || item.variableBase)'
+      - id: result
+        kind: outcome
+        result: "'set'"
+        data: { level: steps.level.value, reset: flags.reset, removed: flags.removed }

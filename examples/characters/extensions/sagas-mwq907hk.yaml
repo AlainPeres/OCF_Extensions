@@ -14,11 +14,11 @@ values:
   sagas-core:chars.pre: 8
   sagas-core:chars.ins: 5
 features:
-  - id: dodge
+  - id: sagas-core-skills-dodge
     item: sagas-core:skills.dodge
     state:
       learning: 3
-  - id: stealth
+  - id: sagas-core-skills-stealth
     item: sagas-core:skills.stealth
     state:
       learning: 3

@@ -15,8 +15,8 @@ values:
   sagas-core:chars.pre: 7
   sagas-core:chars.ins: 9
 features:
-  - { id: dodge, item: sagas-core:skills.dodge, state: { learning: 6 } }
-  - { id: stealth, item: sagas-core:skills.stealth, state: { learning: 2 } }
+  - { id: sagas-core-skills-dodge, item: sagas-core:skills.dodge, state: { learning: 6 } }
+  - { id: sagas-core-skills-stealth, item: sagas-core:skills.stealth, state: { learning: 2 } }
 inventory:
   - { id: plate, item: sagas-core:armor.plate-armor, equipped: true }
   - { id: helmet, item: sagas-core:armor.normal-helmet, equipped: true }

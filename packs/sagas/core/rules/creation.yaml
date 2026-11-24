@@ -45,6 +45,8 @@ actions:
         kind: choice
         options: { values: [0, 1, 2, 3, 4, 5, 6, 7, 8] }
         recommend: "'2'"
+        changes:
+          - { type: set, field: universe.techLevel, value: picked.value }
 
       # Main characteristics from 5, at their cost per point. The random start spends three
       # fifths of the points there, one point at a time on a characteristic drawn at random.
@@ -68,36 +70,30 @@ actions:
         cost: '3 * ((3 * min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) + amount, 5) + 6 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) + amount, 10) - 5) + 12 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) + amount, 15) - 10) + 24 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) + amount, 20) - 15) + 48 * max(0, ((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) + amount - 20)) - (3 * min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value), 5) + 6 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value), 10) - 5) + 12 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value), 15) - 10) + 24 * max(0, min(((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value), 20) - 15) + 48 * max(0, ((field.id == @creation.cco ? raw.cco : field.id == @creation.rco ? raw.rco : field.id == @creation.spd ? raw.spd : raw.ini) + field.value) - 20)))'
         recommend: '0'
 
-      # Skills: which ones to learn (the random start draws 1d6 + 3), then their levels, one step
-      # at a time while the points last.
+      # Skills: every skill of the universe is on the sheet at its initial level (a standard
+      # copy). The random start draws 1d6 + 3 to study and raises each one step; then the levels
+      # rise one step at a time while the points last (the random start's among those it drew).
       - id: skillCount
         kind: roll
         when: params.random
         parts: [{ dice: 1d6 }]
-      - id: counts
-        kind: branch
-        cases:
-          - when: params.random
-            flags: { learnMin: steps.skillCount.total + 3, learnMax: steps.skillCount.total + 3 }
-        else:
-          flags: { learnMin: 0, learnMax: 40 }
       - id: learn
         kind: choice
         sheet: proposed
-        random: params.random
-        repeat: { max: flags.learnMax, min: flags.learnMin }
+        when: params.random
+        random: true
+        repeat: { max: steps.skillCount.total + 3, min: steps.skillCount.total + 3 }
         options:
-          content:
+          copies:
             type: skill
             where: >-
               !item.generic && !item.variableBase && item.techLevel <= steps.techLevel.value
-                && picks == 0 && countCopies(copy.item == item.id) == 0
-        recommend: >-
-          size(filterList([@skills.native-language, @skills.general-culture, @skills.perception, @skills.dodge, @skills.first-aid, @skills.stealth, @skills.brawling], x in options)) > 0
-            ? filterList([@skills.native-language, @skills.general-culture, @skills.perception, @skills.dodge, @skills.first-aid, @skills.stealth, @skills.brawling], x in options)[0] : '#done'
+                && self.learning == self.initial
         changes:
-          - type: addItem
-            entry: { item: picked.id }
+          - type: setState
+            entry: picked
+            key: learning
+            value: 'picked.self.learning < 0 ? picked.self.learning + 5 : picked.self.learning + 1'
       - id: raise
         kind: choice
         sheet: proposed
@@ -106,9 +102,14 @@ actions:
         options:
           copies:
             type: skill
-            where: '(self.learning < 5 ? 1 : self.learning < 10 ? 2 : self.learning < 15 ? 4 : self.learning < 20 ? 8 : 16) <= points.remaining'
+            where: >-
+              item.techLevel <= steps.techLevel.value
+                && (!params.random || self.learning > self.initial)
+                && [1, 2, 4, 8, 16][min(4, floor(max(self.learning, 0) / 5))] <= points.remaining
         # The lowest learning level first, so an automatic run spreads the points.
         prefer: -self.learning
+        # A guided run finished automatically raises none: the player picks.
+        recommend: "params.random ? options[0] : '#done'"
         changes:
           - type: setState
             entry: picked
@@ -149,7 +150,8 @@ actions:
 
   # A generic skill taken with a specialty (section 3.3), at creation or later: the skill, its
   # initial level for an "Other" skill (-15, -10, -5 or 0), then its level one step at a time,
-  # within the creation points while the character is being created.
+  # within the creation points while the character is being created, paid with experience
+  # points afterwards (improve-skill then raises it with a trainer).
   - id: learn-specialty
     tags: [creation]
     params:
@@ -184,13 +186,18 @@ actions:
             type: skill
             where: >-
               item.id == steps.skill.picked && self.specialty == params.specialty
-                && (!character.creating || (self.learning < 5 ? 1 : self.learning < 10 ? 2 : self.learning < 15 ? 4 : self.learning < 20 ? 8 : 16) <= points.remaining)
+                && (self.learning < 5 ? 1 : self.learning < 10 ? 2 : self.learning < 15 ? 4 : self.learning < 20 ? 8 : 16)
+                  <= (character.creating ? points.remaining : xp.current)
         recommend: "'#done'"
         changes:
           - type: setState
             entry: picked
             key: learning
             value: 'picked.self.learning < 0 ? picked.self.learning + 5 : picked.self.learning + 1'
+          - type: adjust
+            when: '!character.creating'
+            field: xp.current
+            by: '-(picked.self.learning < 5 ? 1 : picked.self.learning < 10 ? 2 : picked.self.learning < 15 ? 4 : picked.self.learning < 20 ? 8 : 16)'
       - id: result
         kind: outcome
         result: "'learned'"
