@@ -447,6 +447,10 @@
                 <option value="1">Privileged (−10 pts)</option>
               </select>
             </label>
+            <label title="Skills, weapons and protections above it don't exist in the universe"
+              >Technological level
+              <select id="techLevel"></select
+            ></label>
           </div>
         </section>
 
@@ -595,10 +599,20 @@
         specVersion: '0.4.0',
         id: `sagas-${Date.now().toString(36)}`,
         packs: [{ id: D.pack, version: '0.1.0' }],
-        values: { [`${D.pack}:creation.points`]: 150 },
+        values: { [`${D.pack}:creation.points`]: 150, [`${D.pack}:universe.techLevel`]: 2 },
         features: [],
         inventory: [],
       });
+      // The universe's technological level (TL2 for a character saved before it was recorded):
+      // skills and gear above it don't exist there.
+      const techLevel = () => getV('universe.techLevel', 2);
+      const inUniverse = (it) => (it.fields.techLevel ?? 0) <= techLevel();
+      // What the pack's display hints hide, from the last computed sheet: a copy (a skill above
+      // the universe's level, never raised), or an item not held that would be once held.
+      const hiddenByPack = (it, copyId) =>
+        copyId
+          ? (sheet.hidden ?? []).includes(copyId)
+          : (sheet.hiddenItems ?? []).includes(k(it.id));
 
       // --- Computing ----------------------------------------------------------------------------------
       let pending;
@@ -660,6 +674,7 @@
           b.classList.toggle('on', Number(b.dataset.v) === getV('creation.points', 150));
         $('points').value = getV('creation.points', 150);
         $('social').value = String(getV('creation.social', 0));
+        $('techLevel').value = String(techLevel());
 
         const chars = $('chars');
         chars.replaceChildren();
@@ -718,6 +733,13 @@
           // A generic skill has one copy per specialization; any other skill at most one.
           const feats = ch.features.filter((f) => f.item === k(sk.id));
           if (takenOnly && !feats.length) continue;
+          // Not raised yet: listed when the pack's display hints show it (a skill of the universe's
+          // level); one raised above it stays, flagged below.
+          if (
+            !feats.length &&
+            hiddenByPack(sk, sk.fields.generic || sk.fields.variableBase ? undefined : stdId(sk.id))
+          )
+            continue;
           if (fc && sk.fields.characteristic !== fc) continue;
           const specs = feats
             .map((f) => f.state.specialty ?? '')
@@ -739,7 +761,9 @@
             sk.fields.generic
               ? '<span class="pill" title="Must be specialized; can be learned once per specialty">generic</span>'
               : '',
-            sk.fields.techLevel ? `<span class="pill">TL ${sk.fields.techLevel}</span>` : '',
+            sk.fields.techLevel
+              ? `<span class="pill"${inUniverse(sk) ? '' : ' style="color: var(--bad)" title="Above the universe\'s technological level"'}>TL ${sk.fields.techLevel}</span>`
+              : '',
           ].join(' ');
           const learn = (label) => {
             const b = Object.assign(document.createElement('button'), {
@@ -755,14 +779,19 @@
               const state = { learning: base };
               if (specialty) state.specialty = specialty;
               if (variable) state.initial = base; // chosen afterwards in the Initial column
-              ch.features.push({ id: newFeatureId(local, specialty), item: k(sk.id), state });
+              // A skill that isn't generic is a standard copy: its ID is fixed.
+              const id =
+                sk.fields.generic || variable ? newFeatureId(local, specialty) : stdId(sk.id);
+              ch.features.push({ id, item: k(sk.id), state });
               change();
             };
             return b;
           };
           if (!feats.length) {
+            // Not raised yet: a standard copy at its initial level, whose total the engine gives.
+            const std = !sk.fields.generic && !variable;
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${esc(sk.name)} ${tags}</td><td>${esc(charName(sk.fields.characteristic))}</td><td class="num">${variable ? '<span title="Chosen when learned">−15 to 0</span>' : base}</td><td class="num"></td><td class="num"></td><td></td><td></td>`;
+            tr.innerHTML = `<td>${esc(sk.name)} ${tags}</td><td>${esc(charName(sk.fields.characteristic))}</td><td class="num">${variable ? '<span title="Chosen when learned">−15 to 0</span>' : base}</td><td class="num"></td><td class="num muted"${std ? ` data-total="${esc(stdId(sk.id))}"` : ''}></td><td class="muted"></td><td></td>`;
             tr.children[6].append(learn(sk.fields.generic ? 'Learn…' : 'Learn'));
             body.append(tr);
             continue;
@@ -816,10 +845,12 @@
                 prevLearning,
               ),
             );
+            // A standard copy can't leave the sheet: taking it out of the file puts it back at its
+            // initial level.
             const rm = Object.assign(document.createElement('button'), {
               className: 'small',
               textContent: '×',
-              title: 'Remove',
+              title: sk.fields.generic || variable ? 'Remove' : 'Back to the initial level',
             });
             rm.onclick = () => {
               ch.features = ch.features.filter((f) => f !== feat);
@@ -836,6 +867,9 @@
           `${ch.features.length} learned · ${shown} shown of ${D.skills.length}`;
         fillComputed();
       }
+
+      /** A standard copy's ID: the qualified ID with hyphens (sagas-core-skills-dodge). */
+      const stdId = (localId) => `${D.pack}-${localId.replace(/\./g, '-')}`;
 
       /** A feature ID from the skill and its specialty ("foreign-languages-spanish"), unique in the file. */
       function newFeatureId(local, specialty) {
@@ -946,6 +980,8 @@
         const body = $('gear');
         body.replaceChildren();
         for (const it of D[kind]) {
+          // Offered when the pack's display hints would show it once carried.
+          if (hiddenByPack(it)) continue;
           if (q && !it.name.toLowerCase().includes(q) && !it.id.includes(q)) continue;
           const f = it.fields;
           const tr = document.createElement('tr');
@@ -1083,6 +1119,29 @@
           setV('creation.social', Number(e.target.value), 0);
           change();
         };
+        $('techLevel').innerHTML = D.techLevels
+          .map((name, n) => `<option value="${n}">${esc(name)}</option>`)
+          .join('');
+        // A lower level removes the skills learned above it (as the pack's set-tech-level does).
+        $('techLevel').onchange = (e) => {
+          const level = Number(e.target.value);
+          const above = ch.features.filter((f) => {
+            const sk = D.skills.find((s) => k(s.id) === f.item);
+            return (sk?.fields.techLevel ?? 0) > level;
+          });
+          if (
+            above.length &&
+            !confirm(
+              `${D.techLevels[level]}: these skills don't exist there and will be removed:\n\n${above.map((f) => featureName(f.id)).join('\n')}`,
+            )
+          ) {
+            e.target.value = String(techLevel());
+            return;
+          }
+          ch.features = ch.features.filter((f) => !above.includes(f));
+          setV('universe.techLevel', level);
+          change();
+        };
         $('skillSearch').oninput = renderSkills;
         $('skillChar').onchange = renderSkills;
         $('skillTaken').onchange = renderSkills;
@@ -1097,7 +1156,7 @@
         };
         $('btnRandom').onclick = async () => {
           ch = await api(
-            `/api/random?points=${getV('creation.points', 150)}&id=${encodeURIComponent(ch.id)}`,
+            `/api/random?points=${getV('creation.points', 150)}&tl=${techLevel()}&id=${encodeURIComponent(ch.id)}`,
           );
           change();
           toast('Random character rolled');

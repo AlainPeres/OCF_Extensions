@@ -158,6 +158,15 @@
       button.roll {
         padding: 2px 9px;
       }
+      tr.flash td {
+        background: color-mix(in srgb, var(--accent) 22%, transparent);
+        transition: background 0.4s;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: default;
+        border-color: var(--line);
+      }
       button.bad {
         border-color: var(--bad);
         color: var(--bad);
@@ -501,7 +510,7 @@
             <span class="seg" id="skillFilter">
               <button
                 data-f="all"
-                title="Every skill of the pack, unlearned ones at their initial level"
+                title="Every skill of the universe, those not raised at their initial level"
               >
                 All skills
               </button>
@@ -531,7 +540,6 @@
             <tbody id="skills"></tbody>
           </table>
         </section>
-
         <section>
           <h2>
             Weapons
@@ -599,6 +607,65 @@
         <section>
           <h2>Background</h2>
           <div id="idBackground" class="text"></div>
+        </section>
+
+        <section>
+          <h2>Progression <small id="xpInfo"></small></h2>
+          <div class="form">
+            <strong>Experience</strong>
+            <label
+              title="Up to 5 more points for exceptional role-playing (rare, the referee's call)"
+              >Bonus
+              <select id="xpBonus">
+                <option>0</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </label>
+            <button id="btnXp" title="The referee's award after a scenario">
+              End of scenario: +5 XP
+            </button>
+          </div>
+          <div class="form">
+            <strong>Improve</strong>
+            <select id="upChar"></select>
+            <button id="btnUpChar">+1</button>
+            <select id="upSec"></select>
+            <button id="btnUpSec">+1</button>
+          </div>
+          <div class="form">
+            <strong>Skills</strong>
+            <label
+              title="A trainer's total level is at least 5 above the character's: the cost is halved, rounded up"
+              ><input type="checkbox" id="trainer" /> With a trainer (half cost)</label
+            >
+            <span class="muted"
+              >▲ in the skills table raises a skill one step, from its initial level for one not
+              raised yet ("All skills" lists them).</span
+            >
+          </div>
+          <div class="form">
+            <strong>Learn a generic skill</strong>
+            <select id="learnGeneric"></select>
+            <input id="learnSpec" placeholder="Specialty" style="width: 130px" />
+            <select id="learnInitial" title='Initial level of an "Other" skill'>
+              <option>-15</option>
+              <option>-10</option>
+              <option>-5</option>
+              <option>0</option>
+            </select>
+            <button id="btnLearnGeneric">Learn</button>
+          </div>
+          <div class="form">
+            <strong>Universe</strong>
+            <select id="techLevel"></select>
+            <button id="btnTl" title="Skills above the new level are removed">
+              Set the technological level
+            </button>
+          </div>
         </section>
       </div>
 
@@ -766,9 +833,17 @@
           params: { characteristic: P(key) },
         });
 
-      /** Rolls a skill: the given copy (a generic skill's specialty), else the character's copy, else unlearned. */
+      /** A skill's copy: the saved one, else its standard copy (none for a generic skill). */
+      const skillCopy = (skillId) =>
+        (ch.features ?? []).find((f) => f.item === skillId) ??
+        (itemOf(skillId) && !multiCopy(itemOf(skillId)) ? { id: stdId(skillId) } : undefined);
+
+      /**
+       * Rolls a skill: the given copy (a generic skill's specialty), else its copy (every skill
+       * that isn't generic has one), else a generic skill without a specialty, at its initial level.
+       */
       function rollSkill(skillId, extraSituational = {}, label, copy) {
-        const feat = copy ?? (ch.features ?? []).find((f) => f.item === skillId);
+        const feat = copy ?? skillCopy(skillId);
         const item = itemOf(skillId);
         const name = label ?? `${item?.name ?? skillId} roll`;
         if (feat)
@@ -777,11 +852,11 @@
             { action: { id: P('skill-check'), entry: feat.id } },
             extraSituational,
           );
-        // Not learned: the engine only offers skill-check for a learned skill, so the base roll is used
-        // with the score the skill would have at its initial learning level.
+        // A generic skill with no specialty learned has no copy: the base roll is used with the
+        // score it would have at its initial level.
         const score = (V(item.fields.characteristic) ?? 0) + (item.fields.base ?? 0);
         return check(
-          `${name} (unlearned, initial level ${item.fields.base ?? 0})`,
+          `${name} (no specialty, initial level ${item.fields.base ?? 0})`,
           {
             action: { id: P('degree-roll') },
             params: { score },
@@ -809,6 +884,121 @@
         const r = await rollSkill(P(w.fields.skill), extra, `${w.name}: attack`);
         const degree = r?.outcome?.data?.degree ?? 0;
         if (degree >= 1) await dealDamage(gear, degree);
+      }
+
+      // --- Progression -----------------------------------------------------------------------------
+      // Costs as the pack's advancement actions charge them, for display only: the engine decides.
+      // A main characteristic's +1 costs the price of the new value (3 up to 5, 6 up to 10, 12 up
+      // to 15, 24 up to 20, 48 above), a secondary one three times as much; a skill step 1 below 0
+      // (steps of 5), then 1, 2, 4, 8 or 16 by the level, halved and rounded up with a trainer.
+      const pointPrice = (v) => (v <= 5 ? 3 : v <= 10 ? 6 : v <= 15 ? 12 : v <= 20 ? 24 : 48);
+      const charCost = (value) => pointPrice(value + 1);
+      const secCost = (value) => 3 * pointPrice(value + 1);
+      const skillCost = (learning, trainer) => {
+        const c = learning < 5 ? 1 : learning < 10 ? 2 : learning < 15 ? 4 : learning < 20 ? 8 : 16;
+        return trainer ? Math.ceil(c / 2) : c;
+      };
+      const nextLearning = (l) => (l < 0 ? l + 5 : l + 1);
+      const xp = () => V('xp.current') ?? 0;
+      const techLevel = () => V('universe.techLevel') ?? 2;
+      const tlName = (n) => D.techLevels[n] ?? `TL${n}`;
+      /**
+       * Fills a select with [value, label, off, short] options, keeping the choice. An `off`
+       * option can't be picked; a `short` one (not enough XP) can, so the list always shows a
+       * choice and its cost, and its button is greyed (syncUp).
+       */
+      const fillSelect = (el, options, keep = true) => {
+        const before = el.value;
+        el.innerHTML = options
+          .map(
+            ([v, label, off, short]) =>
+              `<option value="${esc(v)}"${off ? ' disabled' : ''}${short ? ' data-short' : ''}>${esc(label)}${short ? ' — not enough XP' : ''}</option>`,
+          )
+          .join('');
+        if (keep && options.some(([v, , off]) => v === before && !off)) el.value = before;
+      };
+      /** An improve button is active only for a chosen option the XP can pay. */
+      const syncUp = (select, button) => {
+        const o = select.selectedOptions[0];
+        button.disabled = !o || !o.value || o.disabled || o.hasAttribute('data-short');
+      };
+
+      function renderProgression() {
+        const have = xp();
+        const studies = V('study.limit');
+        $('xpInfo').textContent =
+          `${have} XP to spend · ${V('xp.earned') ?? 0} earned · ${tlName(techLevel())} · ${studies} studies at once`;
+        fillSelect(
+          $('upChar'),
+          D.chars.map((c) => {
+            const v = V(c.key) ?? 0;
+            const cost = charCost(v);
+            return [
+              c.key.split('.')[1],
+              `${c.name} ${v} → ${v + 1} (${cost} XP)`,
+              false,
+              cost > have,
+            ];
+          }),
+        );
+        fillSelect(
+          $('upSec'),
+          D.secondary.map((c) => {
+            const v = V(c.key) ?? 0;
+            const cost = secCost(v);
+            return [
+              c.key.split('.')[1],
+              `${c.name} ${v} → ${v + 1} (${cost} XP)`,
+              false,
+              cost > have,
+            ];
+          }),
+        );
+        // The generic skills the pack's display hints would show (those of the universe).
+        const hiddenItems = new Set(sheet.hiddenItems ?? []);
+        fillSelect(
+          $('learnGeneric'),
+          Object.entries(D.items)
+            .filter(([id, it]) => it.fields.generic && !hiddenItems.has(id))
+            .sort(([, a], [, b]) => a.name.localeCompare(b.name))
+            .map(([id, it]) => [id, it.name]),
+        );
+        $('learnInitial').style.display = itemOf($('learnGeneric').value)?.fields.variableBase
+          ? ''
+          : 'none';
+        fillSelect(
+          $('techLevel'),
+          D.techLevels.map((name, n) => [String(n), name]),
+          false,
+        );
+        $('techLevel').value = String(techLevel());
+        syncUp($('upChar'), $('btnUpChar'));
+        syncUp($('upSec'), $('btnUpSec'));
+      }
+
+      /** Runs an advancement action; `answers` are its picks in order (a skill, a level…). */
+      const advance = (title, id, params = {}, answers = []) =>
+        ch
+          ? act(title, {
+              action: { id: P(id) },
+              params,
+              answers: answers.map((option) => ({ option })),
+            })
+          : toast('Load a character first');
+
+      /** A generic or "Other" skill can be held once per specialty: its copy is asked for too. */
+      const multiCopy = (it) => !!(it.fields.generic || it.fields.variableBase);
+
+      /** One step of a skill's copy with improve-skill (its standard copy, or a specialty's). */
+      function raiseSkill(r) {
+        const trainer = $('trainer').checked;
+        const cost = skillCost(r.learning, trainer);
+        return advance(
+          `${r.name}: ${r.learning} → ${nextLearning(r.learning)} (${cost} XP${trainer ? ', trainer' : ''})`,
+          'improve-skill',
+          { trainer },
+          [r.feat.id],
+        );
       }
 
       // --- Log -------------------------------------------------------------------------------------
@@ -875,6 +1065,19 @@
           );
         }
         if (o?.result === 'rested') lines.push('<div class="line">Stun cleared.</div>');
+        // Advancement outcomes, with the experience points left after them.
+        const advanced = {
+          gained: (d) => `+${d.points} XP`,
+          improved: (d) =>
+            d.cost ? `Now ${d.value ?? d.learning} · ${d.cost} XP spent` : 'Raised one step',
+          'not-enough-points': () =>
+            '<span class="result failure">Not enough experience points</span>',
+          learned: () => 'Learned',
+          set: (d) =>
+            `${esc(tlName(d.level))} · ${d.reset ?? 0} skill(s) back to their initial level, ${d.removed ?? 0} specialty(ies) removed`,
+        }[o?.result];
+        if (advanced)
+          lines.push(`<div class="line">${advanced(o.data ?? {})} · <b>${xp()}</b> XP left</div>`);
         if (result.applyErrors)
           lines.push(
             `<div class="line result failure">${esc(JSON.stringify(result.applyErrors))}</div>`,
@@ -941,6 +1144,7 @@
         }
 
         renderSkills();
+        renderProgression();
 
         const weapons = $('weapons');
         weapons.replaceChildren();
@@ -950,14 +1154,15 @@
         for (const g of gear) {
           const w = itemOf(g.item);
           const skill = itemOf(P(w.fields.skill));
-          const feat = (ch.features ?? []).find((f) => f.item === P(w.fields.skill));
+          const feat = skillCopy(P(w.fields.skill));
           const total = feat ? sheet.copies[feat.id]?.total : undefined;
+          const raised = (ch.features ?? []).some((f) => f.item === P(w.fields.skill));
           const tr = document.createElement('tr');
           const weak =
             (V('chars.str') ?? 0) < (w.fields.strReq ?? 0)
               ? ` <span class="badge warn" title="Strength below the weapon's minimum: −I">STR ${w.fields.strReq}</span>`
               : '';
-          tr.innerHTML = `<td>${esc(w.name)}${g.equipped === false ? ' <span class="muted">(not equipped)</span>' : ''}${weak}</td><td>${esc(skill?.name ?? '—')}${feat ? '' : ' <span class="muted">(unlearned)</span>'}</td><td class="num"><b>${total ?? ''}</b></td><td class="num">+${w.fields.damageBonus}${w.fields.kind === 'melee' ? ` +${V('bonus.str')}` : ''}</td><td class="num">${w.fields.dmax}</td><td class="num">${rangeText(w.fields)}</td><td></td>`;
+          tr.innerHTML = `<td>${esc(w.name)}${g.equipped === false ? ' <span class="muted">(not equipped)</span>' : ''}${weak}</td><td>${esc(skill?.name ?? '—')}${raised ? '' : ' <span class="muted">(initial level)</span>'}</td><td class="num"><b>${total ?? ''}</b></td><td class="num">+${w.fields.damageBonus}${w.fields.kind === 'melee' ? ` +${V('bonus.str')}` : ''}</td><td class="num">${w.fields.dmax}</td><td class="num">${rangeText(w.fields)}</td><td></td>`;
           const cell = tr.lastElementChild;
           const atk = Object.assign(document.createElement('button'), {
             className: 'roll',
@@ -1022,32 +1227,52 @@
       const gradeOf = (total) =>
         total <= 0 ? 0 : total <= 5 ? 1 : total <= 10 ? 2 : total <= 15 ? 3 : total <= 20 ? 4 : 5;
 
-      /** Every skill of the pack, with the character's learning level, or its initial level if unlearned. */
+      /** A standard copy's ID: the qualified ID with hyphens (sagas-core-skills-dodge). */
+      const stdId = (qid) => qid.replace(':', '-').replace(/\./g, '-');
+
+      /**
+       * Every skill the pack's display hints show: those of the universe's technological level,
+       * and any raised above it. A skill that isn't generic is a standard copy on every sheet,
+       * saved in the file once raised; a generic one has one copy per specialty, none until one is
+       * learned (then the hints say whether a specialty of it would show).
+       */
       function skillRows() {
-        // A generic skill has one row per specialty learned.
+        const hidden = new Set(sheet.hidden ?? []);
+        const hiddenItems = new Set(sheet.hiddenItems ?? []);
         return (
           Object.entries(D.items)
             .filter(([, it]) => it.fields.characteristic)
             .flatMap(([id, it]) => {
-              const feats = (ch.features ?? []).filter((f) => f.item === id);
-              return (feats.length ? feats : [undefined]).map((feat) => {
+              const saved = (ch.features ?? []).filter((f) => f.item === id);
+              const copies = saved.length
+                ? saved
+                : multiCopy(it)
+                  ? [undefined]
+                  : [{ id: stdId(id), item: id, state: {} }];
+              return copies.flatMap((feat) => {
                 // The copy's initial level (chosen for an "Other" skill), else the skill's.
                 const base = feat?.state?.initial ?? it.fields.base ?? 0;
                 const learning = feat?.state?.learning ?? base;
-                // Learned skills come from the engine; unlearned ones are characteristic + initial level.
+                const raised = learning > base;
+                if (feat ? hidden.has(feat.id) : hiddenItems.has(id)) return [];
+                // The engine's total and grade; a generic skill without a copy: characteristic +
+                // initial level.
                 const copy = feat ? sheet.copies[feat.id] : undefined;
                 const total = copy?.total ?? (V(it.fields.characteristic) ?? 0) + base;
                 const name = `${it.name}${feat?.state?.specialty ? ` (${feat.state.specialty})` : ''}`;
-                return {
-                  id,
-                  it,
-                  feat,
-                  name,
-                  base,
-                  learning,
-                  total,
-                  grade: copy?.grade ?? gradeOf(total),
-                };
+                return [
+                  {
+                    id,
+                    it,
+                    feat,
+                    name,
+                    base,
+                    learning,
+                    raised,
+                    total,
+                    grade: copy?.grade ?? gradeOf(total),
+                  },
+                ];
               });
             })
             // Grouped by characteristic, in the sheet's order; "Other" skills last in each group.
@@ -1069,8 +1294,7 @@
         const all = skillRows();
         const rows = all.filter(
           (r) =>
-            (skillFilter === 'all' ||
-              (skillFilter === 'spent' ? r.feat && r.learning > r.base : r.total > 0)) &&
+            (skillFilter === 'all' || (skillFilter === 'spent' ? r.raised : r.total > 0)) &&
             (!q || r.name.toLowerCase().includes(q)),
         );
         $('skillCount').textContent =
@@ -1092,14 +1316,29 @@
             body.append(head);
           }
           const tr = document.createElement('tr');
-          if (!r.feat) tr.className = 'muted';
-          const learning = r.feat
+          if (!r.raised) tr.className = 'muted';
+          if (r.feat) tr.dataset.copy = r.feat.id;
+          const learning = r.raised
             ? r.learning
-            : `<span title="Not learned: initial level">${r.base}</span>`;
-          tr.innerHTML = `<td>${esc(r.name)}${r.feat ? '' : ' <span class="muted">(unlearned)</span>'}</td><td class="muted">${esc(charName)}</td><td class="num">${learning}</td><td class="num"><b>${r.total}</b></td><td>${GRADES[r.grade] ?? ''}</td><td></td>`;
-          tr.lastElementChild.append(
-            rollButton(() => rollSkill(r.id, {}, `${r.name} roll`, r.feat)),
-          );
+            : `<span title="Not raised: the initial level">${r.base}</span>`;
+          const note = r.feat ? '' : ' <span class="muted">(no specialty learned)</span>';
+          tr.innerHTML = `<td>${esc(r.name)}${note}</td><td class="muted">${esc(charName)}</td><td class="num">${learning}</td><td class="num"><b>${r.total}</b></td><td>${GRADES[r.grade] ?? ''}</td><td></td>`;
+          const cell = tr.lastElementChild;
+          cell.style.whiteSpace = 'nowrap';
+          cell.append(rollButton(() => rollSkill(r.id, {}, `${r.name} roll`, r.feat)));
+          // Every copy rises one step with experience points; a generic skill gets a copy with
+          // "Learn a generic skill", which asks its specialty.
+          if (r.feat) {
+            const cost = skillCost(r.learning, $('trainer').checked);
+            const up = Object.assign(document.createElement('button'), {
+              className: 'roll',
+              textContent: `▲ ${cost}`,
+              title: `Raise to ${nextLearning(r.learning)} for ${cost} XP`,
+              disabled: cost > xp(),
+            });
+            up.onclick = () => raiseSkill(r);
+            cell.append(' ', up);
+          }
           body.append(tr);
         }
       }
@@ -1178,6 +1417,83 @@
           };
         }
         $('skillSearch').oninput = () => ch && renderSkills();
+
+        // Progression.
+        /**
+         * Shows the skill just learned (the newest copy) in the table, where ▲ raises it: every
+         * skill listed, no search left behind, the row scrolled into view and highlighted.
+         */
+        const showSkill = () => {
+          const copy = (ch.features ?? []).at(-1);
+          skillFilter = 'all';
+          $('skillSearch').value = '';
+          renderSkills();
+          const row = copy && $('skills').querySelector(`tr[data-copy="${CSS.escape(copy.id)}"]`);
+          if (!row) return;
+          row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          row.classList.add('flash');
+          setTimeout(() => row.classList.remove('flash'), 2000);
+        };
+        $('btnXp').onclick = () => {
+          const bonus = Number($('xpBonus').value) || 0;
+          advance(`End of scenario: +${5 + bonus} XP`, 'gain-experience', { bonus });
+          $('xpBonus').value = '0';
+        };
+        $('upChar').onchange = () => syncUp($('upChar'), $('btnUpChar'));
+        $('upSec').onchange = () => syncUp($('upSec'), $('btnUpSec'));
+        $('btnUpChar').onclick = () => {
+          const o = $('upChar').selectedOptions[0];
+          if (!o?.value) return toast('Choose a characteristic');
+          advance(`Improve ${o.textContent}`, 'improve-characteristic', {
+            characteristic: o.value,
+          });
+        };
+        $('btnUpSec').onclick = () => {
+          const o = $('upSec').selectedOptions[0];
+          if (!o?.value) return toast('Choose a secondary characteristic');
+          advance(`Improve ${o.textContent}`, 'improve-secondary', { secondary: o.value });
+        };
+        $('trainer').onchange = () => ch && renderSkills();
+        $('learnGeneric').onchange = () => {
+          $('learnInitial').style.display = itemOf($('learnGeneric').value)?.fields.variableBase
+            ? ''
+            : 'none';
+        };
+        $('btnLearnGeneric').onclick = async () => {
+          const id = $('learnGeneric').value;
+          const specialty = $('learnSpec').value.trim();
+          if (!id) return;
+          if (!specialty) return toast('Give the specialty first');
+          const it = itemOf(id);
+          const answers = it.fields.variableBase ? [id, $('learnInitial').value] : [id];
+          const r = await advance(
+            `Learn ${it.name} (${specialty})`,
+            'learn-specialty',
+            { specialty },
+            answers,
+          );
+          if (r) {
+            $('learnSpec').value = '';
+            showSkill();
+          }
+        };
+        $('btnTl').onclick = () => {
+          if (!ch) return toast('Load a character first');
+          const level = Number($('techLevel').value);
+          const lost = (ch.features ?? [])
+            .filter((f) => (itemOf(f.item)?.fields.techLevel ?? 0) > level)
+            .map(
+              (f) => `${itemOf(f.item).name}${f.state?.specialty ? ` (${f.state.specialty})` : ''}`,
+            );
+          if (
+            lost.length &&
+            !confirm(
+              `${tlName(level)}: these skills don't exist there. They go back to their initial level (a generic skill's specialty is removed), their points lost:\n\n${lost.join('\n')}`,
+            )
+          )
+            return ($('techLevel').value = String(techLevel()));
+          advance(`Technological level: ${tlName(level)}`, 'set-tech-level', {}, [String(level)]);
+        };
         $('btnClearLog').onclick = () => {
           $('log').innerHTML = '<div class="empty">Rolls appear here.</div>';
         };

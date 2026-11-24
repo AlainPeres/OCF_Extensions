@@ -5,6 +5,8 @@
 // Options:
 //   --random          roll a random character (no questions)
 //   --points N        creation points: 150, 250 or 350 (default 150)
+//   --tl N            the universe's technological level, 0 to 8 (default 2): skills and gear
+//                     above it don't exist
 //   --id ID           character ID (default sagas-<timestamp>)
 //   --out FILE        output file (default examples/characters/extensions/<id>.yaml)
 //
@@ -45,9 +47,13 @@ const readContent = (folder: string): Item[] =>
     .filter((f) => f.endsWith('.yaml'))
     .map((f) => parse(readFileSync(join(packDir, 'content', folder, f), 'utf8')))
     .map((c) => ({ id: c.id, name: nameOf(c.id), fields: c.fields ?? {} }));
-const skills = readContent('skills');
-const weapons = readContent('weapons');
-const armors = readContent('armor');
+const allSkills = readContent('skills');
+const allWeapons = readContent('weapons');
+const allArmors = readContent('armor');
+// Those of the universe, once its technological level is known (setTechLevel).
+let skills = allSkills;
+let weapons = allWeapons;
+let armors = allArmors;
 
 const CHARS = ['str', 'agi', 'end', 'dex', 'wit', 'wil', 'pre', 'ins'];
 const SECONDARY = ['cco', 'rco', 'spd', 'ini'];
@@ -72,6 +78,16 @@ const key = (field: string) => `${PACK}:${field}`;
 const get = (field: string, def = 0): number => Number(ch.values[key(field)] ?? def);
 const set = (field: string, v: number | string) => (ch.values[key(field)] = v);
 
+/** The universe's technological level: recorded, and the skills and gear above it left out. */
+const setTechLevel = (tl: number) => {
+  set('universe.techLevel', tl);
+  const inUniverse = (i: Item) => Number(i.fields.techLevel ?? 0) <= tl;
+  skills = allSkills.filter(inUniverse);
+  weapons = allWeapons.filter(inUniverse);
+  armors = allArmors.filter(inUniverse);
+};
+const tlName = (n: number) => nameOf(`actions.set-tech-level.options.${n}`);
+
 const sheet = (): any => computeSheet(ruleset, ch);
 const value = (s: any, field: string) => s.values[key(field)]?.value;
 const remaining = () => value(sheet(), 'points.remaining') as number;
@@ -93,9 +109,17 @@ const addSkill = (item: Item, learning: number, specialty = '', initial?: number
     if (initial !== undefined) existing.state.initial = initial;
     return;
   }
-  let featureId = slug ? `${local}-${slug}` : local;
-  for (let n = 2; ch.features.some((f) => f.id === featureId); n++)
-    featureId = `${slug ? `${local}-${slug}` : local}-${n}`;
+  // A skill that isn't generic is a standard copy on every sheet, with a fixed ID: the qualified
+  // ID with hyphens (sagas-core-skills-dodge).
+  const standard = !item.fields.generic && !item.fields.variableBase;
+  let featureId = standard
+    ? `${PACK}-${item.id.replace(/\./g, '-')}`
+    : slug
+      ? `${local}-${slug}`
+      : local;
+  if (!standard)
+    for (let n = 2; ch.features.some((f) => f.id === featureId); n++)
+      featureId = `${slug ? `${local}-${slug}` : local}-${n}`;
   const state: Feature['state'] = { learning };
   if (specialty) state.specialty = specialty;
   if (initial !== undefined) state.initial = initial;
@@ -117,6 +141,7 @@ const summary = () => {
   console.log(
     `\n=== ${who || id}: ${v('points.spent')} points spent of ${v('points.budget')}, ${v('points.remaining')} left ===`,
   );
+  console.log(tlName(v('universe.techLevel')));
   console.log(CHARS.map((c) => `${nameOf(`fields.chars.${c}`)} ${v(`chars.${c}`)}`).join(' | '));
   console.log(SECONDARY.map((c) => `${nameOf(`fields.sec.${c}`)} ${v(`sec.${c}`)}`).join(' | '));
   console.log(
@@ -167,7 +192,7 @@ const randomCharacter = () => {
   // The rest in 4 to 8 skills.
   // Generic skills are left out: they need a specialty, which only the player can name.
   const chosen = skills
-    .filter((s) => !s.fields.generic)
+    .filter((s) => !s.fields.generic && !s.fields.variableBase)
     .toSorted(() => Math.random() - 0.5)
     .slice(0, 4 + Math.floor(Math.random() * 5));
   for (const sk of chosen) addSkill(sk, sk.fields.base ?? 0);
@@ -182,12 +207,13 @@ const randomCharacter = () => {
       fails++;
     }
   }
-  // A weapon of a chosen skill (if any) and a light protection.
+  // A weapon of a chosen skill (if any) and a light protection (leather or kevlar, else any).
   const usable = weapons.filter((w) =>
     ch.features.some((f) => f.item === `${PACK}:${w.fields.skill}`),
   );
-  addGear(pick(usable.length ? usable : weapons));
-  addGear(pick(armors.filter((a) => /leather|kevlar/.test(a.id))));
+  if (weapons.length) addGear(pick(usable.length ? usable : weapons));
+  const light = armors.filter((a) => /leather|kevlar/.test(a.id));
+  if (armors.length) addGear(pick(light.length ? light : armors));
 };
 
 // --- Interactive mode --------------------------------------------------------------------------
@@ -339,8 +365,14 @@ const interactiveCharacter = async () => {
 
 // --- Program -----------------------------------------------------------------------------------
 const main = async () => {
+  const tlArg = Number(opt('tl') ?? 2);
+  if (!Number.isInteger(tlArg) || tlArg < 0 || tlArg > 8) {
+    console.log('--tl: a whole number from 0 to 8.');
+    process.exit(1);
+  }
   if (random) {
     set('creation.points', Number(opt('points') ?? pick([150, 250, 350])));
+    setTechLevel(tlArg);
     randomCharacter();
   } else {
     console.log(`SagaS character creation (${id}). Type q at any time to quit.`);
@@ -355,6 +387,9 @@ const main = async () => {
       1,
     );
     if (social) set('creation.social', social);
+    console.log('Technological level of the universe (skills and gear above it are left out):');
+    for (let n = 0; n <= 8; n++) console.log(`  ${n}. ${tlName(n)}`);
+    setTechLevel(await askInt('Level:', tlArg, 0, 8));
     await interactiveCharacter();
   }
 

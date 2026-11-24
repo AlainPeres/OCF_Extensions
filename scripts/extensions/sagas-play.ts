@@ -1,5 +1,6 @@
 // SagaS character sheet in the browser, for play: skill and characteristic rolls, dealing damage
-// with a weapon, taking damage, rest.
+// with a weapon, taking damage, rest, and progression (experience points spent on
+// characteristics and skills, new skills, the universe's technological level).
 //
 //   node --import tsx --conditions @opencharacter/source scripts/extensions/sagas-play.ts [--port 5175] [--no-open]
 //
@@ -9,10 +10,12 @@
 import {
   applyChanges,
   computeSheet,
+  continueAction,
   loadRuleset,
   startAction,
 } from '../../packages/engine/src/index.ts';
 import { readPack } from '../../packages/engine/test/packs.ts';
+import { hiddenCopies, hiddenItems } from './display-lib.ts';
 import { parse, stringify } from 'yaml';
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
@@ -69,11 +72,37 @@ const data = {
       i,
     ]),
   ),
+  // The universe's technological levels, TL0 to TL8, by their names.
+  techLevels: Array.from({ length: 9 }, (_, n) => nameOf(`actions.set-tech-level.options.${n}`)),
+};
+
+// A skill that isn't generic is a standard copy on every sheet; its copy's ID is fixed: the
+// qualified ID with hyphens (sagas-core-skills-dodge). Older files named it freely ("dodge"):
+// they are renamed when loaded.
+const stdId = (qid: string) => qid.replace(':', '-').replace(/\./g, '-');
+const standard = new Set(
+  readContent('skills')
+    .filter((s) => !s.fields.generic && !s.fields.variableBase)
+    .map((s) => `${PACK}:${s.id}`),
+);
+const adopt = (ch: { features?: { id: string; item: string }[] }) => {
+  for (const f of ch.features ?? []) if (standard.has(f.item)) f.id = stdId(f.item);
+  return ch;
 };
 
 // --- Engine ------------------------------------------------------------------------------------
 type Character = { values?: Record<string, unknown>; [k: string]: unknown };
 
+// Generic and "Other" skills: one copy per specialty, none until one is learned.
+const genericSkills = readContent('skills')
+  .filter((s) => s.fields.generic || s.fields.variableBase)
+  .map((s) => `${PACK}:${s.id}`);
+
+/**
+ * The sheet as the page uses it: values without the pack prefix, the copies' computed values,
+ * the issues, and what the pack's display hints hide: copies (skills above the universe's
+ * technological level, never raised) and generic skills a new specialty of would be.
+ */
 const sheetOf = (ch: Character) => {
   const s = computeSheet(ruleset, ch as never) as unknown as {
     values: Record<string, { value: unknown }>;
@@ -83,7 +112,13 @@ const sheetOf = (ch: Character) => {
   };
   const values: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(s.values)) values[k.replace(`${PACK}:`, '')] = v.value;
-  return { values, copies: s.copies, issues: [...(s.errors ?? []), ...(s.issues ?? [])] };
+  return {
+    values,
+    copies: s.copies,
+    issues: [...(s.errors ?? []), ...(s.issues ?? [])],
+    hidden: [...hiddenCopies(s)],
+    hiddenItems: [...hiddenItems(ruleset, ch, s, genericSkills)],
+  };
 };
 
 type LogEntry = {
@@ -96,16 +131,33 @@ type LogEntry = {
   summary?: { flags?: { score?: number; modifier?: number } };
 };
 
-/** Runs one action; changes it proposes for the character are applied. */
-const act = (ch: Character, input: unknown) => {
-  const res = startAction(ruleset, ch as never, input as never) as unknown as {
-    status: string;
-    outcome?: { result: string; data?: Record<string, unknown> };
-    proposedChanges?: { to: string; change: unknown }[];
-    log?: LogEntry[];
-    errors?: unknown[];
-    needs?: unknown;
-  };
+type ActResult = {
+  status: string;
+  outcome?: { result: string; data?: Record<string, unknown> };
+  proposedChanges?: { to: string; change: unknown }[];
+  log?: LogEntry[];
+  errors?: unknown[];
+  needs?: { options?: ({ id?: string } | string)[] };
+};
+
+/**
+ * Runs one action; changes it proposes for the character are applied. With `answers` (the
+ * page's picks: a skill, a level…), the choices pause and take them in turn; a pause left over
+ * that can end with "#done" (a repeated step such as raising a new skill) ends there.
+ */
+const act = (ch: Character, input: { answers?: unknown[]; policy?: unknown }) => {
+  const run = input.answers?.length ? { ...input, policy: { choices: 'pause' } } : input;
+  let res = startAction(ruleset, ch as never, run as never) as unknown as ActResult;
+  for (let n = 0; res.status === 'paused' && n < 100; n++) {
+    const options = (res.needs?.options ?? []).map((o) => (typeof o === 'string' ? o : o.id));
+    if (!options.includes('#done')) break;
+    res = continueAction(
+      ruleset,
+      res as never,
+      { option: '#done' } as never,
+      run.policy as never,
+    ) as unknown as ActResult;
+  }
   if (res.status !== 'finished')
     return { result: { status: res.status, errors: res.errors, needs: res.needs }, character: ch };
   const rolls = (res.log ?? [])
@@ -175,7 +227,7 @@ const server = createServer(async (req, res) => {
     if (url.pathname === '/api/load') {
       const file = url.searchParams.get('file') ?? '';
       if (!FILE.test(file)) return send(res, 400, { error: 'invalid file name' });
-      const character = parse(readFileSync(join(charDir, file), 'utf8'));
+      const character = adopt(parse(readFileSync(join(charDir, file), 'utf8')));
       return send(res, 200, { character, sheet: sheetOf(character) });
     }
     if (url.pathname === '/api/sheet' && req.method === 'POST')

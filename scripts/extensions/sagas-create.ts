@@ -7,6 +7,7 @@
 // (points.remaining); no rule is recoded here.
 import { computeSheet, loadRuleset } from '../../packages/engine/src/index.ts';
 import { readPack } from '../../packages/engine/test/packs.ts';
+import { hiddenCopies, hiddenItems } from './display-lib.ts';
 import { parse, stringify } from 'yaml';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
@@ -48,6 +49,8 @@ const data = {
   skills: readContent('skills'),
   weapons: readContent('weapons'),
   armors: readContent('armor'),
+  // The universe's technological levels, TL0 to TL8, by their names.
+  techLevels: Array.from({ length: 9 }, (_, n) => nameOf(`actions.set-tech-level.options.${n}`)),
   // Constraint messages, by constraint ID.
   constraints: Object.fromEntries(
     Object.entries(names)
@@ -75,6 +78,18 @@ type Character = {
 };
 const key = (field: string) => `${PACK}:${field}`;
 
+// A skill that isn't generic is a standard copy on every sheet; its copy's ID is fixed: the
+// qualified ID with hyphens (sagas-core-skills-dodge). Older files named it freely ("dodge"):
+// they are renamed when loaded.
+const stdId = (qid: string) => qid.replace(':', '-').replace(/\./g, '-');
+const standard = new Set(
+  data.skills.filter((s) => !s.fields.generic && !s.fields.variableBase).map((s) => key(s.id)),
+);
+const adopt = <T extends { features?: { id: string; item: string }[] }>(ch: T): T => {
+  for (const f of ch.features ?? []) if (standard.has(f.item)) f.id = stdId(f.item);
+  return ch;
+};
+
 const compute = (ch: Character) => {
   const s = computeSheet(ruleset, ch as never) as unknown as {
     values: Record<string, { value: unknown }>;
@@ -84,9 +99,27 @@ const compute = (ch: Character) => {
   };
   const values: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(s.values)) values[k.replace(`${PACK}:`, '')] = v.value;
-  return { values, copies: s.copies, issues: [...(s.errors ?? []), ...(s.issues ?? [])] };
+  // What the pack's display hints hide: copies (skills above the universe's technological
+  // level, never raised), and items that would be once held: gear above it (all of it, as the
+  // page offers gear whether carried or not) and generic skills not learned.
+  const held = new Set((ch.features ?? []).map((c) => c.item));
+  const candidates = [
+    ...data.skills.filter((sk) => !standard.has(key(sk.id)) && !held.has(key(sk.id))),
+    ...data.weapons,
+    ...data.armors,
+  ].map((i) => key(i.id));
+  return {
+    values,
+    copies: s.copies,
+    issues: [...(s.errors ?? []), ...(s.issues ?? [])],
+    hidden: [...hiddenCopies(s)],
+    hiddenItems: [...hiddenItems(ruleset, ch, s, candidates)],
+  };
 };
-const remaining = (ch: Character) => compute(ch).values['points.remaining'] as number;
+// The points left, alone (the random roll asks it at every step: no display hints needed).
+const remaining = (ch: Character) =>
+  (computeSheet(ruleset, ch as never) as unknown as { values: Record<string, { value: unknown }> })
+    .values[key('points.remaining')]?.value as number;
 
 const pick = <T>(list: T[]): T => list[Math.floor(Math.random() * list.length)]!;
 const addGear = (ch: Character, item: Item) => {
@@ -95,16 +128,22 @@ const addGear = (ch: Character, item: Item) => {
   ch.inventory.push({ id: local, item: key(item.id), equipped: true });
 };
 
-/** Same roll as sagas-create-cli.ts --random. */
-const randomCharacter = (points: number, id: string): Character => {
+/** Skills and gear exist from their technological level on. */
+const inUniverse = (item: Item, tl: number) => Number(item.fields.techLevel ?? 0) <= tl;
+
+/** Same roll as sagas-create-cli.ts --random, among the skills and gear of the universe's level. */
+const randomCharacter = (points: number, id: string, tl: number): Character => {
   const ch: Character = {
     specVersion: '0.4.0',
     id,
     packs: [{ id: PACK, version: '0.1.0' }],
-    values: { [key('creation.points')]: points },
+    values: { [key('creation.points')]: points, [key('universe.techLevel')]: tl },
     features: [],
     inventory: [],
   };
+  const skills = data.skills.filter((s) => inUniverse(s, tl));
+  const weapons = data.weapons.filter((w) => inUniverse(w, tl));
+  const armors = data.armors.filter((a) => inUniverse(a, tl));
   for (const c of CHARS) ch.values[key(`chars.${c}`)] = 5;
   const budget = remaining(ch);
   let fails = 0;
@@ -121,14 +160,15 @@ const randomCharacter = (points: number, id: string): Character => {
       fails++;
     }
   }
-  // Generic skills are left out: they need a specialty, which only the player can name.
-  const chosen = data.skills
-    .filter((s) => !s.fields.generic)
+  // Generic skills are left out: they need a specialty, which only the player can name. The
+  // others are standard copies, saved once raised.
+  const chosen = skills
+    .filter((s) => standard.has(key(s.id)))
     .toSorted(() => Math.random() - 0.5)
     .slice(0, 4 + Math.floor(Math.random() * 5));
   for (const sk of chosen) {
     ch.features.push({
-      id: sk.id.replace('skills.', ''),
+      id: stdId(key(sk.id)),
       item: key(sk.id),
       state: { learning: Number(sk.fields.base ?? 0) },
     });
@@ -144,11 +184,13 @@ const randomCharacter = (points: number, id: string): Character => {
       fails++;
     }
   }
-  const usable = data.weapons.filter((w) =>
+  const usable = weapons.filter((w) =>
     ch.features.some((f) => f.item === key(String(w.fields.skill))),
   );
-  addGear(ch, pick(usable.length ? usable : data.weapons));
-  addGear(ch, pick(data.armors.filter((a) => /leather|kevlar/.test(a.id))));
+  if (weapons.length) addGear(ch, pick(usable.length ? usable : weapons));
+  // A light protection: leather or kevlar, else any of the universe.
+  const light = armors.filter((a) => /leather|kevlar/.test(a.id));
+  if (armors.length) addGear(ch, pick(light.length ? light : armors));
   return ch;
 };
 
@@ -183,10 +225,15 @@ const server = createServer(async (req, res) => {
     }
     if (url.pathname === '/api/random') {
       const points = Number(url.searchParams.get('points') ?? 150);
+      const tl = Math.min(8, Math.max(0, Number(url.searchParams.get('tl') ?? 2) || 0));
       return send(
         res,
         200,
-        randomCharacter(points, url.searchParams.get('id') || `sagas-${Date.now().toString(36)}`),
+        randomCharacter(
+          points,
+          url.searchParams.get('id') || `sagas-${Date.now().toString(36)}`,
+          tl,
+        ),
       );
     }
     if (url.pathname === '/api/characters') {
@@ -199,7 +246,7 @@ const server = createServer(async (req, res) => {
     if (url.pathname === '/api/load') {
       const file = url.searchParams.get('file') ?? '';
       if (!/^[a-z0-9-]+\.yaml$/.test(file)) return send(res, 400, { error: 'invalid file name' });
-      return send(res, 200, parse(readFileSync(join(charDir, file), 'utf8')));
+      return send(res, 200, adopt(parse(readFileSync(join(charDir, file), 'utf8'))));
     }
     if (url.pathname === '/api/save' && req.method === 'POST') {
       const { character, overwrite } = await body(req);
