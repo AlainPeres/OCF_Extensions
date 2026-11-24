@@ -1,0 +1,13 @@
+id: weapons.example-enfield-303
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.gun-rifle
+  damageBonus: 12
+  strReq: 5
+  dmax: 5
+  range: 21
+  ap: 1
+  techLevel: 4
+  shots: 5
+  weight: 4.1

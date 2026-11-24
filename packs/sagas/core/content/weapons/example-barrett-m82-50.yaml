@@ -1,0 +1,14 @@
+id: weapons.example-barrett-m82-50
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.automatic-weapons
+  damageBonus: 21
+  dmax: 5
+  range: 23
+  ap: 2
+  techLevel: 5
+  shots: 10
+  rof: 2
+  weight: 17.5
+  tripod: true

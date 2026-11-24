@@ -1,0 +1,13 @@
+id: weapons.example-colt-45
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.pistol
+  damageBonus: 9
+  strReq: 5
+  dmax: 4
+  range: 16
+  ap: 1
+  techLevel: 5
+  shots: 7
+  weight: 1.4

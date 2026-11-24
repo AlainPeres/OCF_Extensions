@@ -1,0 +1,14 @@
+id: weapons.example-light-mortar
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.heavy-weapons
+  damageBonus: 18
+  dmax: 3
+  range: 27
+  ap: 1
+  techLevel: 5
+  special: true
+  shots: 1
+  weight: 10
+  tripod: true

@@ -1,0 +1,13 @@
+id: weapons.example-winchester-44-40
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.gun-rifle
+  damageBonus: 9
+  strReq: 4
+  dmax: 5
+  range: 21
+  ap: 1
+  techLevel: 4
+  shots: 11
+  weight: 3.5

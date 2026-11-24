@@ -1,0 +1,144 @@
+# The fight (section 7): initiative, the Reflex Dodge, shields, a charge's speed bonus, and the
+# martial arts (7.5). Each character rolls on their own sheet; what reaches another character
+# (a degree to subtract, damage to take) is reported by the players.
+fields:
+  # Speed's effect bonus on the Universal Table, added twice to the damage of a charge.
+  bonus.spd:
+    type: integer
+    formula: 'min(sec.spd, 40) <= 4 ? 2 * min(sec.spd, 40) - 10 : min(sec.spd, 40) <= 20 ? floor(min(sec.spd, 40) / 2) - 2 : min(sec.spd, 40) == 21 ? 9 : min(sec.spd, 40) <= 28 ? 12 + 3 * (min(sec.spd, 40) - 22) : 35 + 5 * (min(sec.spd, 40) - 29)'
+
+  # The initiative rolled at the start of a fight (1d6* + Initiative), kept for all its rounds.
+  combat.initiative: { type: integer, input: true, default: 0 }
+
+  # The parry bonus of the shield carried: against a contact attack, and against a visible
+  # missile (medium +I, large +II).
+  shield.contact: { type: integer, input: true, default: 0, min: 0 }
+  shield.missile: { type: integer, input: true, default: 0, min: 0 }
+
+  # Martial arts (7.5): the style says which domains it teaches and their learning-level
+  # modifiers; without one (none), the skill covers all three at its learning level.
+  martial.style:
+    type: enum
+    input: true
+    default: none
+    values:
+      [none, karate, boxing, kung-fu-dmax, kung-fu-two-weapons, aikido, wrestling, judo, krav-maga]
+  martial.learning:
+    type: integer
+    formula: sumCopies(copy.state.learning, copy.item == @skills.martial-arts)
+  # Each domain's learning level: the skill's plus the style's modifier; a domain the style
+  # doesn't teach stays at the initial level (-15).
+  martial.strike:
+    type: integer
+    formula: "martial.style in ['none', 'karate', 'boxing', 'kung-fu-dmax', 'kung-fu-two-weapons', 'krav-maga'] ? martial.learning : -15"
+  martial.projection:
+    type: integer
+    formula: "martial.style in ['none', 'judo'] ? martial.learning : martial.style in ['aikido', 'wrestling', 'krav-maga'] ? martial.learning - 5 : -15"
+  martial.hold:
+    type: integer
+    formula: "martial.style in ['none', 'aikido', 'wrestling'] ? martial.learning : martial.style in ['judo', 'krav-maga'] ? martial.learning - 5 : -15"
+  # The equivalent Strength of each domain: its learning level + 5 on the Universal Table, when
+  # higher than the character's.
+  martial.strength.strike: { type: integer, formula: 'max(chars.str, martial.strike + 5)' }
+  martial.strength.projection: { type: integer, formula: 'max(chars.str, martial.projection + 5)' }
+  martial.strength.hold: { type: integer, formula: 'max(chars.str, martial.hold + 5)' }
+  # A strike's damage bonus: the equivalent Strength's on the Universal Table.
+  bonus.martial:
+    type: integer
+    formula: 'min(martial.strength.strike, 40) <= 4 ? 2 * min(martial.strength.strike, 40) - 10 : min(martial.strength.strike, 40) <= 20 ? floor(min(martial.strength.strike, 40) / 2) - 2 : min(martial.strength.strike, 40) == 21 ? 9 : min(martial.strength.strike, 40) <= 28 ? 12 + 3 * (min(martial.strength.strike, 40) - 22) : 35 + 5 * (min(martial.strength.strike, 40) - 29)'
+  # Strikes: DMAX 3 instead of 2 bare-handed (karate, kung fu), or fighting as with two weapons
+  # (boxing, kung fu): two rolls, the best kept.
+  martial.dmax: { type: integer, formula: "martial.style in ['karate', 'kung-fu-dmax'] ? 3 : 2" }
+  martial.twoWeapons:
+    { type: boolean, formula: "martial.style in ['boxing', 'kung-fu-two-weapons']" }
+
+actions:
+  # Initiative (7.1): 1d6* + Initiative, the highest first, kept for the fight; +10 after a
+  # round passed doing nothing.
+  - id: roll-initiative
+    tags: [combat]
+    params:
+      waited: { type: boolean, default: false }
+    results: [rolled]
+    steps:
+      - id: roll
+        kind: roll
+        parts:
+          - dice: 1d6!
+          - value: sec.ini
+          - value: 'params.waited ? 10 : 0'
+      - id: keep
+        kind: changes
+        to: self
+        changes:
+          - { type: set, field: combat.initiative, value: steps.roll.total }
+      - id: result
+        kind: outcome
+        result: "'rolled'"
+        data: { initiative: steps.roll.total }
+
+  # The Reflex Dodge (7.3): the defense always available against a perceived attack, the
+  # character's only one after choosing the offensive option. Its degree is subtracted from the
+  # attack's (the attacker's player is told it).
+  - id: reflex-dodge
+    tags: [check, combat]
+    results: { bands: degree }
+    steps:
+      - id: roll
+        kind: action
+        use: degree-roll
+        params:
+          score: dodge.reflex
+      - id: result
+        kind: outcome
+        result: steps.roll.result
+        data:
+          degree: steps.roll.data.degree
+
+  # A martial arts strike's damage (7.5): the degree's dice, at most the style's DMAX (2, or 3
+  # for karate and kung fu), plus the equivalent Strength's bonus.
+  - id: martial-strike-damage
+    tags: [damage, combat]
+    params:
+      degree: { type: integer, min: 1 }
+    results: [dealt]
+    steps:
+      - id: roll
+        kind: roll
+        tags: [damage]
+        parts:
+          - dice: '(min(params.degree, martial.dmax))d6!'
+          - value: bonus.martial
+      - id: result
+        kind: outcome
+        result: "'dealt'"
+        data:
+          damage: steps.roll.total
+          dice: min(params.degree, martial.dmax)
+
+  # A projection's damage (7.5), for the one thrown: 1d6* + 1d6* per 3 m thrown, less the degree
+  # of the victim's Acrobatics or Martial Arts (Projection) roll.
+  - id: projection-damage
+    tags: [damage, combat]
+    params:
+      meters: { type: integer, default: 0, min: 0 }
+      reduction: { type: integer, default: 0, min: 0 }
+    results: [dealt]
+    steps:
+      - id: count
+        kind: branch
+        cases:
+          - when: true
+            flags: { dice: 'max(0, 1 + floor(params.meters / 3) - params.reduction)' }
+      - id: roll
+        kind: roll
+        tags: [damage]
+        when: flags.dice > 0
+        parts:
+          - dice: '(flags.dice)d6!'
+      - id: result
+        kind: outcome
+        result: "'dealt'"
+        data:
+          damage: 'flags.dice > 0 ? steps.roll.total : 0'
+          dice: flags.dice

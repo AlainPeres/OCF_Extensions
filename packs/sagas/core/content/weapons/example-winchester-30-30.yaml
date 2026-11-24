@@ -1,0 +1,13 @@
+id: weapons.example-winchester-30-30
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.gun-rifle
+  damageBonus: 12
+  strReq: 5
+  dmax: 5
+  range: 21
+  ap: 1
+  techLevel: 4
+  shots: 6
+  weight: 3.5

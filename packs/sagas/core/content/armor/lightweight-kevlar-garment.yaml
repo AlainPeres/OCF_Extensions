@@ -3,4 +3,5 @@ type: armor
 fields:
   protection: 3
   bulletProtection: 6
+  resilient: 1
   techLevel: 5

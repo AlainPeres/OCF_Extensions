@@ -1,4 +1,4 @@
-﻿fields:
+fields:
   # Main characteristics: base 5 for an ordinary person.
   chars.str: { type: integer, input: true, default: 5, min: 0, tags: [characteristic] }
   chars.agi: { type: integer, input: true, default: 5, min: 0, tags: [characteristic] }
@@ -41,9 +41,10 @@
   raw.ini:
     type: integer
     formula: floor((chars.agi + chars.wit) / 2)
+  # Martial arts give an Initiative at least equal to their learning level (7.5).
   sec.ini:
     type: integer
-    formula: raw.ini + creation.ini
+    formula: max(raw.ini + creation.ini, martial.learning)
     tags: [characteristic]
 
   # Characteristic bonus: the Universal Table's effect bonus (0 to 40).
@@ -83,15 +84,24 @@
 
   # Armor protection (0 without armor) and the impact bonus it gives.
   protection: { type: integer, input: true, default: 0, min: 0 }
+  # Against bullets and impact, an armor may protect more (a Kevlar vest: 6 instead of 3).
+  armor.bullets: { type: integer, input: true, default: 0, min: 0 }
+  # Resilient armor (RA) of what is worn, the best piece's: each point of armor piercing above it
+  # halves the protection (section 7.4).
+  armor.resilient: { type: integer, input: true, default: 0, min: 0 }
   impact.max: { type: integer, formula: 2 * protection + shock.physical }
 
   # Skills the character studies at once: floor(min(Wit, Will) / 2).
   study.limit: { type: integer, formula: 'floor(min(chars.wit, chars.wil) / 2)' }
 
-  # Reflex Dodge = 2 + floor(total Dodge level / 2); the Dodge skill is based on Agility.
+  # Reflex Dodge = 2 + floor(total Dodge level / 2); the Dodge skill is based on Agility. Martial
+  # arts give a Dodge learning level at least equal to theirs (7.5).
+  dodge.learning:
+    type: integer
+    formula: 'max(sumCopies(copy.state.learning, copy.item == @skills.dodge), martial.learning)'
   dodge.reflex:
     type: integer
-    formula: '2 + floor((chars.agi + (countCopies(copy.item == @skills.dodge) > 0 ? sumCopies(copy.state.learning, copy.item == @skills.dodge) : 0)) / 2)'
+    formula: '2 + floor((chars.agi + dodge.learning) / 2)'
 
   # Creation points: 150, 250 or 350 for a character's power level; a privileged social class
   # costs 10 points (creation.social = 1), a less favored one gives 10 (-1).

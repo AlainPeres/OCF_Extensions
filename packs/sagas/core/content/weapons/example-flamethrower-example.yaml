@@ -1,0 +1,13 @@
+id: weapons.example-flamethrower-example
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.heavy-weapons
+  damageBonus: 12
+  strReq: 8
+  dmax: 2
+  range: 3
+  techLevel: 5
+  special: true
+  shots: 1
+  weight: 25

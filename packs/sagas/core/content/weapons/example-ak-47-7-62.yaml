@@ -1,0 +1,14 @@
+id: weapons.example-ak-47-7-62
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.automatic-weapons
+  damageBonus: 12
+  strReq: 5
+  dmax: 5
+  range: 21
+  ap: 1
+  techLevel: 5
+  shots: 30
+  rof: 2
+  weight: 5

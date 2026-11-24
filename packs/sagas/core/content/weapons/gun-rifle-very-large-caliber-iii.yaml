@@ -7,4 +7,5 @@ fields:
   strReq: 12
   dmax: 4
   range: 21
+  ap: 2
   techLevel: 4

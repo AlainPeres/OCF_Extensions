@@ -1,0 +1,13 @@
+id: weapons.example-sandw-m29-44m
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.pistol
+  damageBonus: 12
+  strReq: 8
+  dmax: 4
+  range: 16
+  ap: 1
+  techLevel: 5
+  shots: 6
+  weight: 1.7

@@ -1,0 +1,13 @@
+id: weapons.example-rifle-600-handh
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.gun-rifle
+  damageBonus: 21
+  strReq: 12
+  dmax: 5
+  range: 21
+  ap: 2
+  techLevel: 5
+  shots: 3
+  weight: 7

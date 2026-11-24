@@ -1,0 +1,14 @@
+id: weapons.example-ingram-m10-9mm
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.automatic-weapons
+  damageBonus: 9
+  strReq: 4
+  dmax: 4
+  range: 16
+  ap: 1
+  techLevel: 5
+  shots: 32
+  rof: 3
+  weight: 4

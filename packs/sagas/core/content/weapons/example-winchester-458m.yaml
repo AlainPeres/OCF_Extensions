@@ -1,0 +1,13 @@
+id: weapons.example-winchester-458m
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.gun-rifle
+  damageBonus: 18
+  strReq: 10
+  dmax: 5
+  range: 21
+  ap: 2
+  techLevel: 5
+  shots: 3
+  weight: 4.5

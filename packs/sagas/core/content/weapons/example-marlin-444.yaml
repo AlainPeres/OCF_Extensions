@@ -1,0 +1,13 @@
+id: weapons.example-marlin-444
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.gun-rifle
+  damageBonus: 15
+  strReq: 8
+  dmax: 5
+  range: 21
+  ap: 2
+  techLevel: 5
+  shots: 5
+  weight: 3.2

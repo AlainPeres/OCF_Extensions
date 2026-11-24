@@ -314,6 +314,7 @@ actions.take-damage.params.kind.name: Kind
 actions.take-damage.params.amount.name: Damage
 actions.take-damage.params.armorPiercing.name: Armor piercing
 actions.take-damage.params.ignoreArmor.name: Ignores armor
+actions.take-damage.params.bullets.name: Bullets or impact
 actions.take-damage.params.stun.name: Stun instead of injury
 actions.take-damage.results.taken.name: Damage taken
 actions.take-damage.results.shock-failed.name: Shock roll failed
@@ -505,3 +506,147 @@ actions.resist-poison.params.virulence.name: Virulence
 actions.resist-poison.params.aid.name: First aid's degree (the helper's roll)
 actions.resist-poison.results.resisted.name: Resisted
 actions.resist-poison.results.affected.name: Affected
+fields.armor.bullets.name: Protection against bullets and impact
+fields.armor.resilient.name: Resilient armor (RA)
+weapons.example-walther-ppk-7-65.name: 'Walther PPK 7.65'
+weapons.example-beretta-9mm.name: 'Beretta 9mm'
+weapons.example-luger-p08-9mm.name: 'Luger P08 9mm'
+weapons.example-mauser-c96-30.name: 'Mauser C96 .30'
+weapons.example-colt-45.name: 'Colt .45'
+weapons.example-automag-44m.name: 'Automag .44M'
+weapons.example-imi-eagle-44m.name: 'IMI Eagle .44M'
+weapons.example-derringer-95-m.name: 'Derringer 95 M'
+weapons.example-sandw-38-special.name: 'S&W .38 Special'
+weapons.example-colt-python-357m.name: 'Colt Python .357M'
+weapons.example-sandw-m29-44m.name: 'S&W M29 .44M'
+weapons.example-winchester-44-40.name: 'Winchester 44-40'
+weapons.example-winchester-30-30.name: 'Winchester 30-30'
+weapons.example-lebel-86.name: 'Lebel 86'
+weapons.example-springfield-30-06.name: 'Springfield 30-06'
+weapons.example-m1-garand-30-06.name: 'M1 Garand .30-06'
+weapons.example-enfield-303.name: 'Enfield .303'
+weapons.example-marlin-444.name: 'Marlin 444'
+weapons.example-rifle-375-handh.name: 'Rifle .375 H&H'
+weapons.example-winchester-458m.name: 'Winchester .458M'
+weapons.example-weatherby-460.name: 'Weatherby .460'
+weapons.example-rifle-600-handh.name: 'Rifle .600 H&H'
+weapons.example-ak-47-7-62.name: 'AK-47 7.62'
+weapons.example-m16-223-rem.name: 'M16 .223 Rem'
+weapons.example-barrett-m82-50.name: 'Barrett M82 .50'
+weapons.example-mini-uzi-9mm.name: 'Mini Uzi 9mm'
+weapons.example-ingram-m11-38.name: 'Ingram M11 .38'
+weapons.example-thompson-45.name: 'Thompson .45'
+weapons.example-ingram-m10-9mm.name: 'Ingram M10 9mm'
+weapons.example-uzi-9mm.name: 'Uzi 9mm'
+weapons.example-remington-m70-12g.name: 'Remington M70 12G'
+weapons.example-ithaca-37-mandp.name: 'Ithaca 37 M&P'
+weapons.example-vz-52.name: 'VZ 52'
+weapons.example-bazooka-rpg.name: 'Bazooka (RPG)'
+weapons.example-light-mortar.name: 'Light mortar'
+weapons.example-flamethrower-example.name: 'Flamethrower (example)'
+tags.combat.name: Combat
+tags.danger.name: Danger
+fields.bonus.spd.name: Speed bonus (Universal Table)
+fields.combat.initiative.name: Initiative rolled for the fight
+fields.dodge.learning.name: Dodge learning level (martial arts included)
+fields.shield.contact.name: Shield parry bonus against contact attacks
+fields.shield.missile.name: Shield parry bonus against missiles
+fields.martial.style.name: Martial art style
+fields.martial.style.values.none.name: 'None given (all domains)'
+fields.martial.style.values.karate.name: 'Karate, Taekwondo (strikes, DMAX 3)'
+fields.martial.style.values.boxing.name: 'Boxing (strikes, as two weapons)'
+fields.martial.style.values.kung-fu-dmax.name: 'Kung Fu (strikes, DMAX 3)'
+fields.martial.style.values.kung-fu-two-weapons.name: 'Kung Fu (strikes, as two weapons)'
+fields.martial.style.values.aikido.name: 'Aikido (projections -5, holds)'
+fields.martial.style.values.wrestling.name: 'Wrestling, Sumo (projections -5, holds)'
+fields.martial.style.values.judo.name: 'Judo, Jiu-Jitsu (projections, holds -5)'
+fields.martial.style.values.krav-maga.name: 'Krav Maga (strikes, projections -5, holds -5)'
+fields.martial.learning.name: Martial arts learning level
+fields.martial.strike.name: Martial arts strikes learning level
+fields.martial.projection.name: Martial arts projections learning level
+fields.martial.hold.name: Martial arts holds learning level
+fields.martial.strength.strike.name: Equivalent Strength for strikes
+fields.martial.strength.projection.name: Equivalent Strength for projections (weight limit)
+fields.martial.strength.hold.name: Equivalent Strength for holds (grappling)
+fields.bonus.martial.name: Martial arts strike damage bonus
+fields.martial.dmax.name: Martial arts strike DMAX
+fields.martial.twoWeapons.name: Martial arts strikes as two weapons
+fields.breath.rounds.name: Rounds of breath held without a roll (prepared)
+fields.long.total.name: Long-term action total degree
+fields.long.target.name: Long-term action degrees to reach
+fields.long.failAt.name: Long-term action failure threshold
+fields.long.steps.name: Long-term action rolls made
+fields.long.active.name: Long-term action under way
+types.weapon.fields.shots.name: Shots
+types.weapon.fields.rof.name: Rate of fire
+types.weapon.fields.weight.name: Weight (kg)
+types.weapon.fields.tripod.name: Tripod
+actions.roll-initiative.name: Roll initiative (1d6* + Initiative)
+actions.roll-initiative.params.waited.name: Passed the last round (+10)
+actions.roll-initiative.results.rolled.name: Rolled
+actions.reflex-dodge.name: Reflex Dodge
+actions.martial-strike-damage.name: Martial arts strike damage
+actions.martial-strike-damage.params.degree.name: Degree of success
+actions.martial-strike-damage.results.dealt.name: Damage dealt
+actions.projection-damage.name: Projection damage (to the one thrown)
+actions.projection-damage.params.meters.name: Meters thrown
+actions.projection-damage.params.reduction.name: Degree of the victim's Acrobatics or Martial Arts roll
+actions.projection-damage.results.dealt.name: Damage dealt
+actions.damage.params.charge.name: Charge (+2 x Speed bonus, up to the Maximum Impact Bonus)
+actions.damage.params.extraDice.name: Extra dice (bursts, or bullets beyond the first)
+actions.skill-check.params.help1.name: First helper's skill total (adds half)
+actions.skill-check.params.help2.name: Second helper's skill total (adds a quarter)
+actions.skill-check.params.help3.name: Third helper's skill total (adds an eighth)
+actions.skill-check.params.neighbor.name: Neighboring skill total (half of it is used)
+actions.skill-check.params.together.name: Skill used at the same time (the weaker counts)
+actions.fall.name: Fall
+actions.fall.params.meters.name: Meters fallen
+actions.fall.params.extraDice.name: Dice added or removed (the ground)
+actions.fall.results.taken.name: Damage taken
+actions.fall.results.shock-failed.name: Shock roll failed
+actions.fall.results.unhurt.name: Unhurt
+actions.hold-breath.name: Hold one's breath (Endurance roll)
+actions.hold-breath.params.period.name: Period of 2 x Endurance rounds beyond the first (-I each)
+actions.suffocate.name: Suffocate or drown (1d6* stun a round)
+actions.suffocate.results.taken.name: Damage taken
+actions.suffocate.results.shock-failed.name: Shock roll failed
+actions.burn.name: Burn (a round in the flames)
+actions.burn.params.big.name: Big fire (2d6*)
+actions.burn.results.taken.name: Damage taken
+actions.burn.results.shock-failed.name: Shock roll failed
+actions.explosion.name: Explosion or area attack
+actions.explosion.params.base.name: Base damage
+actions.explosion.params.relativeDegree.name: Relative degree (the thrower's less the victim's dodge)
+actions.explosion.params.armorPiercing.name: Armor piercing
+actions.explosion.results.taken.name: Damage taken
+actions.explosion.results.shock-failed.name: Shock roll failed
+actions.explosion.results.unhurt.name: Unhurt
+actions.long-start.name: Start a long-term action
+actions.long-start.params.target.name: Degrees to reach
+actions.long-start.params.failAt.name: Failure threshold (negative; 0 for none)
+actions.long-start.results.started.name: Started
+actions.long-step.name: Long-term action roll
+actions.long-step.params.score.name: Score (skill or characteristic total)
+actions.long-step.params.opposition.name: Opposition score (0 for none)
+actions.long-step.params.modifier.name: Degree modifier
+actions.long-step.results.ongoing.name: Under way
+actions.long-step.results.succeeded.name: Succeeded
+actions.long-step.results.failed.name: Failed
+situational.invisibleMelee.name: 'Attack an invisible opponent, close combat [-1]'
+situational.invisibleRanged.name: 'Shoot at an invisible opponent [-2]'
+situational.defendInvisible.name: 'Defend against an invisible opponent [-1]'
+situational.rangeShort.name: 'Short range [+1]'
+situational.rangeLong.name: 'Long range [-1]'
+situational.rangeExtreme.name: 'Extreme range [-2]'
+situational.concealed.name: 'Target partially concealed [-1]'
+situational.concealedMostly.name: 'Target mostly concealed [-2]'
+situational.shotgun.name: 'Shotgun on the target [+1]'
+situational.moveBy.name: 'Move-by attack [-1]'
+situational.stunBlunt.name: 'Stun instead of injury, blunt weapon [-1]'
+situational.stunEdged.name: 'Stun instead of injury, other weapon [-2]'
+situational.parryBareHands.name: 'Parry a weapon bare-handed [-1]'
+situational.parryLargerWeapon.name: 'Parry a larger weapon [-1]'
+situational.parryFastMissile.name: 'Parry a fast missile [-1]'
+situational.parryStrongCreature.name: 'Parry a much stronger opponent (Strength +10) [-2]'
+situational.shieldContact.name: 'Parry with the shield, contact attack [+shield]'
+situational.shieldMissile.name: 'Parry with the shield, missile [+shield]'

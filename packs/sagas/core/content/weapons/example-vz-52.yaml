@@ -1,0 +1,14 @@
+id: weapons.example-vz-52
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.heavy-weapons
+  damageBonus: 21
+  dmax: 5
+  range: 21
+  ap: 2
+  techLevel: 5
+  shots: 100
+  rof: 3
+  weight: 8
+  tripod: true

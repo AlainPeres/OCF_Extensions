@@ -1,0 +1,13 @@
+id: weapons.example-colt-python-357m
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.pistol
+  damageBonus: 10
+  strReq: 5
+  dmax: 4
+  range: 16
+  ap: 1
+  techLevel: 5
+  shots: 6
+  weight: 1.5

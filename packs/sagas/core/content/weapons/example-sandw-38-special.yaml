@@ -1,0 +1,13 @@
+id: weapons.example-sandw-38-special
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.pistol
+  damageBonus: 6
+  strReq: 4
+  dmax: 4
+  range: 16
+  ap: 1
+  techLevel: 5
+  shots: 6
+  weight: 1

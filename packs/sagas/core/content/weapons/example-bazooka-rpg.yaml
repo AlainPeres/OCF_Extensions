@@ -1,0 +1,13 @@
+id: weapons.example-bazooka-rpg
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.heavy-weapons
+  damageBonus: 27
+  strReq: 8
+  dmax: 3
+  range: 21
+  ap: 3
+  techLevel: 5
+  shots: 1
+  weight: 13

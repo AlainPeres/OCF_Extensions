@@ -29,5 +29,10 @@ From the _Rules of SagaS 0.995 LLL (OGL)_:
 
 Licensed under OGL 1.0a; see `pack.yaml`.
 
-Not yet modelled: long-term actions, help and neighboring skills, combat options,
-martial arts, TL 4/5 weapon examples, structures, the French translation.
+Also: armor piercing against resilient armor and bullet protection, initiative, Reflex Dodge,
+combat modifiers as situations, charge and extra damage dice, martial arts (styles, domains,
+equivalent Strength), falls, breath, suffocation, flames, explosions, long-term actions, help,
+neighboring and simultaneous skills, and the TL4/TL5 firearm examples (14.3).
+
+Not yet modelled: grappling and two-weapon rolls, a mount's charge, weapon size modifiers, burst
+sizes, structures, the French translation.

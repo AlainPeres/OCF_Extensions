@@ -1,0 +1,12 @@
+id: weapons.example-derringer-95-m
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.pistol
+  damageBonus: 3
+  strReq: 3
+  dmax: 4
+  range: 9
+  techLevel: 4
+  shots: 2
+  weight: 0.3

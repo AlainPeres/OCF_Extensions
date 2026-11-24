@@ -1,0 +1,13 @@
+id: weapons.example-mauser-c96-30
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.pistol
+  damageBonus: 7
+  strReq: 4
+  dmax: 4
+  range: 16
+  ap: 1
+  techLevel: 4
+  shots: 10
+  weight: 1.4

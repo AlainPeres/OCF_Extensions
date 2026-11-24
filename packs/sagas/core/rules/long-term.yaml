@@ -1,0 +1,85 @@
+# Long-term actions (section 4.3): an important action resolved over several rolls, their net
+# degrees accumulated. The referee sets the degrees to reach, the negative threshold that fails
+# it for good, the opposition and the time between rolls; the player starts the action, then
+# rolls each step on the sheet.
+fields:
+  long.total: { type: integer, input: true, default: 0 }
+  long.target: { type: integer, input: true, default: 0, min: 0 }
+  # The negative total that fails the action (0: none).
+  long.failAt: { type: integer, input: true, default: 0, max: 0 }
+  long.steps: { type: integer, input: true, default: 0, min: 0 }
+  long.active: { type: boolean, formula: long.target > 0 }
+
+actions:
+  - id: long-start
+    tags: [check]
+    params:
+      target: { type: integer, min: 1 }
+      failAt: { type: integer, default: 0, max: 0 }
+    results: [started]
+    steps:
+      - id: start
+        kind: changes
+        to: self
+        changes:
+          - { type: set, field: long.target, value: params.target }
+          - { type: set, field: long.failAt, value: params.failAt }
+          - { type: set, field: long.total, value: 0 }
+          - { type: set, field: long.steps, value: 0 }
+      - id: result
+        kind: outcome
+        result: "'started'"
+
+  # One step: the character's roll (under a skill or characteristic total) less the opposition's
+  # (a score the referee gives; 0 for none), added to the total. Reaching the target succeeds,
+  # reaching the negative threshold fails; either ends the action.
+  - id: long-step
+    tags: [check]
+    available: long.active
+    params:
+      score: { type: integer, min: 0 }
+      opposition: { type: integer, default: 0, min: 0 }
+      modifier: { type: integer, default: 0 }
+    results: [ongoing, succeeded, failed]
+    steps:
+      - id: mine
+        kind: action
+        use: degree-roll
+        params:
+          score: params.score
+          modifier: params.modifier
+      - id: theirs
+        kind: action
+        when: params.opposition > 0
+        use: degree-roll
+        params:
+          score: params.opposition
+      - id: net
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              net: 'steps.mine.data.degree - (params.opposition > 0 ? steps.theirs.data.degree : 0)'
+      - id: sum
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              total: long.total + flags.net
+      - id: outcome
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              done: "flags.total >= long.target ? 'succeeded' : long.failAt < 0 && flags.total <= long.failAt ? 'failed' : 'ongoing'"
+      - id: keep
+        kind: changes
+        to: self
+        changes:
+          - { type: set, field: long.total, value: flags.total }
+          - { type: adjust, field: long.steps, by: 1 }
+          - { type: set, when: "flags.done != 'ongoing'", field: long.target, value: 0 }
+      - id: result
+        kind: outcome
+        result: flags.done
+        data: { net: flags.net, total: flags.total, target: long.target, steps: long.steps + 1 }

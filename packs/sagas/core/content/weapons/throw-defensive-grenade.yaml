@@ -6,5 +6,6 @@ fields:
   damageBonus: 20
   dmax: 5
   range: 5
+  ap: 1
   techLevel: 5
   special: true

@@ -1,0 +1,129 @@
+# The dangers of the environment (section 6) and the area attacks (7.4), as the character
+# suffers them: each rolls its damage and takes it (take-damage, so shock and states follow).
+# The book doesn't say whether armor protects from falls, suffocation and flames: it doesn't
+# here; an explosion goes through it, with its armor piercing.
+fields:
+  # Breath held without a roll when prepared: 2 x Endurance rounds (6.3).
+  breath.rounds: { type: integer, formula: 2 * chars.end }
+
+actions:
+  # A fall (6.2): 1d6* per 3 m, 20d6* at most. The ground can change it (soft, hard and rugged):
+  # the referee adds or removes dice.
+  - id: fall
+    tags: [danger, health]
+    params:
+      meters: { type: integer, min: 0 }
+      extraDice: { type: integer, default: 0 }
+    results: [taken, shock-failed, unhurt]
+    steps:
+      - id: count
+        kind: branch
+        cases:
+          - when: true
+            flags: { dice: 'max(0, min(20, floor(params.meters / 3)) + params.extraDice)' }
+      - { id: unhurt, kind: outcome, when: flags.dice == 0, result: "'unhurt'" }
+      - id: roll
+        kind: roll
+        tags: [damage]
+        parts: [{ dice: '(flags.dice)d6!' }]
+      - id: hurt
+        kind: action
+        use: take-damage
+        params: { kind: "'physical'", amount: steps.roll.total, ignoreArmor: true }
+      - id: result
+        kind: outcome
+        result: steps.hurt.result
+        data: { damage: steps.roll.total, dice: flags.dice }
+
+  # Holding one's breath (6.3): after the 2 x Endurance rounds held automatically (prepared), an
+  # Endurance roll for each further 2 x Endurance rounds, with -I more each time; unprepared, the
+  # rolls start at once. Swimming or Diving can replace Endurance (a skill check instead).
+  - id: hold-breath
+    tags: [danger, health]
+    params:
+      period: { type: integer, default: 1, min: 1 }
+    results: { bands: degree }
+    steps:
+      - id: roll
+        kind: action
+        use: degree-roll
+        params:
+          score: chars.end
+          modifier: 1 - params.period
+      - id: result
+        kind: outcome
+        result: steps.roll.result
+        data: { degree: steps.roll.data.degree }
+
+  # Suffocating or drowning (6.3): 1d6* of physical stun per round.
+  - id: suffocate
+    tags: [danger, health]
+    results: [taken, shock-failed]
+    steps:
+      - id: roll
+        kind: roll
+        tags: [damage]
+        parts: [{ dice: 1d6! }]
+      - id: hurt
+        kind: action
+        use: take-damage
+        params: { kind: "'physical'", amount: steps.roll.total, stun: true, ignoreArmor: true }
+      - id: result
+        kind: outcome
+        result: steps.hurt.result
+        data: { damage: steps.roll.total }
+
+  # Flames (6.4): 1d6* of physical injuries per round of exposure to a small fire, 2d6* to a big
+  # one.
+  - id: burn
+    tags: [danger, health]
+    params:
+      big: { type: boolean, default: false }
+    results: [taken, shock-failed]
+    steps:
+      - id: roll
+        kind: roll
+        tags: [damage]
+        parts: [{ dice: '(params.big ? 2 : 1)d6!' }]
+      - id: hurt
+        kind: action
+        use: take-damage
+        params: { kind: "'physical'", amount: steps.roll.total, ignoreArmor: true }
+      - id: result
+        kind: outcome
+        result: steps.hurt.result
+        data: { damage: steps.roll.total }
+
+  # An explosion or an area attack (7.4): the base damage plus the relative degree x 1d6* (the
+  # thrower's degree less the victim's Dodge or Reflex Dodge degree, so possibly negative,
+  # lowering the damage), through the armor with the explosive's armor piercing.
+  - id: explosion
+    tags: [danger, health, combat]
+    params:
+      base: { type: integer, min: 0 }
+      relativeDegree: { type: integer, default: 0 }
+      armorPiercing: { type: integer, default: 0, min: 0 }
+    results: [taken, shock-failed, unhurt]
+    steps:
+      - id: roll
+        kind: roll
+        tags: [damage]
+        when: params.relativeDegree != 0
+        parts: [{ dice: '(abs(params.relativeDegree))d6!' }]
+      - id: total
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              amount: >-
+                max(0, params.base + (params.relativeDegree > 0 ? steps.roll.total
+                  : params.relativeDegree < 0 ? -steps.roll.total : 0))
+      - { id: unhurt, kind: outcome, when: flags.amount == 0, result: "'unhurt'" }
+      - id: hurt
+        kind: action
+        use: take-damage
+        params: { kind: "'physical'", amount: flags.amount, armorPiercing: params.armorPiercing }
+      - id: result
+        kind: outcome
+        result: steps.hurt.result
+        data: { damage: flags.amount }

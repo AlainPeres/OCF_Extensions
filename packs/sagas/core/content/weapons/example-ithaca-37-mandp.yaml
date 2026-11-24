@@ -1,0 +1,13 @@
+id: weapons.example-ithaca-37-mandp
+type: weapon
+fields:
+  kind: ranged
+  skill: skills.gun-rifle
+  damageBonus: 12
+  strReq: 5
+  dmax: 3
+  range: 5
+  techLevel: 5
+  special: true
+  shots: 8
+  weight: 3

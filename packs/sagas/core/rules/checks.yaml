@@ -62,7 +62,79 @@ situational:
     type: boolean
     default: false
     rolls: [check]
-
+  # Combat modifiers (section 12), the attacker's and the defender's.
+  - id: invisibleMelee
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: invisibleRanged
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: defendInvisible
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: rangeShort
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: rangeLong
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: rangeExtreme
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: concealed
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: concealedMostly
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: shotgun
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: moveBy
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: stunBlunt
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: stunEdged
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: parryBareHands
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: parryLargerWeapon
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: parryFastMissile
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: parryStrongCreature
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: shieldContact
+    type: boolean
+    default: false
+    rolls: [check]
+  - id: shieldMissile
+    type: boolean
+    default: false
+    rolls: [check]
 actions:
   # The 2d6* roll under a score. Degree modifiers (difficulty, situation) are added to the degree.
   - id: degree-roll
@@ -96,7 +168,7 @@ actions:
           - when: true
             flags:
               score: params.score
-              modifier: "params.modifier + [4, 2, 1, 0, -1, -2, -3, -4, -8][indexOf(['obvious', 'very-easy', 'easy', 'normal', 'difficult', 'very-difficult', 'extremely-difficult', 'almost-impossible', 'theoretically-impossible'], params.difficulty)] + (situational.attackInBack ? 1 : 0) + (situational.surprise ? 1 : 0) + (situational.calledShot ? -1 : 0) + (situational.secondaryHand ? -1 : 0) + (situational.prone ? -1 : 0) + (situational.opponentBehind ? -1 : 0) + (situational.helpless ? 4 : 0) + (situational.strengthBelowMinimum ? -1 : 0) + (situational.aim ? 1 : 0) + (situational.singleTargetBurst ? 1 : 0) + (situational.pointBlank ? 1 : 0) + (situational.charging ? -1 : 0)"
+              modifier: "params.modifier + [4, 2, 1, 0, -1, -2, -3, -4, -8][indexOf(['obvious', 'very-easy', 'easy', 'normal', 'difficult', 'very-difficult', 'extremely-difficult', 'almost-impossible', 'theoretically-impossible'], params.difficulty)] + (situational.attackInBack ? 1 : 0) + (situational.surprise ? 1 : 0) + (situational.calledShot ? -1 : 0) + (situational.secondaryHand ? -1 : 0) + (situational.prone ? -1 : 0) + (situational.opponentBehind ? -1 : 0) + (situational.helpless ? 4 : 0) + (situational.strengthBelowMinimum ? -1 : 0) + (situational.aim ? 1 : 0) + (situational.singleTargetBurst ? 1 : 0) + (situational.pointBlank ? 1 : 0) + (situational.charging ? -1 : 0) + (situational.invisibleMelee ? -1 : 0) + (situational.invisibleRanged ? -2 : 0) + (situational.defendInvisible ? -1 : 0) + (situational.rangeShort ? 1 : 0) + (situational.rangeLong ? -1 : 0) + (situational.rangeExtreme ? -2 : 0) + (situational.concealed ? -1 : 0) + (situational.concealedMostly ? -2 : 0) + (situational.shotgun ? 1 : 0) + (situational.moveBy ? -1 : 0) + (situational.stunBlunt ? -1 : 0) + (situational.stunEdged ? -2 : 0) + (situational.parryBareHands ? -1 : 0) + (situational.parryLargerWeapon ? -1 : 0) + (situational.parryFastMissile ? -1 : 0) + (situational.parryStrongCreature ? -2 : 0) + (situational.shieldContact ? shield.contact : 0) + (situational.shieldMissile ? shield.missile : 0)"
       - id: check
         kind: roll
         tags: [check]
@@ -147,12 +219,22 @@ actions:
         data:
           degree: steps.roll.data.degree
 
+  # A skill roll, under its total level. Optionally (section 4), with the help of other
+  # characters (their skill totals: the first adds half, the second a quarter, the third an
+  # eighth), with a neighboring skill instead (half its total, for a skill not learned), or with a
+  # skill used at the same time (two weapons, fighting on a mount: the weaker total counts).
+  # 0 means none.
   - id: skill-check
     tags: [check]
     params:
       characteristic: { type: id, of: field, where: "'characteristic' in item.tags" }
       learning: { type: integer }
       modifier: { type: integer, default: 0 }
+      help1: { type: integer, default: 0, min: 0 }
+      help2: { type: integer, default: 0, min: 0 }
+      help3: { type: integer, default: 0, min: 0 }
+      neighbor: { type: integer, default: 0, min: 0 }
+      together: { type: integer, default: 0, min: 0 }
       difficulty:
         {
           type: enum,
@@ -172,11 +254,25 @@ actions:
         }
     results: { bands: degree }
     steps:
+      - id: base
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              own: 'params.neighbor > 0 ? floor(params.neighbor / 2) : params.characteristic.value + params.learning'
+      - id: score
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              score: >-
+                (params.together > 0 ? min(flags.own, params.together) : flags.own)
+                  + floor(params.help1 / 2) + floor(params.help2 / 4) + floor(params.help3 / 8)
       - id: roll
         kind: action
         use: degree-roll
         params:
-          score: params.characteristic.value + params.learning
+          score: flags.score
           modifier: params.modifier
           difficulty: params.difficulty
       - id: result
@@ -215,7 +311,10 @@ actions:
           degreeOfSuccess: steps.mine.data.degree - steps.theirs.data.degree
 
   # Damage = Nd6* + weapon bonus (+ Strength bonus in melee); N is the degree of success, at most
-  # the weapon's maximum effect dice (DMAX; 0 for no limit).
+  # the weapon's maximum effect dice (DMAX; 0 for no limit). Extra dice, within the DMAX too: one
+  # per burst fired at the target (automatic weapons) or per bullet beyond the first
+  # (semi-automatic, 3 at most). A charge (7.2) adds twice the Speed bonus to the Strength bonus,
+  # the two together limited to the Maximum Impact Bonus.
   - id: damage
     tags: [damage]
     params:
@@ -223,24 +322,35 @@ actions:
       weaponBonus: { type: integer, default: 0 }
       melee: { type: boolean, default: true }
       dmax: { type: integer, default: 0, min: 0 }
+      extraDice: { type: integer, default: 0, min: 0 }
+      charge: { type: boolean, default: false }
     results: [dealt]
     steps:
+      - id: count
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              dice: 'params.dmax > 0 ? min(params.degree + params.extraDice, params.dmax) : params.degree + params.extraDice'
+              strength: 'params.melee ? (params.charge ? min(impact.max, bonus.str + 2 * bonus.spd) : bonus.str) : 0'
       - id: roll
         kind: roll
         tags: [damage]
         parts:
-          - dice: '(params.dmax > 0 ? min(params.degree, params.dmax) : params.degree)d6!'
+          - dice: '(flags.dice)d6!'
           - value: params.weaponBonus
-          - value: 'params.melee ? bonus.str : 0'
+          - value: flags.strength
       - id: result
         kind: outcome
         result: "'dealt'"
         data:
           damage: steps.roll.total
-          dice: 'params.dmax > 0 ? min(params.degree, params.dmax) : params.degree'
+          dice: flags.dice
 
   # Physical or psychical damage, as injury or as stun. Physical damage is first reduced by the
-  # armor's protection, less the attack's armor piercing (unless the damage ignores armor). Stun
+  # armor's protection (its bullet protection against bullets or impact, when higher), halved for
+  # each point of the attack's armor piercing above the armor's resilience (section 7.4), unless
+  # the damage ignores armor. Stun
   # reaching the hit points turns further stun into injury. Damage above the shock threshold
   # calls for a shock roll (Endurance for physical, Presence for psychical): a degree of 0 faints
   # or confuses.
@@ -252,8 +362,18 @@ actions:
       stun: { type: boolean, default: false }
       armorPiercing: { type: integer, default: 0, min: 0 }
       ignoreArmor: { type: boolean, default: false }
+      # Bullets or impact: the armor's bullet protection counts when higher (a Kevlar vest).
+      bullets: { type: boolean, default: false }
     results: [taken, shock-failed]
     steps:
+      # The protection, halved for each point of armor piercing above the armor's resilience.
+      - id: armor
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              base: 'params.bullets ? max(protection, armor.bullets) : protection'
+              halvings: min(4, max(0, params.armorPiercing - armor.resilient))
       - id: split
         kind: branch
         cases:
@@ -261,7 +381,7 @@ actions:
             flags:
               room: hp.physical.max - stun.physical
               threshold: shock.physical
-              absorbed: 'params.ignoreArmor ? 0 : min(params.amount, max(0, protection - params.armorPiercing))'
+              absorbed: 'params.ignoreArmor ? 0 : min(params.amount, floor(flags.base / [1, 2, 4, 8, 16][flags.halvings]))'
           - when: true
             flags:
               room: hp.psychical.max - stun.psychical
