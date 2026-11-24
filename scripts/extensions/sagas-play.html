@@ -590,9 +590,24 @@
           </div>
           <div class="form">
             <strong>Recovery</strong>
-            <button id="btnRest" title="Ten minutes of rest: all stun is cured">
-              Short rest (clear stun)
+            <button
+              id="btnRest"
+              title="Ten minutes of rest after damage: all stun is cured, and an Endurance roll heals 5 physical injuries per degree"
+            >
+              Rest 10 minutes
             </button>
+            <button
+              id="btnRestDay"
+              title="Once a day after a sleep: all stun is cured, an Endurance roll heals its degree of physical injuries, a Presence roll its degree of psychical injuries"
+            >
+              Rest a day
+            </button>
+            <label title="+I on the Endurance roll"
+              ><input type="checkbox" id="restComplete" /> complete rest</label
+            >
+            <label title="With complete rest: +I on the Endurance roll, and the recovery is doubled"
+              ><input type="checkbox" id="restMedical" /> medical institution</label
+            >
             <label>Heal <input type="number" id="healAmount" value="5" min="1" /></label>
             <button id="btnHealPhys">physical injuries</button>
             <button id="btnHealPsy">psychical injuries</button>
@@ -1064,7 +1079,18 @@
             `<div class="line">${o.data.amount} damage taken${o.result === 'shock-failed' ? ' · <span class="result shock-failed">shock failed</span>' : result.rolls?.length ? ' · <span class="result success">shock resisted</span>' : ''}</div>`,
           );
         }
-        if (o?.result === 'rested') lines.push('<div class="line">Stun cleared.</div>');
+        if (o?.result === 'rested') {
+          // The rolls above are Endurance, then Presence for a day's rest.
+          const healed = [
+            o.data?.physical !== undefined ? `${o.data.physical} physical` : '',
+            o.data?.psychical !== undefined ? `${o.data.psychical} psychical` : '',
+          ]
+            .filter(Boolean)
+            .join(', ');
+          lines.push(
+            `<div class="line">Stun cleared${healed ? ` · injuries healed: <b>${healed}</b>` : ''}.</div>`,
+          );
+        }
         // Advancement outcomes, with the experience points left after them.
         const advanced = {
           gained: (d) => `+${d.points} XP`,
@@ -1524,8 +1550,18 @@
         };
         $('btnRest').onclick = () =>
           ch
-            ? act('Short rest', { action: { id: P('rest-short') } })
+            ? act('Rest 10 minutes', { action: { id: P('rest-short') } })
             : toast('Load a character first');
+        $('btnRestDay').onclick = () => {
+          if (!ch) return toast('Load a character first');
+          const completeRest = $('restComplete').checked;
+          const medical = $('restMedical').checked;
+          const how = medical ? ' (medical institution)' : completeRest ? ' (complete rest)' : '';
+          act(`Rest a day${how}`, {
+            action: { id: P('rest-day') },
+            params: { completeRest, medical },
+          });
+        };
         $('btnHealPhys').onclick = () => (ch ? heal('physical') : toast('Load a character first'));
         $('btnHealPsy').onclick = () => (ch ? heal('psychical') : toast('Load a character first'));
         window.addEventListener('beforeunload', (e) => {
