@@ -307,18 +307,19 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 
 ## What was added
 
-| Path                                                  | What                                                            |
-| ----------------------------------------------------- | --------------------------------------------------------------- |
-| `packs/sagas/core/`                                   | The `sagas-core` pack (rules, 119 skills, 62 weapons, 14 armor) |
-| `scripts/extensions/sagas-create-cli.ts`              | SagaS character creation in the terminal                        |
-| `scripts/extensions/sagas-create.ts` + `.html`        | SagaS character creation in the browser                         |
-| `scripts/extensions/sagas-play.ts` + `.html`          | SagaS play sheet in the browser                                 |
-| `scripts/extensions/universal-lib.ts`                 | Shared server of the two universal tools                        |
-| `scripts/extensions/universal-create.ts` + `.html`    | Character creator for any pack                                  |
-| `scripts/extensions/universal-play.ts` + `.html`      | Play sheet for any pack and character                           |
-| `scripts/extensions/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                 |
-| `examples/characters/extensions/`                     | SagaS example characters and the characters the tools save      |
-| `.vscode/launch.json`, `.vscode/settings.json`        | Run and debug the current TS file from VS Code                  |
+| Path                                                  | What                                                                |
+| ----------------------------------------------------- | ------------------------------------------------------------------- |
+| `packs/sagas/core/`                                   | The `sagas-core` pack (rules, 119 skills, 62 weapons, 14 armor)     |
+| `scripts/extensions/sagas-create-cli.ts`              | SagaS character creation in the terminal                            |
+| `scripts/extensions/sagas-create.ts` + `.html`        | SagaS character creation in the browser                             |
+| `scripts/extensions/sagas-play.ts` + `.html`          | SagaS play sheet in the browser                                     |
+| `scripts/extensions/universal-lib.ts`                 | Shared server of the two universal tools                            |
+| `scripts/extensions/display-lib.ts`                   | What a pack's display hints hide, for the SagaS and universal tools |
+| `scripts/extensions/universal-create.ts` + `.html`    | Character creator for any pack                                      |
+| `scripts/extensions/universal-play.ts` + `.html`      | Play sheet for any pack and character                               |
+| `scripts/extensions/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                     |
+| `examples/characters/extensions/`                     | SagaS example characters and the characters the tools save          |
+| `.vscode/launch.json`, `.vscode/settings.json`        | Run and debug the current TS file from VS Code                      |
 
 Our files stay apart from OCF's: scripts in `scripts/extensions/`, characters in
 `examples/characters/extensions/`. `pnpm validate` reads `examples/characters/` with its
@@ -337,13 +338,13 @@ In VS Code, open the file and press F5 (launch configuration "Exécuter le fichi
 server (127.0.0.1 only) and opens the page in the browser. `--port N` changes the port and
 `--no-open` doesn't open the browser. Ctrl+C stops the server.
 
-| Tool                  | Port | Options                                                                                       |
-| --------------------- | ---- | --------------------------------------------------------------------------------------------- |
-| `sagas-create-cli.ts` | —    | `--random`, `--points 150\|250\|350`, `--id ID`, `--out FILE`; type `q` at any prompt to quit |
-| `sagas-create.ts`     | 5174 | `--port`, `--no-open`                                                                         |
-| `sagas-play.ts`       | 5175 | `--port`, `--no-open`                                                                         |
-| `universal-create.ts` | 5176 | `--port`, `--no-open`                                                                         |
-| `universal-play.ts`   | 5177 | `--port`, `--no-open`                                                                         |
+| Tool                  | Port | Options                                                                                                   |
+| --------------------- | ---- | --------------------------------------------------------------------------------------------------------- |
+| `sagas-create-cli.ts` | —    | `--random`, `--points 150\|250\|350`, `--tl 0–8`, `--id ID`, `--out FILE`; type `q` at any prompt to quit |
+| `sagas-create.ts`     | 5174 | `--port`, `--no-open`                                                                                     |
+| `sagas-play.ts`       | 5175 | `--port`, `--no-open`                                                                                     |
+| `universal-create.ts` | 5176 | `--port`, `--no-open`                                                                                     |
+| `universal-play.ts`   | 5177 | `--port`, `--no-open`                                                                                     |
 
 Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
 without asking). The SagaS tools read and write that folder only. The universal tools list OCF's
@@ -369,7 +370,14 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
   background, possessions.
 - **`skills.yaml`**: the skill content type. Each copy has a learning level, an initial level and a
   specialty. Its total is the characteristic plus the learning level, and its grade runs from
-  incompetent to master. Constraints:
+  incompetent to master. Every character knows every skill at its initial level at least (an
+  unlearned skill can still be rolled), so each skill that isn't generic is a **standard copy**
+  (`standardCopies`): on every sheet, with its total and its roll, saved in the character file
+  only once raised, under a fixed ID, the qualified ID with hyphens (`sagas-core-skills-dodge`).
+  Generic and "Other" skills have one copy per specialty, added with `learn-specialty`. The list
+  of standard copies is fixed when the pack loads, so it can't follow the universe's
+  technological level: skills above it are on the sheet too, at their initial level, and the
+  actions don't raise them. Constraints:
   - learning never below the initial level;
   - below 0, learning moves in steps of 5: −15 → −10 → −5 → 0, 1 point each;
   - a generic skill needs a specialty;
@@ -385,8 +393,14 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
   Universal Table, armor piercing, technological level) with their damage action; armor and
   shields, whose protection counts while equipped.
 - **`creation.yaml`**: the creation starts and their actions (below).
-- **`tags.yaml`**: the tags `characteristic`, `check`, `creation`, `damage`, `health` and
-  `secondary-bonus`.
+- **`advancement.yaml`**: the evolution of the characters ([below](#advancement-rulesadvancementyaml)).
+- **`display.yaml`**: display hints (never part of the calculations). Content groups keep to the
+  universe's technological level: skills of that level (and any raised above it), weapons and
+  armor of that level; what lies above goes to hidden groups (`showWhen: 'false'`), so an app
+  doesn't show it. A carried weapon above the level still shows: a group holding a copy that
+  isn't standard always does.
+- **`tags.yaml`**: the tags `advancement`, `characteristic`, `check`, `creation`, `damage`,
+  `health` and `secondary-bonus`.
 
 ### Content (`content/`)
 
@@ -408,22 +422,50 @@ Two creation starts, as every OCF pack that starts a sheet has.
   3. the universe's technological level (TL0–TL8), which limits the skills and gear offered;
   4. the main characteristics, bought at their cost;
   5. the secondary characteristic bonuses;
-  6. the skills to learn, then their levels one step at a time while the points last;
+  6. the skills of the universe to raise, one step at a time while the points last;
   7. weapons and armor.
 
   It leaves the character being created (`creating: true`), so generic skills can be added next.
 
 - **Random**: the same action, which draws the power level, spends three fifths of the points on
-  the characteristics, learns 1d6 + 3 skills and raises them with the rest, and takes a weapon and
+  the characteristics, draws 1d6 + 3 skills to study, raises each one step and spreads the rest
+  of the points over them, and takes a weapon and
   an armor. It finishes the creation itself.
+- Both record the technological level in `universe.techLevel`, for the advancement actions.
 - **`learn-specialty`**: learns a generic skill with a specialty (a text parameter), its initial
-  level for an "Other" skill, then its level step by step. It works at creation and later.
+  level for an "Other" skill, then its level step by step: with creation points while the
+  character is being created, with experience points afterwards.
 - **`finish-creation`**: ends a creation the guided start left open.
 - **Constraint `creation-within-budget`**: while the character is being created, no more points
   may be spent than the budget allows.
 
 The three creation actions carry the `creation` tag, which the universal creator uses to show them
 first.
+
+### Advancement (`rules/advancement.yaml`)
+
+The evolution of the characters (section 3.4), once the creation is finished. Experience points
+go to a pool, `xp.current`; each purchase takes its price from it, at the creation costs for the
+current value. The creation counters (`points.*`) don't take part: a budget recomputed from the
+values would charge again for the secondary bonuses when a main characteristic rises (their raw
+value rises with it), and a skill bought with a trainer at full price.
+
+| Action                   | Does                                                                                                                                                                                                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `gain-experience`        | 5 points after a scenario, plus a bonus of 0 to 5 for exceptional role-playing (`xp.earned` totals them)                                                                                               |
+| `improve-characteristic` | +1 to a main characteristic: 3, 6, 12, 24 or 48 points by the new value                                                                                                                                |
+| `improve-secondary`      | +1 to a secondary one (to its bought bonus, `creation.cco`…): three times as much                                                                                                                      |
+| `improve-skill`          | one step of a skill of the universe (any copy: a standard one, from its initial level, or a specialty's): 1 point a step of 5 below 0, then 1, 2, 4, 8 or 16 a level; half (rounded up) with a trainer |
+| `set-tech-level`         | the universe's technological level; skills above it lose their points (not given back): a standard one goes back to its initial level, a generic one's specialties are removed                         |
+
+The improvements are offered as soon as the creation is finished, and end with "not enough
+experience points" when the pool can't pay. A generic or "Other" skill's new specialty is
+learned with `learn-specialty`, which asks it (and its initial level). The trainer halves skills only, as
+the book says ("total skill level"). Not modelled: the referee's agreement on each choice, and the
+limit on simultaneous studies (`study.limit`, shown as a reminder). Characters made before this
+have `universe.techLevel` 2 by default: `set-tech-level` corrects it. Files written before the
+standard copies named a skill's copy freely (`dodge`): `sagas-create` and `sagas-play` rename it
+when they load it (`sagas-core-skills-dodge`); the two characters in `extensions/` are converted.
 
 ### Not yet modelled
 
@@ -433,17 +475,22 @@ TL 4/5 weapon examples, structures, the French translation.
 ## The SagaS tools
 
 - **`sagas-create-cli.ts`**: asks, in the terminal:
-  1. identity;
-  2. characteristics and secondary bonuses;
-  3. skills: a specialty for a generic one, an initial level for an "Other" one;
-  4. equipment.
+  1. creation points, social class and the universe's technological level (TL0–TL8);
+  2. identity;
+  3. characteristics and secondary bonuses;
+  4. skills: a specialty for a generic one, an initial level for an "Other" one;
+  5. equipment.
 
-  It shows the points left after each answer. `--random` makes a character without questions.
-  Point costs come from the pack's formulas; the script recodes no rule.
+  It shows the points left after each answer, and offers only the skills and gear of the
+  technological level, which it saves (`universe.techLevel`). `--random` makes a character
+  without questions, at `--tl` (default 2). Point costs come from the pack's formulas; the script
+  recodes no rule.
 
 - **`sagas-create.ts`**: the same in the browser. Its sections, in order:
   1. identity;
-  2. creation points (150/250/350 or any number) and social class;
+  2. creation points (150/250/350 or any number), social class and the universe's technological
+     level: what the pack's display hints hide isn't offered (skills, weapons and protections
+     above it), and lowering it removes the skills learned above it (after a confirmation);
   3. characteristics and secondary bonuses;
   4. skills, grouped by characteristic: specialties for generic skills, an initial level for the
      "Other" ones;
@@ -459,7 +506,15 @@ TL 4/5 weapon examples, structures, the French translation.
     characteristic and filtered (all, points spent, total > 0), with one row per specialty;
   - weapons with attack and damage, DMAX and range;
   - taking damage with armor piercing or ignoring armor, a short rest, healing;
-  - possessions, background and a roll log.
+  - progression, with the pack's advancement actions: experience points at the end of a
+    scenario (plus a bonus), a main or secondary characteristic raised (its cost in each option,
+    marked when the XP can't pay), a skill raised one step with ▲ in the skills table (with a
+    trainer: half cost; from its initial level for one never raised), a generic one learned with
+    its specialty, and the universe's technological level set (skills above it lose their
+    points, after a confirmation). The skills table lists what the pack's display hints show
+    (the skills of that level, plus any raised above it), with the engine's totals (every skill
+    is a standard copy); so does the list of generic skills to learn;
+  - possessions, background and a roll log, where each progression shows the XP left.
 
 ## The universal tools
 
@@ -480,7 +535,24 @@ text (`@opencharacter/text`, `describeNeed`).
   two ORC packs (PF2, read from git on Windows: [PF2 in the universal tools](#pf2-in-the-universal-tools)).
 
 - **`universal-play.ts`**: load any example character and play it:
-  - **Sheet**: fields by display group, content with its state and computed values, rules issues.
+  - **Sheet**: fields by display group and rules issues.
+  - **Abilities** and **Items**: the character's copies in its two lists, `features` (skills,
+    spells, class features…) and `inventory` (what it carries, the types marked `carried`), each
+    with its state, its computed values and its actions. They include the standard copies not
+    saved yet (every SagaS skill at its initial level). A copy is named with its text state (a
+    specialty: "Foreign languages (German)"). The pack's display hints decide what shows: a copy
+    only hidden groups list is left out, and the title counts it ("34 hidden by the pack": SagaS
+    skills above the universe's technological level). "Not held" leaves out the items the hints
+    would hide once held, found on one trial sheet that holds them all. Each list has its own
+    filters, and a text filter:
+    - Abilities, by mode: all; changed (a number in its state away from its initial value: for
+      SagaS, points spent on a skill); total > 0 (the first number the sheet computes for it).
+    - Items, by type and by mode: all; changed (for an item, a number in its state away from its
+      initial value, such as uses or charges taken; SagaS weapons and armor have none, so the
+      list stays empty); not held (the pack's items of the chosen type the character doesn't
+      carry, greyed, with their fields; no actions of their own: a rules action adds them).
+    - The three sections fold (click their title); the filters and folds are kept between
+      sessions.
   - **Actions**: the rules' actions, and each item's actions on its own line. One click runs an
     action with its defaults; "…" opens its form.
   - **Situation**: the situational choices apply to the next action.
@@ -496,7 +568,8 @@ Limits of the universal tools:
 - Handoff pauses (another character's turn in an action) aren't answered.
 - Only on/off situational choices are offered.
 - Pending choices outside an action are counted but not answered.
-- A pack without display groups (SagaS) shows its fields in one table.
+- A pack without fields display groups (SagaS has content groups only) shows its fields in one
+  table.
 
 ## VS Code setup
 
