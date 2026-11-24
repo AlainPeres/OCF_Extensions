@@ -12,7 +12,9 @@ From the _Rules of SagaS 0.995 LLL (OGL)_:
   automatic failure, difficulty and situation degree modifiers), `damage` (dice capped at the weapon's
   DMAX), `take-damage` (protection less armor piercing, stun, shock),
   `rest-short` (10 minutes: stun, 5 injuries per degree of Endurance) and `rest-day` (after a sleep:
-  Endurance and Presence degrees in injuries, complete rest, medical institution);
+  Endurance and Presence degrees in injuries, complete rest, medical institution); fainted and
+  confused after a failed shock, dying and `bleed`, `first-aid-received` (woken, stabilized,
+  fumble), `resist-poison` (virulence, first aid's degree);
 - creation starts (`create-character`), guided and random: power level, social class and the
   universe's technological level, then main and secondary characteristics bought with the
   points, skills raised one step at a time, weapons and armor. Generic and "Other"
@@ -27,5 +29,5 @@ From the _Rules of SagaS 0.995 LLL (OGL)_:
 
 Licensed under OGL 1.0a; see `pack.yaml`.
 
-Not yet modelled: long-term actions, help and neighboring skills, first aid, combat options,
+Not yet modelled: long-term actions, help and neighboring skills, combat options,
 martial arts, TL 4/5 weapon examples, structures, the French translation.

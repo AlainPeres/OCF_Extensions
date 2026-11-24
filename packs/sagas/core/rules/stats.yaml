@@ -72,6 +72,14 @@
   state.dead: { type: boolean, formula: injury.physical >= hp.physical.max + chars.end }
   state.confused: { type: boolean, formula: damage.psychical >= hp.psychical.max }
   state.mad: { type: boolean, formula: injury.psychical >= hp.psychical.max + chars.pre }
+  # Fainted after a failed physical shock roll, confused after a failed psychical one (sections
+  # 5.4 and 5.5): take-damage sets them, the rests and first aid clear them; the player can too.
+  state.fainted: { type: boolean, input: true, default: false }
+  state.shaken: { type: boolean, input: true, default: false }
+  # Dying: unconscious, losing 1 physical injury every 4 rounds (bleed), until first aid stops it
+  # (stabilized, cleared by new physical damage).
+  state.stabilized: { type: boolean, input: true, default: false }
+  state.dying: { type: boolean, formula: state.unconscious && !state.stabilized && !state.dead }
 
   # Armor protection (0 without armor) and the impact bonus it gives.
   protection: { type: integer, input: true, default: 0, min: 0 }

@@ -484,3 +484,24 @@ groups.weapons.label: Weapons
 groups.armor.label: Armor and shields
 groups.weapons-beyond.label: Weapons beyond the universe's technological level
 groups.armor-beyond.label: Armor beyond the universe's technological level
+fields.state.fainted.name: Fainted (failed physical shock)
+fields.state.shaken.name: Confused (failed psychical shock)
+fields.state.stabilized.name: Stabilized by first aid
+fields.state.dying.name: Dying
+actions.first-aid-received.name: First aid received
+actions.first-aid-received.params.outcome.name: What the helper's First Aid roll gave
+actions.first-aid-received.params.outcome.values.woken.name: Woken from a faint
+actions.first-aid-received.params.outcome.values.stabilized.name: Stabilized (no longer dying)
+actions.first-aid-received.params.outcome.values.fumble.name: Fumble (complications)
+actions.first-aid-received.results.woken.name: Woken
+actions.first-aid-received.results.stabilized.name: Stabilized
+actions.first-aid-received.results.survived.name: Survived the complications
+actions.first-aid-received.results.died.name: Died of the complications
+actions.bleed.name: Bleed (every 4 rounds while dying)
+actions.bleed.results.bled.name: Lost 1 injury
+actions.bleed.results.died.name: Died
+actions.resist-poison.name: Resist a poison or a disease
+actions.resist-poison.params.virulence.name: Virulence
+actions.resist-poison.params.aid.name: First aid's degree (the helper's roll)
+actions.resist-poison.results.resisted.name: Resisted
+actions.resist-poison.results.affected.name: Affected

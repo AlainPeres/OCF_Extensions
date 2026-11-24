@@ -313,9 +313,33 @@ actions:
         use: characteristic-check
         params:
           characteristic: "params.kind == 'physical' ? @chars.end : @chars.pre"
+      - id: failed
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              shockFailed: "has(steps.shock.result) && steps.shock.result != 'success' && steps.shock.result != 'natural-two'"
+      # A failed shock roll faints (physical) or confuses (psychical); new physical damage ends a
+      # stabilization.
+      - id: states
+        kind: changes
+        to: self
+        changes:
+          - type: set
+            when: "params.kind == 'physical' && flags.net > 0"
+            field: state.stabilized
+            value: false
+          - type: set
+            when: "params.kind == 'physical' && flags.shockFailed"
+            field: state.fainted
+            value: true
+          - type: set
+            when: "params.kind == 'psychical' && flags.shockFailed"
+            field: state.shaken
+            value: true
       - id: result
         kind: outcome
-        result: "has(steps.shock.result) && steps.shock.result != 'success' && steps.shock.result != 'natural-two' ? 'shock-failed' : 'taken'"
+        result: "flags.shockFailed ? 'shock-failed' : 'taken'"
         data:
           amount: flags.net
           absorbed: flags.absorbed
@@ -346,6 +370,8 @@ actions:
           - { type: adjust, field: injury.physical, by: -flags.physical }
           - { type: set, field: stun.physical, value: 0 }
           - { type: set, field: stun.psychical, value: 0 }
+          - { type: set, field: state.fainted, value: false }
+          - { type: set, field: state.shaken, value: false }
       - id: result
         kind: outcome
         result: "'rested'"
@@ -388,7 +414,102 @@ actions:
           - { type: adjust, field: injury.psychical, by: -flags.psychical }
           - { type: set, field: stun.physical, value: 0 }
           - { type: set, field: stun.psychical, value: 0 }
+          - { type: set, field: state.fainted, value: false }
+          - { type: set, field: state.shaken, value: false }
       - id: result
         kind: outcome
         result: "'rested'"
         data: { physical: flags.physical, psychical: flags.psychical }
+
+  # First aid (section 5.6), as the patient receives it: the helper rolls First Aid on their own
+  # sheet, and the patient's player reports the outcome here (no sheet acts on another).
+  # woken: out of a faint. stabilized: a dying character stops losing injuries. fumble, on a
+  # dying character: complications; the victim dies if an Endurance shock roll fails (the
+  # physical injuries go to the death threshold, hit points + Endurance).
+  - id: first-aid-received
+    tags: [health]
+    available: state.fainted || state.dying
+    params:
+      outcome: { type: enum, values: [woken, stabilized, fumble] }
+    results: [woken, stabilized, survived, died]
+    steps:
+      - id: care
+        kind: changes
+        to: self
+        changes:
+          - { type: set, when: "params.outcome == 'woken'", field: state.fainted, value: false }
+          - type: set
+            when: "params.outcome == 'stabilized'"
+            field: state.stabilized
+            value: true
+      - id: shock
+        kind: action
+        when: "params.outcome == 'fumble'"
+        use: characteristic-check
+        params:
+          characteristic: '@chars.end'
+      - id: failed
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              dies: "has(steps.shock.result) && steps.shock.result != 'success' && steps.shock.result != 'natural-two'"
+      - id: death
+        kind: changes
+        to: self
+        when: flags.dies
+        changes:
+          - { type: set, field: injury.physical, value: hp.physical.max + chars.end }
+      - id: result
+        kind: outcome
+        result: "params.outcome == 'fumble' ? (flags.dies ? 'died' : 'survived') : params.outcome"
+
+  # Dying (section 5.2): 1 physical injury every 4 rounds (12 s) until first aid stabilizes the
+  # character; at hit points + Endurance in injuries, the character dies (state.dead).
+  - id: bleed
+    tags: [health]
+    available: state.dying
+    results: [bled, died]
+    steps:
+      - id: lose
+        kind: changes
+        to: self
+        changes:
+          - { type: adjust, field: injury.physical, by: 1 }
+      - id: result
+        kind: outcome
+        result: "injury.physical + 1 >= hp.physical.max + chars.end ? 'died' : 'bled'"
+        data: { injuries: injury.physical + 1 }
+
+  # A poison or a disease (section 6.1): at inoculation and at the end of each period, an
+  # opposition between the character's Physical Resistance (Endurance + its learning level) and
+  # the virulence. A final degree of at least I resists it (not affected, or no longer). First
+  # aid's degree (the helper's roll, reported by the player) adds to the final degree. The
+  # effects are the referee's.
+  - id: resist-poison
+    tags: [health]
+    params:
+      virulence: { type: integer, min: 0 }
+      aid: { type: integer, default: 0, min: 0 }
+    results: [resisted, affected]
+    steps:
+      - id: mine
+        kind: action
+        use: degree-roll
+        params:
+          score: 'chars.end + sumCopies(copy.state.learning, copy.item == @skills.physical-resistance)'
+      - id: theirs
+        kind: action
+        use: degree-roll
+        params:
+          score: params.virulence
+      - id: final
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              degree: steps.mine.data.degree - steps.theirs.data.degree + params.aid
+      - id: result
+        kind: outcome
+        result: "flags.degree >= 1 ? 'resisted' : 'affected'"
+        data: { degree: flags.degree }
