@@ -11,14 +11,14 @@ Everything runs from the repo's TypeScript sources, so nothing needs a build: th
 
 ## Getting the repository
 
-| System           | Procedure                             | What you get                                      | Tested                             |
-| ---------------- | ------------------------------------- | ------------------------------------------------- | ---------------------------------- |
-| Linux            | [Linux](#linux)                       | Everything: 16 packs, ORC included                | Not yet                            |
-| macOS            | [macOS](#macos)                       | Everything: 16 packs, ORC included                | Not yet                            |
-| Windows          | [Windows](#windows)                   | 14 packs on disk; ORC only in the universal tools | Yes, clone from GitHub, 2026-11-23 |
-| Windows with WSL | [Windows with WSL](#windows-with-wsl) | Everything, as on Linux                           | Not yet                            |
+| System          | Procedure                                                  | What you get                                      | Tested                             |
+| --------------- | ---------------------------------------------------------- | ------------------------------------------------- | ---------------------------------- |
+| Linux           | [Linux](#linux)                                            | Everything: 16 packs, ORC included                | Not yet                            |
+| macOS           | [macOS](#macos)                                            | Everything: 16 packs, ORC included                | Not yet                            |
+| Windows         | [Windows](#windows)                                        | 14 packs on disk; ORC only in the universal tools | Yes, clone from GitHub, 2026-11-23 |
+| Windows via WSL | [Windows, cloned through WSL](#windows-cloned-through-wsl) | As Windows; a full clone stays in WSL             | Yes, 2026-11-24                    |
 
-Linux, macOS and WSL take the same commands. Windows needs a few more (no checkout at first,
+Linux and macOS take the same commands. Windows needs a few more (no checkout at first,
 `core.protectNTFS`, a sparse checkout, two links to remove) because of `boosts/con.yaml` ([The ORC packs are left out](#the-orc-packs-are-left-out)).
 
 ### Requirements
@@ -149,32 +149,122 @@ command that reads the whole tree (`checkout` of another commit, `merge`, `resto
   (`git sparse-checkout set --cone --sparse-index` with every folder but `packs/orc`): `packs/orc/`
   stays one folder entry in the index, so `con.yaml` never shows up. But cone mode can't leave out
   single files: the 19 `orc-*.yaml` example characters come back on disk, and `pnpm validate` then
-  reports some 300 errors about them. WSL avoids all of this.
+  reports some 300 errors about them.
 
-### Windows with WSL
+### Windows, cloned through WSL
 
-For the whole repository on a Windows machine, ORC packs and `pnpm test` included, work in WSL (a
-Linux inside Windows), in its own file system:
+WSL (a Linux inside Windows) serves only to clone here: in its own file system `con.yaml` is an
+ordinary name, so a plain `git clone` works. The clone is then copied to a Windows folder, without
+the ORC files, and used there as a [Windows](#windows) clone. Node and pnpm aren't needed in WSL,
+only git and rsync. Tested on 2026-11-24 (Ubuntu 22.04).
+
+The result is the same as the [Windows](#windows) procedure, which is quicker (no copy). This route
+is for when a full clone, `packs/orc/` included, is wanted somewhere: in WSL, it can be kept.
+
+#### 1. Install WSL and Ubuntu (once)
+
+In an administrator PowerShell:
 
 ```powershell
-wsl --install -d Ubuntu      # once, in an administrator PowerShell; then restart
+wsl --install -d Ubuntu      # then restart Windows
+wsl -l -v                    # lists the installed distributions, for instance Ubuntu-22.04
 ```
 
-Then, in the Ubuntu terminal:
+At the first start, Ubuntu asks for a Linux user name and password (for `sudo`; they have nothing
+to do with the Windows account). Open it from the Start menu ("Ubuntu") or with `wsl` in PowerShell.
+
+#### 2. Install git and rsync (once)
+
+In the Ubuntu terminal:
 
 ```sh
-sudo apt update && sudo apt install -y git curl
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash   # then reopen the terminal
-nvm install 26
-npm install -g pnpm@10.20.0
-cd ~
+sudo apt update && sudo apt install -y git rsync
+git --version                # 2.34 or later (Ubuntu 22.04 has 2.34.1)
 ```
 
-and follow [Linux](#linux), with the same results. Clone in the Linux home folder (`~`), not under
-`/mnt/c` or `/mnt/d`: that is the Windows disk, much slower from WSL, and Windows' naming rules may
-still apply there. Open the folder in VS Code with `code .` (the WSL extension). The tools print
-their address (`http://127.0.0.1:5176/` …); WSL can't always open a Windows browser itself, so open
-that address in the browser if it doesn't open, or pass `--no-open`.
+#### 3. Clone in WSL
+
+In the Linux home folder (`~`), not under `/mnt/c` or `/mnt/d`: those are the Windows disks, where
+Windows' naming rules apply (`con.yaml` again).
+
+```sh
+cd ~
+git clone https://github.com/AlainPeres/OCF_Extensions.git
+cd OCF_Extensions
+git remote add upstream https://github.com/pixelqueue/opencharacter.git
+ls packs/orc/2e/content/boosts    # cha.yaml con.yaml dex.yaml int.yaml str.yaml wis.yaml
+git status                        # nothing to commit, working tree clean
+```
+
+The remotes are set here, so the copy has them too.
+
+`~` is `/home/<user>`, inside the distribution's virtual disk, one `ext4.vhdx` file (under
+`%LOCALAPPDATA%\Packages\CanonicalGroupLimited.Ubuntu…\LocalState\` by default, or wherever the
+distribution was moved; `wsl --unregister` deletes it). Windows Explorer shows it at
+`\\wsl.localhost\Ubuntu-22.04\home\<user>`, or under "Linux" in its left pane: reading files there
+is fine, but don't open or edit the `.vhdx` itself.
+
+#### 4. Copy to a Windows folder
+
+Still in Ubuntu:
+
+```sh
+mkdir -p /mnt/d/Developpement/FichiersTypescript/OCF_Test
+rsync -a --exclude '/packs/orc/' --exclude '/examples/characters/orc-*.yaml' \
+  ~/OCF_Extensions/ /mnt/d/Developpement/FichiersTypescript/OCF_Test/OCF_Extensions/
+echo $?                           # 0: everything copied
+```
+
+- `D:\Developpement\FichiersTypescript\OCF_Test` is `/mnt/d/Developpement/FichiersTypescript/OCF_Test`
+  in WSL.
+- The two `--exclude` leave out `packs/orc/` (it holds the two `con.yaml`, which Windows can't
+  create) and the 19 ORC example characters (their pack is missing), as a Windows clone does. Their
+  leading `/` ties each pattern to the clone's root.
+- The source ends with `/`: rsync copies the folder's content into `OCF_Extensions/`.
+- `.git` goes along whole: history, remotes, branches and stashes.
+- The copy takes several minutes (about 20,000 files, crossing to the Windows disk) and prints
+  nothing until it ends. Run again, it copies only what changed.
+- Don't copy with Windows Explorer from `\\wsl.localhost\…`: it stops on `con.yaml`.
+
+#### 5. Adopt the copy in Windows
+
+In PowerShell:
+
+```powershell
+cd D:\Developpement\FichiersTypescript\OCF_Test\OCF_Extensions
+git status --short | Measure-Object    # Count about 6,950: the ORC files, seen as deleted
+git config core.protectNTFS false
+git sparse-checkout set --no-cone '/*' '!packs/orc/' '!examples/characters/orc-*.yaml'
+git status                             # nothing to commit, working tree clean, 74% present
+pnpm install --frozen-lockfile
+cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-2e
+cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-sf-2e
+pnpm validate                          # Validated 14 pack(s) […] 30 character file(s) […] 0 error(s)
+```
+
+- The copied `.git` comes from Linux, without a sparse checkout, so git first sees the left-out
+  ORC files as deleted. The sparse checkout tells it they are left out on purpose.
+- `core.protectNTFS false` isn't needed for that, but it is for every later command that reads the
+  whole tree: without it, `git checkout` of another commit or `git merge upstream/main` stops on
+  `con.yaml` and leaves `pnpm-lock.yaml` and `pnpm-workspace.yaml` deleted in the index
+  ([`core.protectNTFS`](#coreprotectntfs) says how to repair that).
+- `pnpm install` and the two `rmdir` are those of [Windows](#windows), steps 6 and 7.
+- Line endings: the files keep Linux's LF. With Git for Windows' default (`core.autocrlf true`) git
+  sees no change, and files it writes later get CRLF; both are fine.
+
+The copy is then an ordinary Windows clone: everything in [Windows](#windows) applies.
+
+#### 6. Clean up
+
+- **The WSL clone,** once copied: keep it as a full reference, or remove it with
+  `rm -rf ~/OCF_Extensions` in Ubuntu (Linux's `rm` doesn't follow links, so it touches nothing
+  outside the folder). If kept, don't work in both: push from the Windows copy, and
+  `git pull` in WSL before copying again.
+- **To copy again from scratch,** delete the Windows copy first: `cmd /c rmdir /s /q <folder>` from
+  PowerShell, never Windows Explorer or `Remove-Item` (pnpm's junctions;
+  [Copying the repository folder](#copying-the-repository-folder)).
+- **WSL itself,** if it served only for this: `wsl --unregister Ubuntu-22.04` deletes the
+  distribution and **everything** in it.
 
 ### After cloning
 
@@ -496,7 +586,7 @@ On Windows they aren't on disk, so `universal-lib.ts` reads them from git instea
 lists what `HEAD` holds under `packs/` and `examples/characters/` but the disk doesn't, reads that
 YAML into memory with one `git cat-file --batch`, and builds each pack as `readPack` does (rules
 and content in path order). Nothing is written to disk, and nothing in the code names the ORC
-packs: any pack a sparse checkout leaves out is read the same way. On macOS, Linux or WSL the
+packs: any pack a sparse checkout leaves out is read the same way. On macOS or Linux the
 files are on disk and this doesn't kick in.
 
 - Both packs are listed with their two creation starts, guided and random.
@@ -568,7 +658,8 @@ reload the VS Code window (Ctrl+Shift+P, "Developer: Reload Window") if the erro
 
 To get the repository on another machine or folder, clone it ([Getting the
 repository](#getting-the-repository)). This section is for copying a working folder as it is, as
-this one was first made from an earlier local folder, `opencharacter`.
+this one was first made from an earlier local folder, `opencharacter`. To copy a clone from WSL,
+see [Windows, cloned through WSL](#windows-cloned-through-wsl).
 
 Windows Explorer stops on the first broken link and can't leave a folder out. Use `robocopy`,
 Windows' command-line copy tool. It takes two folders, `robocopy <source> <destination> [options]`,
