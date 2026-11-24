@@ -248,6 +248,48 @@
       .hidden {
         display: none;
       }
+      /* Segmented filter buttons: the active one in the accent colour. */
+      .seg {
+        display: inline-flex;
+      }
+      .seg button {
+        border-radius: 0;
+        margin-left: -1px;
+      }
+      .seg button:first-child {
+        border-radius: 6px 0 0 6px;
+        margin-left: 0;
+      }
+      .seg button:last-child {
+        border-radius: 0 6px 6px 0;
+      }
+      .seg button.on {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--accent-ink);
+      }
+      .copyFilters {
+        margin-bottom: 8px;
+      }
+      /* Folding sections: the title is the toggle, with an arrow. */
+      details.fold > summary {
+        list-style: none;
+      }
+      details.fold > summary::-webkit-details-marker {
+        display: none;
+      }
+      details.fold > summary h2 {
+        display: inline-block;
+      }
+      details.fold > summary h2::before {
+        content: '▸ ';
+      }
+      details.fold[open] > summary h2::before {
+        content: '▾ ';
+      }
+      details.fold:not([open]) > summary h2 {
+        margin-bottom: 0;
+      }
     </style>
   </head>
   <body>
@@ -293,14 +335,31 @@
           <div class="row" id="actions"></div>
         </section>
         <section id="secSheet" class="hidden">
-          <h2>Sheet <span id="status" class="badge"></span></h2>
-          <div id="issues"></div>
-          <div id="groups" class="grid"></div>
+          <details class="fold" data-fold="sheet" open>
+            <summary>
+              <h2>Sheet <span id="status" class="badge"></span></h2>
+            </summary>
+            <div id="issues"></div>
+            <div id="groups" class="grid"></div>
+          </details>
         </section>
-        <section id="secCopies" class="hidden">
-          <h2>Content</h2>
-          <input id="filter" placeholder="filter…" />
-          <div id="copies"></div>
+        <!-- The character's copies, in its two lists: features (abilities, skills, spells…) and
+             inventory (what it carries). Each list has its own filters. -->
+        <section id="secFeatures" class="hidden">
+          <details class="fold" data-fold="features" open>
+            <summary>
+              <h2>Abilities <small class="muted" data-count="features"></small></h2>
+            </summary>
+            <div class="copyPanel" data-list="features"></div>
+          </details>
+        </section>
+        <section id="secInventory" class="hidden">
+          <details class="fold" data-fold="inventory" open>
+            <summary>
+              <h2>Items <small class="muted" data-count="inventory"></small></h2>
+            </summary>
+            <div class="copyPanel" data-list="inventory"></div>
+          </details>
         </section>
         <section id="secInputs" class="hidden">
           <details>
@@ -573,32 +632,211 @@
               `<div><h3>${esc(g.label)}</h3><table>${g.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td></tr>`).join('')}</table></div>`,
           )
           .join('');
-        // Content, each copy with its own actions.
-        $('secCopies').classList.toggle('hidden', !v.copies.length);
+        // The two lists of copies, each copy with its own actions.
+        lastView = v;
         const itemActs = v.actions.filter((a) => a.entry);
-        $('copies').innerHTML = v.copies
+        for (const list of LISTS) renderList(v, list, itemActs, busy);
+      }
+
+      // ---- Abilities and Items: the character's copies by list, with their filters
+      const LISTS = ['features', 'inventory'];
+      // The filters each list offers. Abilities: by mode only (all, changed, total > 0). Items:
+      // by type, and by mode (all, changed, not held: the pack's items of the type not carried).
+      const LIST_UI = {
+        features: { types: false, modes: ['all', 'changed', 'positive'] },
+        inventory: { types: true, modes: ['all', 'changed', 'notheld'] },
+      };
+      const MODES = {
+        all: ['All', 'Every copy'],
+        changed: [
+          'Changed',
+          'A number in its state away from its initial value: points spent on a skill, uses or charges taken…',
+        ],
+        positive: ['Total > 0', 'The first total the sheet computes for it is above 0'],
+        notheld: ['Not held', "The pack's items of the chosen type the character doesn't have"],
+      };
+      let lastView;
+      // Per list, kept between sessions: a content type (its ID), a mode. The text filter and the
+      // "Not held" list fetched are per page.
+      const filters = Object.fromEntries(
+        LISTS.map((l) => {
+          const mode = store.get(`copyMode.${l}`) ?? 'all';
+          return [
+            l,
+            {
+              type: LIST_UI[l].types ? (store.get(`copyType.${l}`) ?? '') : '',
+              mode: LIST_UI[l].modes.includes(mode) ? mode : 'all',
+              text: '',
+              catalog: undefined,
+            },
+          ];
+        }),
+      );
+      const panel = (list) => document.querySelector(`.copyPanel[data-list="${list}"]`);
+
+      /** A list's panel: its filters once, then its copies (each with its actions). */
+      function renderList(v, list, itemActs, busy) {
+        // The copies the sheet shows: the pack's display hints may hide some (SagaS: skills above
+        // the universe's technological level, never raised).
+        const all = v.copies.filter((c) => c.where === list);
+        const copies = all.filter((c) => !c.hidden);
+        const hiddenCount = all.length - copies.length;
+        const types = (v.contentTypes ?? []).filter((t) => t.list === list);
+        const sec = list === 'features' ? 'secFeatures' : 'secInventory';
+        $(sec).classList.toggle('hidden', !copies.length && !types.length);
+        document.querySelector(`[data-count="${list}"]`).textContent =
+          (copies.length ? `(${copies.length})` : '') +
+          (hiddenCount ? ` · ${hiddenCount} hidden by the pack` : '');
+        const box = panel(list);
+        if (!box.firstChild) {
+          box.innerHTML = `<div class="row copyFilters">
+            <span class="seg" data-role="types"></span>
+            <span class="seg" data-role="modes">
+              ${LIST_UI[list].modes.map((m) => `<button data-m="${m}" title="${esc(MODES[m][1])}">${esc(MODES[m][0])}</button>`).join('')}
+            </span>
+            <input data-role="text" placeholder="filter…" />
+          </div>
+          <div data-role="copies"></div>
+          <div data-role="catalog" class="hidden"></div>`;
+          const F = filters[list];
+          box.querySelector('[data-role="text"]').oninput = (e) => {
+            F.text = e.target.value.toLowerCase();
+            applyFilter(list);
+          };
+          for (const b of box.querySelector('[data-role="modes"]').children)
+            b.onclick = () => {
+              F.mode = b.dataset.m;
+              store.set(`copyMode.${list}`, F.mode);
+              renderTypes(list);
+              applyFilter(list);
+            };
+        }
+        const acts = (c) => itemActs.map((a, i) => [a, i]).filter(([a]) => a.entry === c.id);
+        box.querySelector('[data-role="copies"]').innerHTML = copies
           .map((c) => {
-            const acts = itemActs.map((a, i) => [a, i]).filter(([a]) => a.entry === c.id);
             const extra = [
               ...c.state.map((s) => `${esc(s.label)}: ${esc(s.value)}`),
               ...c.computed.map((s) => `${esc(s.key)}: ${esc(s.value)}`),
             ];
-            return `<div class="copy" data-text="${esc((c.label + ' ' + c.type + ' ' + extra.join(' ')).toLowerCase())}"><b>${esc(c.label)}</b> <span class="badge">${esc(c.type)}</span>${c.equipped ? ' <span class="badge">equipped</span>' : ''}${c.quantity !== undefined ? ` ×${esc(c.quantity)}` : ''}
-        ${busy ? '' : acts.map(([a, i]) => actionButtons(a, `c${i}`, a.name)).join('')}
+            return `<div class="copy" data-type="${esc(c.typeId)}" data-changed="${c.changed ? 1 : 0}" data-score="${c.score ?? ''}" data-text="${esc((c.label + ' ' + c.type + ' ' + extra.join(' ')).toLowerCase())}"><b>${esc(c.label)}</b> <span class="badge">${esc(c.type)}</span>${c.equipped ? ' <span class="badge">equipped</span>' : ''}${c.quantity !== undefined ? ` ×${esc(c.quantity)}` : ''}
+        ${
+          busy
+            ? ''
+            : acts(c)
+                .map(([a, i]) => actionButtons(a, `c${i}`, a.name))
+                .join('')
+        }
         ${extra.length ? `<div class="state">${extra.join(' · ')}</div>` : ''}</div>`;
           })
           .join('');
-        bindActions($('copies'), itemActs, 'c');
-        applyFilter();
+        bindActions(box.querySelector('[data-role="copies"]'), itemActs, 'c');
+        filters[list].catalog = undefined; // the copies may have changed: fetch "Not held" again
+        renderTypes(list);
+        applyFilter(list);
       }
-      function applyFilter() {
-        const q = $('filter').value.toLowerCase();
-        $('copies')
-          .querySelectorAll('.copy')
-          .forEach((d) => d.classList.toggle('hidden', !!q && !d.dataset.text.includes(q)));
-      }
-      $('filter').oninput = applyFilter;
 
+      /** A button per content type of the list: the character's, or the pack's in "Not held". */
+      function renderTypes(list) {
+        const v = lastView;
+        if (!v) return;
+        const F = filters[list];
+        const types =
+          F.mode === 'notheld'
+            ? (v.contentTypes ?? [])
+                .filter((t) => t.list === list)
+                .map((t) => [t.id, `${t.label} (${t.count})`])
+            : [
+                ...new Map(
+                  v.copies
+                    .filter((c) => c.where === list && c.typeId && !c.hidden)
+                    .map((c) => [c.typeId, c.type]),
+                ),
+              ];
+        if (F.type && !types.some(([id]) => id === F.type)) F.type = '';
+        const box = panel(list).querySelector('[data-role="types"]');
+        // Abilities have no type buttons.
+        box.classList.toggle('hidden', !LIST_UI[list].types);
+        if (!LIST_UI[list].types) return;
+        box.innerHTML = [['', 'All types'], ...types]
+          .map(([id, label]) => `<button data-t="${esc(id)}">${esc(label)}</button>`)
+          .join('');
+        for (const b of box.children)
+          b.onclick = () => {
+            F.type = b.dataset.t;
+            store.set(`copyType.${list}`, F.type);
+            applyFilter(list);
+          };
+      }
+
+      function applyFilter(list) {
+        const F = filters[list];
+        const box = panel(list);
+        for (const b of box.querySelector('[data-role="types"]').children)
+          b.classList.toggle('on', b.dataset.t === F.type);
+        for (const b of box.querySelector('[data-role="modes"]').children)
+          b.classList.toggle('on', b.dataset.m === F.mode);
+        const notHeld = F.mode === 'notheld';
+        box.querySelector('[data-role="copies"]').classList.toggle('hidden', notHeld);
+        box.querySelector('[data-role="catalog"]').classList.toggle('hidden', !notHeld);
+        if (notHeld) return renderCatalog(list);
+        box.querySelectorAll('.copy').forEach((d) => {
+          const shown =
+            (!F.type || d.dataset.type === F.type) &&
+            (F.mode !== 'changed' || d.dataset.changed === '1') &&
+            (F.mode !== 'positive' || Number(d.dataset.score) > 0) &&
+            (!F.text || d.dataset.text.includes(F.text));
+          d.classList.toggle('hidden', !shown);
+        });
+      }
+
+      /** The pack's items of the chosen type the character doesn't hold, greyed, by name. */
+      async function renderCatalog(list) {
+        const F = filters[list];
+        const box = panel(list).querySelector('[data-role="catalog"]');
+        if (!F.type) {
+          box.innerHTML =
+            '<p class="muted">Choose a type to list what the character doesn\'t have.</p>';
+          return;
+        }
+        const key = `${lastView.sid}|${F.type}`;
+        if (F.catalog?.key !== key) {
+          box.innerHTML = '<p class="muted">Loading…</p>';
+          try {
+            F.catalog = {
+              key,
+              ...(await api('/api/catalog', { sid: lastView.sid, type: F.type })),
+            };
+          } catch (e) {
+            box.innerHTML = `<p class="muted">${esc(e.message)}</p>`;
+            return;
+          }
+        }
+        // Items the pack's display hints would hide once held are left out (SagaS: gear above the
+        // universe's technological level).
+        const offered = F.catalog.items.filter((i) => !i.hidden);
+        const hiddenCount = F.catalog.items.length - offered.length;
+        const items = offered.filter(
+          (i) => !F.text || `${i.label} ${i.fields.join(' ')}`.toLowerCase().includes(F.text),
+        );
+        box.innerHTML = items.length
+          ? `<p class="muted">${items.length} not held${hiddenCount ? `, ${hiddenCount} more hidden by the pack` : ''}. A rules action adds them.</p>` +
+            items
+              .map(
+                (i) =>
+                  `<div class="copy muted"><b>${esc(i.label)}</b>${i.fields.length ? `<div class="state">${esc(i.fields.join(' · '))}</div>` : ''}</div>`,
+              )
+              .join('')
+          : '<p class="muted">Nothing: the character has every item of this type.</p>';
+      }
+
+      // Folding sections, kept between sessions.
+      for (const d of document.querySelectorAll('details.fold')) {
+        const saved = store.get(`fold.${d.dataset.fold}`);
+        if (saved !== null) d.open = saved === 'open';
+        d.addEventListener('toggle', () =>
+          store.set(`fold.${d.dataset.fold}`, d.open ? 'open' : 'closed'),
+        );
+      }
       function renderLog() {
         if (!log.length) {
           $('log').innerHTML = '<p class="muted">Rolls and outcomes appear here.</p>';

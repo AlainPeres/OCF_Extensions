@@ -17,6 +17,7 @@ import {
   startAction,
 } from '../../packages/engine/src/index.ts';
 import { buildRelease } from '../../packages/engine/src/index.ts';
+import { hiddenCopies, hiddenItems } from './display-lib.ts';
 import { readPack } from '../../packages/engine/test/packs.ts';
 import {
   createText,
@@ -309,13 +310,38 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
             .map(fieldRow),
         },
       ];
+  // Copies the pack's display hints hide (SagaS: a skill above the universe's technological
+  // level, never raised).
+  const hiddenByPack = hiddenCopies(sheet);
   const copy = (c: Any, where: string) => {
     const type = R.content[c.item]?.type;
+    const ct: Any = type ? R.contentTypes?.[type] : undefined;
+    // A numeric state's initial value: a number, or one of the item's fields (`item.base`).
+    const initial = (d: Any): number | undefined => {
+      if (typeof d === 'number') return d;
+      const m = typeof d === 'string' ? /^item\.(\w+)$/.exec(d) : null;
+      if (!m) return undefined;
+      const v = R.content[c.item]?.fields?.[m[1]!] ?? ct?.fields?.[m[1]!]?.default;
+      return typeof v === 'number' ? v : undefined;
+    };
+    // Changed: a numeric state away from its initial value (points spent on a skill, uses…).
+    const changed = Object.entries(ct?.state ?? {}).some(([k, d]: Any) => {
+      if (!['integer', 'decimal'].includes(d.type) || c.state?.[k] === undefined) return false;
+      const i = initial(d.default);
+      return i !== undefined && Number(c.state[k]) !== i;
+    });
+    // The first number the sheet computes for the copy (a skill's total…), for "> 0".
+    const score = Object.values(sheet.copies?.[c.id] ?? {}).find((v) => typeof v === 'number');
     return {
       id: c.id,
       where,
       type: type ? t.type(type) : '',
-      label: sheet.copyNames?.[c.id] || t.copy({ item: c.item, templates: c.templates }),
+      typeId: type ?? '',
+      hidden: hiddenByPack.has(c.id),
+      changed,
+      score,
+      // With its text state, a specialty for instance: "Foreign languages (German)".
+      label: copyName(L, sheet, c),
       equipped: !!c.equipped,
       quantity: c.quantity,
       state: Object.entries(c.state ?? {}).map(([k, v]) => ({
@@ -328,9 +354,17 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
       })),
     };
   };
+  // The file's copies, then the standard copies not saved yet (every character holds them: a
+  // SagaS skill at its initial level, an unarmed attack…), each in its list: `inventory` for a
+  // carried type, `features` otherwise.
+  const listOf = (item: string) =>
+    R.contentTypes?.[R.content[item]?.type]?.carried ? 'inventory' : 'features';
   const copies = [
     ...(S.character.features ?? []).map((c: Any) => copy(c, 'features')),
     ...(S.character.inventory ?? []).map((c: Any) => copy(c, 'inventory')),
+    ...(sheet.standardCopies ?? [])
+      .filter((s: Any) => !s.saved)
+      .map((s: Any) => copy({ id: s.entry, item: s.item }, listOf(s.item))),
   ];
   // The actions available now, the rules' and the items' (`entry`, the copy).
   // `start`: run from a creation start; `forCreation`: tagged `creation` (local or qualified).
@@ -396,6 +430,15 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
     creating: !!S.character.creating,
     groups,
     copies,
+    // The pack's content types with items, for the "Not held" list (/api/catalog).
+    contentTypes: Object.keys(R.contentTypes ?? {})
+      .map((id) => ({
+        id,
+        label: t.type(id),
+        list: R.contentTypes[id].carried ? 'inventory' : 'features',
+        count: Object.values(R.content).filter((i: Any) => i.type === id).length,
+      }))
+      .filter((x) => x.count > 0),
     issues: (sheet.issues ?? []).map((i: Any) => t.issue(i)),
     pending: (sheet.pending ?? []).length,
     actions,
@@ -422,7 +465,11 @@ function pauseView(L: Loaded, S: Session) {
     const item = Object.keys(L.ruleset.content).find((q) => local(q).replace(/\./g, '-') === stem);
     return item ? `${L.text.content(item)} (new)` : id;
   };
+  // A copy of the character is named as on the sheet, with its specialty ("Foreign languages
+  // (German)"): the engine's label is the item's name alone, the same for every copy.
   const label = (id: string) => {
+    const c = copies.find((x: Any) => x.id === id);
+    if (c) return copyName(L, undefined, c);
     const l = described.options?.find((o: Any) => o.id === id)?.label;
     return l === undefined || l === id ? copyLabel(id) : l;
   };
@@ -667,6 +714,39 @@ export function serve(title: string, page: string, defaultPort: number) {
         return send(res, 200, view(sid));
       }
       if (p === '/api/view') return send(res, 200, view((session(b.sid), b.sid)));
+      if (p === '/api/catalog') {
+        // The pack's items of one content type the character holds no copy of, by name, with
+        // their fields as text (a skill's characteristic, initial level, technological level…).
+        const S = session(b.sid);
+        const L = loadPack(S.pack);
+        // Held: the file's copies and the standard ones, saved or not.
+        const base: Any = computeSheet(L.ruleset, S.character);
+        const held = new Set([
+          ...allCopies(S.character).map((c: Any) => c.item),
+          ...(base.standardCopies ?? []).map((s: Any) => s.item),
+        ]);
+        const ids = Object.keys(L.ruleset.content).filter(
+          (id) => L.ruleset.content[id]!.type === b.type && !held.has(id),
+        );
+        // What the pack's display hints would hide once held (SagaS: gear above the universe's
+        // technological level).
+        const hiddenIds = hiddenItems(L.ruleset, S.character, base, ids);
+        const items = ids
+          .map((id) => [id, L.ruleset.content[id]] as [string, Any])
+          .map(([id, i]: Any) => ({
+            id,
+            hidden: hiddenIds.has(id),
+            label: L.text.content(id),
+            fields: Object.entries(i.fields ?? {})
+              .filter(([, v]) => v !== false && v !== '' && v !== null && typeof v !== 'object')
+              .map(
+                ([k, v]) =>
+                  `${L.text.typeField(b.type, k)}: ${typeof v === 'string' && L.ruleset.fields[v] ? L.text.field(v) : show(v, L)}`,
+              ),
+          }))
+          .toSorted((a, z) => a.label.localeCompare(z.label));
+        return send(res, 200, { type: b.type, items });
+      }
 
       if (p === '/api/start') {
         // A creation start: its action and params; a random start runs on its own.
