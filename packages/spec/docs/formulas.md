@@ -319,8 +319,12 @@ treats the rest as `dyn`:
 In roll, option, `changes` and `action` effects, `steps`, `flags` and `params` are `dyn`, because the effect
 applies to many actions (so is `params` in the `min`, `max` and `formula` of a parameter a
 `params` effect adds or bounds; an action's own bounds and derived parameters see its typed
-`params`); so are their `action.item` and `action.self`, and a roll effect's or
-result band's `participants` and `participant`.
+`params`); so are their `action.item` and `action.self`, and a result band's `participants` and
+`participant`. A roll, `changes` or `action` effect's `participants.<role>` and `participant` are
+the views the roles of the actions its pack sees declare: a field no such role declares is
+`unknown-name` at load, since a participant's view carries only its role's fields. A role name
+the pack doesn't see is `dyn`, so a generic effect can test `has(participants.target)` for
+another pack's actions, and so is `participant` when the pack sees no role.
 
 **Roll effects**. A roll effect's formulas see the content's own roots (`item`, `self`)
 with the action context (`steps`, `flags`, `params`, `situational`, `participants`,
@@ -397,7 +401,10 @@ a path must not be a map (`type-mismatch`). In a change an app gives to applyCha
 names are `unknown-name`. A change aimed at applied entries passes on `applied.where` and its
 per-entry `by` or `value` the same way; there `item` is the entry's source item (typed `dyn`, since
 it may be of any content type) and `self` the entry: `id`, `appliedBy` and its state keys, with declared
-defaults.
+defaults. In a `picks` or `grants` query, `self` is the state alone (with the change's `key`, which every
+match declares). Since the entry may be of any
+type, `self` may read any state key a content type or item the pack sees declares; any other key
+(`self.source`) is `unknown-name` at load.
 
 Details of each root are in [`data/formula-context.json`](../data/formula-context.json).
 

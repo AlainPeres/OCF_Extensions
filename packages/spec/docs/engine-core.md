@@ -10,13 +10,16 @@ character. Parts marked **PROVISIONAL** may change once more games are modeled.
 Input: pack releases in load order (later packs win). Output: a ruleset, or errors.
 
 1. **Check the packs.**
+   - Each pack release has a `manifest` and `rules` (objects) and `content` (a list), else
+     `invalid-shape` at the missing one's path (`/packs/<i>/content`).
    - Each pack's `specVersion` must not be newer than the engine's (`spec-version-unsupported`).
    - A pack may appear only once (`duplicate-pack`).
    - Every dependency must be loaded and in range (`missing-dependency`). A dependency may appear
      anywhere in the load order.
    - **Families**: a pack not yet expanded (inline, homebrew) has its rules
      and content expanded with the families it sees (its own and its dependencies' declared
-     values, by name, its own first): family keys, and `fields` that name a `viewFields` set.
+     values, by name, its own first): family keys, and `fields` that name one of its own
+     `viewFields` sets (a pack sees no other pack's sets, so naming one is an error).
      Each family's values for formulas are its pack's, then each loaded pack's additions (a
      qualified family name) in load order; `fieldOf` reads an added value's fields in the pack
      that added it, and `fieldId` names them there. The ruleset's `familyOrigins` maps each

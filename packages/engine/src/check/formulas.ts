@@ -184,6 +184,21 @@ interface ActionTarget<L> {
   ownerType?: string;
 }
 
+const isObjectType = (t: FType): t is { object: Record<string, FType> } =>
+  typeof t === 'object' && 'object' in t;
+
+/** Both views' fields; one two views type differently is `dyn`. */
+function mergeViews(a: FType, b: FType): FType {
+  if (!isObjectType(a) || !isObjectType(b))
+    return JSON.stringify(a) === JSON.stringify(b) ? a : 'dyn';
+  const object: Record<string, FType> = { ...a.object };
+  for (const [key, type] of Object.entries(b.object)) {
+    const known = object[key];
+    object[key] = known === undefined ? type : mergeViews(known, type);
+  }
+  return { object };
+}
+
 /** Whether a step of `kind` carries a literal tag the target names. */
 function reachesStep(steps: Step[], tags: string[], kind: 'choice' | 'changes'): boolean {
   return steps.some((step) => {
@@ -222,6 +237,8 @@ class FormulaChecker<L> {
   readonly problems: FormulaProblem<L>[] = [];
   private readonly scope: string[];
   private readonly targetsByTags = new Map<string, ActionTarget<L>[]>();
+  private readonly stateKeys = new Map<string, Record<string, FType>>();
+  private readonly roleViews = new Map<string, { participants: FType; participant: FType }>();
 
   constructor(
     private readonly set: PackSet<L>,
@@ -734,10 +751,48 @@ class FormulaChecker<L> {
       flags: 'dyn',
       params: 'dyn',
       situational: this.situationalRoot(),
-      participants: 'dyn',
-      participant: 'dyn',
+      ...this.roleTypes(),
       action: actionType('dyn', 'dyn'),
     };
+  }
+
+  /**
+   * `participants` and `participant` in an effect that acts as an action runs: the roles of any
+   * action the pack sees, each view carrying the fields some role of that name (or, for
+   * `participant`, any role) declares. A view is closed, so a field no such role carries is
+   * `unknown-name`: the run's views drop it. A role name the pack doesn't see is `dyn`, since a
+   * generic effect reaches other packs' actions (`has(participants.target)`), and so is
+   * `participant` when the pack sees no role at all.
+   */
+  private roleTypes(): { participants: FType; participant: FType } {
+    const memo = this.scope.join(' ');
+    const known = this.roleViews.get(memo);
+    if (known) return known;
+    const roles: Record<string, FType> = {};
+    let any: FType | undefined;
+    const add = (def: ActionOrUse) => {
+      if ('use' in def) return;
+      for (const [role, decl] of Object.entries(def.participants ?? {})) {
+        const view = viewType(decl.fields ?? {});
+        const list = roles[role];
+        roles[role] = { list: list ? mergeViews((list as { list: FType }).list, view) : view };
+        any = any ? mergeViews(any, view) : view;
+      }
+    };
+    for (const pid of this.scope) {
+      const rules = this.set.rules.get(pid);
+      for (const [, { def }] of rules?.actions ?? []) add(def);
+      for (const [, { def }] of rules?.contentTypes ?? [])
+        for (const a of def.actions ?? []) add(a);
+      for (const { doc } of this.set.packContent.get(pid) ?? [])
+        for (const a of doc.actions ?? []) add(a);
+    }
+    const types = {
+      participants: { object: roles, open: true } as FType,
+      participant: any ?? 'dyn',
+    };
+    this.roleViews.set(memo, types);
+    return types;
   }
 
   /** Inside an aura: its effects' `self` is the aura's entry, which has no computed values. */
@@ -784,8 +839,7 @@ class FormulaChecker<L> {
           params: 'dyn',
           situational: this.situationalRoot(),
           action: actionType('dyn', 'dyn'),
-          participants: 'dyn',
-          participant: 'dyn',
+          ...this.roleTypes(),
         },
         () => this.withRoots(STEP_ROOTS, () => this.effectBody(effect, at, where, kind)),
       );
@@ -1449,7 +1503,11 @@ class FormulaChecker<L> {
             }
             if (change.applied || change.picks || change.grants) {
               const query = (change.applied ?? change.picks ?? change.grants)?.where as Formula;
-              this.typed({ item: 'dyn', self: entryType(undefined), batch: BATCH }, () =>
+              const self = this.queryEntryType(
+                change.applied !== undefined,
+                typeof change.key === 'string' ? change.key : undefined,
+              );
+              this.typed({ item: 'dyn', self, batch: BATCH }, () =>
                 this.at('content', () =>
                   this.onlyRoots(['batch'], () => {
                     this.formula(query, at, where, BOOL);
@@ -1589,7 +1647,11 @@ class FormulaChecker<L> {
     this.appliedContent(change, at, where, [...PASSED_ROOTS, ...this.inEach(), ...this.inRun()]);
     const applied = change.applied ?? change.picks ?? change.grants;
     if (applied) {
-      this.typed({ item: 'dyn', self: entryType(undefined), batch: BATCH }, () =>
+      const self = this.queryEntryType(
+        change.applied !== undefined,
+        typeof change.key === 'string' ? change.key : undefined,
+      );
+      this.typed({ item: 'dyn', self, batch: BATCH }, () =>
         this.at('content', () =>
           this.onlyRoots([...PASSED_ROOTS, ...this.inEach(), ...this.inRun(), 'batch'], () => {
             this.passedOn(applied.where, at, where, BOOL);
@@ -1721,6 +1783,41 @@ class FormulaChecker<L> {
     return this.templateFieldDecls;
   }
   private templateFieldDecls: Record<string, ValueDecl> | undefined;
+
+  /**
+   * `self` in an `applied`, `picks` or `grants` query: the entry's `id` and `appliedBy` (applied
+   * entries only) and its state keys, any a content type or item the pack sees declares (a key
+   * declared with two types is `dyn`). Closed, so a key no entry can have is `unknown-name`; a
+   * `picks` or `grants` query matches only content declaring the change's `key`, so it has that.
+   */
+  private queryEntryType(applied: boolean, key?: string): FType {
+    const memo = this.scope.join(' ');
+    let keys = this.stateKeys.get(memo);
+    if (keys === undefined) {
+      const found: Record<string, FType> = {};
+      const add = (decls: Record<string, ValueDecl> | undefined) => {
+        for (const [name, decl] of Object.entries(decls ?? {})) {
+          const type = fieldFormulaType(decl.type, decl.of);
+          const known = found[name];
+          found[name] =
+            known === undefined || JSON.stringify(known) === JSON.stringify(type) ? type : 'dyn';
+        }
+      };
+      for (const pid of this.scope) {
+        for (const { def } of this.set.rules.get(pid)?.contentTypes.values() ?? []) add(def.state);
+        for (const { doc } of this.set.packContent.get(pid) ?? []) add(doc.state);
+      }
+      keys = found;
+      this.stateKeys.set(memo, keys);
+    }
+    return {
+      object: {
+        ...(key !== undefined && !applied ? { [key]: 'dyn' as FType } : {}),
+        ...keys,
+        ...(applied ? { id: 'string', appliedBy: 'string' } : {}),
+      },
+    };
+  }
 
   private contentTypeDef(name: string | undefined): ContentTypeDef | undefined {
     return name ? this.set.contentType(name, this.scope)?.def : undefined;
@@ -2033,6 +2130,7 @@ class FormulaChecker<L> {
         if (!field || (this.inputOnly && !field.def.input)) return undefined;
         return fieldFormulaType(field.def.type);
       },
+      fieldExists: (id) => this.set.field(id, this.scope) !== undefined,
       roots: new Set([...rootsFor(this.place), ...this.extraRoots]),
       rootTypes: this.types,
       character: this.place !== 'itemField' && this.place !== 'query',
