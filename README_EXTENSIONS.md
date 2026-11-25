@@ -323,6 +323,7 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 | `scripts/extensions/openquest/`                              | The OpenQuest 3 SRD chapters the pack models (Markdown)              |
 | `scripts/extensions/openquest/openquest-create.ts` + `.html` | OpenQuest character creation in the browser                          |
 | `scripts/extensions/openquest/openquest-play.ts` + `.html`   | OpenQuest play sheet in the browser                                  |
+| `scripts/extensions/validate-pack.ts`                        | `pnpm validate`'s checks on one pack and its characters              |
 | `examples/characters/extensions/`                            | SagaS example characters and the characters the tools save           |
 | `.vscode/launch.json`, `.vscode/settings.json`               | Run and debug the current TS file from VS Code                       |
 
@@ -880,10 +881,23 @@ Without CI, check locally before pushing:
 
 ```sh
 npx oxlint --deny-warnings
-npx oxfmt --check packs/sagas scripts/extensions README_EXTENSIONS.md
+npx oxfmt --check packs/sagas packs/openquest scripts/extensions README_EXTENSIONS.md
 pnpm typecheck
 pnpm validate
 ```
+
+While working on one pack, `scripts/extensions/validate-pack.ts` runs the same checks on it
+alone, in a few seconds instead of half a minute: the pack (its schemas, references, formulas,
+texts and engine load; its dependencies are loaded with it, not checked) and the example
+characters that use it. `pnpm validate` still checks the whole repository before a commit.
+
+```sh
+node --import tsx --conditions @opencharacter/source scripts/extensions/validate-pack.ts openquest-core
+node --import tsx --conditions @opencharacter/source scripts/extensions/validate-pack.ts packs/sagas/core
+```
+
+It takes pack IDs or folders, several at once, and exits 1 on any error. Characters with
+homebrew, or using a pack it didn't load, are left to `pnpm validate`.
 
 `pnpm lint` runs `oxfmt --check` on every file. With `core.autocrlf`, OCF's files are CRLF on
 disk, so on Windows it flags almost all of them; check only the files you changed, as above.
