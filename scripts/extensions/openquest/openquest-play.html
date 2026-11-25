@@ -1,0 +1,1136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenQuest Play Sheet</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --card: #fffdf8;
+        --ink: #22201c;
+        --muted: #6f6a60;
+        --line: #ddd6c8;
+        --accent: #7a4b1f;
+        --accent-ink: #fff;
+        --rec: #f3e6d4;
+        --bad: #a3271f;
+        --ok: #2c6e3f;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1a1814;
+          --card: #24211c;
+          --ink: #efeae0;
+          --muted: #a59e90;
+          --line: #3b362e;
+          --accent: #d9a066;
+          --accent-ink: #1a1814;
+          --rec: #3a2f22;
+          --bad: #f08a80;
+          --ok: #7fcf95;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.45 system-ui,
+          sans-serif;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--line);
+        background: var(--card);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+      header h1 {
+        font-size: 16px;
+        margin: 0 12px 0 0;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px 16px;
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+      @media (max-width: 1100px) {
+        main {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 720px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+      section {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+      }
+      details.fold > summary {
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 15px;
+        list-style: none;
+      }
+      details.fold > summary::before {
+        content: '▸ ';
+        color: var(--muted);
+      }
+      details.fold[open] > summary::before {
+        content: '▾ ';
+      }
+      h3 {
+        font-size: 12px;
+        margin: 12px 0 4px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      button {
+        font: inherit;
+        padding: 3px 9px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--card);
+        color: var(--ink);
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--accent);
+      }
+      button.primary {
+        background: var(--accent);
+        color: var(--accent-ink);
+        border-color: var(--accent);
+      }
+      button.small {
+        padding: 1px 7px;
+        font-size: 12px;
+      }
+      input,
+      select,
+      textarea {
+        font: inherit;
+        padding: 3px 6px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      input[type='number'] {
+        width: 64px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td,
+      th {
+        padding: 2px 6px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: middle;
+      }
+      th {
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        margin-top: 6px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .hidden {
+        display: none !important;
+      }
+      .msg {
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin: 8px 16px 0;
+      }
+      .msg.ok {
+        background: var(--rec);
+      }
+      .msg.err {
+        background: #f6d9d6;
+        color: var(--bad);
+      }
+      .chars {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        text-align: center;
+      }
+      .chars div,
+      .stat {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 3px;
+      }
+      .chars b {
+        display: block;
+        font-size: 18px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+        margin-top: 6px;
+      }
+      .stat small {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .stat b {
+        font-size: 16px;
+      }
+      .bad {
+        color: var(--bad);
+      }
+      .good {
+        color: var(--ok);
+      }
+      .badge {
+        font-size: 11px;
+        padding: 0 6px;
+        border-radius: 8px;
+        background: var(--rec);
+      }
+      .btns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .log {
+        max-height: 520px;
+        overflow: auto;
+      }
+      .log .entry {
+        border-bottom: 1px solid var(--line);
+        padding: 4px 0;
+      }
+      .log .entry b.res {
+        color: var(--accent);
+      }
+      .sit {
+        columns: 2;
+        font-size: 12px;
+      }
+      .sit label {
+        display: block;
+      }
+      .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .options button.rec {
+        background: var(--rec);
+        border-color: var(--accent);
+      }
+      .issues {
+        color: var(--bad);
+        margin: 4px 0;
+        padding-left: 18px;
+      }
+      pre {
+        white-space: pre-wrap;
+        font-size: 12px;
+        max-height: 420px;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>OpenQuest — Play</h1>
+      <select id="charList"></select>
+      <button id="btnLoad" class="primary">Load</button>
+      <span style="flex: 1"></span>
+      <span id="who" class="muted"></span>
+      <button id="btnSave">Save</button>
+      <button id="btnYaml">YAML</button>
+    </header>
+    <div id="messages"></div>
+    <main id="main" class="hidden">
+      <!-- Column 1: the character -->
+      <div>
+        <section>
+          <div id="identity"></div>
+          <div id="issues"></div>
+          <h3>Characteristics</h3>
+          <div class="chars" id="chars"></div>
+          <div class="stats" id="stats"></div>
+          <div id="conditions" class="row"></div>
+        </section>
+        <section>
+          <details class="fold" id="foldInputs">
+            <summary>Edit the sheet</summary>
+            <table id="inputs"></table>
+          </details>
+        </section>
+        <section>
+          <details class="fold" open>
+            <summary>Equipment</summary>
+            <div id="gear"></div>
+          </details>
+        </section>
+      </div>
+      <!-- Column 2: skills, weapons, magic -->
+      <div>
+        <section>
+          <details class="fold" open>
+            <summary>Skills</summary>
+            <div class="row">
+              <label
+                >Difficulty
+                <select id="tDiff">
+                  <option value="easy">Easy +50%</option>
+                  <option value="simple">Simple +20%</option>
+                  <option value="normal" selected>Normal</option>
+                  <option value="difficult">Difficult −20%</option>
+                  <option value="hard">Hard −50%</option>
+                </select></label
+              >
+              <label>Magic <input id="tMagic" type="number" value="0" /></label>
+              <label>Other <input id="tMod" type="number" value="0" /></label>
+              <label><input id="tAssist" type="checkbox" /> Assisted +20%</label>
+            </div>
+            <table id="skills"></table>
+          </details>
+        </section>
+        <section>
+          <details class="fold" open>
+            <summary>Combat</summary>
+            <div class="row">
+              <label
+                >Aim (rounds) <input id="cAim" type="number" min="0" max="5" value="0"
+              /></label>
+              <label><input id="cCrit" type="checkbox" /> Critical hit</label>
+              <label><input id="cGreat" type="checkbox" /> Great Attack</label>
+              <label><input id="cCharge" type="checkbox" /> Charge</label>
+              <label><input id="cThrown" type="checkbox" /> Thrown</label>
+            </div>
+            <table id="weapons"></table>
+            <div class="row">
+              <button id="btnUnarmed">Unarmed attack</button>
+              <button id="btnDodge">Dodge</button>
+              <button id="btnParry">Parry</button>
+              <label>defences already <input id="cDef" type="number" min="0" value="0" /></label>
+            </div>
+            <div class="row">
+              <label>Damage taken <input id="dmgAmount" type="number" min="0" value="0" /></label>
+              <label><input id="dmgIgnore" type="checkbox" /> ignores armour</label>
+              <label>Pierce <input id="dmgPierce" type="number" min="0" value="0" /></label>
+              <button id="btnTake" class="primary">Take</button>
+            </div>
+            <h3>Situation</h3>
+            <div class="sit" id="situational"></div>
+          </details>
+        </section>
+        <section>
+          <details class="fold" open>
+            <summary>Magic</summary>
+            <div class="row">
+              <label><input id="mDuress" type="checkbox" checked /> Under duress (test)</label>
+              <label><input id="mSelf" type="checkbox" /> On oneself</label>
+              <label>Magnitude <input id="mMag" type="number" min="1" placeholder="known" /></label>
+            </div>
+            <div class="row" id="sorcRow">
+              <span class="muted">Sorcery:</span>
+              <select id="sMag"></select>
+              <select id="sDur"></select>
+              <select id="sRange"></select>
+              <label><input id="sFocus" type="checkbox" checked /> with the focus</label>
+            </div>
+            <table id="spells"></table>
+            <h3>Spells on the character</h3>
+            <div id="applied" class="muted"></div>
+            <h3>Stores</h3>
+            <div id="stores" class="muted"></div>
+          </details>
+        </section>
+      </div>
+      <!-- Column 3: what happened, and the other actions -->
+      <div>
+        <section id="secPause" class="hidden">
+          <b id="pauseTitle"></b>
+          <div id="pauseBody"></div>
+        </section>
+        <section id="secForm" class="hidden">
+          <b id="formTitle"></b>
+          <div id="formBody"></div>
+        </section>
+        <section>
+          <details class="fold" open>
+            <summary>Rolls</summary>
+            <div class="log" id="log"><p class="muted">Nothing rolled yet.</p></div>
+          </details>
+        </section>
+        <section>
+          <details class="fold" open>
+            <summary>Actions</summary>
+            <div id="actionGroups"></div>
+          </details>
+        </section>
+        <section id="secYaml" class="hidden">
+          <pre id="yaml"></pre>
+        </section>
+      </div>
+    </main>
+    <script>
+      const PACK = 'openquest-core';
+      const $ = (id) => document.getElementById(id);
+      const esc = (s) =>
+        String(s ?? '').replace(
+          /[&<>"']/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+        );
+      const tid = (c) =>
+        String(c.typeId || '')
+          .split(':')
+          .pop();
+      const local = (id) => String(id || '').replace(PACK + ':', '');
+      let state = null;
+      const history = [];
+
+      const GROUPS = {
+        Resistances: ['dodge', 'persistence', 'resilience'],
+        Combat: ['close-combat', 'ranged-combat', 'unarmed-combat'],
+        Knowledge: [
+          'culture-own',
+          'language-own',
+          'natural-lore',
+          'culture-other',
+          'language-other',
+          'lore',
+        ],
+        Practical: [
+          'athletics',
+          'craft',
+          'deception',
+          'driving',
+          'engineering',
+          'healing',
+          'influence',
+          'mechanisms',
+          'perception',
+          'performance',
+          'riding',
+          'sailing',
+          'streetwise',
+          'trade',
+          'wealth',
+        ],
+        Magic: [
+          'personal-magic-casting',
+          'sorcery-casting',
+          'religion-own',
+          'religion-other',
+          'shamanism',
+        ],
+      };
+      const EXPERTISE = ['Novice', 'Apprentice', 'Veteran', 'Expert', 'Master'];
+      const ACTION_GROUPS = {
+        Health: [
+          'healing-received',
+          'magic-healing',
+          'natural-healing',
+          'recover-magic',
+          'spend-fortune',
+          'fatigue-test',
+          'rest-fatigue',
+          'deprivation',
+        ],
+        'Combat and tests': ['opposed-test', 'defend', 'unarmed-damage'],
+        'Dangers and travel': [
+          'fall',
+          'suffocate',
+          'burn',
+          'resist-poison',
+          'resist-disease',
+          'travel-day',
+        ],
+        'Social combat': [
+          'fast-talk',
+          'oratory-start',
+          'oratory',
+          'oratory-defence',
+          'intimidate',
+          'social-exchange',
+        ],
+        Magic: [
+          'spell-received',
+          'spirit-combat',
+          'make-store',
+          'create-magic-place',
+          'end-magic-place',
+          'learn-personal-spell',
+          'learn-sorcery-spell',
+          'learn-divine-spell',
+          'become-specialist',
+          'sorcery-rank',
+          'religion-rank',
+          'leave-religion',
+          'apotheosis',
+        ],
+        Growth: [
+          'gain-growth',
+          'improve-skill',
+          'improve-characteristic',
+          'learn-specialty',
+          'end-downtime',
+        ],
+      };
+      const SORC = {
+        mag: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
+        dur: [
+          '5-minutes',
+          '15-minutes',
+          '1-hour',
+          '6-hours',
+          '12-hours',
+          '1-day',
+          '1-week',
+          '1-month',
+          '1-season',
+          '1-year',
+          '5-years',
+          'permanent',
+        ],
+        range: [
+          '10-m',
+          '20-m',
+          '50-m',
+          '250-m',
+          '500-m',
+          '1-km',
+          '10-km',
+          '100-km',
+          '1000-km',
+          '5000-km',
+          '10000-km',
+          'planetary',
+        ],
+      };
+      $('sMag').innerHTML = SORC.mag.map((m) => `<option>${m}</option>`).join('');
+      $('sDur').innerHTML = SORC.dur
+        .map((d) => `<option>${d.replace(/-/g, ' ')}</option>`)
+        .join('');
+      $('sRange').innerHTML = SORC.range
+        .map((d) => `<option>${d.replace(/-/g, ' ')}</option>`)
+        .join('');
+
+      async function api(path, body) {
+        const res = await fetch(
+          path,
+          body === undefined
+            ? {}
+            : {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify(body),
+              },
+        );
+        const type = res.headers.get('content-type') || '';
+        const data = type.includes('json') ? await res.json() : await res.text();
+        if (!res.ok) throw new Error(data.error || data || res.statusText);
+        return data;
+      }
+      const flash = (text, kind = 'ok') =>
+        ($('messages').innerHTML = text ? `<div class="msg ${kind}">${esc(text)}</div>` : '');
+      async function call(path, body) {
+        try {
+          const v = await api(path, body);
+          render(v);
+          return v;
+        } catch (e) {
+          flash(e.message, 'err');
+        }
+      }
+      // Runs an action of the rules or of a copy (entry); every recommendation taken unless a
+      // choice is the player's (it pauses then).
+      const run = (action, params = {}, entry, situational) =>
+        call('/api/run', {
+          sid: state.sid,
+          action: PACK + ':' + action,
+          ...(entry ? { entry } : {}),
+          params,
+          situational: situational || {},
+          auto: false,
+        });
+
+      async function listCharacters() {
+        const list = await api('/api/characters?pack=' + PACK);
+        $('charList').innerHTML = list.length
+          ? list.map((f) => `<option>${esc(f)}</option>`).join('')
+          : '<option value="">(no OpenQuest character)</option>';
+        try {
+          const last = localStorage.getItem('oqp.file');
+          if (last && list.includes(last)) $('charList').value = last;
+        } catch {}
+      }
+      $('btnLoad').onclick = () => {
+        if (!$('charList').value) return;
+        try {
+          localStorage.setItem('oqp.file', $('charList').value);
+        } catch {}
+        history.length = 0;
+        call('/api/load', { pack: PACK, file: $('charList').value });
+      };
+
+      // ---- Rendering
+      const fieldsOf = (v) => {
+        const out = {};
+        for (const g of v.groups) for (const f of g.fields) out[local(f.id)] = f;
+        return out;
+      };
+      const comp = (c, k) => (c.computed.find((x) => x.key === k) || {}).value;
+      const st = (c, label) => (c.state.find((s) => s.label === label) || {}).value;
+      const actionsFor = (v, entry) => v.actions.filter((a) => a.entry === entry);
+
+      function render(v) {
+        state = v;
+        $('main').classList.remove('hidden');
+        flash(v.error || '', 'err');
+        const f = fieldsOf(v);
+        const name = f['identity.name']?.value || v.character.id;
+        $('who').textContent = name;
+        const sp = v.copies.find((c) => tid(c) === 'species');
+        $('identity').innerHTML =
+          `<b style="font-size:17px">${esc(name)}</b> <span class="muted">${esc(sp ? sp.label : f['identity.species']?.value || '')}${f['identity.concept']?.value ? ' — ' + esc(f['identity.concept'].value) : ''}</span>`;
+        $('issues').innerHTML = v.issues.length
+          ? `<ul class="issues">${v.issues.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`
+          : '';
+        $('chars').innerHTML = ['str', 'con', 'dex', 'siz', 'int', 'pow', 'cha']
+          .map(
+            (c) =>
+              `<div><small>${c.toUpperCase()}</small><b>${esc(f['chars.' + c]?.value ?? '–')}</b></div>`,
+          )
+          .join('');
+        const hp = Number(f['hp.current']?.value);
+        const stat = (label, value, cls = '') =>
+          `<div class="stat"><small>${esc(label)}</small><b class="${cls}">${esc(value)}</b></div>`;
+        $('stats').innerHTML = [
+          stat(
+            'Hit points',
+            `${f['hp.current']?.value ?? '–'} / ${f['hp.max']?.value ?? '–'}`,
+            hp <= 0 ? 'bad' : '',
+          ),
+          stat('Magic points', `${f['mp.current']?.value ?? '–'} / ${f['mp.max']?.value ?? '–'}`),
+          stat('Armour', f['armour.ap']?.value ?? '–'),
+          stat('Damage mod.', f['damage.modifier']?.value ?? '–'),
+          stat('Movement', `${f['move.rate']?.value ?? '–'} m`),
+          stat('Fortune', f['fortune.points']?.value ?? '–'),
+          stat('Growth', f['growth.points']?.value ?? '–'),
+          stat(
+            'Encumbrance',
+            `${f['enc.total']?.value ?? '–'} / ${f['enc.limit']?.value ?? '–'}`,
+            f['state.overloaded']?.value === 'true' ? 'bad' : '',
+          ),
+          stat('Money (SP)', f['money.silver']?.value ?? '–'),
+        ].join('');
+        const conds = [
+          ['state.mortal', 'Mortally wounded', 'bad'],
+          ['state.unconscious', 'Unconscious', 'bad'],
+          ['state.stabilised', 'Stabilised', ''],
+          ['state.treated', 'Surgery done', ''],
+          ['state.drained', 'No magic points', 'bad'],
+          ['state.overloaded', 'Overloaded', 'bad'],
+          ['state.diseased', 'Diseased', 'bad'],
+          ['state.exposure', 'Exposed', 'bad'],
+          ['state.starving', 'Starving', 'bad'],
+          ['state.thirsty', 'Thirsty', 'bad'],
+        ]
+          .filter(([k]) => String(f[k]?.value) === 'true')
+          .map(([, l, c]) => `<span class="badge ${c}">${l}</span>`);
+        const fat = f['fatigue.level'];
+        if (fat && !/Rested/.test(fat.value))
+          conds.push(`<span class="badge bad">${esc(fat.value.split(' (')[0])}</span>`);
+        $('conditions').innerHTML = conds.join('');
+        renderSkills(v);
+        renderWeapons(v);
+        renderSituational(v);
+        renderMagic(v);
+        renderGear(v);
+        renderInputs(v);
+        renderActions(v);
+        renderPause(v);
+        if (v.outcome) {
+          history.unshift(v.outcome);
+          history.length = Math.min(history.length, 40);
+        }
+        renderLog();
+        if (!$('secYaml').classList.contains('hidden')) showYaml();
+      }
+
+      function testParams() {
+        return {
+          difficulty: $('tDiff').value,
+          magic: Number($('tMagic').value) || 0,
+          modifier: Number($('tMod').value) || 0,
+          assisted: $('tAssist').checked,
+        };
+      }
+      function renderSkills(v) {
+        const skills = v.copies.filter((c) => tid(c) === 'skill' && !c.hidden);
+        const group = (c) =>
+          Object.keys(GROUPS).find((g) => GROUPS[g].includes(local(c.item).replace('skills.', '')));
+        $('skills').innerHTML = Object.keys(GROUPS)
+          .map((g) => {
+            const list = skills.filter((c) => group(c) === g);
+            if (!list.length) return '';
+            return (
+              `<tr><th colspan="4">${g}</th></tr>` +
+              list
+                .map((c) => {
+                  const total = comp(c, 'total');
+                  const ex = EXPERTISE[Number(comp(c, 'expertise'))] || '';
+                  const raised = /true/.test(st(c, 'Raised this downtime') || '');
+                  return `<tr><td>${esc(c.label)}${raised ? ' <span class="badge">+5%</span>' : ''}</td><td class="muted">${ex}</td><td class="num"><b>${esc(total)}%</b></td><td class="num"><button class="small" data-test="${esc(c.id)}">Test</button></td></tr>`;
+                })
+                .join('')
+            );
+          })
+          .join('');
+        $('skills')
+          .querySelectorAll('[data-test]')
+          .forEach((b) => (b.onclick = () => run('skill-test', testParams(), b.dataset.test)));
+      }
+
+      const situation = () => {
+        const out = {};
+        $('situational')
+          .querySelectorAll('input:checked')
+          .forEach((i) => (out[i.dataset.id] = true));
+        return out;
+      };
+      function renderSituational(v) {
+        const was = situation();
+        $('situational').innerHTML = v.situational
+          .map(
+            (s) =>
+              `<label><input type="checkbox" data-id="${esc(s.id)}" ${was[s.id] ? 'checked' : ''}> ${esc(s.label)}</label>`,
+          )
+          .join('');
+      }
+      function renderWeapons(v) {
+        const weapons = v.copies.filter((c) => tid(c) === 'weapon');
+        $('weapons').innerHTML = weapons.length
+          ? weapons
+              .map(
+                (c) =>
+                  `<tr><td>${esc(c.label)}${c.equipped ? '' : ' <span class="muted">(not ready)</span>'}</td><td class="num"><button class="small" data-attack="${esc(c.id)}">Attack</button> <button class="small" data-damage="${esc(c.id)}">Damage</button></td></tr>`,
+              )
+              .join('')
+          : '<tr><td class="muted">No weapon.</td></tr>';
+        $('weapons')
+          .querySelectorAll('[data-attack]')
+          .forEach(
+            (b) =>
+              (b.onclick = () =>
+                run(
+                  'attack',
+                  {
+                    aimRounds: Number($('cAim').value) || 0,
+                    magic: Number($('tMagic').value) || 0,
+                    modifier: Number($('tMod').value) || 0,
+                  },
+                  b.dataset.attack,
+                  situation(),
+                )),
+          );
+        $('weapons')
+          .querySelectorAll('[data-damage]')
+          .forEach(
+            (b) =>
+              (b.onclick = () =>
+                run(
+                  'damage',
+                  {
+                    critical: $('cCrit').checked,
+                    greatAttack: $('cGreat').checked,
+                    charge: $('cCharge').checked,
+                    thrown: $('cThrown').checked,
+                  },
+                  b.dataset.damage,
+                )),
+          );
+      }
+      $('btnUnarmed').onclick = () =>
+        run(
+          'unarmed-attack',
+          { magic: Number($('tMagic').value) || 0, modifier: Number($('tMod').value) || 0 },
+          undefined,
+          situation(),
+        );
+      $('btnDodge').onclick = () =>
+        run(
+          'defend',
+          {
+            reaction: 'dodge',
+            earlierDefences: Number($('cDef').value) || 0,
+            magic: Number($('tMagic').value) || 0,
+            modifier: Number($('tMod').value) || 0,
+          },
+          undefined,
+          situation(),
+        );
+      $('btnParry').onclick = () =>
+        run(
+          'defend',
+          {
+            reaction: 'parry',
+            earlierDefences: Number($('cDef').value) || 0,
+            magic: Number($('tMagic').value) || 0,
+            modifier: Number($('tMod').value) || 0,
+          },
+          undefined,
+          situation(),
+        );
+      $('btnTake').onclick = () => {
+        const amount = Number($('dmgAmount').value) || 0;
+        run('take-damage', {
+          amount,
+          ignoreArmour: $('dmgIgnore').checked,
+          pierce: Number($('dmgPierce').value) || 0,
+        });
+      };
+
+      function renderMagic(v) {
+        const kinds = { personal: 'Personal Magic', sorcery: 'Sorcery', divine: 'Divine Magic' };
+        const spells = v.copies.filter((c) => kinds[tid(c)]);
+        $('sorcRow').classList.toggle('hidden', !spells.some((c) => tid(c) === 'sorcery'));
+        $('spells').innerHTML = spells.length
+          ? Object.keys(kinds)
+              .map((k) => {
+                const list = spells.filter((c) => tid(c) === k);
+                if (!list.length) return '';
+                return (
+                  `<tr><th colspan="2">${kinds[k]}</th></tr>` +
+                  list
+                    .map((c) => {
+                      const mag = st(c, 'Magnitude known');
+                      const spent = st(c, 'Magnitude spent');
+                      const focus = /true/.test(st(c, 'Focused by the wand or staff') || '');
+                      const acts = actionsFor(v, c.id);
+                      return `<tr><td>${esc(c.label)}${mag ? ' ' + esc(mag) : ''}${spent && spent !== '0' ? ` <span class="muted">(${esc(spent)} spent)</span>` : ''}${focus ? ' <span class="badge">focused</span>' : ''}</td><td class="num">${acts
+                        .map(
+                          (a) =>
+                            `<button class="small" data-act="${esc(a.id)}" data-entry="${esc(c.id)}">${esc(a.name)}</button>`,
+                        )
+                        .join(' ')}</td></tr>`;
+                    })
+                    .join('')
+                );
+              })
+              .join('')
+          : '<tr><td class="muted">No spells.</td></tr>';
+        $('spells')
+          .querySelectorAll('[data-act]')
+          .forEach((b) => (b.onclick = () => spellAction(local(b.dataset.act), b.dataset.entry)));
+        $('applied').innerHTML = v.applied.length
+          ? v.applied
+              .map(
+                (a) =>
+                  `<div>${esc(a.label)}${a.state.magnitude ? ' ' + esc(a.state.magnitude) : ''}${a.state.specialty ? ' (' + esc(a.state.specialty) + ')' : ''} <button class="small" data-end="${esc(a.id)}">End</button></div>`,
+              )
+              .join('')
+          : 'None.';
+        $('applied')
+          .querySelectorAll('[data-end]')
+          .forEach((b) => (b.onclick = () => run('end-spell', {}, b.dataset.end)));
+        const stores = v.copies.filter((c) => tid(c) === 'store');
+        $('stores').innerHTML = stores.length
+          ? stores
+              .map(
+                (c) =>
+                  `<div>${esc(c.label)}: ${esc(st(c, 'Magic points stored') ?? 0)} MP <button class="small" data-draw="${esc(c.id)}">Draw</button> <button class="small" data-charge="${esc(c.id)}">Refill</button></div>`,
+              )
+              .join('') +
+            `<div class="muted">Drawn, ready to cast: ${esc(fieldsOf(v)['mp.borrowed']?.value ?? 0)}</div>`
+          : 'None.';
+        $('stores')
+          .querySelectorAll('[data-draw]')
+          .forEach((b) => (b.onclick = () => runAmount('draw-store', b.dataset.draw)));
+        $('stores')
+          .querySelectorAll('[data-charge]')
+          .forEach((b) => (b.onclick = () => runAmount('charge-store', b.dataset.charge)));
+      }
+      function runAmount(action, entry) {
+        const n = Number(prompt('How many magic points?', '1'));
+        if (n > 0) run(action, { amount: n }, entry);
+      }
+      function spellAction(action, entry) {
+        const mag = Number($('mMag').value) || undefined;
+        if (action === 'cast-personal')
+          return run(
+            'cast-personal',
+            {
+              duress: $('mDuress').checked,
+              onSelf: $('mSelf').checked,
+              magic: Number($('tMagic').value) || 0,
+              modifier: Number($('tMod').value) || 0,
+              ...(mag ? { magnitude: mag } : {}),
+            },
+            entry,
+          );
+        if (action === 'cast-sorcery')
+          return run(
+            'cast-sorcery',
+            {
+              duress: $('mDuress').checked,
+              onSelf: $('mSelf').checked,
+              useFocus: $('sFocus').checked,
+              magnitude: SORC.mag[$('sMag').selectedIndex],
+              duration: SORC.dur[$('sDur').selectedIndex],
+              range: SORC.range[$('sRange').selectedIndex],
+              magic: Number($('tMagic').value) || 0,
+              modifier: Number($('tMod').value) || 0,
+            },
+            entry,
+          );
+        if (action === 'cast-divine')
+          return run(
+            'cast-divine',
+            { onSelf: $('mSelf').checked, ...(mag ? { magnitude: mag } : {}) },
+            entry,
+          );
+        if (action === 'regain-divine')
+          return run(
+            'regain-divine',
+            { fortune: confirm('Spend a fortune point? (Cancel: a worshipper duty performed.)') },
+            entry,
+          );
+        return run(action, {}, entry);
+      }
+
+      function renderGear(v) {
+        const items = v.copies.filter(
+          (c) => c.where === 'inventory' && !['weapon', 'store'].includes(tid(c)),
+        );
+        $('gear').innerHTML = items.length
+          ? `<table>${items.map((c) => `<tr><td>${esc(c.label)}${c.quantity > 1 ? ' ×' + c.quantity : ''}</td><td class="muted">${tid(c) === 'armour' ? (c.equipped ? 'worn' : 'not worn') : ''}</td></tr>`).join('')}</table>`
+          : '<p class="muted">Nothing.</p>';
+      }
+
+      // ---- Input fields (hit points, magic points spent, states…), a `set` each
+      function renderInputs(v) {
+        $('inputs').innerHTML = v.inputs
+          .map((f, i) => {
+            const id = `data-i="${i}"`;
+            let el;
+            if (f.values)
+              el = `<select ${id}>${f.values.map((o) => `<option value="${esc(o.id)}" ${o.id === f.value ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select>`;
+            else if (f.type === 'boolean')
+              el = `<input type="checkbox" ${id} ${f.value ? 'checked' : ''}>`;
+            else if (f.type === 'integer' || f.type === 'decimal')
+              el = `<input type="number" ${id} value="${esc(f.value)}">`;
+            else el = `<input ${id} value="${esc(f.value)}" size="26">`;
+            return `<tr><td>${esc(f.label)}</td><td>${el}</td></tr>`;
+          })
+          .join('');
+        $('inputs')
+          .querySelectorAll('[data-i]')
+          .forEach(
+            (el) =>
+              (el.onchange = () => {
+                const f = v.inputs[el.dataset.i];
+                const value =
+                  f.type === 'boolean'
+                    ? el.checked
+                    : f.type === 'integer'
+                      ? Math.trunc(Number(el.value))
+                      : f.type === 'decimal'
+                        ? Number(el.value)
+                        : el.value;
+                call('/api/set', { sid: v.sid, field: f.id, value });
+              }),
+          );
+      }
+
+      // ---- The other actions, by theme, each with its form
+      function renderActions(v) {
+        const rules = v.actions.filter((a) => !a.entry && !a.start);
+        const known = new Set(Object.values(ACTION_GROUPS).flat());
+        const groups = {
+          ...ACTION_GROUPS,
+          Other: rules
+            .map((a) => local(a.id))
+            .filter(
+              (id) =>
+                !known.has(id) &&
+                ![
+                  'skill-test',
+                  'attack',
+                  'unarmed-attack',
+                  'take-damage',
+                  'cast-personal',
+                  'cast-sorcery',
+                  'cast-divine',
+                  'end-spell',
+                ].includes(id),
+            ),
+        };
+        $('actionGroups').innerHTML = Object.entries(groups)
+          .map(([g, ids]) => {
+            const list = ids.map((id) => rules.find((a) => local(a.id) === id)).filter(Boolean);
+            if (!list.length) return '';
+            return `<h3>${g}</h3><div class="btns">${list.map((a) => `<button data-form="${esc(a.id)}">${esc(a.name)}</button>`).join('')}</div>`;
+          })
+          .join('');
+        $('actionGroups')
+          .querySelectorAll('[data-form]')
+          .forEach((b) => (b.onclick = () => openForm(b.dataset.form)));
+      }
+      async function openForm(id) {
+        let d;
+        try {
+          d = await api('/api/describe', { sid: state.sid, action: id });
+        } catch (e) {
+          return flash(e.message, 'err');
+        }
+        if (d.error) return flash(d.error, 'err');
+        $('secForm').classList.remove('hidden');
+        $('formTitle').textContent = d.label;
+        const input = (p) => {
+          const name = `data-name="${esc(p.name)}"`;
+          const opts = p.options || p.values;
+          if (opts)
+            return `<select ${name}>${p.required ? '' : '<option value=""></option>'}${opts.map((o) => `<option value="${esc(o.id)}" ${o.id === p.default ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select>`;
+          if (p.type === 'boolean')
+            return `<input type="checkbox" ${name} ${p.default ? 'checked' : ''}>`;
+          if (p.type === 'integer' || p.type === 'decimal')
+            return `<input type="number" ${name} value="${p.default ?? ''}">`;
+          return `<input ${name} value="${esc(p.default ?? '')}" size="22">`;
+        };
+        $('formBody').innerHTML =
+          `<table>${d.params.map((p) => `<tr><td>${esc(p.label)}</td><td>${input(p)}</td></tr>`).join('') || '<tr><td class="muted">No parameters.</td></tr>'}</table>
+          <div class="row"><button class="primary" id="fRun">Run</button><button id="fClose">Close</button></div>`;
+        $('fRun').onclick = () => {
+          const params = {};
+          for (const p of d.params) {
+            const el = $('formBody').querySelector(`[data-name="${CSS.escape(p.name)}"]`);
+            if (p.type === 'boolean') params[p.name] = el.checked;
+            else if (el.value === '') continue;
+            else if (p.type === 'integer') params[p.name] = Math.trunc(Number(el.value));
+            else if (p.type === 'decimal') params[p.name] = Number(el.value);
+            else params[p.name] = el.value;
+          }
+          $('secForm').classList.add('hidden');
+          call('/api/run', { sid: state.sid, action: id, params, situational: situation() });
+        };
+        $('fClose').onclick = () => $('secForm').classList.add('hidden');
+      }
+
+      // ---- A pause: the player's choice (a skill to raise, a spell to learn…)
+      function renderPause(v) {
+        const p = v.paused;
+        $('secPause').classList.toggle('hidden', !p);
+        if (!p) return;
+        $('pauseTitle').textContent = p.title || p.action;
+        const answer = (a) => call('/api/answer', { sid: v.sid, answer: a });
+        if (p.kind === 'choice') {
+          $('pauseBody').innerHTML =
+            `<input id="pFilter" placeholder="filter…" style="width:100%;margin:6px 0">
+            <div class="options">${p.options.map((o) => `<button data-id="${esc(o.id)}" class="${o.id === p.recommended ? 'rec' : ''}">${esc(o.id === '#done' ? 'Done' : o.label)}</button>`).join('')}</div>
+            <div class="row"><button id="pCancel">Cancel</button></div>`;
+          $('pauseBody')
+            .querySelectorAll('[data-id]')
+            .forEach((b) => (b.onclick = () => answer({ option: b.dataset.id })));
+          $('pFilter').oninput = (e) => {
+            const q = e.target.value.toLowerCase();
+            $('pauseBody')
+              .querySelectorAll('[data-id]')
+              .forEach((b) =>
+                b.classList.toggle('hidden', !b.textContent.toLowerCase().includes(q)),
+              );
+          };
+        } else if (p.kind === 'allocate') {
+          const a = p.allocate;
+          $('pauseBody').innerHTML =
+            `<table>${a.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td><td><input type="number" min="0" value="${(a.recommended || {})[f.id] ?? 0}" data-id="${esc(f.id)}"></td></tr>`).join('')}</table>
+            <div class="row"><span class="muted">Budget ${esc(a.budget)}</span><button id="pOk" class="primary">Confirm</button><button id="pCancel">Cancel</button></div>`;
+          $('pOk').onclick = () => {
+            const amounts = {};
+            $('pauseBody')
+              .querySelectorAll('input[data-id]')
+              .forEach(
+                (i) => Number(i.value) > 0 && (amounts[i.dataset.id] = Math.trunc(Number(i.value))),
+              );
+            answer({ amounts });
+          };
+        } else
+          $('pauseBody').innerHTML =
+            `<p class="muted">This page can't answer a ${esc(p.kind)} pause.</p><div class="row"><button id="pCancel">Cancel</button></div>`;
+        $('pCancel').onclick = () => call('/api/cancel', { sid: v.sid });
+      }
+
+      // ---- The rolls and their outcome
+      function renderLog() {
+        $('log').innerHTML = history.length
+          ? history
+              .map(
+                (
+                  o,
+                ) => `<div class="entry"><b>${esc(o.action)}</b> → <b class="res">${esc(o.result || 'done')}</b>
+                ${o.rolls.map((r) => `<div class="muted">${esc(r.label)}: ${esc(r.roll)} = <b>${esc(r.total)}</b>${r.band ? ' (' + esc(r.band) + ')' : ''}</div>`).join('')}
+                ${o.data.length ? `<div>${o.data.map((d) => `${esc(d.key)} ${esc(d.value)}`).join(' · ')}</div>` : ''}
+                ${o.changed.length ? `<div class="muted">${o.changed.map((c) => `${esc(c.label)}: ${esc(c.from)} → ${esc(c.to)}`).join('; ')}</div>` : ''}</div>`,
+              )
+              .join('')
+          : '<p class="muted">Nothing rolled yet.</p>';
+      }
+
+      async function showYaml() {
+        $('yaml').textContent = await api('/api/yaml', { sid: state.sid });
+      }
+      $('btnYaml').onclick = () => {
+        if (!state) return;
+        $('secYaml').classList.toggle('hidden');
+        if (!$('secYaml').classList.contains('hidden')) showYaml();
+      };
+      $('btnSave').onclick = async () => {
+        if (!state) return;
+        try {
+          const r = await api('/api/save', {
+            sid: state.sid,
+            file: state.file || `extensions/${state.character.id}.yaml`,
+          });
+          flash('Saved: ' + r.saved);
+        } catch (e) {
+          flash(e.message, 'err');
+        }
+      };
+
+      listCharacters().catch((e) => flash(e.message, 'err'));
+    </script>
+  </body>
+</html>

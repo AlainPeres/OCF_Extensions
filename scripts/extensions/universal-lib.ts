@@ -334,6 +334,7 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
     const score = Object.values(sheet.copies?.[c.id] ?? {}).find((v) => typeof v === 'number');
     return {
       id: c.id,
+      item: c.item,
       where,
       type: type ? t.type(type) : '',
       typeId: type ?? '',
@@ -439,6 +440,13 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
         count: Object.values(R.content).filter((i: Any) => i.type === id).length,
       }))
       .filter((x) => x.count > 0),
+    // Content applied to the character (a spell on them), with its state (a magnitude).
+    applied: (S.character.applied ?? []).map((a: Any) => ({
+      id: a.id,
+      source: a.source,
+      label: R.content[a.source] ? t.content(a.source) : a.source,
+      state: a.state ?? {},
+    })),
     issues: (sheet.issues ?? []).map((i: Any) => t.issue(i)),
     pending: (sheet.pending ?? []).length,
     actions,
@@ -475,6 +483,7 @@ function pauseView(L: Loaded, S: Session) {
   };
   return {
     action: L.text.action(needs.action),
+    step: needs.step,
     kind: needs.kind,
     title: described.title,
     options: (needs.options ?? []).map((id: string) => ({ id, label: label(id) })),

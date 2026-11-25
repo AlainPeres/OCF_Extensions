@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenQuest Creation</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --card: #fffdf8;
+        --ink: #22201c;
+        --muted: #6f6a60;
+        --line: #ddd6c8;
+        --accent: #7a4b1f;
+        --accent-ink: #fff;
+        --rec: #f3e6d4;
+        --bad: #a3271f;
+        --ok: #2c6e3f;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1a1814;
+          --card: #24211c;
+          --ink: #efeae0;
+          --muted: #a59e90;
+          --line: #3b362e;
+          --accent: #d9a066;
+          --accent-ink: #1a1814;
+          --rec: #3a2f22;
+          --bad: #f08a80;
+          --ok: #7fcf95;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.45 system-ui,
+          sans-serif;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--line);
+        background: var(--card);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+      header h1 {
+        font-size: 16px;
+        margin: 0 12px 0 0;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px 16px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      @media (max-width: 900px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+      section {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+      }
+      h2 {
+        font-size: 15px;
+        margin: 0 0 8px;
+      }
+      h3 {
+        font-size: 13px;
+        margin: 12px 0 4px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      button {
+        font: inherit;
+        padding: 5px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--card);
+        color: var(--ink);
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--accent);
+      }
+      button.primary {
+        background: var(--accent);
+        color: var(--accent-ink);
+        border-color: var(--accent);
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      input,
+      select,
+      textarea {
+        font: inherit;
+        padding: 4px 6px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      input[type='number'] {
+        width: 64px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td,
+      th {
+        padding: 3px 6px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        margin-top: 8px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .hidden {
+        display: none !important;
+      }
+      .msg {
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin: 8px 16px 0;
+      }
+      .msg.ok {
+        background: var(--rec);
+      }
+      .msg.err {
+        background: #f6d9d6;
+        color: var(--bad);
+      }
+      .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .options button.rec {
+        background: var(--rec);
+        border-color: var(--accent);
+      }
+      .badge {
+        font-size: 11px;
+        padding: 0 6px;
+        border-radius: 8px;
+        background: var(--rec);
+        color: var(--ink);
+      }
+      .starts {
+        display: grid;
+        gap: 8px;
+      }
+      .starts button {
+        text-align: left;
+      }
+      .starts small {
+        display: block;
+        color: var(--muted);
+      }
+      .chars {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+        text-align: center;
+      }
+      .chars div {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 4px;
+      }
+      .chars b {
+        display: block;
+        font-size: 18px;
+      }
+      .pools {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+      }
+      .pools div {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 4px 8px;
+      }
+      .full {
+        color: var(--ok);
+      }
+      .over {
+        color: var(--bad);
+      }
+      .issues {
+        color: var(--bad);
+        margin: 4px 0;
+        padding-left: 18px;
+      }
+      pre {
+        white-space: pre-wrap;
+        font-size: 12px;
+        max-height: 420px;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>OpenQuest — Creation</h1>
+      <select id="charList"></select>
+      <button id="btnLoad">Load</button>
+      <span class="muted">or new:</span>
+      <input id="newId" placeholder="character id" size="16" />
+      <button id="btnNew" class="primary">New character</button>
+      <span style="flex: 1"></span>
+      <input id="saveFile" size="30" />
+      <button id="btnSave">Save</button>
+      <button id="btnYaml">YAML</button>
+    </header>
+    <div id="messages"></div>
+    <main>
+      <div>
+        <section id="secEmpty">
+          <h2>Start</h2>
+          <p class="muted">
+            Create a new character, or load one being created. The guided start asks each step of
+            the Characters chapter; the random start makes a human by itself.
+          </p>
+        </section>
+        <section id="secStart" class="hidden">
+          <h2>How to create the character</h2>
+          <div class="starts" id="starts"></div>
+        </section>
+        <section id="secPause" class="hidden">
+          <h2 id="pauseTitle"></h2>
+          <div class="muted" id="pauseHint"></div>
+          <div id="pauseBody"></div>
+        </section>
+        <section id="secFinish" class="hidden">
+          <h2>Finish the character</h2>
+          <p class="muted">
+            Skills with a descriptor (Lore (Alchemy), Language (Goblinoid)…) take what is left of
+            the knowledge pool; Personal Magic spells are free within the six points. Then finish
+            the creation.
+          </p>
+          <h3>A skill with a descriptor</h3>
+          <div class="row">
+            <input id="specialty" placeholder="descriptor, e.g. Alchemy" size="24" />
+            <button id="btnSpecialty">Add…</button>
+          </div>
+          <h3>A Personal Magic spell</h3>
+          <div class="row">
+            <label>Magnitude <input id="spellMag" type="number" min="1" value="1" /></label>
+            <input id="spellDesc" placeholder="descriptor if needed" size="18" />
+            <button id="btnSpell">Learn…</button>
+          </div>
+          <div class="row" style="margin-top: 14px">
+            <button id="btnFinish" class="primary">Finish the creation</button>
+          </div>
+        </section>
+        <section id="secIdentity" class="hidden">
+          <h2>The character</h2>
+          <table id="identity"></table>
+        </section>
+        <section id="secYaml" class="hidden">
+          <h2>YAML</h2>
+          <pre id="yaml"></pre>
+        </section>
+      </div>
+      <div>
+        <section id="secSheet" class="hidden">
+          <h2>Sheet <span id="status" class="badge"></span></h2>
+          <div id="issues"></div>
+          <div id="species" class="muted"></div>
+          <h3>Characteristics</h3>
+          <div class="chars" id="chars"></div>
+          <h3>Attributes</h3>
+          <table id="attributes"></table>
+          <h3>Skill pools</h3>
+          <div class="pools" id="pools"></div>
+          <h3>Skills</h3>
+          <table id="skills"></table>
+          <h3>Magic</h3>
+          <div id="spells" class="muted"></div>
+          <h3>Equipment</h3>
+          <div id="gear" class="muted"></div>
+        </section>
+      </div>
+    </main>
+    <script>
+      const PACK = 'openquest-core';
+      const $ = (id) => document.getElementById(id);
+      const esc = (s) =>
+        String(s ?? '').replace(
+          /[&<>"']/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+        );
+      let state = null;
+      // A copy's content type, without its pack.
+      const tid = (c) =>
+        String(c.typeId || '')
+          .split(':')
+          .pop();
+
+      // Skill groups and creation pools (Characters, step 4).
+      const GROUPS = {
+        resistance: ['dodge', 'persistence', 'resilience'],
+        combat: ['close-combat', 'ranged-combat', 'unarmed-combat'],
+        knowledge: [
+          'culture-own',
+          'language-own',
+          'natural-lore',
+          'culture-other',
+          'language-other',
+          'lore',
+        ],
+        practical: [
+          'athletics',
+          'craft',
+          'deception',
+          'driving',
+          'engineering',
+          'healing',
+          'influence',
+          'mechanisms',
+          'perception',
+          'performance',
+          'riding',
+          'sailing',
+          'streetwise',
+          'trade',
+          'wealth',
+        ],
+        magic: [
+          'personal-magic-casting',
+          'sorcery-casting',
+          'religion-own',
+          'religion-other',
+          'shamanism',
+        ],
+      };
+      const GROUP_NAMES = {
+        resistance: 'Resistances',
+        combat: 'Combat',
+        knowledge: 'Knowledge',
+        practical: 'Practical',
+        magic: 'Magic',
+      };
+      const POOLS = { resistance: 50, combat: 50, knowledge: 50, practical: 75 };
+      const STEP_POOL = {
+        resistances: 'resistance',
+        combat: 'combat',
+        knowledge: 'knowledge',
+        practical: 'practical',
+      };
+      const groupOf = (item) => {
+        const id = (item || '').split('skills.')[1];
+        return Object.keys(GROUPS).find((g) => GROUPS[g].includes(id));
+      };
+
+      async function api(path, body) {
+        const res = await fetch(
+          path,
+          body === undefined
+            ? {}
+            : {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify(body),
+              },
+        );
+        const type = res.headers.get('content-type') || '';
+        const data = type.includes('json') ? await res.json() : await res.text();
+        if (!res.ok) throw new Error(data.error || data || res.statusText);
+        return data;
+      }
+      const flash = (text, kind = 'ok') =>
+        ($('messages').innerHTML = text ? `<div class="msg ${kind}">${esc(text)}</div>` : '');
+      async function call(path, body) {
+        try {
+          const v = await api(path, body);
+          render(v);
+          return v;
+        } catch (e) {
+          flash(e.message, 'err');
+        }
+      }
+
+      async function listCharacters() {
+        const list = await api('/api/characters?pack=' + PACK);
+        $('charList').innerHTML = list.length
+          ? list.map((f) => `<option>${esc(f)}</option>`).join('')
+          : '<option value="">(no OpenQuest character)</option>';
+      }
+      $('btnNew').onclick = () =>
+        call('/api/new', { pack: PACK, id: $('newId').value.trim() || undefined });
+      $('btnLoad').onclick = () =>
+        $('charList').value && call('/api/load', { pack: PACK, file: $('charList').value });
+
+      // ---- Rendering
+      const values = (v) => {
+        const out = {};
+        for (const g of v.groups) for (const f of g.fields) out[f.id.replace(PACK + ':', '')] = f;
+        return out;
+      };
+      const skillCopies = (v) => v.copies.filter((c) => tid(c) === 'skill');
+      const state_ = (c, label) => c.state.find((s) => s.label === label)?.value;
+      const creationOf = (c) =>
+        Number((c.state.find((s) => /Creation points/.test(s.label)) || {}).value || 0);
+      const computed = (c, k) => (c.computed.find((x) => x.key === k) || {}).value;
+
+      function render(v) {
+        state = v;
+        $('secEmpty').classList.add('hidden');
+        flash(v.error || v.message || '', v.error ? 'err' : 'ok');
+        const busy = !!v.paused;
+        $('secStart').classList.toggle(
+          'hidden',
+          !(v.creating && !busy && v.starts.length && !startedFor(v)),
+        );
+        $('starts').innerHTML = v.starts
+          .map(
+            (s, i) =>
+              `<button class="start" data-i="${i}"><b>${esc(s.name)}</b><small>${esc(s.description)}</small></button>`,
+          )
+          .join('');
+        $('starts')
+          .querySelectorAll('button')
+          .forEach(
+            (b) =>
+              (b.onclick = () => {
+                const s = v.starts[b.dataset.i];
+                call('/api/start', { sid: v.sid, start: s.id, startPack: s.pack });
+              }),
+          );
+        renderPause(v);
+        $('secFinish').classList.toggle('hidden', !(v.creating && !busy && startedFor(v)));
+        renderIdentity(v);
+        renderSheet(v);
+      }
+      // The start has run once its choices are on the sheet: a species copy.
+      const startedFor = (v) => v.copies.some((c) => tid(c) === 'species');
+
+      function renderPause(v) {
+        const p = v.paused;
+        $('secPause').classList.toggle('hidden', !p);
+        if (!p) return;
+        $('pauseTitle').textContent = p.title || p.action;
+        $('pauseHint').textContent = '';
+        const body = $('pauseBody');
+        const answer = (a, auto = false) => call('/api/answer', { sid: v.sid, answer: a, auto });
+        const footer = (rec) =>
+          `<div class="row">${rec ? '<button id="pRec">Take the recommendation</button><button id="pAuto">Finish automatically</button>' : ''}<button id="pCancel">Cancel</button></div>`;
+        if (p.kind === 'choice' && STEP_POOL[p.step]) renderPool(v, p, body, footer);
+        else if (p.kind === 'choice') {
+          const opts = p.options.filter((o) => o.id !== '#done');
+          const done = p.options.some((o) => o.id === '#done');
+          body.innerHTML =
+            `<div class="options">${opts
+              .map(
+                (o) =>
+                  `<button data-id="${esc(o.id)}" class="${o.id === p.recommended ? 'rec' : ''}">${esc(o.label)}</button>`,
+              )
+              .join('')}</div>` +
+            (done
+              ? `<div class="row"><button data-id="#done" class="primary">Done</button></div>`
+              : '') +
+            footer(p.recommended !== undefined);
+          body
+            .querySelectorAll('button[data-id]')
+            .forEach((b) => (b.onclick = () => answer({ option: b.dataset.id })));
+        } else if (p.kind === 'allocate') renderAllocate(p, body, footer, answer);
+        else
+          body.innerHTML =
+            `<p class="muted">This page can't answer a ${esc(p.kind)} pause.</p>` + footer(false);
+        if ($('pRec'))
+          $('pRec').onclick = () =>
+            answer(
+              p.kind === 'allocate'
+                ? { amounts: p.allocate.recommended }
+                : { option: p.recommended },
+            );
+        if ($('pAuto'))
+          $('pAuto').onclick = () =>
+            answer(
+              p.kind === 'allocate'
+                ? { amounts: p.allocate.recommended }
+                : { option: p.recommended },
+              true,
+            );
+        $('pCancel').onclick = () => call('/api/cancel', { sid: v.sid });
+      }
+
+      // A skill pool: every +5% at once on one table, answered pick by pick.
+      function renderPool(v, p, body, footer) {
+        const group = STEP_POOL[p.step];
+        const skills = skillCopies(v).filter(
+          (c) =>
+            groupOf(c.item) === group &&
+            (group !== 'practical' ||
+              !/wealth/.test(c.item) ||
+              p.options.some((o) => o.id === c.id)),
+        );
+        const spent = skills.reduce((n, c) => n + creationOf(c), 0);
+        const left = POOLS[group] - spent;
+        const offered = new Set(p.options.map((o) => o.id));
+        const mayStop = offered.has('#done');
+        $('pauseHint').textContent =
+          `${POOLS[group]} points, +5% at a time, 30 at most a skill. ${left} left.${mayStop ? ' You may keep some (for skills with a descriptor).' : ''}`;
+        body.innerHTML =
+          `<table><tr><th>Skill</th><th class="num">Now</th><th class="num">Points</th><th class="num">Add</th></tr>${skills
+            .map(
+              (c) =>
+                `<tr><td>${esc(c.label)}</td><td class="num">${esc(computed(c, 'total'))}%</td><td class="num">${creationOf(c)}</td><td class="num">${
+                  offered.has(c.id)
+                    ? `<input type="number" step="5" min="0" max="${30 - creationOf(c)}" value="0" data-id="${esc(c.id)}">`
+                    : ''
+                }</td></tr>`,
+            )
+            .join('')}</table>
+          <div class="row"><b id="poolLeft"></b><button id="poolOk" class="primary">Confirm</button><button id="poolEven">Spread evenly</button></div>` +
+          footer(p.recommended !== undefined);
+        const inputs = [...body.querySelectorAll('input[data-id]')];
+        const check = () => {
+          const add = inputs.reduce((n, i) => n + (Number(i.value) || 0), 0);
+          const bad = inputs.some(
+            (i) =>
+              (Number(i.value) || 0) % 5 || Number(i.value) > Number(i.max) || Number(i.value) < 0,
+          );
+          const rest = left - add;
+          $('poolLeft').textContent = `Left: ${rest}`;
+          $('poolLeft').className = rest < 0 || bad ? 'over' : rest === 0 ? 'full' : '';
+          $('poolOk').disabled = bad || rest < 0 || (!mayStop && rest !== 0);
+        };
+        inputs.forEach((i) => (i.oninput = check));
+        $('poolEven').onclick = () => {
+          inputs.forEach((i) => (i.value = 0));
+          let rest = left;
+          for (let pass = 0; rest > 0 && pass < 10; pass++)
+            for (const i of inputs)
+              if (rest > 0 && Number(i.value) + 5 <= Number(i.max)) {
+                i.value = Number(i.value) + 5;
+                rest -= 5;
+              }
+          check();
+        };
+        check();
+        $('poolOk').onclick = async () => {
+          const picks = inputs.flatMap((i) => Array((Number(i.value) || 0) / 5).fill(i.dataset.id));
+          try {
+            let cur = v;
+            for (const id of picks) {
+              if (!cur.paused || cur.paused.step !== p.step) break;
+              cur = await api('/api/answer', { sid: v.sid, answer: { option: id } });
+            }
+            if (
+              cur.paused &&
+              cur.paused.step === p.step &&
+              cur.paused.options.some((o) => o.id === '#done')
+            )
+              cur = await api('/api/answer', { sid: v.sid, answer: { option: '#done' } });
+            render(cur);
+          } catch (e) {
+            flash(e.message, 'err');
+          }
+        };
+      }
+
+      function renderAllocate(p, body, footer, answer) {
+        const a = p.allocate;
+        const rec = a.recommended || {};
+        body.innerHTML =
+          `<table><tr><th></th><th class="num">From</th><th class="num">Add</th><th class="num">Result</th><th class="num">Up to</th></tr>${a.fields
+            .map(
+              (f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td>
+              <td class="num"><input type="number" min="0" ${f.limit !== undefined ? `max="${f.limit}"` : ''} value="${rec[f.id] ?? 0}" data-id="${esc(f.id)}"></td>
+              <td class="num" data-res="${esc(f.id)}"></td><td class="num muted">${f.limit !== undefined ? f.value + f.limit : ''}</td></tr>`,
+            )
+            .join('')}</table>
+          <div class="row"><b id="aSpent"></b><span class="muted">/ ${esc(a.budget)}</span><button class="primary" id="aOk">Confirm</button></div>` +
+          footer(a.recommended !== undefined);
+        const fields = Object.fromEntries(a.fields.map((f) => [f.id, f]));
+        const check = () => {
+          let spent = 0;
+          let ok = true;
+          body.querySelectorAll('input[data-id]').forEach((i) => {
+            const f = fields[i.dataset.id];
+            const n = Math.max(0, Math.floor(Number(i.value) || 0));
+            if (f.limit !== undefined && n > f.limit) ok = false;
+            spent += n;
+            body.querySelector(`[data-res="${CSS.escape(f.id)}"]`).textContent = f.value + n;
+          });
+          const fits = a.spend === 'upTo' ? spent <= a.budget : spent === a.budget;
+          $('aSpent').textContent = `Spent: ${spent}`;
+          $('aSpent').className = fits && ok ? 'full' : 'over';
+          $('aOk').disabled = !(fits && ok);
+        };
+        body.querySelectorAll('input[data-id]').forEach((i) => (i.oninput = check));
+        check();
+        $('aOk').onclick = () => {
+          const amounts = {};
+          body.querySelectorAll('input[data-id]').forEach((i) => {
+            const n = Math.floor(Number(i.value) || 0);
+            if (n > 0) amounts[i.dataset.id] = n;
+          });
+          answer({ amounts });
+        };
+      }
+
+      // ---- Finishing: descriptors, spells, the end of the creation
+      $('btnSpecialty').onclick = () => {
+        const specialty = $('specialty').value.trim();
+        if (!specialty) return flash('Write the descriptor first.', 'err');
+        call('/api/run', {
+          sid: state.sid,
+          action: PACK + ':learn-specialty',
+          params: { specialty },
+        });
+      };
+      $('btnSpell').onclick = () => {
+        const params = { magnitude: Math.max(1, Number($('spellMag').value) || 1) };
+        if ($('spellDesc').value.trim()) params.specialty = $('spellDesc').value.trim();
+        call('/api/run', { sid: state.sid, action: PACK + ':learn-personal-spell', params });
+      };
+      $('btnFinish').onclick = () =>
+        call('/api/run', { sid: state.sid, action: PACK + ':finish-creation', params: {} });
+
+      // ---- The character's text
+      function renderIdentity(v) {
+        const ids = [
+          'identity.name',
+          'identity.species',
+          'identity.concept',
+          'identity.sagaMotive',
+          'identity.questMotive',
+          'identity.age',
+          'identity.appearance',
+          'identity.background',
+          'identity.possessions',
+        ];
+        const inputs = ids
+          .map((id) => v.inputs.find((f) => f.id === PACK + ':' + id))
+          .filter(Boolean);
+        $('secIdentity').classList.toggle('hidden', !!v.paused || !inputs.length);
+        $('identity').innerHTML = inputs
+          .map((f, i) => {
+            const long = /background|appearance|possessions/.test(f.id);
+            const el =
+              f.type === 'integer'
+                ? `<input type="number" data-i="${i}" value="${esc(f.value)}">`
+                : long
+                  ? `<textarea data-i="${i}" rows="3" cols="44">${esc(f.value)}</textarea>`
+                  : `<input data-i="${i}" value="${esc(f.value)}" size="44">`;
+            return `<tr><td>${esc(f.label)}</td><td>${el}</td></tr>`;
+          })
+          .join('');
+        $('identity')
+          .querySelectorAll('[data-i]')
+          .forEach(
+            (el) =>
+              (el.onchange = () => {
+                const f = inputs[el.dataset.i];
+                call('/api/set', {
+                  sid: v.sid,
+                  field: f.id,
+                  value: f.type === 'integer' ? Math.trunc(Number(el.value)) : el.value,
+                });
+              }),
+          );
+      }
+
+      // ---- The sheet as it stands
+      function renderSheet(v) {
+        $('secSheet').classList.remove('hidden');
+        $('status').textContent = v.creating ? 'being created' : 'created';
+        $('issues').innerHTML = v.issues.length
+          ? `<ul class="issues">${v.issues.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`
+          : '';
+        const val = values(v);
+        const sp = v.copies.find((c) => tid(c) === 'species');
+        $('species').textContent = sp ? `Species: ${sp.label}` : '';
+        $('chars').innerHTML = ['str', 'con', 'dex', 'siz', 'int', 'pow', 'cha']
+          .map(
+            (c) =>
+              `<div><small>${c.toUpperCase()}</small><b>${esc(val['chars.' + c]?.value ?? '–')}</b></div>`,
+          )
+          .join('');
+        const attr = [
+          'hp.max',
+          'mp.max',
+          'damage.modifier',
+          'move.rate',
+          'move.fly',
+          'move.swim',
+          'armour.ap',
+          'fortune.points',
+          'money.silver',
+        ]
+          .map((k) => val[k])
+          .filter((f) => f && !(String(f.value) === '0' && /fly|swim/.test(f.id)));
+        $('attributes').innerHTML = attr
+          .map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td></tr>`)
+          .join('');
+        const skills = skillCopies(v);
+        $('pools').innerHTML = Object.entries(POOLS)
+          .map(([g, n]) => {
+            const spent = skills
+              .filter((c) => groupOf(c.item) === g)
+              .reduce((s, c) => s + creationOf(c), 0);
+            return `<div><small>${GROUP_NAMES[g]}</small><br><b class="${spent > n ? 'over' : spent === n ? 'full' : ''}">${spent}</b> / ${n}</div>`;
+          })
+          .join('');
+        $('skills').innerHTML = Object.keys(GROUPS)
+          .map((g) => {
+            const list = skills.filter((c) => groupOf(c.item) === g && !c.hidden);
+            if (!list.length) return '';
+            return (
+              `<tr><th colspan="3">${GROUP_NAMES[g]}</th></tr>` +
+              list
+                .map(
+                  (c) =>
+                    `<tr><td>${esc(c.label)}</td><td class="num muted">${creationOf(c) ? '+' + creationOf(c) : ''}</td><td class="num"><b>${esc(computed(c, 'total'))}%</b></td></tr>`,
+                )
+                .join('')
+            );
+          })
+          .join('');
+        const spells = v.copies.filter((c) => ['personal', 'sorcery', 'divine'].includes(tid(c)));
+        $('spells').innerHTML = spells.length
+          ? spells
+              .map(
+                (c) =>
+                  `${esc(c.label)}${state_(c, 'Magnitude known') ? ' ' + esc(state_(c, 'Magnitude known')) : ''}`,
+              )
+              .join(', ')
+          : 'No spells yet.';
+        const gear = v.copies.filter((c) => c.where === 'inventory');
+        $('gear').innerHTML = gear.length
+          ? gear.map((c) => `${esc(c.label)}${c.quantity > 1 ? ' ×' + c.quantity : ''}`).join(', ')
+          : 'Nothing yet.';
+        if (!$('saveFile').value || $('saveFile').dataset.sid !== v.sid) {
+          $('saveFile').value = v.file || `extensions/${v.character.id}.yaml`;
+          $('saveFile').dataset.sid = v.sid;
+        }
+        if (!$('secYaml').classList.contains('hidden')) showYaml();
+      }
+      async function showYaml() {
+        $('yaml').textContent = await api('/api/yaml', { sid: state.sid });
+      }
+      $('btnYaml').onclick = () => {
+        if (!state) return;
+        $('secYaml').classList.toggle('hidden');
+        if (!$('secYaml').classList.contains('hidden')) showYaml();
+      };
+      $('btnSave').onclick = async () => {
+        if (!state) return;
+        try {
+          const file = $('saveFile').value.trim();
+          const r = await api('/api/save', { sid: state.sid, file }).catch(async (e) => {
+            if (!/already exists/.test(e.message) || !confirm(e.message + '. Overwrite?')) throw e;
+            return api('/api/save', { sid: state.sid, file, overwrite: true });
+          });
+          flash('Saved: ' + r.saved);
+          listCharacters();
+        } catch (e) {
+          flash(e.message, 'err');
+        }
+      };
+
+      listCharacters().catch((e) => flash(e.message, 'err'));
+    </script>
+  </body>
+</html>
