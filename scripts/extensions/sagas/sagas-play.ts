@@ -2,7 +2,7 @@
 // with a weapon, taking damage, rest, and progression (experience points spent on
 // characteristics and skills, new skills, the universe's technological level).
 //
-//   node --import tsx --conditions @opencharacter/source scripts/extensions/sagas-play.ts [--port 5175] [--no-open]
+//   node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/sagas-play.ts [--port 5175] [--no-open]
 //
 // A small local server (127.0.0.1 only) serves sagas-play.html and runs the pack's actions with the
 // engine (startAction, random dice); changes an action proposes for the character (injuries, stun)
@@ -13,9 +13,9 @@ import {
   continueAction,
   loadRuleset,
   startAction,
-} from '../../packages/engine/src/index.ts';
-import { readPack } from '../../packages/engine/test/packs.ts';
-import { hiddenCopies, hiddenItems } from './display-lib.ts';
+} from '../../../packages/engine/src/index.ts';
+import { readPack } from '../../../packages/engine/test/packs.ts';
+import { hiddenCopies, hiddenItems } from '../display-lib.ts';
 import { parse, stringify } from 'yaml';
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';

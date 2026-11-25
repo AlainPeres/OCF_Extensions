@@ -307,19 +307,19 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 
 ## What was added
 
-| Path                                                  | What                                                                |
-| ----------------------------------------------------- | ------------------------------------------------------------------- |
-| `packs/sagas/core/`                                   | The `sagas-core` pack (rules, 119 skills, 62 weapons, 14 armor)     |
-| `scripts/extensions/sagas-create-cli.ts`              | SagaS character creation in the terminal                            |
-| `scripts/extensions/sagas-create.ts` + `.html`        | SagaS character creation in the browser                             |
-| `scripts/extensions/sagas-play.ts` + `.html`          | SagaS play sheet in the browser                                     |
-| `scripts/extensions/universal-lib.ts`                 | Shared server of the two universal tools                            |
-| `scripts/extensions/display-lib.ts`                   | What a pack's display hints hide, for the SagaS and universal tools |
-| `scripts/extensions/universal-create.ts` + `.html`    | Character creator for any pack                                      |
-| `scripts/extensions/universal-play.ts` + `.html`      | Play sheet for any pack and character                               |
-| `scripts/extensions/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                     |
-| `examples/characters/extensions/`                     | SagaS example characters and the characters the tools save          |
-| `.vscode/launch.json`, `.vscode/settings.json`        | Run and debug the current TS file from VS Code                      |
+| Path                                                        | What                                                                |
+| ----------------------------------------------------------- | ------------------------------------------------------------------- |
+| `packs/sagas/core/`                                         | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor)     |
+| `scripts/extensions/sagas/sagas-create-cli.ts`              | SagaS character creation in the terminal                            |
+| `scripts/extensions/sagas/sagas-create.ts` + `.html`        | SagaS character creation in the browser                             |
+| `scripts/extensions/sagas/sagas-play.ts` + `.html`          | SagaS play sheet in the browser                                     |
+| `scripts/extensions/universal-lib.ts`                       | Shared server of the two universal tools                            |
+| `scripts/extensions/display-lib.ts`                         | What a pack's display hints hide, for the SagaS and universal tools |
+| `scripts/extensions/universal-create.ts` + `.html`          | Character creator for any pack                                      |
+| `scripts/extensions/universal-play.ts` + `.html`            | Play sheet for any pack and character                               |
+| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                     |
+| `examples/characters/extensions/`                           | SagaS example characters and the characters the tools save          |
+| `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                      |
 
 Our files stay apart from OCF's: scripts in `scripts/extensions/`, characters in
 `examples/characters/extensions/`. `pnpm validate` reads `examples/characters/` with its
@@ -332,6 +332,8 @@ Each tool is a TypeScript file run with `tsx` and the repo's source condition, f
 ```sh
 node --import tsx --conditions @opencharacter/source scripts/extensions/<tool>.ts [options]
 ```
+
+The SagaS tools are in `scripts/extensions/sagas/`: `scripts/extensions/sagas/<tool>.ts`.
 
 In VS Code, open the file and press F5 (launch configuration "Exécuter le fichier TS courant
 (tsx)") or the Code Runner ▶ button. Run the `.ts` file, not the `.html`: the script starts a local

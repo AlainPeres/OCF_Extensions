@@ -1,13 +1,13 @@
 // SagaS character creation in the browser.
 //
-//   node --import tsx --conditions @opencharacter/source scripts/extensions/sagas-create.ts [--port 5174]
+//   node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/sagas-create.ts [--port 5174]
 //
 // A small local server (127.0.0.1 only) serves sagas-create.html and runs the engine: the page sends
 // the character, the server sends back the computed sheet. Costs come from the pack's formulas
 // (points.remaining); no rule is recoded here.
-import { computeSheet, loadRuleset } from '../../packages/engine/src/index.ts';
-import { readPack } from '../../packages/engine/test/packs.ts';
-import { hiddenCopies, hiddenItems } from './display-lib.ts';
+import { computeSheet, loadRuleset } from '../../../packages/engine/src/index.ts';
+import { readPack } from '../../../packages/engine/test/packs.ts';
+import { hiddenCopies, hiddenItems } from '../display-lib.ts';
 import { parse, stringify } from 'yaml';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';

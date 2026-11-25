@@ -1,6 +1,6 @@
 // SagaS character creation (sagas-core pack) in the terminal, interactive or random.
 //
-//   node --import tsx --conditions @opencharacter/source scripts/extensions/sagas-create-cli.ts [options]
+//   node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/sagas-create-cli.ts [options]
 //
 // Options:
 //   --random          roll a random character (no questions)
@@ -12,8 +12,8 @@
 //
 // The engine computes the point costs (the pack's points.remaining field): this script recodes no
 // rule, it only fills in the character file.
-import { computeSheet, loadRuleset } from '../../packages/engine/src/index.ts';
-import { readPack } from '../../packages/engine/test/packs.ts';
+import { computeSheet, loadRuleset } from '../../../packages/engine/src/index.ts';
+import { readPack } from '../../../packages/engine/test/packs.ts';
 import { parse, stringify } from 'yaml';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
