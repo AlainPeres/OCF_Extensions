@@ -1,7 +1,8 @@
 # SagaS extensions
 
 Additions to the Open Character Format (OCF) repository: a pack for the _Rules of SagaS 0.995 LLL
-(OGL)_ and browser and terminal tools to create and play characters. This repository
+(OGL)_ and browser and terminal tools to create and play characters, and a pack for _OpenQuest 3rd
+Edition_ (SRD v1.2, Creative Commons), played with the universal tools. This repository
 (<https://github.com/AlainPeres/OCF_Extensions>, the `origin` remote) keeps OCF's whole history,
 with OCF's repository as the `upstream` remote. None of the additions is part of OCF; the rest of
 the repo (spec, engine, other packs) is OCF's, unchanged.
@@ -307,19 +308,23 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 
 ## What was added
 
-| Path                                                        | What                                                                |
-| ----------------------------------------------------------- | ------------------------------------------------------------------- |
-| `packs/sagas/core/`                                         | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor)     |
-| `scripts/extensions/sagas/sagas-create-cli.ts`              | SagaS character creation in the terminal                            |
-| `scripts/extensions/sagas/sagas-create.ts` + `.html`        | SagaS character creation in the browser                             |
-| `scripts/extensions/sagas/sagas-play.ts` + `.html`          | SagaS play sheet in the browser                                     |
-| `scripts/extensions/universal-lib.ts`                       | Shared server of the two universal tools                            |
-| `scripts/extensions/display-lib.ts`                         | What a pack's display hints hide, for the SagaS and universal tools |
-| `scripts/extensions/universal-create.ts` + `.html`          | Character creator for any pack                                      |
-| `scripts/extensions/universal-play.ts` + `.html`            | Play sheet for any pack and character                               |
-| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                     |
-| `examples/characters/extensions/`                           | SagaS example characters and the characters the tools save          |
-| `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                      |
+| Path                                                         | What                                                                 |
+| ------------------------------------------------------------ | -------------------------------------------------------------------- |
+| `packs/sagas/core/`                                          | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor)      |
+| `scripts/extensions/sagas/sagas-create-cli.ts`               | SagaS character creation in the terminal                             |
+| `scripts/extensions/sagas/sagas-create.ts` + `.html`         | SagaS character creation in the browser                              |
+| `scripts/extensions/sagas/sagas-play.ts` + `.html`           | SagaS play sheet in the browser                                      |
+| `scripts/extensions/universal-lib.ts`                        | Shared server of the two universal tools                             |
+| `scripts/extensions/display-lib.ts`                          | What a pack's display hints hide, for the SagaS and universal tools  |
+| `scripts/extensions/universal-create.ts` + `.html`           | Character creator for any pack                                       |
+| `scripts/extensions/universal-play.ts` + `.html`             | Play sheet for any pack and character                                |
+| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md`  | The rules the pack models (OGL)                                      |
+| `packs/openquest/core/`                                      | The `openquest-core` pack (rules, 32 skills, 43 weapons, 163 spells) |
+| `scripts/extensions/openquest/`                              | The OpenQuest 3 SRD chapters the pack models (Markdown)              |
+| `scripts/extensions/openquest/openquest-create.ts` + `.html` | OpenQuest character creation in the browser                          |
+| `scripts/extensions/openquest/openquest-play.ts` + `.html`   | OpenQuest play sheet in the browser                                  |
+| `examples/characters/extensions/`                            | SagaS example characters and the characters the tools save           |
+| `.vscode/launch.json`, `.vscode/settings.json`               | Run and debug the current TS file from VS Code                       |
 
 Our files stay apart from OCF's: scripts in `scripts/extensions/`, characters in
 `examples/characters/extensions/`. `pnpm validate` reads `examples/characters/` with its
@@ -333,7 +338,8 @@ Each tool is a TypeScript file run with `tsx` and the repo's source condition, f
 node --import tsx --conditions @opencharacter/source scripts/extensions/<tool>.ts [options]
 ```
 
-The SagaS tools are in `scripts/extensions/sagas/`: `scripts/extensions/sagas/<tool>.ts`.
+The SagaS tools are in `scripts/extensions/sagas/`: `scripts/extensions/sagas/<tool>.ts`; the
+OpenQuest tools in `scripts/extensions/openquest/`.
 
 In VS Code, open the file and press F5 (launch configuration "Exécuter le fichier TS courant
 (tsx)") or the Code Runner ▶ button. Run the `.ts` file, not the `.html`: the script starts a local
@@ -347,6 +353,8 @@ server (127.0.0.1 only) and opens the page in the browser. `--port N` changes th
 | `sagas-play.ts`       | 5175 | `--port`, `--no-open`                                                                                     |
 | `universal-create.ts` | 5176 | `--port`, `--no-open`                                                                                     |
 | `universal-play.ts`   | 5177 | `--port`, `--no-open`                                                                                     |
+| `openquest-create.ts` | 5178 | `--port`, `--no-open`                                                                                     |
+| `openquest-play.ts`   | 5179 | `--port`, `--no-open`                                                                                     |
 
 Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
 without asking). The SagaS tools read and write that folder only. The universal tools list OCF's
@@ -549,6 +557,241 @@ translation.
     is a standard copy); so does the list of generic skills to learn;
   - possessions, background and a roll log, where each progression shows the XP left.
 
+## The OpenQuest pack (`packs/openquest/core`)
+
+Pack ID `openquest-core`, version 0.1.0, spec 0.4.0, from the _OpenQuest 3rd Edition System
+Resource Document_ v1.2 (D101 Games). Its READ ME says the SRD has been under a Creative Commons
+license since 09/03/2023. The pack declares `CC-BY-4.0` with a credit line. The SRD's "How to Use
+the SRD" PDF, not in `scripts/extensions/openquest/`, gives the exact variant: change `license`,
+`credit` and `LICENSE` if it differs. There are no dedicated tools: `universal-create` and
+`universal-play` show it, and `examples/characters/extensions/openquest-test.yaml` is a character
+made by its random start. `pnpm validate` passes with no error or warning.
+
+### Rules (`rules/`)
+
+- **`stats.yaml`**:
+  - the characteristics (8 by default);
+  - the damage modifier, a dice value from STR + SIZ (-1D6 to +1D6, then a D6 more for every 15);
+  - hit points ((SIZ + CON) / 2 rounded up), with the damage taken kept as wounds (`hp.wounds`);
+  - magic points (POW) and those spent; movement (15 m, halved when overloaded);
+  - the states: mortal wound (0 hit points or fewer), stabilised, surgery done, unconscious, no
+    magic points left;
+  - armour points: the best armour worn, since armours don't layer;
+  - encumbrance (the items' ENC against STR + SIZ), fortune points, money in silver pieces and
+    the optional Wealth rule;
+  - the combat skills and resistances as fields, for the combat actions (a copy's computed total
+    can't feed a field).
+- **`identity.yaml`**: name, species, concept, Saga and Quest motives, background, appearance,
+  age, other possessions.
+- **`skills.yaml`**: the `skill` type. Its base comes from one or two characteristics, a
+  multiplier and a bonus (`(char1 + char2) x times + plus`); its state holds the creation points
+  (30 at most) and the growth (+5% steps). The total is at most 100%; expertise and "physical"
+  (DEX or STR) are computed. Every skill without a descriptor is a standard copy.
+- **`checks.yaml`**: the `test` bands (critical, success, fumble, failure on D100: doubles, 00
+  read as 100), `skill-test` and `opposed-test`. A skill test runs from a skill (its copy), an
+  attack from a weapon: an action content uses is listed only on its copies.
+- **`combat.yaml`**:
+  - the `weapon` type (kind, damage dice, hands, ENC, cost, range, rounds per shot, mechanism,
+    thrown damage, shield size) and the `armour` type;
+  - 29 combat situations (the close and ranged tables, cover, Great and All-Out Attacks, the
+    shield actions…);
+  - `attack`, `unarmed-attack`, `defend`, `damage`, `unarmed-damage`, `take-damage`.
+- **`health.yaml`**:
+  - `healing-received`: the patient records the healer's successful test, since one sheet never
+    acts on another;
+  - `magic-healing`: a Resilience test wakes a mortally wounded patient;
+  - `natural-healing`: CON / 4 a day, mortal wounds only after surgery or magic;
+  - `recover-magic`, and `spend-fortune` (avoiding death sets 1 hit point and unconscious).
+- **`creation.yaml`**: the guided and random starts, the four pools as constraints,
+  `learn-specialty`, `finish-creation`.
+- **`advancement.yaml`**: growth points, `gain-growth`, `improve-skill`,
+  `improve-characteristic`, `end-downtime`.
+- **`magic.yaml`**:
+  - the casting skills and Religion (Own) as fields; the paths: a Personal Magic specialist
+    (Shaman, Wise), a Sorcery rank (Apprentice, Adept, Magus), a religion (its name) and its rank
+    (lay member, Initiate, Priest, Holy Warrior); the magnitude known and its limit (POW, twice
+    for a Wise), the spells a wand or staff focuses;
+  - three spell types, `personal`, `sorcery` and `divine` (a type name is one lowercase word:
+    one schema forbids hyphens, another capitals), with the same traits (magnitude, variable,
+    resist, touch, instant, permanent, concentration, ranged, area, duration, common, descriptor);
+  - `cast-personal` (calm: it just works; under duress a Personal Magic Casting test: the
+    magnitude in magic points, 1 on a critical or a failure, the magnitude on a fumble; a variable
+    spell may be cast lower), `cast-sorcery` (magnitude, duration and range manipulated up to the
+    skill's step, a magic point a step; +20% with the focus; a critical costs only the base point;
+    magic points from the stone or bound spirits apart), `cast-divine` (always cast, no magic
+    points, spent until regained; a variable spell split) and `regain-divine` (a worshipper duty
+    or a fortune point; the downtime regains them all);
+  - learning: `learn-personal-spell` (1 growth point a magnitude, free within the six points at
+    creation), `raise-personal-spell`, `learn-sorcery-spell` (3), `learn-divine-spell` (2 a
+    magnitude, 2 at most below Priest), `raise-divine-spell`;
+  - the paths: `become-specialist` (Shaman or Wise: POW 14, Personal Magic Casting 50%, five
+    points; a Shaman gets the Shamanism skill), `sorcery-rank` (Apprentice 25% and two points:
+    Personal and Divine Magic given up, their growth points back, Mystic Vision free; Adept 50%,
+    POW 15, five spells, five points; Magus 90%, ten spells, ten points), `religion-rank` (20%,
+    40% and two points, 75% and five, 50% with a combat skill at 75% and five) and
+    `leave-religion`;
+  - `spirit-combat`: Shamanism or Persistence against the spirit's result; the loser loses 1D6
+    magic points less a Spirit Shield, plus 1D6 for every ten POW above 20 of the winner;
+  - constraints: the magnitude limits, six points at creation, Divine Magic for an Initiate or
+    higher, a sorcerer without Personal or Divine Magic, a Wise without Divine Magic, the focus
+    limit;
+  - the spells on the character: a spell cast with `onSelf`, or recorded with `spell-received`
+    when another character cast it (one sheet never acts on another), is an applied entry at its
+    magnitude, until `end-spell` (listed on it). The spells that change a number carry
+    `scope: applied` effects on `spell.*` fields, which the actions read: Protection and Shield
+    (armour points), Weapon Enhance, Fanaticism, Berserk, Speedart, Coordination (skill
+    bonuses), Strength, Damage Boosting, Dull Weapon (damage), Fireblade (+1D10), True (Weapon)
+    (doubled dice), Pierce (armour ignored, passed to the target's `take-damage`), Mobility,
+    Haste, Slow, Hamper (movement), Vigour (hit points, at most doubled), Damage Resistance,
+    Spirit Shield, Demoralise (combat skills halved) and Befuddle (INT skills -20%). A weapon
+    spell counts for every attack of the character while it lasts;
+  - the Wise's magical places (`create-magic-place`: a seclusion or sanctuary holds its magic
+    points, `mp.locked`, until `end-magic-place`; a place of power is a store), `make-store`
+    (Create Magic Point Store's item, reusable for a growth point), and `apotheosis`: Great
+    Spirit, One with Reality, Ascended Immortal or Deity (POW then grows past its maximum); a
+    Magus transcends on reaching the rank: damage goes to magic points, and physical healing no
+    longer works.
+- **`stores.yaml`**: the `store` type (the sorcerer's stone, holding up to POW, magic point
+  stores, places of power, bound magic spirits), `draw-store` (magic points ready to cast with,
+  `mp.borrowed`, which the casting actions spend first) and `charge-store` (refilled from the
+  character's own). An Apprentice gets the wand; an Adept the stone and the staff (1D10, two
+  hands).
+- **`spot.yaml`** (Spot Rules):
+  - fatigue (`fatigue.level`): `fatigue-test` (Resilience after draining activity, -20% for
+    heavy activity while fatigued, -20% overloaded or deprived; failed, fatigued, then heavily
+    fatigued; a fumble, unconscious 3D6 minutes) and `rest-fatigue` (20 - CON hours). Fatigued,
+    every skill test is at -20% (-50% heavily), DEX and INT -3 (rules effects on the
+    characteristics, so every skill based on them follows) and movement down a quarter;
+  - exposure, starvation and thirst (`deprivation`: 1D6 a day each; no natural healing
+    meanwhile); `travel-day` (the movement rate in kilometres, a Natural Lore test off road);
+  - `fall` (1D6 a metre after the first, the Athletics test, a soft surface), `suffocate`
+    (holding one's breath CON rounds, then Resilience at -10% a round; water, vacuum, smoke,
+    poison gas), `burn` (1 to 3D6 a round; metal armour no help);
+  - poisons and diseases: `resist-poison` and `resist-disease`, Resilience against the Potency,
+    both rolled on the sheet (the potency is no character), with a healer's tenth of Healing;
+    their damage rolled and taken; a disease is tested again after each delay until shaken off.
+- **`species.yaml`**: non-human adventurers (optional, with the Referee's permission): the
+  `species` type (characteristic dice, the averages in brackets, movement, flying and swimming,
+  natural armour, natural weapons, a Troll's regeneration). Its effects set each
+  characteristic's maximum (`charmax.*`: the highest roll plus three, 21 for a human), the
+  movement and the natural armour (the best of it and worn armour: armours don't layer).
+  `regenerate` heals a Troll 1D6 a round.
+- **`social.yaml`** (social combat): `fast-talk` (opposed Influence, -20% for each failed
+  argument, convinced 1D20 minutes or for good), `oratory-start`, `oratory` (1D10 of the
+  audience a success, +/-10 on a critical or fumble, -20% after a failure) and `oratory-defence`
+  (the defending orator's result), `intimidate` (a test, its one modifier) and
+  `social-exchange` (a prolonged social combat's score); -20% beyond two metres unless a Master.
+- **`gear.yaml`**, **`display.yaml`**, **`tags.yaml`**: general items (ENC, cost, what a
+  container holds); the sheet's groups; the tags.
+
+### Content (`content/`)
+
+- **Skills (32)**: the Characters chapter's skill bases. Culture (Other), Language (Other), Lore
+  and Religion (Other) are taken once per descriptor; Shamanism only by a Shaman.
+- **Weapons (43)**: close weapons, shields, missile and thrown weapons, one item per name of the
+  tables ("Club, Hatchet" is two items).
+- **Armour (5)** and **gear (42)**: the general items, ammunition and food.
+- **Spells (163)**: 70 of Personal Magic, 39 of Sorcery, 54 of Divine Magic (the Axe Maidens'
+  Earth Scream included), their traits read from the chapters' italic lines by a script. A spell
+  with a descriptor (Detect (Type), Energy Projection (Type), Call (Elemental)…) is taken once per
+  descriptor. Only the names and traits are in the pack: the effects are the book's.
+
+### Creation (`rules/creation.yaml`)
+
+1. The species: human (the random start's), or one of 13 others. Then the characteristics: by
+   points or by dice. A non-human by points starts from its averages with ten points to spread,
+   up to its maximum; by dice it rolls its own. By points, every characteristic starts from 3 (INT and
+   SIZ from 8) with 55 points to spread, 18 at most: the book's 8 each and 30 points, lowering
+   allowed. By dice, 3D6 (SIZ and INT 2D6 + 6). The random start rolls.
+2. Resources: starting cash (4D6 x 10 SP) or the optional Wealth skill.
+3. The four pools, +5% a pick on a skill of the group, 30 at most a skill: resistances 50,
+   combat 50, knowledge 50 (the guided start may keep some for skills with a descriptor) and
+   practical 75 (Wealth only with its rule). An automatic run spreads them evenly; the random
+   start draws each pick.
+4. An arms package: leather armour, a ranged weapon and a dagger, with a two-handed close weapon,
+   or a one-handed one and a small or medium shield. Then a backpack, rope, two weeks of food,
+   flint and tinder and a waterskin.
+5. Age (2D6 + 16) and fortune points (2).
+
+Between the pools and the cash comes step 5: six points of Personal Magic, each spell at its
+magnitude, then +1 at a time on variable ones; the random start draws them.
+
+The guided start leaves the character being created. `learn-specialty` adds Lore (Alchemy),
+Language (Goblinoid)… with what is left of the knowledge pool, `learn-personal-spell` a spell
+(with a descriptor too) within the six points, and `finish-creation` ends it. The concept,
+motives and background are text the player writes on the sheet.
+
+### Choices made where the SRD is open
+
+- Growth costs follow the expertise table (1, 2, 3, 5, then 10 to reach 100%), not the summary's
+  flat +5% for 1 point.
+- A Master's automatic critical earns no growth point, since there is no roll.
+- Recovering magic points: a quarter of POW is rounded up.
+- Damage that the damage modifier brings below 1 is 1.
+- The thrown dagger, knife, hatchet and shortspear are the close weapons with their thrown
+  damage; the thrown table's other cost isn't kept.
+- Within a group of the ranged table (wind, movement, visibility) only one modifier counts: the
+  player ticks one.
+- Becoming an Apprentice costs two growth points, as the rank's own text says (the summary table
+  says one).
+- A converted Shaman or Wise gets back the growth points of their spells, not the five of the
+  path.
+- The religions' other requirements (their skills at 25% or 75%, a vacancy for a Priest), which
+  spells a religion teaches and the Holy Warriors' special spells at any magnitude are the
+  Referee's: the pack checks the Religion skill, the ranks and the magnitudes.
+- A wand focuses two spells (an Apprentice's), a staff one per ten points of Sorcery Casting (at
+  least two, from Adept).
+
+### Not yet modelled
+
+The effects of the spells that don't change a number of the sheet (Detect, Light, Illusion…:
+the Referee's), those aimed at one skill or characteristic (Enhance (Skill), Hinder (Skill),
+Enhance and Diminish (characteristic): the player adds them as a modifier), the sorcerer's
+familiar and the priest's Allied Spirit (each its own character), the other effects of
+Transcendence and Ascension (immortality, immunities), a poison's or disease's effects other
+than damage (a characteristic penalty, sleep: the player notes them), the illumination rules
+beyond the combat situations, ships and naval combat (a vessel isn't a character), creatures, animals and
+transport. Breaking objects is an Athletics test.
+
+## The OpenQuest tools
+
+Both are the universal tools' server (`universal-lib.ts`) with a page of their own: the pack's
+actions, pauses and texts come from the engine, the page lays them out for OpenQuest. They list
+the characters of `examples/characters/` that use `openquest-core` and save to `extensions/`.
+
+- **`openquest-create.ts`** (port 5178): a new character (or one being created), then the guided
+  or random start.
+  - Each pause of the guided start is asked in turn: the species, the method, the
+    characteristic points (with each one's limit), cash or Wealth, the arms package and weapons,
+    Personal Magic spells (a "Done" button ends the picks).
+  - The four skill pools are each one table: every skill of the group, its total and the points
+    already in it, an amount to add (+5% steps, 30 at most), what is left; "Spread evenly" fills it.
+    The page then answers the step pick by pick, and ends it ("#done") when points may be kept.
+  - Then the character's finishing: a skill with a descriptor (learn-specialty), a Personal Magic
+    spell (learn-personal-spell), and Finish the creation; the character's text (name, concept,
+    motives, age, background…).
+  - Beside it, the sheet as it stands: species, characteristics, attributes, the pools spent
+    against their size, the skills by group with their totals, spells and equipment.
+- **`openquest-play.ts`** (port 5179): a play sheet in three columns.
+  - The character: characteristics, hit and magic points, armour, damage modifier, movement,
+    fortune, growth, encumbrance and money; the conditions as badges (mortal wound, unconscious,
+    fatigue…); every input field under "Edit the sheet"; the equipment.
+  - Skills by group (total, expertise, raised this downtime) with a Test button, and the test
+    options shared by every test: difficulty, magic and other modifiers, assistance.
+  - Combat: each weapon's Attack and Damage (aim, critical, Great Attack, charge, thrown),
+    unarmed attack, Dodge and Parry (defences already made), taking damage (ignoring armour,
+    Pierce), and the situations the pack offers, as checkboxes.
+  - Magic: each spell's actions (cast, raise, regain), with the casting options (under duress, on
+    oneself, magnitude; Sorcery's magnitude, duration, range and focus); the spells on the
+    character, each with End; the stores, with Draw and Refill.
+  - The rolls of each action, its result and what it changed; the other actions by theme
+    (health, dangers and travel, social combat, magic, growth), each with its form; a pause (the
+    skill to raise, the spell to learn) is answered on the page.
+
+For these pages, the universal server's view also gives each copy's item, the step of a pause
+and the content applied to the character (`applied`, with its state): additions the universal
+pages don't use.
+
 ## The universal tools
 
 They work for any pack under `packs/`, with nothing of a pack written in their code: the engine
@@ -744,8 +987,9 @@ git update-index --skip-worktree packages/packs/package.json
 
 ### Reinstalling dependencies (`pnpm install`)
 
-`packs/sagas/core/package.json` makes the SagaS pack a workspace package, like every pack, and
-`pnpm-lock.yaml` has its entry (`packs/sagas/core`, a dev dependency on the engine, added by hand
+`packs/sagas/core/package.json` and `packs/openquest/core/package.json` make the SagaS and
+OpenQuest packs workspace packages, like every pack, and `pnpm-lock.yaml` has their entries
+(`packs/sagas/core` and `packs/openquest/core`, a dev dependency on the engine each, added by hand
 like the other packs'). So `pnpm install --frozen-lockfile` works as is, then remove the two ORC
 links ([above](#pnpms-links-to-the-orc-packs)).
 
