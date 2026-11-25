@@ -1,0 +1,5 @@
+id: gear.musical-instrument
+type: gear
+fields:
+  enc: 2
+  cost: 70

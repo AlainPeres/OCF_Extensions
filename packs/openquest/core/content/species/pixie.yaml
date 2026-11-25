@@ -1,0 +1,18 @@
+id: species.pixie
+type: species
+fields:
+  str: 2d3
+  con: 3d6
+  dex: 4d6
+  siz: 1d6
+  int: 3d6
+  pow: 2d6 + 6
+  cha: 3d6
+  avgStr: 4
+  avgCon: 11
+  avgDex: 14
+  avgSiz: 4
+  avgInt: 11
+  avgPow: 13
+  avgCha: 11
+  fly: 30

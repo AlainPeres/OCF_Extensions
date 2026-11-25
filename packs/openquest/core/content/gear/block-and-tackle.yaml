@@ -1,0 +1,5 @@
+id: gear.block-and-tackle
+type: gear
+fields:
+  enc: 1
+  cost: 15

@@ -1,0 +1,11 @@
+id: personal.befuddle
+type: personal
+fields:
+  magnitude: 2
+  variable: false
+  resist: persistence
+effects:
+  - target: state.befuddled
+    op: add
+    value: 1
+    scope: applied

@@ -1,0 +1,22 @@
+id: species.minotaur
+type: species
+fields:
+  str: 3d6 + 12
+  con: 1d6 + 12
+  dex: 3d6
+  siz: 3d6 + 12
+  int: 2d6
+  pow: 3d6
+  cha: 2d6
+  avgStr: 23
+  avgCon: 16
+  avgDex: 11
+  avgSiz: 23
+  avgInt: 7
+  avgPow: 11
+  avgCha: 7
+  move: 20
+  naturalAp: 3
+  natural:
+    - weapons.natural-gore
+    - weapons.natural-head-butt

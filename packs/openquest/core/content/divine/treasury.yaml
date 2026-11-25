@@ -1,0 +1,6 @@
+id: divine.treasury
+type: divine
+fields:
+  magnitude: 4
+  variable: false
+  duration: 1440

@@ -1,0 +1,10 @@
+id: personal.spirit-shield
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+effects:
+  - target: spell.spiritShield
+    op: atLeast
+    value: self.magnitude
+    scope: applied

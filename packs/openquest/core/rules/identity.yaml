@@ -1,0 +1,14 @@
+fields:
+  # Who the character is: free text the player writes (steps 1 and 7): the one-sentence concept,
+  # the Saga motive (life-long) and the Quest motive (this adventure's), the background.
+  identity.name: { type: string, input: true, default: '' }
+  identity.species: { type: string, input: true, default: 'Human' }
+  identity.concept: { type: string, input: true, default: '' }
+  identity.sagaMotive: { type: string, input: true, default: '' }
+  identity.questMotive: { type: string, input: true, default: '' }
+  identity.background: { type: string, input: true, default: '' }
+  identity.appearance: { type: string, input: true, default: '' }
+  # Age: 18 to 28 for a starting human (2D6 + 16).
+  identity.age: { type: integer, input: true, default: 18, min: 0 }
+  # Belongings that aren't items of the pack, one per line.
+  identity.possessions: { type: string, input: true, default: '' }

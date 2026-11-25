@@ -1,0 +1,5 @@
+id: gear.sack-small
+type: gear
+fields:
+  cost: 0.2
+  holds: 5

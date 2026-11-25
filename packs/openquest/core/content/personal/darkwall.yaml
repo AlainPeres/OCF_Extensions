@@ -1,0 +1,6 @@
+id: personal.darkwall
+type: personal
+fields:
+  magnitude: 2
+  variable: false
+  area: 5

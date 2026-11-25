@@ -1,0 +1,6 @@
+id: gear.slingbag
+type: gear
+fields:
+  enc: 1
+  cost: 0.5
+  holds: 15

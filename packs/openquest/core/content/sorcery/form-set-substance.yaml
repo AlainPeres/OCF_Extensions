@@ -1,0 +1,5 @@
+id: sorcery.form-set-substance
+type: sorcery
+fields:
+  instant: true
+  generic: true

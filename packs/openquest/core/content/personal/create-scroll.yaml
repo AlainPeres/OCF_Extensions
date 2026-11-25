@@ -1,0 +1,6 @@
+id: personal.create-scroll
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  permanent: true

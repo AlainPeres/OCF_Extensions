@@ -1,0 +1,124 @@
+# How a sheet shows the character (display hints: never part of the calculations). Wealth is a
+# skill only with the optional Wealth rule; without it the skill is hidden.
+display:
+  groups:
+    - id: identity
+      priority: 0
+      members:
+        type: field
+        where: >-
+          item.id in [@identity.name, @identity.species, @identity.concept, @identity.sagaMotive,
+            @identity.questMotive, @identity.age, @identity.appearance, @identity.background,
+            @identity.possessions]
+    - id: characteristics
+      priority: 1
+      members: { type: field, where: "'characteristic' in item.tags" }
+    - id: attributes
+      priority: 2
+      members:
+        type: field
+        where: >-
+          item.id in [@hp.current, @hp.max, @hp.wounds, @mp.current, @mp.max, @mp.spent,
+            @damage.modifier, @move.rate, @move.base, @move.fly, @move.swim, @armour.ap,
+            @fortune.points]
+    - id: states
+      priority: 3
+      members:
+        type: field
+        where: >-
+          item.id in [@state.mortal, @state.stabilised, @state.treated, @state.unconscious,
+            @state.drained, @state.overloaded, @enc.tooHeavy]
+    - id: combat
+      priority: 4
+      members:
+        type: field
+        where: >-
+          item.id in [@combat.close, @combat.ranged, @combat.unarmed, @resist.dodge,
+            @resist.persistence, @resist.resilience]
+    - id: possessions
+      priority: 5
+      members:
+        type: field
+        where: item.id in [@enc.total, @enc.limit, @money.silver, @wealth.used]
+    - id: growth
+      priority: 6
+      members:
+        type: field
+        where: item.id in [@growth.points, @growth.earned]
+    - id: creation-pools
+      priority: 7
+      showWhen: character.creating
+      members:
+        type: field
+        where: >-
+          item.id in [@points.resistance.spent, @points.combat.spent, @points.knowledge.spent,
+            @points.practical.spent]
+    - id: magic
+      priority: 8
+      members:
+        type: field
+        where: >-
+          item.id in [@magic.personalCasting, @magic.sorceryCasting, @magic.shamanism,
+            @religion.skill, @magic.specialist, @sorcery.rank, @religion.name, @religion.rank,
+            @magic.personal.known, @magic.personal.limit, @magic.sorcery.known,
+            @magic.divine.known, @magic.focus.limit, @magic.focused, @mp.borrowed, @mp.locked,
+            @magic.apotheosis]
+    - id: conditions
+      priority: 3
+      members:
+        type: field
+        where: >-
+          item.id in [@fatigue.level, @state.exposure, @state.starving, @state.thirsty,
+            @state.diseased, @breath.rounds]
+    - id: social
+      priority: 9
+      members:
+        type: field
+        where: >-
+          item.id in [@skill.influence, @fastTalk.failures, @oratory.audience, @oratory.won,
+            @oratory.penalty, @social.score]
+    - id: species
+      kind: content
+      priority: 1
+      members: { type: species }
+    - id: skills
+      kind: content
+      priority: 10
+      members:
+        type: skill
+        where: 'item.id != @skills.wealth || wealth.used'
+    - id: weapons
+      kind: content
+      priority: 11
+      members: { type: weapon }
+    - id: armour
+      kind: content
+      priority: 12
+      members: { type: armour }
+    - id: gear
+      kind: content
+      priority: 13
+      members: { type: gear }
+    - id: personal
+      kind: content
+      priority: 14
+      members: { type: personal }
+    - id: sorcery
+      kind: content
+      priority: 15
+      members: { type: sorcery }
+    - id: divine
+      kind: content
+      priority: 16
+      members: { type: divine }
+    - id: stores
+      kind: content
+      priority: 17
+      members: { type: store }
+    - id: skills-unused
+      kind: content
+      priority: 19
+      showWhen: 'false'
+      members:
+        type: skill
+        where: 'item.id == @skills.wealth && !wealth.used'

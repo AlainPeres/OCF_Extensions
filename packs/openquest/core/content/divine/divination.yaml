@@ -1,0 +1,7 @@
+id: divine.divination
+type: divine
+fields:
+  magnitude: 1
+  variable: true
+  instant: true
+  common: true

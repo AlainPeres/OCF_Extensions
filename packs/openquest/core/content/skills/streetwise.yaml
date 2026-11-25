@@ -1,0 +1,6 @@
+id: skills.streetwise
+type: skill
+fields:
+  char1: chars.cha
+  char2: chars.pow
+  group: practical

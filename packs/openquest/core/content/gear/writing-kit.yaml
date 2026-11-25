@@ -1,0 +1,5 @@
+id: gear.writing-kit
+type: gear
+fields:
+  enc: 1
+  cost: 45

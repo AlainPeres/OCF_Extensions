@@ -1,0 +1,5 @@
+id: gear.healers-kit
+type: gear
+fields:
+  enc: 1
+  cost: 150

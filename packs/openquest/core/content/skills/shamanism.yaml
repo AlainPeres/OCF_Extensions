@@ -1,0 +1,7 @@
+id: skills.shamanism
+type: skill
+fields:
+  char1: chars.int
+  char2: chars.pow
+  group: magic
+  restricted: true

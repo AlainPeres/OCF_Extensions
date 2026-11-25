@@ -1,0 +1,9 @@
+id: openquest-core
+version: 0.1.0
+specVersion: 0.4.0
+license: CC-BY-4.0
+credit: >-
+  This work includes material taken from the OpenQuest 3rd Edition System Resource Document
+  (v1.2) by Newt Newport, D101 Games, available at https://openquestrpg.com/srd. The OpenQuest 3
+  SRD is released under a Creative Commons Attribution license.
+defaultLanguage: en

@@ -1,0 +1,9 @@
+id: sorcery.hamper
+type: sorcery
+fields:
+  resist: resilience
+effects:
+  - target: spell.move
+    op: add
+    value: -self.magnitude
+    scope: applied

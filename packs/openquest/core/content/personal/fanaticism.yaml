@@ -1,0 +1,18 @@
+id: personal.fanaticism
+type: personal
+fields:
+  magnitude: 2
+  variable: false
+effects:
+  - target: spell.close
+    op: add
+    value: 20
+    scope: applied
+  - target: spell.unarmed
+    op: add
+    value: 20
+    scope: applied
+  - target: spell.persistence
+    op: add
+    value: 50
+    scope: applied

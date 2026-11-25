@@ -1,0 +1,5 @@
+id: sorcery.enhance-characteristic
+type: sorcery
+fields:
+  touch: true
+  generic: true

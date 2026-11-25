@@ -1,0 +1,4 @@
+id: sorcery.make-spell-matrix
+type: sorcery
+fields:
+  permanent: true

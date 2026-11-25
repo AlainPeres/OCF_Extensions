@@ -1,0 +1,8 @@
+id: divine.earth-scream
+type: divine
+fields:
+  magnitude: 2
+  variable: false
+  resist: persistence
+  area: 10
+  duration: 15

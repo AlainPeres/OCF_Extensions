@@ -1,0 +1,8 @@
+id: divine.puppet
+type: divine
+fields:
+  magnitude: 3
+  variable: false
+  resist: persistence
+  concentration: true
+  duration: 360

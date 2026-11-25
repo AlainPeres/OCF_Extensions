@@ -1,0 +1,84 @@
+# Skills (Characters, step 4; Skills chapter). A skill's base comes from one or two
+# characteristics: (char1 + char2) x times + plus (DEX + 10, INT + CHA, POW x 3…). Its total adds
+# the points spent at creation (at most 30 a skill, from its group's pool) and growth (+5% at a
+# time), up to 100%: a skill at 100% makes its owner a Master of it.
+contentTypes:
+  skill:
+    fields:
+      char1: { type: id, of: field, where: "'characteristic' in item.tags", required: true }
+      char2: { type: id, of: field, where: "'characteristic' in item.tags" }
+      times: { type: integer, default: 1, min: 1 }
+      plus: { type: integer, default: 0 }
+      # The creation pool it draws on: resistances, combat, knowledge, practical. Magic skills get
+      # no points at creation.
+      group:
+        { type: enum, values: [resistance, combat, knowledge, practical, magic], required: true }
+      # A skill with a descriptor in brackets (Lore (Type), Culture (Other)…): taken once per
+      # descriptor, each its own skill.
+      generic: { type: boolean, default: false }
+      # Had only on the way of a magic path (Shamanism, for a Shaman): not on every sheet.
+      restricted: { type: boolean, default: false }
+    state:
+      creation: { type: integer, default: 0, min: 0, max: 30 }
+      growth: { type: integer, default: 0, min: 0 }
+      # Raised during the current downtime: a skill goes up +5% at most between two Quests.
+      raised: { type: boolean, default: false }
+      specialty: { type: string, default: '' }
+    computed:
+      base:
+        type: integer
+        formula: >-
+          ((item.char1 == @chars.str ? chars.str : item.char1 == @chars.con ? chars.con
+            : item.char1 == @chars.dex ? chars.dex : item.char1 == @chars.siz ? chars.siz
+            : item.char1 == @chars.int ? chars.int : item.char1 == @chars.pow ? chars.pow
+            : chars.cha)
+          + (!has(item.char2) ? 0 : item.char2 == @chars.str ? chars.str
+            : item.char2 == @chars.con ? chars.con : item.char2 == @chars.dex ? chars.dex
+            : item.char2 == @chars.siz ? chars.siz : item.char2 == @chars.int ? chars.int
+            : item.char2 == @chars.pow ? chars.pow : chars.cha)) * item.times + item.plus
+      total: { type: integer, formula: 'min(100, self.base + self.creation + self.growth)' }
+      # Expertise: 0 Novice (0-25%), 1 Apprentice (26-50%), 2 Veteran (51-75%), 3 Expert
+      # (76-99%), 4 Master (100%).
+      expertise:
+        type: integer
+        formula: 'self.total <= 25 ? 0 : self.total <= 50 ? 1 : self.total <= 75 ? 2 : self.total <= 99 ? 3 : 4'
+      # Physical: based on DEX or STR, so an overloaded character tests it at -20%.
+      physical:
+        type: boolean
+        formula: >-
+          item.char1 == @chars.dex || item.char1 == @chars.str
+            || (has(item.char2) && (item.char2 == @chars.dex || item.char2 == @chars.str))
+    actions:
+      - use: skill-test
+        params:
+          score: self.total
+          master: self.total >= 100
+          physical: self.physical
+          spell: >-
+            item.id == @skills.dodge ? spell.dodge : item.id == @skills.persistence ? spell.persistence
+              : item.id == @skills.close-combat ? spell.close : item.id == @skills.ranged-combat ? spell.ranged
+              : item.id == @skills.unarmed-combat ? spell.unarmed : 0
+          intBased: 'item.char1 == @chars.int || (has(item.char2) && item.char2 == @chars.int)'
+
+# Every character has every skill at its base score: each skill without a descriptor is a
+# standard copy, on every sheet and saved only once points go to it. Skills with a descriptor are
+# added once per descriptor (learn-specialty), and Shamanism once a Shaman (become-shaman).
+standardCopies:
+  - { type: skill, where: '!item.generic && !item.restricted' }
+
+constraints:
+  # A generic skill needs its descriptor (Lore (Alchemy), Language (Goblinoid)…).
+  - id: generic-needs-specialty
+    copies: { type: skill }
+    check: "!item.generic || self.specialty != ''"
+    data: {}
+  # A skill without a descriptor is had once.
+  - id: skill-taken-once
+    copies: { type: skill }
+    check: item.generic || countCopies(copy.item == item.id) <= 1
+    data: {}
+  # Growth moves a skill by +5% at a time.
+  - id: growth-steps
+    copies: { type: skill }
+    check: self.growth % 5 == 0
+    data: {}

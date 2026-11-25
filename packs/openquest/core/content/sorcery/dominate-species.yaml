@@ -1,0 +1,5 @@
+id: sorcery.dominate-species
+type: sorcery
+fields:
+  resist: persistence
+  generic: true

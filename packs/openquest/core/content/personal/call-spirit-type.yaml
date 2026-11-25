@@ -1,0 +1,7 @@
+id: personal.call-spirit-type
+type: personal
+fields:
+  magnitude: 3
+  variable: false
+  resist: persistence
+  generic: true

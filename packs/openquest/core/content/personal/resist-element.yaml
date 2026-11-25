@@ -1,0 +1,6 @@
+id: personal.resist-element
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  generic: true

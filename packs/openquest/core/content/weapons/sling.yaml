@@ -1,0 +1,8 @@
+id: weapons.sling
+type: weapon
+fields:
+  kind: missile
+  damage: 1d6
+  hands: one
+  cost: 5
+  range: 50

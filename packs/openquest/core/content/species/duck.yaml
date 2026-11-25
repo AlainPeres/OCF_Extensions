@@ -1,0 +1,19 @@
+id: species.duck
+type: species
+fields:
+  str: 2d6 + 3
+  con: 2d6 + 6
+  dex: 2d6 + 6
+  siz: 1d6 + 6
+  int: 2d6 + 6
+  pow: 3d6
+  cha: 2d6
+  avgStr: 10
+  avgCon: 13
+  avgDex: 13
+  avgSiz: 9
+  avgInt: 13
+  avgPow: 10
+  avgCha: 7
+  move: 10
+  swim: 15

@@ -1,0 +1,6 @@
+id: divine.stink-bomb
+type: divine
+fields:
+  magnitude: 1
+  variable: false
+  resist: resilience

@@ -1,0 +1,6 @@
+id: personal.walk-on-element
+type: personal
+fields:
+  magnitude: 3
+  variable: true
+  generic: true

@@ -1,0 +1,5 @@
+id: personal.mindspeech
+type: personal
+fields:
+  magnitude: 1
+  variable: true

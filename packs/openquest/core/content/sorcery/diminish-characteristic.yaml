@@ -1,0 +1,6 @@
+id: sorcery.diminish-characteristic
+type: sorcery
+fields:
+  resist: persistence-or-resilience
+  touch: true
+  generic: true

@@ -1,0 +1,6 @@
+id: personal.fist-of-the-wind
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  instant: true

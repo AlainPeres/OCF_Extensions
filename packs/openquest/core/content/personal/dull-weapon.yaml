@@ -1,0 +1,10 @@
+id: personal.dull-weapon
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+effects:
+  - target: spell.damage
+    op: add
+    value: -2 * self.magnitude
+    scope: applied

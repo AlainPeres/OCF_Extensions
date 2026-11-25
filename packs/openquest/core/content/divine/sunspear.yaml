@@ -1,0 +1,8 @@
+id: divine.sunspear
+type: divine
+fields:
+  magnitude: 4
+  variable: false
+  resist: dodge
+  instant: true
+  ranged: true

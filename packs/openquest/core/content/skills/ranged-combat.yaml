@@ -1,0 +1,6 @@
+id: skills.ranged-combat
+type: skill
+fields:
+  char1: chars.dex
+  char2: chars.int
+  group: combat

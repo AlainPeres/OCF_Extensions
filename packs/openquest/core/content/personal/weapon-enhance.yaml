@@ -1,0 +1,19 @@
+id: personal.weapon-enhance
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  touch: true
+effects:
+  - target: spell.close
+    op: add
+    value: 10 * self.magnitude
+    scope: applied
+  - target: spell.unarmed
+    op: add
+    value: 10 * self.magnitude
+    scope: applied
+  - target: spell.damage
+    op: add
+    value: self.magnitude
+    scope: applied

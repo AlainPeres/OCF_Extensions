@@ -1,0 +1,4 @@
+id: sorcery.neutralise-magic
+type: sorcery
+fields:
+  instant: true

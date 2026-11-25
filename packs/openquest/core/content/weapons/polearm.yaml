@@ -1,0 +1,8 @@
+id: weapons.polearm
+type: weapon
+fields:
+  kind: close
+  damage: 1d8
+  hands: two
+  enc: 3
+  cost: 200

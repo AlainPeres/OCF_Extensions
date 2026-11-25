@@ -1,0 +1,6 @@
+id: skills.healing
+type: skill
+fields:
+  char1: chars.int
+  plus: 10
+  group: practical

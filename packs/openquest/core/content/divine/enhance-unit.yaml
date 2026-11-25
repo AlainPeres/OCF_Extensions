@@ -1,0 +1,6 @@
+id: divine.enhance-unit
+type: divine
+fields:
+  magnitude: 3
+  variable: false
+  duration: 360

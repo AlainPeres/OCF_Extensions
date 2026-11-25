@@ -1,0 +1,11 @@
+id: personal.slow
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  resist: resilience
+effects:
+  - target: spell.move
+    op: add
+    value: -2 * self.magnitude
+    scope: applied

@@ -1,0 +1,7 @@
+id: personal.disruption
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  resist: resilience
+  instant: true

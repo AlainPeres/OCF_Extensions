@@ -1,0 +1,8 @@
+id: sorcery.haste
+type: sorcery
+fields: {}
+effects:
+  - target: spell.move
+    op: add
+    value: self.magnitude
+    scope: applied

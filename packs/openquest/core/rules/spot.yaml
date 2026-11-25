@@ -1,0 +1,410 @@
+# Spot Rules: travel, fatigue, exposure, starvation and thirst, falling, suffocation, burning,
+# poisons and diseases. Damage that ignores armour goes straight to the wounds.
+fields:
+  # Fatigue: fatigued (-20% to every skill test, movement down a quarter, DEX and INT -3) or
+  # heavily fatigued (-50%). Set by fatigue-test, cleared by rest-fatigue (or a Vigour spell: the
+  # player clears it).
+  fatigue.level: { type: enum, values: [none, fatigued, heavy], input: true, default: none }
+  # Exposure, starvation (from the third day: -20% to fatigue tests) and thirst: 1D6 damage a day
+  # for each, which no healing mends until shelter, food or water.
+  state.exposure: { type: boolean, input: true, default: false }
+  state.starving: { type: boolean, input: true, default: false }
+  state.thirsty: { type: boolean, input: true, default: false }
+  state.deprived: { type: boolean, formula: state.exposure || state.starving || state.thirsty }
+  # Holding one's breath: CON combat rounds.
+  breath.rounds: { type: integer, formula: chars.con }
+  # A disease the character hasn't shaken off yet (a new opposed test after each delay).
+  state.diseased: { type: boolean, input: true, default: false }
+  # Skills the spot rules test, as fields (a copy's computed total can't be read here).
+  skill.athletics:
+    type: integer
+    formula: >-
+      min(100, chars.dex + chars.str
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.athletics))
+  skill.naturalLore:
+    type: integer
+    formula: >-
+      min(100, chars.int + 10
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.natural-lore))
+  skill.influence:
+    type: integer
+    formula: >-
+      min(100, chars.cha + 10
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.influence))
+
+# Fatigue makes the character sluggish: DEX and INT -3 while it lasts.
+effects:
+  - target: chars.dex
+    op: add
+    value: -3
+    when: "fatigue.level != 'none'"
+  - target: chars.int
+    op: add
+    value: -3
+    when: "fatigue.level != 'none'"
+
+actions:
+  # A Resilience test after draining activity. Failed: fatigued; failed again while fatigued and
+  # still at heavy activity (that test at -20%): heavily fatigued. A fumble: unconscious 3D6
+  # minutes, and fatigued on waking. Overloaded, or exposed, starving or thirsty: -20% (one
+  # penalty). A Berserk recipient succeeds without rolling (the player skips the test).
+  - id: fatigue-test
+    tags: [health]
+    params:
+      heavyActivity: { type: boolean, default: false }
+      difficulty: { type: enum, values: [easy, simple, normal, difficult, hard], default: normal }
+      modifier: { type: integer, default: 0 }
+    results: [fine, fatigued, heavily-fatigued, unconscious]
+    steps:
+      - id: test
+        kind: action
+        use: skill-test
+        params:
+          score: resist.resilience
+          master: resist.resilience >= 100
+          difficulty: params.difficulty
+          modifier: >-
+            params.modifier + (params.heavyActivity && fatigue.level != 'none' ? -20 : 0)
+              + (state.overloaded || state.deprived ? -20 : 0)
+      - id: level
+        kind: branch
+        cases:
+          - when: "steps.test.result == 'success' || steps.test.result == 'critical'"
+            flags: { level: fatigue.level }
+          - when: "fatigue.level != 'none'"
+            flags: { level: "'heavy'" }
+          - when: true
+            flags: { level: "'fatigued'" }
+      - id: minutes
+        kind: roll
+        when: "steps.test.result == 'fumble'"
+        tags: [health]
+        parts: [{ dice: 3d6 }]
+      - id: apply
+        kind: changes
+        changes:
+          - { type: set, field: fatigue.level, value: flags.level }
+          - {
+              type: set,
+              when: "steps.test.result == 'fumble'",
+              field: state.unconscious,
+              value: true,
+            }
+      - id: result
+        kind: outcome
+        result: >-
+          steps.test.result == 'fumble' ? 'unconscious'
+            : steps.test.result == 'success' || steps.test.result == 'critical' ? 'fine'
+            : flags.level == 'heavy' ? 'heavily-fatigued' : 'fatigued'
+        data:
+          minutes: 'has(steps.minutes) ? steps.minutes.total : 0'
+
+  # Complete rest for 20 - CON hours removes any fatigue.
+  - id: rest-fatigue
+    tags: [health]
+    available: "fatigue.level != 'none'"
+    params:
+      hours: { type: integer, min: 0 }
+    results: [rested, not-enough-rest]
+    steps:
+      - id: short
+        kind: outcome
+        when: params.hours < 20 - chars.con
+        result: "'not-enough-rest'"
+        data: { needed: 'max(0, 20 - chars.con)' }
+      - id: rest
+        kind: changes
+        changes:
+          - { type: set, field: fatigue.level, value: "'none'" }
+      - id: result
+        kind: outcome
+        result: "'rested'"
+
+  # A day of exposure, starvation or thirst: 1D6 damage for each, armour no help.
+  - id: deprivation
+    tags: [health]
+    available: state.deprived
+    results: [suffered]
+    steps:
+      - id: hurt
+        kind: roll
+        tags: [damage]
+        parts:
+          - dice: '((state.exposure ? 1 : 0) + (state.starving ? 1 : 0) + (state.thirsty ? 1 : 0))d6'
+      - id: apply
+        kind: changes
+        changes:
+          - { type: adjust, field: hp.wounds, by: steps.hurt.total }
+      - id: result
+        kind: outcome
+        result: "'suffered'"
+        data: { damage: steps.hurt.total, hitPoints: hp.current - steps.hurt.total }
+
+  # A day's travel: the movement rate in kilometres (halved overloaded). Off road or in hard
+  # conditions, a Natural Lore test keeps the pace: failed, half the distance; fumbled, a danger
+  # or no progress at all.
+  - id: travel-day
+    tags: [health]
+    params:
+      offRoad: { type: boolean, default: false }
+      mounted: { type: integer, default: 0, min: 0 }
+    results: [travelled, slowed, lost]
+    steps:
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              km: 'params.mounted > 0 ? params.mounted : (state.overloaded ? floor(move.base / 2) : move.base)'
+      - id: test
+        kind: action
+        when: params.offRoad
+        use: skill-test
+        params:
+          score: skill.naturalLore
+          master: skill.naturalLore >= 100
+      - id: result
+        kind: outcome
+        result: >-
+          !has(steps.test.result) || steps.test.result == 'success' || steps.test.result == 'critical'
+            ? 'travelled' : steps.test.result == 'fumble' ? 'lost' : 'slowed'
+        data:
+          km: >-
+            !has(steps.test.result) || steps.test.result == 'success' || steps.test.result == 'critical'
+              ? flags.km : steps.test.result == 'fumble' ? 0 : floor(flags.km / 2)
+
+  # A fall: 1D6 a metre after the first, armour no help (a soft surface halves the distance).
+  # Unless surprised, an Athletics test: success, two metres shorter (and landing on one's feet
+  # while above zero hit points); critical, no damage; fumble, the maximum.
+  - id: fall
+    tags: [health]
+    params:
+      metres: { type: integer, min: 0 }
+      soft: { type: boolean, default: false }
+      surprised: { type: boolean, default: false }
+    results: [landed, fell]
+    steps:
+      - id: test
+        kind: action
+        when: '!params.surprised'
+        use: skill-test
+        params:
+          score: skill.athletics
+          master: skill.athletics >= 100
+          physical: true
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              ok: "has(steps.test.result) && (steps.test.result == 'success' || steps.test.result == 'critical')"
+              dice: >-
+                max(0, (params.soft ? floor(params.metres / 2) : params.metres) - 1
+                  - (has(steps.test.result) && steps.test.result == 'success' ? 2 : 0))
+      - id: hurt
+        kind: roll
+        when: "!has(steps.test.result) || steps.test.result != 'critical'"
+        tags: [damage]
+        parts:
+          - dice: "has(steps.test.result) && steps.test.result == 'fumble' ? 6 * flags.dice : (flags.dice)d6"
+      - id: apply
+        kind: changes
+        when: has(steps.hurt)
+        changes:
+          - { type: adjust, field: hp.wounds, by: steps.hurt.total }
+      - id: result
+        kind: outcome
+        result: "flags.ok && (!has(steps.hurt) || hp.current - steps.hurt.total > 0) ? 'landed' : 'fell'"
+        data:
+          damage: 'has(steps.hurt) ? steps.hurt.total : 0'
+          prone: '!(flags.ok && (!has(steps.hurt) || hp.current - steps.hurt.total > 0))'
+
+  # Past CON rounds holding one's breath: a Resilience test each round, -10% more each time;
+  # failed, the character breathes in: water or vacuum 2D6, thick smoke 1D6, poison gas the
+  # poison (resist-poison), with 1D6 if it is also thick smoke. Armour no help.
+  - id: suffocate
+    tags: [health]
+    params:
+      round: { type: integer, default: 1, min: 1 }
+      substance:
+        { type: enum, values: [water, vacuum, smoke, poison-gas, poison-smoke], default: water }
+    results: [held, inhaled]
+    steps:
+      - id: test
+        kind: action
+        use: skill-test
+        params:
+          score: resist.resilience
+          master: resist.resilience >= 100
+          modifier: -10 * params.round
+      - id: held
+        kind: outcome
+        when: "steps.test.result == 'success' || steps.test.result == 'critical'"
+        result: "'held'"
+      - id: hurt
+        kind: roll
+        tags: [damage]
+        parts:
+          - dice: "params.substance == 'water' || params.substance == 'vacuum' ? 2d6 : params.substance == 'poison-gas' ? 0d6 : 1d6"
+      - id: apply
+        kind: changes
+        changes:
+          - { type: adjust, field: hp.wounds, by: steps.hurt.total }
+      - id: result
+        kind: outcome
+        result: "'inhaled'"
+        data:
+          damage: steps.hurt.total
+          poison: "params.substance == 'poison-gas' || params.substance == 'poison-smoke'"
+
+  # Fire and heat, each round: a flame 1, a large flame 1D4, a small fire 1D6, a large fire 2D6,
+  # an inferno 3D6. Metal armour (ringmail and heavier) doesn't help; leather does.
+  - id: burn
+    tags: [health]
+    params:
+      source:
+        {
+          type: enum,
+          values: [flame, large-flame, small-fire, large-fire, inferno],
+          default: small-fire,
+        }
+      metalArmour: { type: boolean, default: false }
+    results: [burnt]
+    steps:
+      - id: hurt
+        kind: roll
+        tags: [damage]
+        parts:
+          - dice: >-
+              params.source == 'flame' ? 1 : params.source == 'large-flame' ? 1d4
+                : params.source == 'small-fire' ? 1d6 : params.source == 'large-fire' ? 2d6 : 3d6
+      - id: take
+        kind: action
+        use: take-damage
+        params:
+          amount: steps.hurt.total
+          ignoreArmour: params.metalArmour
+      - id: result
+        kind: outcome
+        result: "'burnt'"
+        data:
+          rolled: steps.hurt.total
+          damage: steps.take.data.amount
+
+  # Resilience against a Potency (a poison's or a disease's): both roll, as an opposed test. A
+  # healer's successful Healing test adds a tenth of their Healing to Resilience.
+  - id: resist-potency
+    listed: false
+    tags: [health]
+    params:
+      potency: { type: integer, min: 1 }
+      healer: { type: integer, default: 0, min: 0 }
+    results: [resisted, succumbed]
+    steps:
+      - id: mine
+        kind: action
+        use: skill-test
+        params:
+          score: resist.resilience + floor(params.healer / 10)
+          master: resist.resilience >= 100
+      - id: potency
+        kind: branch
+        cases:
+          - when: true
+            flags: { target: params.potency }
+      - id: its
+        kind: roll
+        tags: [potency]
+        better: low
+        bands: test
+        parts: [{ dice: 1d100 }]
+      - id: compare
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              mine: indexOf(['fumble', 'failure', 'success', 'critical'], steps.mine.result)
+              theirs: indexOf(['fumble', 'failure', 'success', 'critical'], steps.its.band)
+              roll: 'has(steps.mine.data.roll) ? steps.mine.data.roll : 0'
+      - id: result
+        kind: outcome
+        result: >-
+          resist.resilience >= 100 ? 'resisted'
+            : flags.mine > flags.theirs ? 'resisted' : flags.mine < flags.theirs ? 'succumbed'
+            : flags.mine >= 2 ? (flags.roll >= steps.its.total ? 'resisted' : 'succumbed')
+            : flags.roll <= steps.its.total ? 'resisted' : 'succumbed'
+        data:
+          roll: flags.roll
+          potencyRoll: steps.its.total
+
+  # A poison: Resilience against its Potency once its delay is past. Succumbing, its full effect:
+  # its damage (rolled here, armour no help) and whatever else it does (the player notes it). A
+  # healer may give a second test (with a tenth of their Healing).
+  - id: resist-poison
+    tags: [health]
+    params:
+      potency: { type: integer, min: 1 }
+      damage: { type: dice, optional: true }
+      healer: { type: integer, default: 0, min: 0 }
+    results: [resisted, poisoned]
+    steps:
+      - id: test
+        kind: action
+        use: resist-potency
+        params: { potency: params.potency, healer: params.healer }
+      - id: hurt
+        kind: roll
+        when: "steps.test.result == 'succumbed' && has(params.damage)"
+        tags: [damage]
+        parts: [{ dice: params.damage }]
+      - id: apply
+        kind: changes
+        when: has(steps.hurt)
+        changes:
+          - { type: adjust, field: hp.wounds, by: steps.hurt.total }
+      - id: result
+        kind: outcome
+        result: "steps.test.result == 'resisted' ? 'resisted' : 'poisoned'"
+        data:
+          damage: 'has(steps.hurt) ? steps.hurt.total : 0'
+          roll: steps.test.data.roll
+          potencyRoll: steps.test.data.potencyRoll
+
+  # A disease: Resilience against its Potency. Succumbing, its effects (its damage rolled here),
+  # and another test after its delay, and so on, until one succeeds: then the worst is over. A
+  # healer's success adds a tenth of their Healing to the next test.
+  - id: resist-disease
+    tags: [health]
+    params:
+      potency: { type: integer, min: 1 }
+      damage: { type: dice, optional: true }
+      healer: { type: integer, default: 0, min: 0 }
+    results: [resisted, recovered, sick]
+    steps:
+      - id: test
+        kind: action
+        use: resist-potency
+        params: { potency: params.potency, healer: params.healer }
+      - id: hurt
+        kind: roll
+        when: "steps.test.result == 'succumbed' && has(params.damage)"
+        tags: [damage]
+        parts: [{ dice: params.damage }]
+      - id: apply
+        kind: changes
+        changes:
+          - {
+              type: adjust,
+              when: has(steps.hurt),
+              field: hp.wounds,
+              by: 'has(steps.hurt) ? steps.hurt.total : 0',
+            }
+          - { type: set, field: state.diseased, value: "steps.test.result == 'succumbed'" }
+      - id: result
+        kind: outcome
+        result: >-
+          steps.test.result == 'succumbed' ? 'sick' : state.diseased ? 'recovered' : 'resisted'
+        data:
+          damage: 'has(steps.hurt) ? steps.hurt.total : 0'
+          roll: steps.test.data.roll
+          potencyRoll: steps.test.data.potencyRoll

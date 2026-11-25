@@ -1,0 +1,4 @@
+id: gear.hammer
+type: gear
+fields:
+  cost: 1

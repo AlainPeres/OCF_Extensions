@@ -1,0 +1,6 @@
+id: personal.multimissile
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  touch: true

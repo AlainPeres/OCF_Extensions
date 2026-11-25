@@ -1,0 +1,8 @@
+id: weapons.blowgun
+type: weapon
+fields:
+  kind: missile
+  damage: 1d2
+  hands: two
+  cost: 30
+  range: 15

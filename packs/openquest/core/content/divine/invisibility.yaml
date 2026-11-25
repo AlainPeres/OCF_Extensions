@@ -1,0 +1,7 @@
+id: divine.invisibility
+type: divine
+fields:
+  magnitude: 4
+  variable: false
+  touch: true
+  concentration: true

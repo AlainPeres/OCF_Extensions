@@ -1,0 +1,226 @@
+# Healing (Skills: Healing; Spot Rules: Healing), magic points and fortune points. One sheet
+# never acts on another: a patient records what a healer did for them.
+actions:
+  # Another character's successful Healing test, as the patient records it: wakes them, heals a
+  # minor injury 1D6 (only while their hit points are above zero), stabilises a mortal wound (no
+  # hit points back, but no more bleeding), or, once stabilised, surgery: one hit point back, and
+  # the wound heals naturally from then on.
+  - id: healing-received
+    tags: [health]
+    params:
+      treatment: { type: enum, values: [revive, minor, stabilise, surgery], default: minor }
+    results: [revived, healed, stabilised, operated, no-effect]
+    steps:
+      - id: none
+        kind: outcome
+        when: >-
+          (params.treatment == 'minor' && (state.mortal || hp.wounds == 0))
+            || (params.treatment == 'stabilise' && (!state.mortal || state.stabilised))
+            || (params.treatment == 'surgery' && (!state.mortal || !state.stabilised || state.treated))
+            || (params.treatment == 'revive' && !state.unconscious)
+            || (params.treatment != 'revive' && magic.transcended)
+        result: "'no-effect'"
+      - id: heal
+        kind: roll
+        when: "params.treatment == 'minor'"
+        tags: [healing]
+        parts:
+          - dice: 1d6
+      - id: apply
+        kind: changes
+        to: self
+        changes:
+          - type: set
+            when: "params.treatment == 'revive'"
+            field: state.unconscious
+            value: false
+          - type: adjust
+            when: "params.treatment == 'minor'"
+            field: hp.wounds
+            by: '-min(hp.wounds, has(steps.heal) ? steps.heal.total : 0)'
+          - type: set
+            when: "params.treatment == 'stabilise'"
+            field: state.stabilised
+            value: true
+          - type: adjust
+            when: "params.treatment == 'surgery'"
+            field: hp.wounds
+            by: -1
+          - type: set
+            when: "params.treatment == 'surgery'"
+            field: state.treated
+            value: true
+      - id: result
+        kind: outcome
+        result: >-
+          params.treatment == 'revive' ? 'revived' : params.treatment == 'minor' ? 'healed'
+            : params.treatment == 'stabilise' ? 'stabilised' : 'operated'
+        data:
+          healed: "has(steps.heal) ? min(hp.wounds, steps.heal.total) : params.treatment == 'surgery' ? 1 : 0"
+
+  # Magical healing (a spell, a prayer, a potion): instant. A mortal wound healed even one hit
+  # point stops bleeding and heals naturally; the patient wakes on a successful Resilience test.
+  - id: magic-healing
+    tags: [health]
+    params:
+      amount: { type: integer, min: 1 }
+    results: [healed, healed-awake, no-effect]
+    steps:
+      # A Magus's magical body isn't healed by spells that heal a physical one.
+      - { id: magus, kind: outcome, when: magic.transcended, result: "'no-effect'" }
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              healed: min(params.amount, hp.wounds)
+              wasMortal: state.mortal
+      - id: apply
+        kind: changes
+        to: self
+        changes:
+          - { type: adjust, field: hp.wounds, by: -flags.healed }
+          - { type: set, when: 'flags.wasMortal', field: state.stabilised, value: true }
+          - { type: set, when: 'flags.wasMortal', field: state.treated, value: true }
+      - id: wake
+        kind: action
+        when: flags.wasMortal && state.unconscious
+        use: skill-test
+        params:
+          score: resist.resilience
+          master: resist.resilience >= 100
+          physical: false
+      - id: awake
+        kind: changes
+        when: "has(steps.wake.result) && (steps.wake.result == 'success' || steps.wake.result == 'critical')"
+        to: self
+        changes:
+          - { type: set, field: state.unconscious, value: false }
+      - id: result
+        kind: outcome
+        result: "has(steps.wake.result) && (steps.wake.result == 'success' || steps.wake.result == 'critical') ? 'healed-awake' : 'healed'"
+        data:
+          healed: flags.healed
+
+  # Natural healing: CON / 4 hit points (rounded up) a day of no more than light activity. A
+  # mortal wound heals only after surgery or magical healing. Back above zero hit points, the
+  # wound is no longer mortal.
+  - id: natural-healing
+    tags: [health]
+    params:
+      days: { type: integer, default: 1, min: 1 }
+    results: [healed, no-effect]
+    steps:
+      - id: none
+        kind: outcome
+        when: hp.wounds == 0 || (state.mortal && !state.treated) || magic.transcended || state.deprived
+        result: "'no-effect'"
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              healed: 'min(hp.wounds, params.days * ceil(chars.con / 4))'
+      - id: apply
+        kind: changes
+        to: self
+        changes:
+          - { type: adjust, field: hp.wounds, by: -flags.healed }
+          - type: set
+            when: hp.current + flags.healed > 0
+            field: state.stabilised
+            value: false
+          - type: set
+            when: hp.current + flags.healed > 0
+            field: state.treated
+            value: false
+      - id: result
+        kind: outcome
+        result: "'healed'"
+        data:
+          healed: flags.healed
+
+  # Magic points come back with full rest: a quarter of POW (rounded up) every two hours, all of
+  # them after eight hours of comfortable sleep, never above POW. Those a Wise holds in a magic
+  # place (mp.locked) don't come back while it lasts.
+  - id: recover-magic
+    tags: [health]
+    params:
+      hours: { type: integer, default: 2, min: 0 }
+      sleep: { type: boolean, default: false }
+    results: [recovered]
+    steps:
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              back: >-
+                params.sleep && params.hours >= 8 ? mp.spent - mp.locked
+                  : min(mp.spent - mp.locked, floor(params.hours / 2) * ceil(chars.pow / 4))
+      - id: apply
+        kind: changes
+        to: self
+        changes:
+          - { type: adjust, field: mp.spent, by: -flags.back }
+          - {
+              type: set,
+              when: 'mp.current + flags.back > 0',
+              field: state.unconscious,
+              value: false,
+            }
+      - id: result
+        kind: outcome
+        result: "'recovered'"
+        data:
+          recovered: flags.back
+
+  # Spending a fortune point: reroll a failed roll, swap a failed test's dice (tens and units) to
+  # make it a success, avoid death (at zero hit points or fewer: unconscious, back 1D6 hours later
+  # with one hit point). The player rerolls or swaps; the sheet spends the point and, to avoid
+  # death, sets the hit points. Regaining a Divine spell with one is regain-divine's.
+  - id: spend-fortune
+    tags: [health]
+    available: fortune.points > 0
+    params:
+      use: { type: enum, values: [reroll, swap-dice, avoid-death], default: reroll }
+    results: [spent, not-dying]
+    steps:
+      - {
+          id: alive,
+          kind: outcome,
+          when: "params.use == 'avoid-death' && !state.mortal",
+          result: "'not-dying'",
+        }
+      - id: hours
+        kind: roll
+        when: "params.use == 'avoid-death'"
+        tags: [fortune]
+        parts:
+          - dice: 1d6
+      - id: apply
+        kind: changes
+        to: self
+        changes:
+          - { type: adjust, field: fortune.points, by: -1 }
+          - type: set
+            when: "params.use == 'avoid-death'"
+            field: hp.wounds
+            value: hp.max - 1
+          - type: set
+            when: "params.use == 'avoid-death'"
+            field: state.unconscious
+            value: true
+          - type: set
+            when: "params.use == 'avoid-death'"
+            field: state.stabilised
+            value: false
+          - type: set
+            when: "params.use == 'avoid-death'"
+            field: state.treated
+            value: false
+      - id: result
+        kind: outcome
+        result: "'spent'"
+        data:
+          hours: 'has(steps.hours) ? steps.hours.total : 0'

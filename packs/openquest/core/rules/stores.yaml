@@ -1,0 +1,72 @@
+# Magic point stores (Personal Magic: Create Magic Point Store; Sorcery: the sorcerer's stone;
+# the Wise's places of power; bound magic spirits): magic points kept apart from the character's
+# own, which don't come back with rest. Drawing from one makes them ready to cast with
+# (mp.borrowed, spent first by the casting actions).
+contentTypes:
+  store:
+    carried: true
+    fields:
+      # The sorcerer's stone holds up to the character's current POW.
+      ofPow: { type: boolean, default: false }
+      # A bound spirit or a place of power isn't an object.
+      spirit: { type: boolean, default: false }
+    state:
+      # Its maximum (0: no limit, a place of power).
+      capacity: { type: integer, default: 0, min: 0 }
+      mp: { type: integer, default: 0, min: 0 }
+      # Can be refilled from the character's magic points.
+      reusable: { type: boolean, default: true }
+    actions:
+      - use: draw-store
+        available: self.mp > 0
+        params:
+          held: self.mp
+      - use: charge-store
+        available: >-
+          self.reusable && (item.ofPow ? self.mp < chars.pow : self.capacity == 0 || self.mp < self.capacity)
+        params:
+          held: self.mp
+          room: 'item.ofPow ? chars.pow - self.mp : self.capacity == 0 ? 999 : self.capacity - self.mp'
+
+actions:
+  # Magic points taken from the store, ready for the next casting.
+  - id: draw-store
+    tags: [magic]
+    params:
+      held: { type: integer, min: 0 }
+      amount: { type: integer, default: 1, min: 1 }
+    results: [drawn]
+    steps:
+      - id: draw
+        kind: changes
+        changes:
+          - { type: adjustState, entry: self, key: mp, by: '-min(params.amount, params.held)' }
+          - { type: adjust, field: mp.borrowed, by: 'min(params.amount, params.held)' }
+      - id: result
+        kind: outcome
+        result: "'drawn'"
+        data: { amount: 'min(params.amount, params.held)' }
+
+  # Magic points put into the store from the character's own.
+  - id: charge-store
+    tags: [magic]
+    params:
+      held: { type: integer, min: 0 }
+      room: { type: integer, min: 0 }
+      amount: { type: integer, default: 1, min: 1 }
+    results: [charged]
+    steps:
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags: { amount: 'min(params.amount, params.room, mp.current)' }
+      - id: charge
+        kind: changes
+        changes:
+          - { type: adjustState, entry: self, key: mp, by: flags.amount }
+          - { type: adjust, field: mp.spent, by: flags.amount }
+      - id: result
+        kind: outcome
+        result: "'charged'"
+        data: { amount: flags.amount }

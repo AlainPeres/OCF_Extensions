@@ -1,0 +1,6 @@
+id: skills.personal-magic-casting
+type: skill
+fields:
+  char1: chars.pow
+  times: 3
+  group: magic

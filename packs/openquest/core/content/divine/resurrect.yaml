@@ -1,0 +1,8 @@
+id: divine.resurrect
+type: divine
+fields:
+  magnitude: 5
+  variable: false
+  touch: true
+  instant: true
+  concentration: true

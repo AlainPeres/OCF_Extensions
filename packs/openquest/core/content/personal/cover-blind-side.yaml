@@ -1,0 +1,5 @@
+id: personal.cover-blind-side
+type: personal
+fields:
+  magnitude: 1
+  variable: false

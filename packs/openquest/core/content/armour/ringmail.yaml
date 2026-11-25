@@ -1,0 +1,6 @@
+id: armour.ringmail
+type: armour
+fields:
+  ap: 3
+  enc: 5
+  cost: 1000

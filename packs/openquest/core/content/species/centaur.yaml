@@ -1,0 +1,20 @@
+id: species.centaur
+type: species
+fields:
+  str: 3d6 + 6
+  con: 3d6
+  dex: 3d6 + 3
+  siz: 4d6 + 12
+  int: 2d6 + 6
+  pow: 3d6
+  cha: 3d6
+  avgStr: 17
+  avgCon: 11
+  avgDex: 14
+  avgSiz: 26
+  avgInt: 13
+  avgPow: 11
+  avgCha: 11
+  move: 20
+  natural:
+    - weapons.natural-kick

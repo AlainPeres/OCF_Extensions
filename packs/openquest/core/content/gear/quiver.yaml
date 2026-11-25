@@ -1,0 +1,4 @@
+id: gear.quiver
+type: gear
+fields:
+  cost: 2

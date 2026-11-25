@@ -1,0 +1,11 @@
+id: weapons.light-crossbow
+type: weapon
+fields:
+  kind: missile
+  damage: 1d8
+  hands: one
+  enc: 1
+  cost: 150
+  range: 125
+  rounds: 2
+  mechanism: true

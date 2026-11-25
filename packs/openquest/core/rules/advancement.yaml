@@ -1,0 +1,116 @@
+# Character growth (Characters chapter): growth points from motives, Quest achievement, criticals
+# and fumbles (skill-test adds them), ad hoc awards, and practice or research (one every three
+# months of downtime). They are spent in the downtime between Quests. Learning spells and magic
+# ranks come with the magic chapters.
+families:
+  characteristic: [str, con, dex, siz, int, pow, cha]
+
+fields:
+  growth.points: { type: integer, input: true, default: 0, min: 0 }
+  # Every growth point earned: a record for the Referee.
+  growth.earned: { type: integer, input: true, default: 0, min: 0 }
+
+actions:
+  # Growth points awarded: the motives (+5 for the Saga motive completed, +2 for the Quest
+  # motive, +1 for each motive brought into play), 2 for each session of a Quest, ad hoc awards,
+  # or one for three months of practice or research.
+  - id: gain-growth
+    tags: [advancement]
+    available: '!character.creating'
+    params:
+      amount: { type: integer, default: 1, min: 1 }
+    results: [gained]
+    steps:
+      - id: add
+        kind: changes
+        changes:
+          - { type: adjust, field: growth.points, by: params.amount }
+          - { type: adjust, field: growth.earned, by: params.amount }
+      - id: result
+        kind: outcome
+        result: "'gained'"
+        data: { points: params.amount }
+
+  # +5% to a skill, once a downtime per skill: 1 point a Novice skill (0-25%), 2 an Apprentice
+  # one (26-50%), 3 a Veteran one (51-75%), 5 an Expert one (76-99%), and 10 to reach 100%.
+  - id: improve-skill
+    tags: [advancement]
+    available: '!character.creating'
+    results: [improved, not-enough-points]
+    steps:
+      - { id: short, kind: outcome, when: growth.points < 1, result: "'not-enough-points'" }
+      # The total is worked out again here: a choice's options don't see the copies' computed
+      # values.
+      - id: skill
+        kind: choice
+        options:
+          copies:
+            type: skill
+            where: >-
+              !self.raised && min(100, ((item.char1 == @chars.str ? chars.str : item.char1 == @chars.con ? chars.con : item.char1 == @chars.dex ? chars.dex : item.char1 == @chars.siz ? chars.siz : item.char1 == @chars.int ? chars.int : item.char1 == @chars.pow ? chars.pow : chars.cha) + (!has(item.char2) ? 0 : item.char2 == @chars.str ? chars.str : item.char2 == @chars.con ? chars.con : item.char2 == @chars.dex ? chars.dex : item.char2 == @chars.siz ? chars.siz : item.char2 == @chars.int ? chars.int : item.char2 == @chars.pow ? chars.pow : chars.cha)) * item.times + item.plus + self.creation + self.growth) < 100
+                && (min(100, ((item.char1 == @chars.str ? chars.str : item.char1 == @chars.con ? chars.con : item.char1 == @chars.dex ? chars.dex : item.char1 == @chars.siz ? chars.siz : item.char1 == @chars.int ? chars.int : item.char1 == @chars.pow ? chars.pow : chars.cha) + (!has(item.char2) ? 0 : item.char2 == @chars.str ? chars.str : item.char2 == @chars.con ? chars.con : item.char2 == @chars.dex ? chars.dex : item.char2 == @chars.siz ? chars.siz : item.char2 == @chars.int ? chars.int : item.char2 == @chars.pow ? chars.pow : chars.cha)) * item.times + item.plus + self.creation + self.growth) + 5 >= 100 ? 10 : min(100, ((item.char1 == @chars.str ? chars.str : item.char1 == @chars.con ? chars.con : item.char1 == @chars.dex ? chars.dex : item.char1 == @chars.siz ? chars.siz : item.char1 == @chars.int ? chars.int : item.char1 == @chars.pow ? chars.pow : chars.cha) + (!has(item.char2) ? 0 : item.char2 == @chars.str ? chars.str : item.char2 == @chars.con ? chars.con : item.char2 == @chars.dex ? chars.dex : item.char2 == @chars.siz ? chars.siz : item.char2 == @chars.int ? chars.int : item.char2 == @chars.pow ? chars.pow : chars.cha)) * item.times + item.plus + self.creation + self.growth) <= 25 ? 1 : min(100, ((item.char1 == @chars.str ? chars.str : item.char1 == @chars.con ? chars.con : item.char1 == @chars.dex ? chars.dex : item.char1 == @chars.siz ? chars.siz : item.char1 == @chars.int ? chars.int : item.char1 == @chars.pow ? chars.pow : chars.cha) + (!has(item.char2) ? 0 : item.char2 == @chars.str ? chars.str : item.char2 == @chars.con ? chars.con : item.char2 == @chars.dex ? chars.dex : item.char2 == @chars.siz ? chars.siz : item.char2 == @chars.int ? chars.int : item.char2 == @chars.pow ? chars.pow : chars.cha)) * item.times + item.plus + self.creation + self.growth) <= 50 ? 2 : min(100, ((item.char1 == @chars.str ? chars.str : item.char1 == @chars.con ? chars.con : item.char1 == @chars.dex ? chars.dex : item.char1 == @chars.siz ? chars.siz : item.char1 == @chars.int ? chars.int : item.char1 == @chars.pow ? chars.pow : chars.cha) + (!has(item.char2) ? 0 : item.char2 == @chars.str ? chars.str : item.char2 == @chars.con ? chars.con : item.char2 == @chars.dex ? chars.dex : item.char2 == @chars.siz ? chars.siz : item.char2 == @chars.int ? chars.int : item.char2 == @chars.pow ? chars.pow : chars.cha)) * item.times + item.plus + self.creation + self.growth) <= 75 ? 3 : 5) <= growth.points
+        prefer: >-
+          -(min(100, ((item.char1 == @chars.str ? chars.str : item.char1 == @chars.con ? chars.con : item.char1 == @chars.dex ? chars.dex : item.char1 == @chars.siz ? chars.siz : item.char1 == @chars.int ? chars.int : item.char1 == @chars.pow ? chars.pow : chars.cha) + (!has(item.char2) ? 0 : item.char2 == @chars.str ? chars.str : item.char2 == @chars.con ? chars.con : item.char2 == @chars.dex ? chars.dex : item.char2 == @chars.siz ? chars.siz : item.char2 == @chars.int ? chars.int : item.char2 == @chars.pow ? chars.pow : chars.cha)) * item.times + item.plus + self.creation + self.growth))
+        changes:
+          - { type: setState, entry: picked, key: growth, value: picked.self.growth + 5 }
+          - { type: setState, entry: picked, key: raised, value: true }
+          - type: adjust
+            field: growth.points
+            by: >-
+              -(min(100, ((picked.item.char1 == @chars.str ? chars.str : picked.item.char1 == @chars.con ? chars.con : picked.item.char1 == @chars.dex ? chars.dex : picked.item.char1 == @chars.siz ? chars.siz : picked.item.char1 == @chars.int ? chars.int : picked.item.char1 == @chars.pow ? chars.pow : chars.cha) + (!has(picked.item.char2) ? 0 : picked.item.char2 == @chars.str ? chars.str : picked.item.char2 == @chars.con ? chars.con : picked.item.char2 == @chars.dex ? chars.dex : picked.item.char2 == @chars.siz ? chars.siz : picked.item.char2 == @chars.int ? chars.int : picked.item.char2 == @chars.pow ? chars.pow : chars.cha)) * picked.item.times + picked.item.plus + picked.self.creation + picked.self.growth) + 5 >= 100 ? 10 : min(100, ((picked.item.char1 == @chars.str ? chars.str : picked.item.char1 == @chars.con ? chars.con : picked.item.char1 == @chars.dex ? chars.dex : picked.item.char1 == @chars.siz ? chars.siz : picked.item.char1 == @chars.int ? chars.int : picked.item.char1 == @chars.pow ? chars.pow : chars.cha) + (!has(picked.item.char2) ? 0 : picked.item.char2 == @chars.str ? chars.str : picked.item.char2 == @chars.con ? chars.con : picked.item.char2 == @chars.dex ? chars.dex : picked.item.char2 == @chars.siz ? chars.siz : picked.item.char2 == @chars.int ? chars.int : picked.item.char2 == @chars.pow ? chars.pow : chars.cha)) * picked.item.times + picked.item.plus + picked.self.creation + picked.self.growth) <= 25 ? 1 : min(100, ((picked.item.char1 == @chars.str ? chars.str : picked.item.char1 == @chars.con ? chars.con : picked.item.char1 == @chars.dex ? chars.dex : picked.item.char1 == @chars.siz ? chars.siz : picked.item.char1 == @chars.int ? chars.int : picked.item.char1 == @chars.pow ? chars.pow : chars.cha) + (!has(picked.item.char2) ? 0 : picked.item.char2 == @chars.str ? chars.str : picked.item.char2 == @chars.con ? chars.con : picked.item.char2 == @chars.dex ? chars.dex : picked.item.char2 == @chars.siz ? chars.siz : picked.item.char2 == @chars.int ? chars.int : picked.item.char2 == @chars.pow ? chars.pow : chars.cha)) * picked.item.times + picked.item.plus + picked.self.creation + picked.self.growth) <= 50 ? 2 : min(100, ((picked.item.char1 == @chars.str ? chars.str : picked.item.char1 == @chars.con ? chars.con : picked.item.char1 == @chars.dex ? chars.dex : picked.item.char1 == @chars.siz ? chars.siz : picked.item.char1 == @chars.int ? chars.int : picked.item.char1 == @chars.pow ? chars.pow : chars.cha) + (!has(picked.item.char2) ? 0 : picked.item.char2 == @chars.str ? chars.str : picked.item.char2 == @chars.con ? chars.con : picked.item.char2 == @chars.dex ? chars.dex : picked.item.char2 == @chars.siz ? chars.siz : picked.item.char2 == @chars.int ? chars.int : picked.item.char2 == @chars.pow ? chars.pow : chars.cha)) * picked.item.times + picked.item.plus + picked.self.creation + picked.self.growth) <= 75 ? 3 : 5)
+      - id: result
+        kind: outcome
+        result: "'improved'"
+
+  # +1 to a characteristic for 5 growth points; SIZ never grows.
+  - id: improve-characteristic
+    tags: [advancement]
+    available: '!character.creating'
+    params:
+      characteristic: { type: enum, values: [str, con, dex, int, pow, cha] }
+    results: [improved, not-enough-points, at-maximum]
+    steps:
+      - id: value
+        kind: branch
+        cases:
+          - when: true
+            flags: { value: "fieldOf('chars.{characteristic}', params.characteristic)" }
+      - { id: short, kind: outcome, when: growth.points < 5, result: "'not-enough-points'" }
+      - id: top
+        kind: outcome
+        when: "flags.value >= fieldOf('charmax.{characteristic}', params.characteristic) && !(params.characteristic == 'pow' && magic.powUnlimited)"
+        result: "'at-maximum'"
+      - id: buy
+        kind: changes
+        changes:
+          - type: adjust
+            field: { formula: "fieldId('chars.{characteristic}', params.characteristic)" }
+            by: 1
+          - { type: adjust, field: growth.points, by: -5 }
+      - id: result
+        kind: outcome
+        result: "'improved'"
+        data: { value: flags.value + 1 }
+
+  # The downtime is over: every skill may grow again in the next one, and the Divine spells
+  # spent are regained.
+  - id: end-downtime
+    tags: [advancement]
+    available: '!character.creating'
+    results: [ended]
+    steps:
+      - id: reset
+        kind: changes
+        changes:
+          - type: setState
+            copies: { type: skill, where: self.raised }
+            key: raised
+            value: false
+          # The downtime's worship regains every spent Divine spell.
+          - type: setState
+            copies: { type: divine, where: self.spent > 0 }
+            key: spent
+            value: 0
+      - id: result
+        kind: outcome
+        result: "'ended'"

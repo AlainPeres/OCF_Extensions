@@ -1,0 +1,7 @@
+id: divine.purity-religion-creed
+type: divine
+fields:
+  magnitude: 2
+  variable: false
+  touch: true
+  generic: true

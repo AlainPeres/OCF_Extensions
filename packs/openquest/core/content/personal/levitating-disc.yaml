@@ -1,0 +1,7 @@
+id: personal.levitating-disc
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  concentration: true
+  area: 1

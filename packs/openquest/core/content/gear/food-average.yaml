@@ -1,0 +1,4 @@
+id: gear.food-average
+type: gear
+fields:
+  cost: 0.5

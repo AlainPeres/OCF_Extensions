@@ -1,0 +1,6 @@
+id: personal.create-potion
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  permanent: true

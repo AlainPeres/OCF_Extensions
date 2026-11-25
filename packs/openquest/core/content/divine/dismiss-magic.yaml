@@ -1,0 +1,8 @@
+id: divine.dismiss-magic
+type: divine
+fields:
+  magnitude: 1
+  variable: true
+  instant: true
+  ranged: true
+  common: true

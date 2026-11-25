@@ -1,0 +1,7 @@
+id: divine.absorption
+type: divine
+fields:
+  magnitude: 1
+  variable: true
+  touch: true
+  duration: 15

@@ -1,0 +1,6 @@
+id: skills.language-own
+type: skill
+fields:
+  char1: chars.int
+  plus: 50
+  group: knowledge

@@ -1,0 +1,5 @@
+id: gear.scythe
+type: gear
+fields:
+  enc: 2
+  cost: 30

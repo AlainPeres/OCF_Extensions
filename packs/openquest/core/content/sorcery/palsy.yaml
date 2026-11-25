@@ -1,0 +1,4 @@
+id: sorcery.palsy
+type: sorcery
+fields:
+  resist: resilience

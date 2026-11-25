@@ -1,0 +1,4 @@
+id: gear.torch
+type: gear
+fields:
+  cost: 0.4

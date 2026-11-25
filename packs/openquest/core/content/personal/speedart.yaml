@@ -1,0 +1,15 @@
+id: personal.speedart
+type: personal
+fields:
+  magnitude: 2
+  variable: false
+  touch: true
+effects:
+  - target: spell.ranged
+    op: add
+    value: 20
+    scope: applied
+  - target: spell.damage
+    op: add
+    value: 3
+    scope: applied

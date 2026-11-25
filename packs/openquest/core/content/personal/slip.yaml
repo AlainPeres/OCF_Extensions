@@ -1,0 +1,6 @@
+id: personal.slip
+type: personal
+fields:
+  magnitude: 1
+  variable: false
+  resist: dodge

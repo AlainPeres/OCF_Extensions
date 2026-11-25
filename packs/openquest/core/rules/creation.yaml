@@ -1,0 +1,405 @@
+creation:
+  - { id: guided, action: create-character }
+  - { id: random, action: create-character, params: { random: true }, random: true }
+
+constraints:
+  # The creation pools (step 4): 50 points for the resistances, 50 for combat, 50 for knowledge,
+  # 75 for practical skills; at most 30 to a skill (the skill's state says so).
+  - id: resistance-pool
+    check: '!character.creating || points.resistance.spent <= 50'
+    data: {}
+  - id: combat-pool
+    check: '!character.creating || points.combat.spent <= 50'
+    data: {}
+  - id: knowledge-pool
+    check: '!character.creating || points.knowledge.spent <= 50'
+    data: {}
+  - id: practical-pool
+    check: '!character.creating || points.practical.spent <= 75'
+    data: {}
+  # A human's characteristics at creation: 3 to 18, INT and SIZ at least 8 (another species'
+  # are within its own limits: species.yaml).
+  - id: creation-characteristics
+    check: >-
+      !character.creating || species.nonHuman || (chars.int >= 8 && chars.siz >= 8
+        && minFields(f.value, 'characteristic' in f.tags) >= 3
+        && maxFields(f.value, 'characteristic' in f.tags) <= 18)
+    data: {}
+
+fields:
+  points.resistance.spent:
+    type: integer
+    formula: "sumCopies(copy.state.creation, copy.type == 'skill' && copy.fields.group == 'resistance')"
+  points.combat.spent:
+    type: integer
+    formula: "sumCopies(copy.state.creation, copy.type == 'skill' && copy.fields.group == 'combat')"
+  points.knowledge.spent:
+    type: integer
+    formula: "sumCopies(copy.state.creation, copy.type == 'skill' && copy.fields.group == 'knowledge')"
+  points.practical.spent:
+    type: integer
+    formula: "sumCopies(copy.state.creation, copy.type == 'skill' && copy.fields.group == 'practical')"
+
+actions:
+  # The seven steps of the Characters chapter, guided or random. Step 1 (the concept) and step 7's
+  # motives and background are the player's text, written on the sheet. The random start rolls
+  # the characteristics, spreads each pool +5% at a time over the group's skills, rolls the cash,
+  # takes one of the two arms packages with weapons drawn at random, and rolls the age.
+  # Skills with a descriptor (Lore, Language (Other)…) need a text no step can ask: the guided
+  # start leaves the character being created, so the player adds them with learn-specialty
+  # (spending what is left of the pool), and Personal Magic spells with learn-personal-spell
+  # (free within the six points), then ends with finish-creation.
+  - id: create-character
+    tags: [creation]
+    available: character.creating
+    params:
+      random: { type: boolean, default: false }
+    results: [created]
+    steps:
+      # The species: human, or with the Referee's permission one of the Creatures chapter's
+      # (its natural weapons come with it). The random start makes a human.
+      - id: species
+        kind: choice
+        options: { content: { type: species } }
+        recommend: '@species.human'
+        changes:
+          - { type: addItem, entry: { item: picked.id } }
+          - type: addItem
+            forEach: picked.item.natural
+            entry: { item: x, equipped: true }
+      - id: kind
+        kind: branch
+        cases:
+          - when: true
+            flags: { human: steps.species.item.human }
+
+      # Step 2: by points or by dice.
+      - id: method
+        kind: choice
+        when: '!params.random'
+        options:
+          - { id: method-points, flags: { dice: false } }
+          - { id: method-dice, flags: { dice: true } }
+        recommend: "'method-points'"
+      - id: dice
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              dice: 'params.random || (has(flags.dice) && flags.dice)'
+
+      # Points, for a human: each characteristic from 8, 30 points to spread, lowered to 3 for
+      # more (INT and SIZ no lower than 8), 18 at most. So the others start at 3 and 55 points
+      # are spread. For another species: its average scores plus ten points, up to its maximum.
+      - id: floor
+        kind: changes
+        when: '!flags.dice'
+        changes:
+          - { type: set, field: chars.str, value: 'flags.human ? 3 : steps.species.item.avgStr' }
+          - { type: set, field: chars.con, value: 'flags.human ? 3 : steps.species.item.avgCon' }
+          - { type: set, field: chars.dex, value: 'flags.human ? 3 : steps.species.item.avgDex' }
+          - { type: set, field: chars.siz, value: 'flags.human ? 8 : steps.species.item.avgSiz' }
+          - { type: set, field: chars.int, value: 'flags.human ? 8 : steps.species.item.avgInt' }
+          - { type: set, field: chars.pow, value: 'flags.human ? 3 : steps.species.item.avgPow' }
+          - { type: set, field: chars.cha, value: 'flags.human ? 3 : steps.species.item.avgCha' }
+      - id: points
+        kind: allocate
+        sheet: proposed
+        when: '!flags.dice'
+        fields: { type: field, where: "'characteristic' in item.tags" }
+        budget: 'flags.human ? 55 : 10'
+        limit: >-
+          flags.human ? 18 - field.value
+            : (field.id == @chars.str ? charmax.str : field.id == @chars.con ? charmax.con
+              : field.id == @chars.dex ? charmax.dex : field.id == @chars.siz ? charmax.siz
+              : field.id == @chars.int ? charmax.int : field.id == @chars.pow ? charmax.pow
+              : charmax.cha) - field.value
+        recommend: >-
+          flags.human
+            ? (field.id == @chars.str ? 8 : field.id == @chars.siz ? 5 : field.id == @chars.int ? 6 : 9)
+            : (field.id == @chars.dex ? 4 : field.id == @chars.con || field.id == @chars.pow ? 3 : 0)
+
+      # Dice: the species' (a human's 3D6, SIZ and INT 2D6 + 6).
+      - id: str
+        kind: roll
+        when: flags.dice
+        tags: [characteristic]
+        parts: [{ dice: steps.species.item.str }]
+      - id: con
+        kind: roll
+        when: flags.dice
+        tags: [characteristic]
+        parts: [{ dice: steps.species.item.con }]
+      - id: dex
+        kind: roll
+        when: flags.dice
+        tags: [characteristic]
+        parts: [{ dice: steps.species.item.dex }]
+      - id: siz
+        kind: roll
+        when: flags.dice
+        tags: [characteristic]
+        parts: [{ dice: steps.species.item.siz }]
+      - id: int
+        kind: roll
+        when: flags.dice
+        tags: [characteristic]
+        parts: [{ dice: steps.species.item.int }]
+      - id: pow
+        kind: roll
+        when: flags.dice
+        tags: [characteristic]
+        parts: [{ dice: steps.species.item.pow }]
+      - id: cha
+        kind: roll
+        when: flags.dice
+        tags: [characteristic]
+        parts: [{ dice: steps.species.item.cha }]
+      - id: rolled
+        kind: changes
+        when: flags.dice
+        changes:
+          - { type: set, field: chars.str, value: steps.str.total }
+          - { type: set, field: chars.con, value: steps.con.total }
+          - { type: set, field: chars.dex, value: steps.dex.total }
+          - { type: set, field: chars.siz, value: steps.siz.total }
+          - { type: set, field: chars.int, value: steps.int.total }
+          - { type: set, field: chars.pow, value: steps.pow.total }
+          - { type: set, field: chars.cha, value: steps.cha.total }
+
+      # Step 6 comes first for one choice: starting cash, or the optional Wealth skill instead.
+      - id: resources
+        kind: choice
+        when: '!params.random'
+        options:
+          - { id: resources-cash, flags: { wealth: false } }
+          - { id: resources-wealth, flags: { wealth: true } }
+        recommend: "'resources-cash'"
+      - id: wealth
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              wealth: '!params.random && has(flags.wealth) && flags.wealth'
+      - id: wealthRule
+        kind: changes
+        changes:
+          - { type: set, field: wealth.used, value: flags.wealth }
+
+      # Step 4: the pools, +5% at a time, at most 30 to a skill. The lowest first, so an automatic
+      # run spreads them; the random start draws each +5%.
+      - id: resistances
+        kind: choice
+        sheet: proposed
+        random: params.random
+        repeat: { max: 10, min: 10 }
+        options:
+          copies:
+            type: skill
+            where: "item.group == 'resistance' && self.creation < 30 && points.resistance.spent <= 45"
+        prefer: -self.creation
+        changes:
+          - { type: setState, entry: picked, key: creation, value: picked.self.creation + 5 }
+      - id: combat
+        kind: choice
+        sheet: proposed
+        random: params.random
+        repeat: { max: 10, min: 10 }
+        options:
+          copies:
+            type: skill
+            where: "item.group == 'combat' && self.creation < 30 && points.combat.spent <= 45"
+        prefer: -self.creation
+        changes:
+          - { type: setState, entry: picked, key: creation, value: picked.self.creation + 5 }
+      - id: knowledge
+        kind: choice
+        sheet: proposed
+        random: params.random
+        repeat: { max: 10, min: 'params.random ? 10 : 0' }
+        options:
+          copies:
+            type: skill
+            where: "item.group == 'knowledge' && self.creation < 30 && points.knowledge.spent <= 45"
+        prefer: -self.creation
+        changes:
+          - { type: setState, entry: picked, key: creation, value: picked.self.creation + 5 }
+      - id: practical
+        kind: choice
+        sheet: proposed
+        random: params.random
+        repeat: { max: 15, min: 15 }
+        options:
+          copies:
+            type: skill
+            where: >-
+              item.group == 'practical' && self.creation < 30 && points.practical.spent <= 70
+                && (item.id != @skills.wealth || flags.wealth)
+        prefer: -self.creation
+        changes:
+          - { type: setState, entry: picked, key: creation, value: picked.self.creation + 5 }
+
+      # Step 5: six points of magnitude of Personal Magic, each spell at its magnitude (a spell
+      # with a descriptor goes through learn-personal-spell, which asks it), then +1 at a time to
+      # variable ones (6 at most). The guided start leaves the choice to the player; the random
+      # start draws spells, then raises them, while points remain.
+      - id: spells
+        kind: choice
+        sheet: proposed
+        random: params.random
+        repeat: { max: 6 }
+        options:
+          content:
+            type: personal
+            where: >-
+              !item.generic && countCopies(copy.item == item.id) == 0
+                && magic.personal.known + item.magnitude <= min(6, magic.personal.limit)
+        recommend: "params.random ? options[0] : '#done'"
+        changes:
+          - { type: addItem, entry: { item: picked.id } }
+      - id: spellMagnitude
+        kind: choice
+        sheet: proposed
+        random: params.random
+        repeat: { max: 6 }
+        options:
+          copies:
+            type: personal
+            where: item.variable && self.magnitude < 6 && magic.personal.known < min(6, magic.personal.limit)
+        recommend: "params.random ? options[0] : '#done'"
+        changes:
+          - { type: setState, entry: picked, key: magnitude, value: picked.self.magnitude + 1 }
+
+      # Step 6: 4D6 x 10 silver pieces, unless the Wealth skill stands for the resources.
+      - id: cash
+        kind: roll
+        when: '!flags.wealth'
+        tags: [cash]
+        parts: [{ dice: 4d6 }]
+      - id: money
+        kind: changes
+        when: '!flags.wealth'
+        changes:
+          - { type: set, field: money.silver, value: 10 * steps.cash.total }
+
+      # One of the two arms packages: leather armour, a ranged weapon and a dagger, with a
+      # two-handed close weapon, or a one-handed one and a small or medium shield.
+      - id: package
+        kind: choice
+        random: params.random
+        options:
+          - { id: package-two-handed, flags: { shield: false } }
+          - { id: package-shield, flags: { shield: true } }
+        recommend: "'package-shield'"
+      - id: ranged
+        kind: choice
+        random: params.random
+        options:
+          content: { type: weapon, where: "item.kind != 'close' && item.id != @weapons.rock" }
+        recommend: options[0]
+        changes:
+          - { type: addItem, entry: { item: picked.id, equipped: true } }
+      - id: close
+        kind: choice
+        random: params.random
+        options:
+          content:
+            type: weapon
+            where: >-
+              item.kind == 'close' && !has(item.shield) && !item.natural && item.id != @weapons.dagger
+                && item.id != @weapons.knife && item.id != @weapons.lance
+                && (flags.shield ? item.hands != 'two' : item.hands != 'one')
+        recommend: options[0]
+        changes:
+          - { type: addItem, entry: { item: picked.id, equipped: true } }
+      - id: shield
+        kind: choice
+        when: flags.shield
+        random: params.random
+        options:
+          content: { type: weapon, where: "has(item.shield) && item.shield != 'large'" }
+        recommend: options[0]
+        changes:
+          - { type: addItem, entry: { item: picked.id, equipped: true } }
+      # And for everyone: a backpack, rope, two weeks of travelling provisions, flint and tinder,
+      # and a waterskin.
+      - id: kit
+        kind: changes
+        changes:
+          - { type: addItem, entry: { item: '@armour.leather', equipped: true } }
+          - { type: addItem, entry: { item: '@weapons.dagger', equipped: true } }
+          - { type: addItem, entry: { item: '@gear.backpack' } }
+          - { type: addItem, entry: { item: '@gear.rope', quantity: 1 } }
+          - { type: addItem, entry: { item: '@gear.food-average', quantity: 14 } }
+          - { type: addItem, entry: { item: '@gear.flint-and-tinder' } }
+          - { type: addItem, entry: { item: '@gear.waterskin' } }
+
+      # Step 7: the age (2D6 + 16); fortune points start at 2.
+      - { id: age, kind: roll, tags: [age], parts: [{ dice: 2d6 + 16 }] }
+      - id: finishing
+        kind: changes
+        changes:
+          - { type: set, field: identity.age, value: steps.age.total }
+          - { type: set, field: fortune.points, value: 2 }
+      - id: finish
+        kind: changes
+        sheet: proposed
+        when: params.random
+        changes:
+          - { type: finishCreation }
+      - id: result
+        kind: outcome
+        result: "'created'"
+
+  # A skill with a descriptor (Lore (Alchemy), Culture (Other), Language (Other), Religion
+  # (Other)), at creation or later: each descriptor is its own skill, at its base. While the
+  # character is being created, what is left of the knowledge pool may go to it, +5% at a time
+  # (30 at most).
+  - id: learn-specialty
+    tags: [creation]
+    params:
+      specialty: { type: string }
+    results: [learned]
+    steps:
+      - id: skill
+        kind: choice
+        options: { content: { type: skill, where: item.generic } }
+        recommend: options[0]
+      - id: add
+        kind: changes
+        changes:
+          - type: addItem
+            entry:
+              item: steps.skill.picked
+              state: { specialty: params.specialty }
+      - id: raise
+        kind: choice
+        sheet: proposed
+        when: character.creating
+        repeat: { max: 6 }
+        options:
+          copies:
+            type: skill
+            where: >-
+              item.id == steps.skill.picked && item.group == 'knowledge' && self.specialty == params.specialty
+                && self.creation < 30 && points.knowledge.spent <= 45
+        recommend: "'#done'"
+        changes:
+          - { type: setState, entry: picked, key: creation, value: picked.self.creation + 5 }
+      - id: result
+        kind: outcome
+        result: "'learned'"
+
+  # Ends the creation the guided start leaves open, once the rules are met.
+  - id: finish-creation
+    tags: [creation]
+    available: character.creating
+    results: [finished]
+    steps:
+      - id: finish
+        kind: changes
+        changes:
+          - { type: finishCreation }
+      - id: result
+        kind: outcome
+        result: "'finished'"

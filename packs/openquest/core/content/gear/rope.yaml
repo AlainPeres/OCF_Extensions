@@ -1,0 +1,5 @@
+id: gear.rope
+type: gear
+fields:
+  enc: 2
+  cost: 10

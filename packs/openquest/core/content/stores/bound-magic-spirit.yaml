@@ -1,0 +1,4 @@
+id: stores.bound-magic-spirit
+type: store
+fields:
+  spirit: true

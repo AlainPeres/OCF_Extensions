@@ -1,0 +1,5 @@
+id: gear.ladder-3m
+type: gear
+fields:
+  enc: 4
+  cost: 2

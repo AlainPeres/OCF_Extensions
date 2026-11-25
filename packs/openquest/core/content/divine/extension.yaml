@@ -1,0 +1,6 @@
+id: divine.extension
+type: divine
+fields:
+  magnitude: 1
+  variable: true
+  common: true

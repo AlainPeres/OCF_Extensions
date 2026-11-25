@@ -1,0 +1,7 @@
+id: personal.read-emotion
+type: personal
+fields:
+  magnitude: 1
+  variable: false
+  resist: persistence
+  instant: true

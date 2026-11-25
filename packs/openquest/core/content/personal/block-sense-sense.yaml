@@ -1,0 +1,7 @@
+id: personal.block-sense-sense
+type: personal
+fields:
+  magnitude: 3
+  variable: false
+  resist: persistence
+  generic: true

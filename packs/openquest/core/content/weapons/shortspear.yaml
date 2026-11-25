@@ -1,0 +1,10 @@
+id: weapons.shortspear
+type: weapon
+fields:
+  kind: close
+  damage: 1d6
+  hands: one
+  enc: 2
+  cost: 20
+  thrownDamage: 1d6
+  rangeStr: 2

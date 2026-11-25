@@ -1,0 +1,7 @@
+id: divine.call-elemental
+type: divine
+fields:
+  magnitude: 1
+  variable: true
+  permanent: true
+  generic: true

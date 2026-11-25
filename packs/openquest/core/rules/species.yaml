@@ -1,0 +1,99 @@
+# Non-human adventurers (Characters chapter, optional, with the Referee's permission), from the
+# Creatures chapter. A species is a copy on the sheet: its characteristic dice (the random
+# method) and average scores (the points method: the averages plus ten points), its movement,
+# natural armour and natural weapons. A characteristic never goes above the highest its dice can
+# roll plus three (21 for a human). Skills start at their bases, as for anyone.
+fields:
+  charmax.str: { type: integer, formula: 21 }
+  charmax.con: { type: integer, formula: 21 }
+  charmax.dex: { type: integer, formula: 21 }
+  charmax.siz: { type: integer, formula: 21 }
+  charmax.int: { type: integer, formula: 21 }
+  charmax.pow: { type: integer, formula: 21 }
+  charmax.cha: { type: integer, formula: 21 }
+  # Flying and swimming movement, in metres a round (0: none).
+  move.fly: { type: integer, formula: 0 }
+  move.swim: { type: integer, formula: 0 }
+  # A non-human species is on the sheet.
+  species.nonHuman:
+    { type: boolean, formula: "countCopies(copy.type == 'species' && !copy.fields.human) > 0" }
+
+contentTypes:
+  species:
+    fields:
+      str: { type: dice, required: true }
+      con: { type: dice, required: true }
+      dex: { type: dice, required: true }
+      siz: { type: dice, required: true }
+      int: { type: dice, required: true }
+      pow: { type: dice, required: true }
+      cha: { type: dice, required: true }
+      # The average scores in brackets (none for humans, who use the 8 and 30 points).
+      avgStr: { type: integer, default: 8 }
+      avgCon: { type: integer, default: 8 }
+      avgDex: { type: integer, default: 8 }
+      avgSiz: { type: integer, default: 8 }
+      avgInt: { type: integer, default: 8 }
+      avgPow: { type: integer, default: 8 }
+      avgCha: { type: integer, default: 8 }
+      human: { type: boolean, default: false }
+      move: { type: integer, default: 15, min: 0 }
+      fly: { type: integer, default: 0, min: 0 }
+      swim: { type: integer, default: 0, min: 0 }
+      # Natural armour: it doesn't add to worn armour (armours don't layer).
+      naturalAp: { type: integer, default: 0, min: 0 }
+      # Natural weapons, added at creation.
+      natural: { type: list, of: weapon, default: [] }
+      # Regeneration a combat round (a Troll's 1D6; not damage by fire).
+      regenerate: { type: dice }
+    effects:
+      - { target: charmax.str, op: set, value: 'maxOf(item.str) + 3' }
+      - { target: charmax.con, op: set, value: 'maxOf(item.con) + 3' }
+      - { target: charmax.dex, op: set, value: 'maxOf(item.dex) + 3' }
+      - { target: charmax.siz, op: set, value: 'maxOf(item.siz) + 3' }
+      - { target: charmax.int, op: set, value: 'maxOf(item.int) + 3' }
+      - { target: charmax.pow, op: set, value: 'maxOf(item.pow) + 3' }
+      - { target: charmax.cha, op: set, value: 'maxOf(item.cha) + 3' }
+      - { target: move.base, op: set, value: item.move }
+      - { target: move.fly, op: set, value: item.fly }
+      - { target: move.swim, op: set, value: item.swim }
+      - { target: armour.worn, op: atLeast, value: item.naturalAp }
+    actions:
+      - use: regenerate
+        available: has(item.regenerate) && hp.wounds > 0
+        params:
+          dice: item.regenerate
+
+constraints:
+  # Characteristics within the species' limits: never above the highest roll plus three.
+  - id: characteristic-maximum
+    check: >-
+      chars.str <= charmax.str && chars.con <= charmax.con && chars.dex <= charmax.dex
+        && chars.siz <= charmax.siz && chars.int <= charmax.int
+        && (chars.pow <= charmax.pow || magic.powUnlimited) && chars.cha <= charmax.cha
+    data: {}
+  # One species.
+  - id: one-species
+    check: "countCopies(copy.type == 'species') <= 1"
+    data: {}
+
+actions:
+  # A Troll's regeneration: hit points back each combat round (not damage done by fire).
+  - id: regenerate
+    tags: [health]
+    params:
+      dice: { type: dice }
+    results: [regenerated]
+    steps:
+      - id: heal
+        kind: roll
+        tags: [healing]
+        parts: [{ dice: params.dice }]
+      - id: apply
+        kind: changes
+        changes:
+          - { type: adjust, field: hp.wounds, by: '-min(hp.wounds, steps.heal.total)' }
+      - id: result
+        kind: outcome
+        result: "'regenerated'"
+        data: { healed: 'min(hp.wounds, steps.heal.total)' }

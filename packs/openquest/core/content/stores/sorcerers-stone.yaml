@@ -1,0 +1,4 @@
+id: stores.sorcerers-stone
+type: store
+fields:
+  ofPow: true

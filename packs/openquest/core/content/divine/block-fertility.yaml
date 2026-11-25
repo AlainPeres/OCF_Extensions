@@ -1,0 +1,6 @@
+id: divine.block-fertility
+type: divine
+fields:
+  magnitude: 3
+  variable: false
+  permanent: true

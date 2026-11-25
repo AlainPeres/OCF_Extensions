@@ -1,0 +1,6 @@
+id: personal.harden
+type: personal
+fields:
+  magnitude: 1
+  variable: false
+  touch: true

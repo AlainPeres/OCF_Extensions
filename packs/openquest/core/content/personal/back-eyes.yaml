@@ -1,0 +1,5 @@
+id: personal.back-eyes
+type: personal
+fields:
+  magnitude: 2
+  variable: false

@@ -1,0 +1,13 @@
+id: divine.true-weapon
+type: divine
+fields:
+  magnitude: 3
+  variable: false
+  ranged: true
+  duration: 15
+  generic: true
+effects:
+  - target: spell.trueWeapon
+    op: add
+    value: 1
+    scope: applied

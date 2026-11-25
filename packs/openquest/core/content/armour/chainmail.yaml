@@ -1,0 +1,6 @@
+id: armour.chainmail
+type: armour
+fields:
+  ap: 5
+  enc: 8
+  cost: 3000

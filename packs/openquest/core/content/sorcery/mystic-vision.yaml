@@ -1,0 +1,4 @@
+id: sorcery.mystic-vision
+type: sorcery
+fields:
+  concentration: true

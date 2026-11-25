@@ -1,0 +1,9 @@
+id: weapons.short-bow
+type: weapon
+fields:
+  kind: missile
+  damage: 1d8
+  hands: two
+  enc: 1
+  cost: 75
+  range: 75

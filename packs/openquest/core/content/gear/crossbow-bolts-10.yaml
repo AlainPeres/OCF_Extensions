@@ -1,0 +1,4 @@
+id: gear.crossbow-bolts-10
+type: gear
+fields:
+  cost: 2

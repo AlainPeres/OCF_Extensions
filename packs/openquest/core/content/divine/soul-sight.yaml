@@ -1,0 +1,8 @@
+id: divine.soul-sight
+type: divine
+fields:
+  magnitude: 1
+  variable: false
+  touch: true
+  duration: 15
+  common: true

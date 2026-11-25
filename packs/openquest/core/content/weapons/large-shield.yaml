@@ -1,0 +1,9 @@
+id: weapons.large-shield
+type: weapon
+fields:
+  kind: close
+  damage: 1d8
+  hands: one
+  enc: 3
+  cost: 300
+  shield: large

@@ -1,0 +1,11 @@
+id: personal.strength
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  touch: true
+effects:
+  - target: spell.damage
+    op: add
+    value: self.magnitude
+    scope: applied

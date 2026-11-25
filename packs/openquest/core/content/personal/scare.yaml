@@ -1,0 +1,6 @@
+id: personal.scare
+type: personal
+fields:
+  magnitude: 2
+  variable: false
+  resist: persistence

@@ -1,0 +1,8 @@
+id: divine.fear
+type: divine
+fields:
+  magnitude: 1
+  variable: false
+  resist: persistence
+  instant: true
+  ranged: true

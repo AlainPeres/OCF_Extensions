@@ -1,0 +1,5 @@
+id: gear.mining-pick
+type: gear
+fields:
+  enc: 1
+  cost: 35

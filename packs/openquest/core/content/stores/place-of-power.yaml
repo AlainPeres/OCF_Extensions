@@ -1,0 +1,4 @@
+id: stores.place-of-power
+type: store
+fields:
+  spirit: true

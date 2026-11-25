@@ -1,0 +1,8 @@
+id: personal.sap-energy
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  resist: resilience
+  touch: true
+  instant: true

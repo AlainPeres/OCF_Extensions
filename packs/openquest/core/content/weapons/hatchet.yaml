@@ -1,0 +1,10 @@
+id: weapons.hatchet
+type: weapon
+fields:
+  kind: close
+  damage: 1d6
+  hands: one
+  enc: 1
+  cost: 20
+  thrownDamage: 1d8
+  rangeStr: 1

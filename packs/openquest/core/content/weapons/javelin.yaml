@@ -1,0 +1,9 @@
+id: weapons.javelin
+type: weapon
+fields:
+  kind: thrown
+  damage: 1d6
+  hands: one
+  enc: 1
+  cost: 20
+  rangeStr: 2

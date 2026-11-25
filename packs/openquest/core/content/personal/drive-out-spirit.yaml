@@ -1,0 +1,7 @@
+id: personal.drive-out-spirit
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  resist: persistence
+  instant: true

@@ -1,0 +1,7 @@
+id: personal.leap
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  resist: dodge
+  touch: true

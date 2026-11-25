@@ -1,0 +1,7 @@
+id: divine.create-idol
+type: divine
+fields:
+  magnitude: 4
+  variable: false
+  permanent: true
+  common: true

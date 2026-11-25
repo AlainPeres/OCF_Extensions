@@ -1,0 +1,11 @@
+id: personal.coordination
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  touch: true
+effects:
+  - target: spell.dodge
+    op: add
+    value: 10 * self.magnitude
+    scope: applied

@@ -1,0 +1,11 @@
+id: divine.shield
+type: divine
+fields:
+  magnitude: 1
+  variable: true
+  duration: 15
+effects:
+  - target: spell.armour
+    op: add
+    value: self.magnitude
+    scope: applied

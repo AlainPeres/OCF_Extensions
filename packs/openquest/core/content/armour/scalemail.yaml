@@ -1,0 +1,6 @@
+id: armour.scalemail
+type: armour
+fields:
+  ap: 4
+  enc: 7
+  cost: 1500

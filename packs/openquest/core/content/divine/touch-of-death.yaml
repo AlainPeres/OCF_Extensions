@@ -1,0 +1,8 @@
+id: divine.touch-of-death
+type: divine
+fields:
+  magnitude: 4
+  variable: false
+  resist: persistence
+  touch: true
+  instant: true

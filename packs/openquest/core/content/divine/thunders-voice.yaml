@@ -1,0 +1,5 @@
+id: divine.thunders-voice
+type: divine
+fields:
+  magnitude: 2
+  variable: false

@@ -1,0 +1,7 @@
+id: divine.sureshot
+type: divine
+fields:
+  magnitude: 1
+  variable: false
+  ranged: true
+  duration: 15

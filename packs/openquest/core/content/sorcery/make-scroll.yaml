@@ -1,0 +1,4 @@
+id: sorcery.make-scroll
+type: sorcery
+fields:
+  permanent: true

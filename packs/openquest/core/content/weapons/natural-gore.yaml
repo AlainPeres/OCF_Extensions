@@ -1,0 +1,7 @@
+id: weapons.natural-gore
+type: weapon
+fields:
+  kind: close
+  damage: 1d6
+  hands: one
+  natural: true

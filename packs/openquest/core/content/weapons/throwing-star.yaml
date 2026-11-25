@@ -1,0 +1,8 @@
+id: weapons.throwing-star
+type: weapon
+fields:
+  kind: thrown
+  damage: 1d4
+  hands: one
+  cost: 15
+  rangeStr: 1

@@ -1,0 +1,1040 @@
+# Magic (Personal Magic, Sorcery and Divine Magic chapters; spirit combat from the Combat
+# chapter). Magic points are in stats.yaml, their recovery in health.yaml.
+fields:
+  # The casting skills and Religion (Own), as fields for the spell actions (base + points +
+  # growth, at most 100%).
+  magic.personalCasting:
+    type: integer
+    formula: >-
+      min(100, chars.pow * 3
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.personal-magic-casting))
+  magic.sorceryCasting:
+    type: integer
+    formula: >-
+      min(100, chars.int
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.sorcery-casting))
+  magic.shamanism:
+    type: integer
+    formula: >-
+      countCopies(copy.item == @skills.shamanism) == 0 ? 0 : min(100, chars.int + chars.pow
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.shamanism))
+  religion.skill:
+    type: integer
+    formula: >-
+      min(100, chars.int + 10
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.religion-own))
+
+  # The magic paths: a specialist of Personal Magic (Shaman or Wise), a rank of Sorcery, a
+  # religion (its name is the player's text) and a rank in it.
+  magic.specialist: { type: enum, values: [none, shaman, wise], input: true, default: none }
+  sorcery.rank: { type: enum, values: [none, apprentice, adept, magus], input: true, default: none }
+  religion.name: { type: string, input: true, default: '' }
+  religion.rank:
+    { type: enum, values: [none, lay, initiate, priest, holy-warrior], input: true, default: none }
+
+  # Spells known: Personal Magic by magnitude (at most POW, twice it for a Wise), Sorcery by
+  # count, Divine Magic by magnitude.
+  magic.personal.known:
+    type: integer
+    formula: "sumCopies(copy.state.magnitude, copy.type == 'personal')"
+  magic.personal.limit:
+    type: integer
+    formula: "magic.specialist == 'wise' ? 2 * chars.pow : chars.pow"
+  magic.sorcery.known: { type: integer, formula: "countCopies(copy.type == 'sorcery')" }
+  magic.divine.known:
+    type: integer
+    formula: "sumCopies(copy.state.magnitude, copy.type == 'divine')"
+  # Spells a sorcerer's wand focuses (2), or a staff (one per ten points of Sorcery Casting).
+  magic.focus.limit:
+    type: integer
+    formula: >-
+      sorcery.rank == 'apprentice' ? 2
+        : sorcery.rank == 'none' ? 0 : max(2, floor(magic.sorceryCasting / 10))
+
+  # What the spells on the character add (applied entries of the spells: cast on oneself, or
+  # received, as the recipient records it). Each spell's own effects say which.
+  spell.armour: { type: integer, formula: 0 }
+  spell.close: { type: integer, formula: 0 }
+  spell.unarmed: { type: integer, formula: 0 }
+  spell.ranged: { type: integer, formula: 0 }
+  spell.dodge: { type: integer, formula: 0 }
+  spell.persistence: { type: integer, formula: 0 }
+  spell.damage: { type: integer, formula: 0 }
+  spell.fireblade: { type: integer, formula: 0 }
+  spell.trueWeapon: { type: integer, formula: 0 }
+  spell.pierce: { type: integer, formula: 0 }
+  spell.move: { type: integer, formula: 0 }
+  spell.hp: { type: integer, formula: 0 }
+  spell.damageResistance: { type: integer, formula: 0 }
+  spell.spiritShield: { type: integer, formula: 0 }
+  state.demoralised: { type: integer, formula: 0 }
+  state.befuddled: { type: integer, formula: 0 }
+
+  # Magic points drawn from a store or a bound spirit, ready to cast with (spent first), and
+  # those a Wise holds in a seclusion or a sanctuary (they don't come back while it lasts).
+  mp.borrowed: { type: integer, input: true, default: 0, min: 0 }
+  mp.locked: { type: integer, input: true, default: 0, min: 0 }
+  # A Wise has made a sanctuary (a requirement of Becoming One with Reality).
+  magic.sanctuary: { type: boolean, input: true, default: false }
+  # The pinnacle of a path: a Shaman become a Great Spirit, a Wise One with Reality, a Magus
+  # transcended, an Ascended Immortal or Deity.
+  magic.apotheosis:
+    type: enum
+    values: [none, great-spirit, one-with-reality, transcended, ascended-immortal, ascended-deity]
+    input: true
+    default: none
+  magic.transcended: { type: boolean, formula: "magic.apotheosis == 'transcended'" }
+  # POW grows past the maximum (Great Spirit, One with Reality, the Ascended).
+  magic.powUnlimited:
+    type: boolean
+    formula: "magic.apotheosis != 'none' && magic.apotheosis != 'transcended'"
+  magic.focused:
+    type: integer
+    formula: "countCopies(copy.type == 'sorcery' && copy.state.focused)"
+
+contentTypes:
+  # A Personal Magic spell: its base magnitude, variable (castable higher, up to 6 unless a Wise)
+  # or not, and its traits. The copy keeps the magnitude known. Range POW x 3 m, ten minutes,
+  # unless a trait says otherwise.
+  personal:
+    fields: &spellFields
+      magnitude: { type: integer, default: 1, min: 1 }
+      variable: { type: boolean, default: true }
+      resist: { type: enum, values: [dodge, persistence, resilience, persistence-or-resilience] }
+      touch: { type: boolean, default: false }
+      instant: { type: boolean, default: false }
+      permanent: { type: boolean, default: false }
+      concentration: { type: boolean, default: false }
+      ranged: { type: boolean, default: false }
+      # Area in metres (areaSpecial: as the spell says).
+      area: { type: integer, min: 0 }
+      areaSpecial: { type: boolean, default: false }
+      # Duration in minutes, when the spell states one.
+      duration: { type: integer, min: 0 }
+      # A Common Divine Magic spell: every religion teaches it.
+      common: { type: boolean, default: false }
+      # A spell with a descriptor (Detect (Type), Enhance (Skill)…): taken once per descriptor.
+      generic: { type: boolean, default: false }
+    state:
+      magnitude: { type: integer, default: item.magnitude, min: 1 }
+      specialty: { type: string, default: '' }
+    actions:
+      - use: cast-personal
+        params:
+          known: self.magnitude
+          variable: item.variable
+      - use: raise-personal-spell
+        available: item.variable
+      - { use: end-spell, scope: applied, params: { entry: self.id } }
+
+  # A Sorcery spell: one magic point at magnitude 1, 5 minutes and 10 m, each manipulated up to
+  # what the Sorcery Casting skill allows. A wand or staff may focus it (+20% to cast with it).
+  sorcery:
+    fields: *spellFields
+    state:
+      focused: { type: boolean, default: false }
+      specialty: { type: string, default: '' }
+      # The magnitude of an applied entry (a spell on the character); a copy doesn't use it.
+      magnitude: { type: integer, default: 1, min: 1 }
+    actions:
+      - use: cast-sorcery
+        params:
+          focused: self.focused
+      - { use: end-spell, scope: applied, params: { entry: self.id } }
+
+  # A Divine Magic spell: always cast, no magic points, then spent until the character regains
+  # it. A variable (progressive) one known at a higher magnitude may be split into several.
+  divine:
+    fields: *spellFields
+    state:
+      magnitude: { type: integer, default: item.magnitude, min: 1 }
+      spent: { type: integer, default: 0, min: 0 }
+      specialty: { type: string, default: '' }
+    actions:
+      - use: cast-divine
+        available: self.spent < self.magnitude
+        params:
+          known: self.magnitude
+          spent: self.spent
+          variable: item.variable
+      - use: regain-divine
+        available: self.spent > 0
+      - use: raise-divine-spell
+        available: item.variable
+      - { use: end-spell, scope: applied, params: { entry: self.id } }
+
+constraints:
+  - id: personal-magic-limit
+    check: magic.personal.known <= magic.personal.limit
+    data: {}
+  # Six points of Personal Magic at creation.
+  - id: creation-personal-magic
+    check: '!character.creating || magic.personal.known <= 6'
+    data: {}
+  # A fixed spell is known at its magnitude; a variable one from it, to 6 (a Wise has no limit).
+  - id: personal-spell-magnitude
+    copies: { type: personal }
+    check: >-
+      item.variable ? self.magnitude >= item.magnitude
+        && (self.magnitude <= 6 || magic.specialist == 'wise') : self.magnitude == item.magnitude
+    data: {}
+  - id: divine-spell-magnitude
+    copies: { type: divine }
+    check: >-
+      (item.variable ? self.magnitude >= item.magnitude : self.magnitude == item.magnitude)
+        && (religion.rank == 'priest' || self.magnitude <= 2 || !item.variable)
+        && self.spent <= self.magnitude
+    data: {}
+  - id: personal-spell-needs-specialty
+    copies: { type: personal }
+    check: "!item.generic || self.specialty != ''"
+    data: {}
+  - id: sorcery-spell-needs-specialty
+    copies: { type: sorcery }
+    check: "!item.generic || self.specialty != ''"
+    data: {}
+  - id: divine-spell-needs-specialty
+    copies: { type: divine }
+    check: "!item.generic || self.specialty != ''"
+    data: {}
+  # Divine Magic is for Initiates, Priests and Holy Warriors.
+  - id: divine-needs-rank
+    check: "magic.divine.known == 0 || religion.rank in ['initiate', 'priest', 'holy-warrior']"
+    data: {}
+  # Sorcery is learned as an Apprentice or higher, and gives up Personal and Divine Magic and the
+  # Shaman's and Wise's ways; a Wise learns no Divine Magic.
+  - id: sorcery-needs-rank
+    check: "magic.sorcery.known == 0 || sorcery.rank != 'none'"
+    data: {}
+  - id: sorcery-alone
+    check: >-
+      sorcery.rank == 'none' || (magic.personal.known == 0 && magic.divine.known == 0
+        && magic.specialist == 'none')
+    data: {}
+  - id: wise-no-divine
+    check: "magic.specialist != 'wise' || magic.divine.known == 0"
+    data: {}
+  - id: focus-limit
+    check: magic.focused <= magic.focus.limit
+    data: {}
+
+actions:
+  # Casting Personal Magic. Calmly, with time, it just works. Under duress, a Personal Magic
+  # Casting test: success costs the magnitude in magic points, a critical one point, a failure
+  # one point (no effect), a fumble the magnitude (no effect). A variable spell may be cast lower
+  # than known.
+  - id: cast-personal
+    tags: [magic]
+    params:
+      known: { type: integer, min: 1 }
+      variable: { type: boolean, default: true }
+      magnitude: { type: integer, min: 1, optional: true }
+      duress: { type: boolean, default: true }
+      # Cast on oneself: the spell's effects go on the sheet (a spell cast on another is theirs to
+      # record, with spell-received).
+      onSelf: { type: boolean, default: false }
+      magic: { type: integer, default: 0 }
+      modifier: { type: integer, default: 0 }
+    results: [cast, failed, fumbled, not-enough-magic]
+    steps:
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              magnitude: 'params.variable && has(params.magnitude) ? min(params.magnitude, params.known) : params.known'
+      - id: short
+        kind: outcome
+        when: mp.current + mp.borrowed < flags.magnitude
+        result: "'not-enough-magic'"
+      - id: calm
+        kind: changes
+        when: '!params.duress'
+        changes:
+          - { type: adjust, field: mp.borrowed, by: '-min(mp.borrowed, flags.magnitude)' }
+          - type: adjust
+            field: mp.spent
+            by: 'flags.magnitude - min(mp.borrowed, flags.magnitude)'
+          - type: applyEffect
+            when: params.onSelf && !item.instant
+            source: item.id
+            state: { magnitude: flags.magnitude, specialty: self.specialty }
+      - id: calmResult
+        kind: outcome
+        when: '!params.duress'
+        result: "'cast'"
+        data: { magnitude: flags.magnitude, cost: flags.magnitude }
+      - id: test
+        kind: action
+        use: skill-test
+        params:
+          score: magic.personalCasting
+          master: magic.personalCasting >= 100
+          magic: params.magic
+          modifier: params.modifier
+      - id: cost
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              cost: "steps.test.result == 'success' || steps.test.result == 'fumble' ? flags.magnitude : 1"
+              cast: "steps.test.result == 'success' || steps.test.result == 'critical'"
+      - id: pay
+        kind: changes
+        changes:
+          - { type: adjust, field: mp.borrowed, by: '-min(mp.borrowed, flags.cost)' }
+          - { type: adjust, field: mp.spent, by: 'flags.cost - min(mp.borrowed, flags.cost)' }
+          - type: applyEffect
+            when: params.onSelf && !item.instant && flags.cast
+            source: item.id
+            state: { magnitude: flags.magnitude, specialty: self.specialty }
+      - id: result
+        kind: outcome
+        result: >-
+          flags.cast ? 'cast' : steps.test.result == 'fumble' ? 'fumbled' : 'failed'
+        data:
+          magnitude: flags.magnitude
+          cost: flags.cost
+          roll: 'has(steps.test.data.roll) ? steps.test.data.roll : 0'
+
+  # Casting Sorcery: magnitude, duration and range each from its default (1, 5 minutes, 10 m) to
+  # what the skill allows (a step per ten points of Sorcery Casting, the 91-99% step, and the
+  # Master's), each step costing a magic point more (ten at most) over the base one. Calmly the
+  # spell just works; under duress a Sorcery Casting test (+20% with its focus): a critical costs
+  # only the base point (and resisting it is at -25%), a failure one point, a fumble the full
+  # cost. Magic points drawn from the sorcerer's stone or bound spirits (mp.borrowed) go first.
+  - id: cast-sorcery
+    tags: [magic]
+    params:
+      focused: { type: boolean, default: false }
+      magnitude: { type: integer, default: 1, min: 1, max: 20 }
+      duration:
+        type: enum
+        values:
+          [
+            5-minutes,
+            15-minutes,
+            1-hour,
+            6-hours,
+            12-hours,
+            1-day,
+            1-week,
+            1-month,
+            1-season,
+            1-year,
+            5-years,
+            permanent,
+          ]
+        default: 5-minutes
+      range:
+        type: enum
+        values:
+          [
+            10-m,
+            20-m,
+            50-m,
+            250-m,
+            500-m,
+            1-km,
+            10-km,
+            100-km,
+            1000-km,
+            5000-km,
+            10000-km,
+            planetary,
+          ]
+        default: 10-m
+      useFocus: { type: boolean, default: true }
+      duress: { type: boolean, default: true }
+      onSelf: { type: boolean, default: false }
+      magic: { type: integer, default: 0 }
+      modifier: { type: integer, default: 0 }
+    results: [cast, failed, fumbled, beyond-skill, not-enough-magic]
+    steps:
+      - id: levels
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              allowed: 'magic.sorceryCasting >= 100 ? 11 : min(10, ceil(magic.sorceryCasting / 10))'
+              m: indexOf([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20], params.magnitude)
+              d: indexOf(['5-minutes', '15-minutes', '1-hour', '6-hours', '12-hours', '1-day', '1-week', '1-month', '1-season', '1-year', '5-years', 'permanent'], params.duration)
+              r: indexOf(['10-m', '20-m', '50-m', '250-m', '500-m', '1-km', '10-km', '100-km', '1000-km', '5000-km', '10000-km', 'planetary'], params.range)
+      - id: price
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              cost: 1 + min(flags.m, 10) + min(flags.d, 10) + min(flags.r, 10)
+      - id: beyond
+        kind: outcome
+        when: flags.m < 0 || flags.m > flags.allowed || flags.d > flags.allowed || flags.r > flags.allowed
+        result: "'beyond-skill'"
+        data: { allowed: flags.allowed }
+      - id: short
+        kind: outcome
+        when: mp.current + mp.borrowed < flags.cost
+        result: "'not-enough-magic'"
+        data: { cost: flags.cost }
+      - id: calm
+        kind: changes
+        when: '!params.duress'
+        changes:
+          - { type: adjust, field: mp.borrowed, by: '-min(mp.borrowed, flags.cost)' }
+          - { type: adjust, field: mp.spent, by: 'flags.cost - min(mp.borrowed, flags.cost)' }
+          - type: applyEffect
+            when: params.onSelf && !item.instant
+            source: item.id
+            state: { magnitude: params.magnitude, specialty: self.specialty }
+      - id: calmResult
+        kind: outcome
+        when: '!params.duress'
+        result: "'cast'"
+        data: { magnitude: params.magnitude, cost: flags.cost }
+      - id: test
+        kind: action
+        use: skill-test
+        params:
+          score: 'magic.sorceryCasting + (params.focused && params.useFocus ? 20 : 0)'
+          master: magic.sorceryCasting >= 100
+          magic: params.magic
+          modifier: params.modifier
+      - id: paid
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              paid: >-
+                steps.test.result == 'success' || steps.test.result == 'fumble' ? flags.cost : 1
+              cast: "steps.test.result == 'success' || steps.test.result == 'critical'"
+      - id: pay
+        kind: changes
+        changes:
+          - { type: adjust, field: mp.borrowed, by: '-min(mp.borrowed, flags.paid)' }
+          - { type: adjust, field: mp.spent, by: 'flags.paid - min(mp.borrowed, flags.paid)' }
+          - type: applyEffect
+            when: params.onSelf && !item.instant && flags.cast
+            source: item.id
+            state: { magnitude: params.magnitude, specialty: self.specialty }
+      - id: result
+        kind: outcome
+        result: >-
+          flags.cast ? 'cast' : steps.test.result == 'fumble' ? 'fumbled' : 'failed'
+        data:
+          magnitude: params.magnitude
+          cost: flags.paid
+          critical: "steps.test.result == 'critical'"
+          roll: 'has(steps.test.data.roll) ? steps.test.data.roll : 0'
+
+  # Casting Divine Magic: always successful, no magic points; the magnitude cast is spent until
+  # regained. A variable spell may be split: cast at less than what is left.
+  - id: cast-divine
+    tags: [magic]
+    params:
+      known: { type: integer, min: 1 }
+      spent: { type: integer, default: 0, min: 0 }
+      variable: { type: boolean, default: false }
+      magnitude: { type: integer, min: 1, optional: true }
+      onSelf: { type: boolean, default: false }
+    results: [cast]
+    steps:
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              magnitude: >-
+                params.variable && has(params.magnitude)
+                  ? min(params.magnitude, params.known - params.spent) : params.known - params.spent
+      - id: spend
+        kind: changes
+        changes:
+          - { type: setState, entry: self, key: spent, value: params.spent + flags.magnitude }
+          - type: applyEffect
+            when: params.onSelf && !item.instant
+            source: item.id
+            state: { magnitude: flags.magnitude, specialty: self.specialty }
+      - id: result
+        kind: outcome
+        result: "'cast'"
+        data: { magnitude: flags.magnitude }
+
+  # A spent Divine spell comes back: a worshipper duty performed, or a fortune point spent
+  # calling on the deity. The downtime's worship brings them all back (end-downtime).
+  - id: regain-divine
+    tags: [magic]
+    params:
+      fortune: { type: boolean, default: false }
+    results: [regained, no-fortune]
+    steps:
+      - {
+          id: none,
+          kind: outcome,
+          when: params.fortune && fortune.points < 1,
+          result: "'no-fortune'",
+        }
+      - id: regain
+        kind: changes
+        changes:
+          - { type: setState, entry: self, key: spent, value: 0 }
+          - { type: adjust, when: params.fortune, field: fortune.points, by: -1 }
+      - id: result
+        kind: outcome
+        result: "'regained'"
+
+  # Learning a Personal Magic spell: one growth point per magnitude, from a teacher (a Wise needs
+  # none). At creation the six points are free. Within the magnitude limit (POW, twice for a
+  # Wise), a variable spell at most 6 unless a Wise.
+  - id: learn-personal-spell
+    tags: [magic, advancement]
+    available: "sorcery.rank == 'none'"
+    params:
+      magnitude: { type: integer, default: 1, min: 1 }
+      specialty: { type: string, default: '' }
+    results: [learned, not-enough-points]
+    steps:
+      - id: spell
+        kind: choice
+        options:
+          content:
+            type: personal
+            where: >-
+              (item.generic || countCopies(copy.item == item.id) == 0)
+                && (!item.generic || params.specialty != '')
+                && magic.personal.known + (item.variable ? max(item.magnitude, params.magnitude) : item.magnitude)
+                  <= (character.creating ? min(6, magic.personal.limit) : magic.personal.limit)
+                && (!item.variable || magic.specialist == 'wise' || max(item.magnitude, params.magnitude) <= 6)
+                && (character.creating
+                  || (item.variable ? max(item.magnitude, params.magnitude) : item.magnitude) <= growth.points)
+        changes:
+          - type: addItem
+            entry:
+              item: picked.id
+              state:
+                magnitude: 'picked.item.variable ? max(picked.item.magnitude, params.magnitude) : picked.item.magnitude'
+                specialty: params.specialty
+          - type: adjust
+            when: '!character.creating'
+            field: growth.points
+            by: '-(picked.item.variable ? max(picked.item.magnitude, params.magnitude) : picked.item.magnitude)'
+      - id: result
+        kind: outcome
+        result: "'learned'"
+
+  # +1 magnitude to a variable Personal Magic spell: one growth point (free at creation, within
+  # the six points).
+  - id: raise-personal-spell
+    tags: [magic, advancement]
+    results: [raised, not-enough-points, at-limit]
+    steps:
+      - id: limit
+        kind: outcome
+        when: >-
+          magic.personal.known + 1 > (character.creating ? min(6, magic.personal.limit) : magic.personal.limit)
+            || (self.magnitude >= 6 && magic.specialist != 'wise')
+        result: "'at-limit'"
+      - {
+          id: short,
+          kind: outcome,
+          when: '!character.creating && growth.points < 1',
+          result: "'not-enough-points'",
+        }
+      - id: raise
+        kind: changes
+        changes:
+          - { type: setState, entry: self, key: magnitude, value: self.magnitude + 1 }
+          - { type: adjust, when: '!character.creating', field: growth.points, by: -1 }
+      - id: result
+        kind: outcome
+        result: "'raised'"
+        data: { magnitude: self.magnitude + 1 }
+
+  # Learning a Sorcery spell from its written form or a teacher: three growth points, for an
+  # Apprentice or higher.
+  - id: learn-sorcery-spell
+    tags: [magic, advancement]
+    available: "sorcery.rank != 'none'"
+    params:
+      specialty: { type: string, default: '' }
+    results: [learned, not-enough-points]
+    steps:
+      - { id: short, kind: outcome, when: growth.points < 3, result: "'not-enough-points'" }
+      - id: spell
+        kind: choice
+        options:
+          content:
+            type: sorcery
+            where: >-
+              (item.generic || countCopies(copy.item == item.id) == 0)
+                && (!item.generic || params.specialty != '')
+        changes:
+          - { type: addItem, entry: { item: picked.id, state: { specialty: params.specialty } } }
+          - { type: adjust, field: growth.points, by: -3 }
+      - id: result
+        kind: outcome
+        result: "'learned'"
+
+  # Learning a Divine Magic spell the religion teaches: two growth points per magnitude, for an
+  # Initiate, Priest or Holy Warrior; a variable spell at most 2 below Priest.
+  - id: learn-divine-spell
+    tags: [magic, advancement]
+    available: "religion.rank in ['initiate', 'priest', 'holy-warrior']"
+    params:
+      magnitude: { type: integer, default: 1, min: 1 }
+      specialty: { type: string, default: '' }
+    results: [learned]
+    steps:
+      - id: spell
+        kind: choice
+        options:
+          content:
+            type: divine
+            where: >-
+              (item.generic || countCopies(copy.item == item.id) == 0)
+                && (!item.generic || params.specialty != '')
+                && (!item.variable || religion.rank == 'priest' || max(item.magnitude, params.magnitude) <= 2)
+                && 2 * (item.variable ? max(item.magnitude, params.magnitude) : item.magnitude) <= growth.points
+        changes:
+          - type: addItem
+            entry:
+              item: picked.id
+              state:
+                magnitude: 'picked.item.variable ? max(picked.item.magnitude, params.magnitude) : picked.item.magnitude'
+                specialty: params.specialty
+          - type: adjust
+            field: growth.points
+            by: '-2 * (picked.item.variable ? max(picked.item.magnitude, params.magnitude) : picked.item.magnitude)'
+      - id: result
+        kind: outcome
+        result: "'learned'"
+
+  # +1 magnitude to a variable Divine spell: two growth points (2 at most below Priest).
+  - id: raise-divine-spell
+    tags: [magic, advancement]
+    results: [raised, not-enough-points, at-limit]
+    steps:
+      - id: limit
+        kind: outcome
+        when: "religion.rank != 'priest' && self.magnitude >= 2"
+        result: "'at-limit'"
+      - { id: short, kind: outcome, when: growth.points < 2, result: "'not-enough-points'" }
+      - id: raise
+        kind: changes
+        changes:
+          - { type: setState, entry: self, key: magnitude, value: self.magnitude + 1 }
+          - { type: adjust, field: growth.points, by: -2 }
+      - id: result
+        kind: outcome
+        result: "'raised'"
+        data: { magnitude: self.magnitude + 1 }
+
+  # Becoming a Shaman or a Wise: POW 14 or more, Personal Magic Casting at least 50% (over 50%
+  # for a Wise), five growth points. A Shaman gains the Shamanism skill at its base. Neither
+  # practises Sorcery; a Wise learns no Divine Magic.
+  - id: become-specialist
+    tags: [magic, advancement]
+    available: "!character.creating && magic.specialist == 'none' && sorcery.rank == 'none'"
+    params:
+      path: { type: enum, values: [shaman, wise], default: shaman }
+    results: [became, requirements-not-met, not-enough-points]
+    steps:
+      - id: unmet
+        kind: outcome
+        when: >-
+          chars.pow < 14 || magic.personalCasting < 50
+            || (params.path == 'wise' && (magic.personalCasting == 50 || magic.divine.known > 0))
+        result: "'requirements-not-met'"
+      - { id: short, kind: outcome, when: growth.points < 5, result: "'not-enough-points'" }
+      - id: become
+        kind: changes
+        changes:
+          - { type: set, field: magic.specialist, value: params.path }
+          - { type: adjust, field: growth.points, by: -5 }
+          - { type: addItem, when: "params.path == 'shaman'", entry: { item: '@skills.shamanism' } }
+      - id: result
+        kind: outcome
+        result: "'became'"
+
+  # The ranks of Sorcery. Apprentice: Sorcery Casting 25%, two growth points; Mystic Vision for
+  # free, and the wand; Personal and Divine Magic are given up, their growth points back (one a
+  # magnitude of Personal Magic, two of Divine Magic), and so is a Shaman's or Wise's way (not
+  # its five points). Adept: 50%, POW 15, five spells, five points; the sorcerer's stone (a store
+  # of POW magic points) and staff. Magus: 90%, ten spells, ten points; transcended: damage goes
+  # to magic points, and physical healing no longer works.
+  - id: sorcery-rank
+    tags: [magic, advancement]
+    available: "!character.creating && sorcery.rank != 'magus'"
+    results: [promoted, requirements-not-met, not-enough-points]
+    steps:
+      - id: next
+        kind: branch
+        cases:
+          - when: "sorcery.rank == 'none'"
+            flags: { rank: "'apprentice'", cost: 2, met: magic.sorceryCasting >= 25 }
+          - when: "sorcery.rank == 'apprentice'"
+            flags:
+              rank: "'adept'"
+              cost: 5
+              met: magic.sorceryCasting >= 50 && chars.pow >= 15 && magic.sorcery.known >= 5
+          - when: true
+            flags:
+              {
+                rank: "'magus'",
+                cost: 10,
+                met: magic.sorceryCasting >= 90 && magic.sorcery.known >= 10,
+              }
+      - {
+          id: unmet,
+          kind: outcome,
+          when: '!flags.met',
+          result: "'requirements-not-met'",
+          data: { rank: flags.rank },
+        }
+      - id: refund
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              refund: "flags.rank == 'apprentice' ? magic.personal.known + 2 * magic.divine.known : 0"
+      - id: short
+        kind: outcome
+        when: growth.points + flags.refund < flags.cost
+        result: "'not-enough-points'"
+      - id: promote
+        kind: changes
+        changes:
+          - { type: set, field: sorcery.rank, value: flags.rank }
+          - { type: adjust, field: growth.points, by: flags.refund - flags.cost }
+          - {
+              type: set,
+              when: "flags.rank == 'apprentice'",
+              field: magic.specialist,
+              value: "'none'",
+            }
+          - type: removeItem
+            when: "flags.rank == 'apprentice'"
+            copies: { type: personal }
+          - type: removeItem
+            when: "flags.rank == 'apprentice'"
+            copies: { type: divine }
+          - type: addItem
+            when: "flags.rank == 'apprentice' && countCopies(copy.item == @sorcery.mystic-vision) == 0"
+            entry: { item: '@sorcery.mystic-vision' }
+          - {
+              type: addItem,
+              when: "flags.rank == 'apprentice'",
+              entry: { item: '@gear.sorcerers-wand' },
+            }
+          - type: addItem
+            when: "flags.rank == 'adept'"
+            entry: { item: '@stores.sorcerers-stone', state: { capacity: chars.pow } }
+          - {
+              type: addItem,
+              when: "flags.rank == 'adept'",
+              entry: { item: '@weapons.sorcerers-staff', equipped: true },
+            }
+          - {
+              type: set,
+              when: "flags.rank == 'magus'",
+              field: magic.apotheosis,
+              value: "'transcended'",
+            }
+      - id: result
+        kind: outcome
+        result: "'promoted'"
+        data: { rank: flags.rank, refund: flags.refund }
+
+  # A rank in a religion. Lay member: Religion (Own) 20%, no cost. Initiate: 40% (and one of the
+  # religion's skills at 25%, the Referee's check), two growth points. Priest: 75% (and two of
+  # its skills at 75%, a vacancy), five points. Holy Warrior: 50% and a combat skill at 75%, five
+  # points. Not for a sorcerer.
+  - id: religion-rank
+    tags: [magic, advancement]
+    available: "sorcery.rank == 'none'"
+    params:
+      rank: { type: enum, values: [lay, initiate, priest, holy-warrior], default: lay }
+      religion: { type: string, default: '' }
+    results: [joined, requirements-not-met, not-enough-points]
+    steps:
+      - id: need
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              cost: "params.rank == 'lay' ? 0 : params.rank == 'initiate' ? 2 : 5"
+              met: >-
+                params.rank == 'lay' ? religion.skill >= 20
+                  : params.rank == 'initiate' ? religion.skill >= 40
+                  : params.rank == 'priest' ? religion.skill >= 75
+                  : religion.skill >= 50 && max(combat.close, combat.ranged, combat.unarmed) >= 75
+      - id: unmet
+        kind: outcome
+        when: "!flags.met || (params.rank != 'lay' && magic.specialist == 'wise')"
+        result: "'requirements-not-met'"
+      - {
+          id: short,
+          kind: outcome,
+          when: '!character.creating && growth.points < flags.cost',
+          result: "'not-enough-points'",
+        }
+      - id: join
+        kind: changes
+        changes:
+          - { type: set, field: religion.rank, value: params.rank }
+          - {
+              type: set,
+              when: "params.religion != ''",
+              field: religion.name,
+              value: params.religion,
+            }
+          - { type: adjust, when: '!character.creating', field: growth.points, by: -flags.cost }
+      - id: result
+        kind: outcome
+        result: "'joined'"
+
+  # Leaving a religion, or being excommunicated: its Divine Magic is lost.
+  - id: leave-religion
+    tags: [magic]
+    available: "religion.rank != 'none'"
+    results: [left]
+    steps:
+      - id: leave
+        kind: changes
+        changes:
+          - { type: set, field: religion.rank, value: "'none'" }
+          - { type: removeItem, copies: { type: divine } }
+      - id: result
+        kind: outcome
+        result: "'left'"
+
+  # Spirit combat: an opposed test, Shamanism for a Shaman, else Persistence, against the
+  # spirit's Spirit Combat (its result and roll entered). The loser loses 1D6 magic points less
+  # any Spirit Shield, plus 1D6 for every ten points of POW above 20 of the winner. At 0 magic
+  # points or fewer the combat is lost.
+  - id: spirit-combat
+    tags: [magic, combat]
+    params:
+      opponentResult: { type: enum, values: [critical, success, failure, fumble], default: failure }
+      opponentRoll: { type: integer, default: 50, min: 1, max: 100 }
+      opponentExtraDice: { type: integer, default: 0, min: 0 }
+      spiritShield: { type: integer, default: 0, min: 0 }
+    results: [won, lost, standoff, nobody]
+    steps:
+      - id: clash
+        kind: action
+        use: opposed-test
+        params:
+          score: 'magic.shamanism > 0 ? magic.shamanism : resist.persistence'
+          master: '(magic.shamanism > 0 ? magic.shamanism : resist.persistence) >= 100'
+          opponentResult: params.opponentResult
+          opponentRoll: params.opponentRoll
+      - id: hurt
+        kind: roll
+        when: "steps.clash.result == 'lost'"
+        tags: [damage]
+        parts:
+          - dice: '(1 + params.opponentExtraDice)d6'
+      - id: strike
+        kind: roll
+        when: "steps.clash.result == 'won'"
+        tags: [damage]
+        parts:
+          - dice: '(1 + max(0, floor((chars.pow - 20) / 10)))d6'
+      - id: lose
+        kind: changes
+        when: "steps.clash.result == 'lost'"
+        changes:
+          - type: adjust
+            field: mp.spent
+            by: 'min(mp.current, max(0, steps.hurt.total - params.spiritShield - spell.spiritShield))'
+      - id: result
+        kind: outcome
+        result: steps.clash.result
+        data:
+          lost: 'has(steps.hurt) ? max(0, steps.hurt.total - params.spiritShield - spell.spiritShield) : 0'
+          dealt: 'has(steps.strike) ? steps.strike.total : 0'
+
+  # Ending a spell on the character (dismissed, dispelled, or its duration over).
+  - id: end-spell
+    tags: [magic]
+    params:
+      entry: { type: string }
+    results: [ended]
+    steps:
+      - id: end
+        kind: changes
+        changes:
+          - { type: removeEffect, applied: { where: 'self.id == params.entry' } }
+      - id: result
+        kind: outcome
+        result: "'ended'"
+
+  # A spell another character cast on this one: the recipient records it (one sheet never acts
+  # on another), at its magnitude, and its effects go on the sheet until it ends.
+  - id: spell-received
+    tags: [magic]
+    params:
+      kind: { type: enum, values: [personal, sorcery, divine], default: personal }
+      magnitude: { type: integer, default: 1, min: 1 }
+      specialty: { type: string, default: '' }
+    results: [received]
+    steps:
+      - id: personal
+        kind: choice
+        when: "params.kind == 'personal'"
+        options: { content: { type: personal, where: '!item.instant' } }
+        changes:
+          - type: applyEffect
+            source: picked.id
+            state: { magnitude: params.magnitude, specialty: params.specialty }
+      - id: sorcery
+        kind: choice
+        when: "params.kind == 'sorcery'"
+        options: { content: { type: sorcery, where: '!item.instant' } }
+        changes:
+          - type: applyEffect
+            source: picked.id
+            state: { magnitude: params.magnitude, specialty: params.specialty }
+      - id: divine
+        kind: choice
+        when: "params.kind == 'divine'"
+        options: { content: { type: divine, where: '!item.instant' } }
+        changes:
+          - type: applyEffect
+            source: picked.id
+            state: { magnitude: params.magnitude, specialty: params.specialty }
+      - id: result
+        kind: outcome
+        result: "'received'"
+
+  # A magic point store made with Create Magic Point Store: the magic points put in become its
+  # maximum; one growth point makes it reusable (refilled from the character's own).
+  - id: make-store
+    tags: [magic]
+    available: '!character.creating'
+    params:
+      amount: { type: integer, min: 1 }
+      reusable: { type: boolean, default: false }
+    results: [made, not-enough-magic, not-enough-points]
+    steps:
+      - { id: short, kind: outcome, when: mp.current < params.amount, result: "'not-enough-magic'" }
+      - id: points
+        kind: outcome
+        when: params.reusable && growth.points < 1
+        result: "'not-enough-points'"
+      - id: make
+        kind: changes
+        changes:
+          - { type: adjust, field: mp.spent, by: params.amount }
+          - { type: adjust, when: params.reusable, field: growth.points, by: -1 }
+          - type: addItem
+            entry:
+              item: '@stores.magic-point-store'
+              state: { capacity: params.amount, mp: params.amount, reusable: params.reusable }
+      - id: result
+        kind: outcome
+        result: "'made'"
+
+  # A Wise's magical places: a seclusion (1 magic point a day) and a sanctuary (1 an hour, which
+  # companions may add to) hold their magic points until the Wise ends them; a place of power is a
+  # store tied to a location, of any size. Made in haste, a Personal Magic Casting test first.
+  - id: create-magic-place
+    tags: [magic]
+    available: "magic.specialist == 'wise'"
+    params:
+      place: { type: enum, values: [seclusion, sanctuary, power], default: seclusion }
+      amount: { type: integer, min: 1 }
+      haste: { type: boolean, default: false }
+    results: [created, failed, not-enough-magic]
+    steps:
+      - { id: short, kind: outcome, when: mp.current < params.amount, result: "'not-enough-magic'" }
+      - id: test
+        kind: action
+        when: params.haste
+        use: skill-test
+        params:
+          score: magic.personalCasting
+          master: magic.personalCasting >= 100
+      - id: failed
+        kind: outcome
+        when: "has(steps.test.result) && steps.test.result != 'success' && steps.test.result != 'critical'"
+        result: "'failed'"
+      - id: create
+        kind: changes
+        changes:
+          - { type: adjust, field: mp.spent, by: params.amount }
+          - { type: adjust, when: "params.place != 'power'", field: mp.locked, by: params.amount }
+          - { type: set, when: "params.place == 'sanctuary'", field: magic.sanctuary, value: true }
+          - type: addItem
+            when: "params.place == 'power'"
+            entry:
+              item: '@stores.place-of-power'
+              state: { capacity: 0, mp: params.amount, reusable: true }
+      - id: result
+        kind: outcome
+        result: "'created'"
+
+  # A seclusion or sanctuary ended: its magic points can come back with rest.
+  - id: end-magic-place
+    tags: [magic]
+    available: mp.locked > 0
+    params:
+      amount: { type: integer, min: 1 }
+    results: [ended]
+    steps:
+      - id: release
+        kind: changes
+        changes:
+          - { type: adjust, field: mp.locked, by: '-min(mp.locked, params.amount)' }
+      - id: result
+        kind: outcome
+        result: "'ended'"
+
+  # The pinnacles of the paths. Great Spirit: Shamanism 100%, POW at its maximum, ten Personal
+  # Magic spells. One with Reality: Personal Magic Casting 100%, POW at its maximum, ten spells, a
+  # sanctuary made. Ascended Immortal: Religion (Own) 100%, POW at its maximum, ten points of
+  # Divine Magic, ten growth points; Ascended Deity also a Religion (Other) at 100%, twenty
+  # points. (A Magus transcends on reaching the rank.) The story requirements are the Referee's.
+  - id: apotheosis
+    tags: [magic, advancement]
+    available: "!character.creating && magic.apotheosis == 'none'"
+    params:
+      kind:
+        {
+          type: enum,
+          values: [great-spirit, one-with-reality, ascended-immortal, ascended-deity],
+          default: great-spirit,
+        }
+    results: [achieved, requirements-not-met, not-enough-points]
+    steps:
+      - id: need
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              cost: "params.kind == 'ascended-immortal' ? 10 : params.kind == 'ascended-deity' ? 20 : 0"
+              met: >-
+                chars.pow >= charmax.pow && (params.kind == 'great-spirit'
+                  ? magic.specialist == 'shaman' && magic.shamanism >= 100 && countCopies(copy.type == 'personal') >= 10
+                  : params.kind == 'one-with-reality'
+                    ? magic.specialist == 'wise' && magic.personalCasting >= 100
+                      && countCopies(copy.type == 'personal') >= 10 && magic.sanctuary
+                    : religion.skill >= 100 && magic.divine.known >= 10
+                      && (params.kind == 'ascended-immortal'
+                        || countCopies(copy.item == @skills.religion-other
+                          && chars.int + copy.state.creation + copy.state.growth >= 100) > 0))
+      - { id: unmet, kind: outcome, when: '!flags.met', result: "'requirements-not-met'" }
+      - {
+          id: short,
+          kind: outcome,
+          when: growth.points < flags.cost,
+          result: "'not-enough-points'",
+        }
+      - id: achieve
+        kind: changes
+        changes:
+          - { type: set, field: magic.apotheosis, value: params.kind }
+          - { type: adjust, field: growth.points, by: -flags.cost }
+      - id: result
+        kind: outcome
+        result: "'achieved'"

@@ -1,0 +1,7 @@
+id: divine.ward-camp
+type: divine
+fields:
+  magnitude: 2
+  variable: false
+  areaSpecial: true
+  duration: 480

@@ -1,0 +1,7 @@
+id: divine.exorcism
+type: divine
+fields:
+  magnitude: 3
+  variable: false
+  concentration: true
+  common: true

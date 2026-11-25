@@ -1,0 +1,4 @@
+id: gear.fish-hook
+type: gear
+fields:
+  cost: 0.04

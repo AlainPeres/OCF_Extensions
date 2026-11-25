@@ -1,0 +1,6 @@
+id: skills.riding
+type: skill
+fields:
+  char1: chars.dex
+  char2: chars.pow
+  group: practical

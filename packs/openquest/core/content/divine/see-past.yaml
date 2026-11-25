@@ -1,0 +1,7 @@
+id: divine.see-past
+type: divine
+fields:
+  magnitude: 2
+  variable: false
+  concentration: true
+  areaSpecial: true

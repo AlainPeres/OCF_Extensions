@@ -1,0 +1,10 @@
+# General items (Equipment chapter): carried, with their ENC and cost in silver pieces (a copper
+# penny is 0.1, a lead bit 0.02). Items too small or light to have an ENC have 0.
+contentTypes:
+  gear:
+    carried: true
+    fields:
+      enc: { type: integer, default: 0, min: 0 }
+      cost: { type: decimal, default: 0, min: 0 }
+      # What a container holds, in ENC.
+      holds: { type: integer, min: 0 }

@@ -1,0 +1,7 @@
+id: personal.restore-energy
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  touch: true
+  instant: true

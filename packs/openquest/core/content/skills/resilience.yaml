@@ -1,0 +1,6 @@
+id: skills.resilience
+type: skill
+fields:
+  char1: chars.con
+  char2: chars.pow
+  group: resistance

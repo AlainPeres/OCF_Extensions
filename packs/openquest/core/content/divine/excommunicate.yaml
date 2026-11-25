@@ -1,0 +1,8 @@
+id: divine.excommunicate
+type: divine
+fields:
+  magnitude: 5
+  variable: false
+  resist: persistence
+  permanent: true
+  common: true

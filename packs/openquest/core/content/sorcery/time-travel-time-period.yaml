@@ -1,0 +1,5 @@
+id: sorcery.time-travel-time-period
+type: sorcery
+fields:
+  instant: true
+  generic: true

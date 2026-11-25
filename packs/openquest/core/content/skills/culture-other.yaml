@@ -1,0 +1,6 @@
+id: skills.culture-other
+type: skill
+fields:
+  char1: chars.int
+  group: knowledge
+  generic: true

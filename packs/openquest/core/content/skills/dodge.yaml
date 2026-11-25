@@ -1,0 +1,6 @@
+id: skills.dodge
+type: skill
+fields:
+  char1: chars.dex
+  plus: 10
+  group: resistance

@@ -1,0 +1,1206 @@
+pack.name: OpenQuest 3 Core
+
+tags.advancement.name: Growth
+tags.age.name: Age
+tags.cash.name: Starting cash
+tags.characteristic.name: Characteristic
+tags.combat.name: Combat
+tags.creation.name: Creation
+tags.damage.name: Damage
+tags.fortune.name: Fortune
+tags.healing.name: Healing
+tags.health.name: Health
+tags.test.name: Skill test
+
+fields.identity.name.name: Name
+fields.identity.species.name: Species
+fields.identity.concept.name: Concept
+fields.identity.sagaMotive.name: Saga motive
+fields.identity.questMotive.name: Quest motive
+fields.identity.background.name: Background
+fields.identity.appearance.name: Appearance and personality
+fields.identity.age.name: Age
+fields.identity.possessions.name: Other possessions
+
+fields.chars.str.name: Strength (STR)
+fields.chars.con.name: Constitution (CON)
+fields.chars.dex.name: Dexterity (DEX)
+fields.chars.siz.name: Size (SIZ)
+fields.chars.int.name: Intelligence (INT)
+fields.chars.pow.name: Power (POW)
+fields.chars.cha.name: Charisma (CHA)
+fields.damage.strSiz.name: STR + SIZ
+fields.damage.modifier.name: Damage modifier
+fields.hp.max.name: Hit points (maximum)
+fields.hp.wounds.name: Damage taken
+fields.hp.current.name: Hit points
+fields.mp.max.name: Magic points (maximum)
+fields.mp.spent.name: Magic points spent
+fields.mp.current.name: Magic points
+fields.move.base.name: Movement rate (unencumbered, m)
+fields.move.rate.name: Movement rate (m)
+fields.state.mortal.name: Mortally wounded
+fields.state.stabilised.name: Stabilised
+fields.state.treated.name: Surgery done (heals naturally)
+fields.state.unconscious.name: Unconscious
+fields.state.drained.name: No magic points left (unconscious)
+fields.armour.ap.name: Armour points
+fields.enc.total.name: Encumbrance carried
+fields.enc.limit.name: Encumbrance limit (STR + SIZ)
+fields.state.overloaded.name: Overloaded
+fields.enc.tooHeavy.name: Carrying more than twice the limit
+fields.fortune.points.name: Fortune points
+fields.money.silver.name: Money (silver pieces)
+fields.wealth.used.name: Optional Wealth rule
+fields.combat.close.name: Close Combat
+fields.combat.ranged.name: Ranged Combat
+fields.combat.unarmed.name: Unarmed Combat
+fields.resist.dodge.name: Dodge
+fields.resist.persistence.name: Persistence
+fields.resist.resilience.name: Resilience
+fields.growth.points.name: Growth points
+fields.growth.earned.name: Growth points earned
+fields.points.resistance.spent.name: Resistance points spent (of 50)
+fields.points.combat.spent.name: Combat points spent (of 50)
+fields.points.knowledge.spent.name: Knowledge points spent (of 50)
+fields.points.practical.spent.name: Practical points spent (of 75)
+
+types.skill.name: Skill
+types.skill.fields.char1.name: Characteristic
+types.skill.fields.char2.name: Second characteristic
+types.skill.fields.times.name: Multiplier
+types.skill.fields.plus.name: Bonus
+types.skill.fields.group.name: Group
+types.skill.fields.group.values.resistance.name: Resistance
+types.skill.fields.group.values.combat.name: Combat
+types.skill.fields.group.values.knowledge.name: Knowledge
+types.skill.fields.group.values.practical.name: Practical
+types.skill.fields.group.values.magic.name: Magic
+types.skill.fields.generic.name: Taken once per descriptor
+types.skill.state.creation.name: Creation points
+types.skill.state.growth.name: Growth
+types.skill.state.raised.name: Raised this downtime
+types.skill.state.specialty.name: Descriptor
+types.skill.computed.base.name: Base
+types.skill.computed.total.name: Total
+types.skill.computed.expertise.name: Expertise
+types.skill.computed.physical.name: Physical
+
+types.weapon.name: Weapon
+types.weapon.fields.kind.name: Kind
+types.weapon.fields.kind.values.close.name: Close combat
+types.weapon.fields.kind.values.missile.name: Missile
+types.weapon.fields.kind.values.thrown.name: Thrown
+types.weapon.fields.damage.name: Damage
+types.weapon.fields.hands.name: Hands
+types.weapon.fields.hands.values.one.name: One
+types.weapon.fields.hands.values.two.name: Two
+types.weapon.fields.hands.values.one-or-two.name: One or two
+types.weapon.fields.enc.name: ENC
+types.weapon.fields.cost.name: Cost (SP)
+types.weapon.fields.range.name: Range (m)
+types.weapon.fields.rangeStr.name: Thrown range (STR x m)
+types.weapon.fields.rounds.name: Combat rounds per shot
+types.weapon.fields.mechanism.name: Mechanism (no damage modifier)
+types.weapon.fields.thrownDamage.name: Thrown damage
+types.weapon.fields.shield.name: Shield size
+types.weapon.fields.shield.values.small.name: Small
+types.weapon.fields.shield.values.medium.name: Medium
+types.weapon.fields.shield.values.large.name: Large
+types.armour.name: Armour
+types.armour.fields.ap.name: Armour points (AP)
+types.armour.fields.enc.name: ENC
+types.armour.fields.cost.name: Cost (SP)
+types.gear.name: Equipment
+types.gear.fields.enc.name: ENC
+types.gear.fields.cost.name: Cost (SP)
+types.gear.fields.holds.name: Holds (ENC)
+
+groups.identity.label: Character
+groups.characteristics.label: Characteristics
+groups.attributes.label: Attributes
+groups.states.label: Condition
+groups.combat.label: Combat skills and resistances
+groups.possessions.label: Encumbrance and resources
+groups.growth.label: Growth
+groups.creation-pools.label: Creation pools
+groups.skills.label: Skills
+groups.weapons.label: Weapons
+groups.armour.label: Armour
+groups.gear.label: Equipment
+groups.skills-unused.label: Skills of optional rules not in use
+
+bands.test.critical.name: Critical success
+bands.test.success.name: Success
+bands.test.failure.name: Failure
+bands.test.fumble.name: Fumble
+
+actions.skill-test.name: Skill test
+actions.skill-test.params.score.name: Skill (%)
+actions.skill-test.params.difficulty.name: Difficulty
+actions.skill-test.params.difficulty.values.easy.name: Easy (+50%)
+actions.skill-test.params.difficulty.values.simple.name: Simple (+20%)
+actions.skill-test.params.difficulty.values.normal.name: Normal
+actions.skill-test.params.difficulty.values.difficult.name: Difficult (-20%)
+actions.skill-test.params.difficulty.values.hard.name: Hard (-50%)
+actions.skill-test.params.magic.name: Magic modifier (%)
+actions.skill-test.params.assisted.name: Assisted (+20%)
+actions.skill-test.params.modifier.name: Other modifier (%)
+actions.skill-test.params.master.name: Master of the skill (100%)
+actions.skill-test.params.physical.name: Physical skill (-20% when overloaded)
+
+actions.opposed-test.name: Opposed test
+actions.opposed-test.params.score.name: Skill (%)
+actions.opposed-test.params.difficulty.name: Difficulty
+actions.opposed-test.params.difficulty.values.easy.name: Easy (+50%)
+actions.opposed-test.params.difficulty.values.simple.name: Simple (+20%)
+actions.opposed-test.params.difficulty.values.normal.name: Normal
+actions.opposed-test.params.difficulty.values.difficult.name: Difficult (-20%)
+actions.opposed-test.params.difficulty.values.hard.name: Hard (-50%)
+actions.opposed-test.params.magic.name: Magic modifier (%)
+actions.opposed-test.params.modifier.name: Other modifier (%)
+actions.opposed-test.params.master.name: Master of the skill (100%)
+actions.opposed-test.params.opponentResult.name: Opponent's result
+actions.opposed-test.params.opponentResult.values.critical.name: Critical success
+actions.opposed-test.params.opponentResult.values.success.name: Success
+actions.opposed-test.params.opponentResult.values.failure.name: Failure
+actions.opposed-test.params.opponentResult.values.fumble.name: Fumble
+actions.opposed-test.params.opponentRoll.name: Opponent's roll
+actions.opposed-test.params.opponentMaster.name: Opponent is a Master
+actions.opposed-test.results.won.name: Won
+actions.opposed-test.results.lost.name: Lost
+actions.opposed-test.results.standoff.name: Standoff
+actions.opposed-test.results.nobody.name: Nobody wins
+
+situational.targetProne.name: 'Target prone (close +20%, ranged -20%) or attacked from behind (+20%)'
+situational.targetHelpless.name: 'Target helpless (close: automatic critical; ranged +20%)'
+situational.higherGround.name: 'On higher ground or riding (+20%)'
+situational.lowerGround.name: 'Defending on lower ground or against a mounted foe (-20%)'
+situational.prone.name: 'Prone (close -20%, ranged -50%)'
+situational.unstableGround.name: 'On unstable ground (-20%)'
+situational.underwater.name: 'Underwater (close -50%, thrown -20%)'
+situational.partialDarkness.name: 'Partial darkness, smoke or mist (-20%)'
+situational.darkness.name: 'Darkness, thick smoke or fog (-50%)'
+situational.mountedVsFoot.name: 'Mounted against an opponent on foot (+20%)'
+situational.allOutAttack.name: 'All-Out Attack (-20%, no defence)'
+situational.greatAttack.name: 'Great Attack (+20%, no defence)'
+situational.setWeapon.name: 'Set weapon against a charge (+20%)'
+situational.offHand.name: 'Off-hand bonus attack (-20%)'
+situational.thrownCloseWeapon.name: 'Close weapon thrown (-20%, 8 m)'
+situational.doubleRange.name: 'Beyond range, up to double (-20%)'
+situational.highWind.name: 'High wind (-20%)'
+situational.fierceWind.name: 'Fierce wind (-50%)'
+situational.targetMoved10.name: 'Target moved 10 m or more (-20%)'
+situational.targetMoved30.name: 'Target moved 30 m or more (-50%)'
+situational.largeTarget.name: 'Target above SIZ 20 (+20%)'
+situational.blinded.name: 'Attacker blinded (-50%)'
+situational.coverPartial.name: 'Target in partial cover or behind a medium shield (-20%)'
+situational.coverExcellent.name: 'Target in excellent cover or behind a large shield (-50%)'
+situational.coverTotal.name: 'Target in virtually total cover (-75%)'
+situational.shieldDefence.name: 'Shield Defence action (parry +20%)'
+situational.fightingRetreat.name: 'Fighting Retreat (+20%)'
+situational.fightingRetreatLargeShield.name: 'Fighting Retreat with a large shield (+50%)'
+situational.changingWeapon.name: 'Parrying while changing weapons (-20%)'
+
+actions.attack.name: Attack
+actions.attack.params.skill.name: Combat skill
+actions.attack.params.skill.values.close.name: Close Combat
+actions.attack.params.skill.values.ranged.name: Ranged Combat
+actions.attack.params.skill.values.unarmed.name: Unarmed Combat
+actions.attack.params.aimRounds.name: Rounds spent aiming (+20% each)
+actions.attack.params.magic.name: Magic modifier (%)
+actions.attack.params.modifier.name: Other modifier (%)
+actions.unarmed-attack.name: Unarmed attack
+actions.unarmed-attack.params.magic.name: Magic modifier (%)
+actions.unarmed-attack.params.modifier.name: Other modifier (%)
+actions.defend.name: Defend
+actions.defend.params.reaction.name: Reaction
+actions.defend.params.reaction.values.dodge.name: Dodge
+actions.defend.params.reaction.values.parry.name: Parry (Close Combat)
+actions.defend.params.reaction.values.unarmed.name: Unarmed Combat
+actions.defend.params.earlierDefences.name: Defences already made this round (-20% each)
+actions.defend.params.magic.name: Magic modifier (%)
+actions.defend.params.modifier.name: Other modifier (%)
+actions.damage.name: Damage
+actions.damage.params.dice.name: Weapon damage
+actions.damage.params.thrownDice.name: Thrown damage
+actions.damage.params.thrown.name: Thrown
+actions.damage.params.modifier.name: Add the damage modifier
+actions.damage.params.critical.name: Critical hit (maximum damage)
+actions.damage.params.greatAttack.name: Great Attack (maximum damage modifier)
+actions.damage.params.charge.name: Charge (+1D6)
+actions.damage.results.dealt.name: Damage dealt
+actions.unarmed-damage.name: Unarmed damage
+actions.unarmed-damage.params.effect.name: Effect
+actions.unarmed-damage.params.effect.values.strike.name: Strike (1D4 + damage modifier)
+actions.unarmed-damage.params.effect.values.hold.name: Hold (1D4 + damage modifier a round, armour doesn't help)
+actions.unarmed-damage.params.effect.values.throw.name: Throw (2 m, the damage modifier)
+actions.unarmed-damage.params.critical.name: Critical
+actions.unarmed-damage.results.dealt.name: Damage dealt
+actions.take-damage.name: Take damage
+actions.take-damage.params.amount.name: Damage
+actions.take-damage.params.ignoreArmour.name: Ignores armour (critical hit, hold)
+actions.take-damage.results.minor.name: Minor wound
+actions.take-damage.results.mortal.name: Mortal wound
+
+actions.healing-received.name: Healing received
+actions.healing-received.params.treatment.name: Treatment (the healer's successful Healing test)
+actions.healing-received.params.treatment.values.revive.name: Revive from unconsciousness
+actions.healing-received.params.treatment.values.minor.name: Treat a minor injury (1D6 hit points)
+actions.healing-received.params.treatment.values.stabilise.name: Stabilise a mortal wound
+actions.healing-received.params.treatment.values.surgery.name: Surgery (one hit point, heals naturally)
+actions.healing-received.results.revived.name: Revived
+actions.healing-received.results.healed.name: Healed
+actions.healing-received.results.stabilised.name: Stabilised
+actions.healing-received.results.operated.name: Operated
+actions.healing-received.results.no-effect.name: No effect
+actions.magic-healing.name: Magical healing
+actions.magic-healing.params.amount.name: Hit points healed
+actions.magic-healing.results.healed.name: Healed
+actions.magic-healing.results.healed-awake.name: Healed and awake
+actions.natural-healing.name: Natural healing
+actions.natural-healing.params.days.name: Days of light activity
+actions.natural-healing.results.healed.name: Healed
+actions.natural-healing.results.no-effect.name: No effect
+actions.recover-magic.name: Recover magic points
+actions.recover-magic.params.hours.name: Hours of rest
+actions.recover-magic.params.sleep.name: Comfortable sleep (8 hours restore all)
+actions.recover-magic.results.recovered.name: Recovered
+actions.spend-fortune.name: Spend a fortune point
+actions.spend-fortune.params.use.name: Use
+actions.spend-fortune.params.use.values.reroll.name: Reroll a failed roll
+actions.spend-fortune.params.use.values.swap-dice.name: Swap a failed test's tens and units
+actions.spend-fortune.params.use.values.avoid-death.name: Avoid death (unconscious, one hit point)
+actions.spend-fortune.results.spent.name: Spent
+actions.spend-fortune.results.not-dying.name: Not dying
+
+actions.gain-growth.name: Gain growth points
+actions.gain-growth.params.amount.name: Growth points
+actions.gain-growth.results.gained.name: Gained
+actions.improve-skill.name: Grow a skill (+5%)
+actions.improve-skill.steps.skill.prompt: Skill
+actions.improve-skill.results.improved.name: Improved
+actions.improve-skill.results.not-enough-points.name: Not enough growth points
+actions.improve-characteristic.name: Grow a characteristic (+1, 5 points)
+actions.improve-characteristic.params.characteristic.name: Characteristic
+actions.improve-characteristic.params.characteristic.values.str.name: Strength
+actions.improve-characteristic.params.characteristic.values.con.name: Constitution
+actions.improve-characteristic.params.characteristic.values.dex.name: Dexterity
+actions.improve-characteristic.params.characteristic.values.int.name: Intelligence
+actions.improve-characteristic.params.characteristic.values.pow.name: Power
+actions.improve-characteristic.params.characteristic.values.cha.name: Charisma
+actions.improve-characteristic.results.improved.name: Improved
+actions.improve-characteristic.results.not-enough-points.name: Not enough growth points
+actions.improve-characteristic.results.at-maximum.name: Already at its maximum
+actions.end-downtime.name: End the downtime
+actions.end-downtime.results.ended.name: Ended
+
+constraints.resistance-pool: More than 50 points spent on resistances
+constraints.combat-pool: More than 50 points spent on combat skills
+constraints.knowledge-pool: More than 50 points spent on knowledge skills
+constraints.practical-pool: More than 75 points spent on practical skills
+constraints.creation-characteristics: Characteristics must be 3 to 18 at creation, INT and SIZ at least 8
+constraints.generic-needs-specialty: This skill needs its descriptor
+constraints.skill-taken-once: This skill can be taken only once
+constraints.growth-steps: Growth goes +5% at a time
+
+creation.guided.name: Guided creation
+creation.guided.description: 'Characteristics by points or dice, cash or Wealth, the skill pools +5% at a time, an arms package; then add skills with a descriptor (Lore, Language…) and finish the creation.'
+creation.random.name: Random character
+creation.random.description: 'Rolls the characteristics, spreads the skill pools at random, rolls the cash and the age, and takes an arms package.'
+actions.create-character.name: Create a character
+actions.create-character.params.random.name: Random
+actions.create-character.results.created.name: Created
+actions.create-character.steps.method.prompt: Characteristics
+actions.create-character.options.method-points.name: 'Points: 8 each and 30 to spread (3 to 18)'
+actions.create-character.options.method-dice.name: 'Dice: 3D6, SIZ and INT 2D6 + 6'
+actions.create-character.steps.points.prompt: 'Characteristic points: a human spreads 55 (from 3, INT and SIZ from 8; 18 at most), another species 10 over its averages (up to its maximum)'
+actions.create-character.steps.str.name: Strength
+actions.create-character.steps.con.name: Constitution
+actions.create-character.steps.dex.name: Dexterity
+actions.create-character.steps.siz.name: Size
+actions.create-character.steps.int.name: Intelligence
+actions.create-character.steps.pow.name: Power
+actions.create-character.steps.cha.name: Charisma
+actions.create-character.steps.resources.prompt: Resources
+actions.create-character.options.resources-cash.name: 'Starting cash (4D6 x 10 silver pieces)'
+actions.create-character.options.resources-wealth.name: 'Optional Wealth skill instead of cash'
+actions.create-character.steps.resistances.prompt: 'Resistances: 50 points, +5% at a time (30 at most a skill)'
+actions.create-character.steps.combat.prompt: 'Combat skills: 50 points, +5% at a time (30 at most a skill)'
+actions.create-character.steps.knowledge.prompt: 'Knowledge skills: 50 points, +5% at a time (30 at most a skill; keep some for Lore and other languages)'
+actions.create-character.steps.practical.prompt: 'Practical skills: 75 points, +5% at a time (30 at most a skill)'
+actions.create-character.steps.cash.name: Starting cash (x 10 SP)
+actions.create-character.steps.package.prompt: Arms and armour package
+actions.create-character.options.package-two-handed.name: 'Leather armour, a ranged weapon, a two-handed close weapon and a dagger'
+actions.create-character.options.package-shield.name: 'Leather armour, a small or medium shield, a ranged weapon, a one-handed close weapon and a dagger'
+actions.create-character.steps.ranged.prompt: Ranged weapon
+actions.create-character.steps.close.prompt: Close combat weapon
+actions.create-character.steps.shield.prompt: Shield
+actions.create-character.steps.age.name: Age
+actions.learn-specialty.name: Add a skill with a descriptor
+actions.learn-specialty.params.specialty.name: Descriptor
+actions.learn-specialty.steps.skill.prompt: Skill
+actions.learn-specialty.steps.raise.prompt: 'Knowledge points left (+5% a pick)'
+actions.learn-specialty.results.learned.name: Learned
+actions.finish-creation.name: Finish the creation
+actions.finish-creation.results.finished.name: Finished
+
+skills.dodge.name: Dodge
+skills.persistence.name: Persistence
+skills.resilience.name: Resilience
+skills.close-combat.name: Close Combat
+skills.ranged-combat.name: Ranged Combat
+skills.unarmed-combat.name: Unarmed Combat
+skills.culture-own.name: Culture (Own)
+skills.language-own.name: Language (Own)
+skills.natural-lore.name: Natural Lore
+skills.culture-other.name: Culture (Other)
+skills.language-other.name: Language (Other)
+skills.lore.name: Lore
+skills.athletics.name: Athletics
+skills.craft.name: Craft
+skills.deception.name: Deception
+skills.driving.name: Driving
+skills.engineering.name: Engineering
+skills.healing.name: Healing
+skills.influence.name: Influence
+skills.mechanisms.name: Mechanisms
+skills.perception.name: Perception
+skills.performance.name: Performance
+skills.riding.name: Riding
+skills.sailing.name: Sailing
+skills.streetwise.name: Streetwise
+skills.trade.name: Trade
+skills.wealth.name: Wealth
+skills.personal-magic-casting.name: Personal Magic Casting
+skills.sorcery-casting.name: Sorcery Casting
+skills.religion-own.name: Religion (Own)
+skills.religion-other.name: Religion (Other)
+weapons.cosh.name: Cosh
+weapons.club.name: Club
+weapons.hatchet.name: Hatchet
+weapons.quarterstaff.name: Quarterstaff
+weapons.battleaxe.name: Battleaxe
+weapons.warhammer.name: Warhammer
+weapons.war-pick.name: War Pick
+weapons.ball-and-chain.name: Ball & Chain
+weapons.mace.name: Mace
+weapons.greathammer.name: Greathammer
+weapons.great-axe.name: Great Axe
+weapons.military-flail.name: Military Flail
+weapons.war-maul.name: War Maul
+weapons.halberd.name: Halberd
+weapons.polearm.name: Polearm
+weapons.glaive.name: Glaive
+weapons.small-shield.name: Small Shield
+weapons.medium-shield.name: Medium Shield
+weapons.large-shield.name: Large Shield
+weapons.lance.name: Lance
+weapons.longspear.name: Longspear
+weapons.shortspear.name: Shortspear
+weapons.bastard-sword.name: Bastard Sword
+weapons.dagger.name: Dagger
+weapons.knife.name: Knife
+weapons.greatsword.name: Greatsword
+weapons.longsword.name: Longsword
+weapons.scimitar.name: Scimitar
+weapons.rapier.name: Rapier
+weapons.shortsword.name: Shortsword
+weapons.gladius.name: Gladius
+weapons.blowgun.name: Blowgun
+weapons.heavy-crossbow.name: Heavy Crossbow
+weapons.light-crossbow.name: Light Crossbow
+weapons.long-bow.name: Long Bow
+weapons.nomad-bow.name: Nomad Bow
+weapons.short-bow.name: Short Bow
+weapons.staff-sling.name: Staff Sling
+weapons.sling.name: Sling
+weapons.dart.name: Dart
+weapons.throwing-star.name: Throwing Star
+weapons.javelin.name: Javelin
+weapons.rock.name: Rock
+armour.leather.name: Leather
+armour.ringmail.name: Ringmail
+armour.scalemail.name: Scalemail
+armour.chainmail.name: Chainmail
+armour.platemail.name: Platemail
+gear.backpack.name: Backpack
+gear.bedroll.name: Bedroll
+gear.block-and-tackle.name: Block & Tackle
+gear.bottle-glass.name: Bottle, glass
+gear.candle-1-hour.name: Candle, 1 hour
+gear.chain-2-metres.name: Chain, 2 metres
+gear.climbing-kit.name: Climbing kit
+gear.codex.name: Codex
+gear.craft-tools.name: Craft Tools
+gear.crowbar.name: Crowbar
+gear.first-aid-kit.name: First Aid Kit
+gear.fish-hook.name: Fish Hook
+gear.fishing-kit.name: Fishing Kit
+gear.flint-and-tinder.name: Flint & Tinder
+gear.grappling-hook.name: Grappling Hook
+gear.hammer.name: Hammer
+gear.healers-kit.name: Healer's Kit
+gear.ladder-3m.name: Ladder, 3m
+gear.lantern.name: Lantern
+gear.lock-picks.name: Lock Picks
+gear.mining-pick.name: Mining Pick
+gear.musical-instrument.name: Musical Instrument
+gear.oil-flask.name: Oil, Flask
+gear.papyrus-sheet.name: Papyrus, Sheet
+gear.pole-3m.name: Pole, 3m
+gear.quiver.name: Quiver
+gear.rope.name: Rope, 10m
+gear.sack-large.name: Sack, Large
+gear.sack-small.name: Sack, Small
+gear.scythe.name: Scythe
+gear.slingbag.name: Slingbag
+gear.spade.name: Spade
+gear.torch.name: Torch
+gear.waterskin.name: Waterskin
+gear.writing-kit.name: Writing kit
+gear.arrows-10.name: Arrows (10)
+gear.blowgun-darts-10.name: Blowgun darts (10)
+gear.crossbow-bolts-10.name: Crossbow bolts (10)
+gear.sling-bullets-10.name: Sling bullets (10)
+gear.food-poor.name: Food & Drink, Poor, 1 day
+gear.food-average.name: Food & Drink, Average, 1 day
+gear.food-superior.name: Food & Drink, Superior, 1 day
+personal.animal-whisperer.name: Animal Whisperer
+personal.babel.name: Babel
+personal.back-eyes.name: Back Eyes
+personal.beast-call.name: Beast Call
+personal.befuddle.name: Befuddle
+personal.block-sense-sense.name: Block Sense (Sense)
+personal.call-spirit-type.name: Call Spirit (Type)
+personal.care.name: Care
+personal.clear-path.name: Clear Path
+personal.coordination.name: Coordination
+personal.countermagic.name: Countermagic
+personal.cover-blind-side.name: Cover Blind Side
+personal.create-charms.name: Create Charms
+personal.create-magic-point-store.name: Create Magic Point Store
+personal.create-potion.name: Create Potion
+personal.create-scroll.name: Create Scroll
+personal.cushion-fall.name: Cushion Fall
+personal.darkwall.name: Darkwall
+personal.demoralise.name: Demoralise
+personal.detect-type.name: Detect (Type)
+personal.dispel-magic.name: Dispel Magic
+personal.disruption.name: Disruption
+personal.drive-out-spirit.name: Drive Out Spirit
+personal.dull-weapon.name: Dull Weapon
+personal.enhance-skill.name: Enhance (Skill)
+personal.extinguish.name: Extinguish
+personal.fanaticism.name: Fanaticism
+personal.farsight.name: Farsight
+personal.firearrow.name: Firearrow
+personal.fireblade.name: Fireblade
+personal.fist-of-gold.name: Fist of Gold
+personal.fist-of-the-wind.name: Fist of the Wind
+personal.frostbite.name: Frostbite
+personal.glue.name: Glue
+personal.harden.name: Harden
+personal.heal.name: Heal
+personal.hinder-skill.name: Hinder (Skill)
+personal.ignite.name: Ignite
+personal.ironmind.name: Ironmind
+personal.leap.name: Leap
+personal.levitating-disc.name: Levitating Disc
+personal.light.name: Light
+personal.lock.name: Lock
+personal.mindspeech.name: Mindspeech
+personal.mobility.name: Mobility
+personal.multimissile.name: Multimissile
+personal.personal-insight.name: Personal Insight
+personal.pierce.name: Pierce
+personal.protection.name: Protection
+personal.push-pull.name: Push/Pull
+personal.read-emotion.name: Read Emotion
+personal.resist-element.name: Resist (Element)
+personal.restore-energy.name: Restore Energy
+personal.sap-energy.name: Sap Energy
+personal.scare.name: Scare
+personal.second-sight.name: Second Sight
+personal.slip.name: Slip
+personal.slow.name: Slow
+personal.speedart.name: Speedart
+personal.spirit-shield.name: Spirit Shield
+personal.strength.name: Strength
+personal.talk-to-animal.name: Talk to Animal
+personal.tongues.name: Tongues
+personal.truth-seeker.name: Truth Seeker
+personal.unlock.name: Unlock
+personal.vigour.name: Vigour
+personal.vomit.name: Vomit
+personal.walk-on-element.name: Walk on (Element)
+personal.water-breath.name: Water Breath
+personal.weapon-enhance.name: Weapon Enhance
+sorcery.animate-substance.name: Animate (Substance)
+sorcery.cast-back.name: Cast Back
+sorcery.create-godform-deity.name: Create Godform (Deity)
+sorcery.damage-boosting.name: Damage Boosting
+sorcery.damage-resistance.name: Damage Resistance
+sorcery.diminish-characteristic.name: Diminish (characteristic)
+sorcery.dominate-species.name: Dominate (Species)
+sorcery.energy-projection-type.name: Energy Projection (Type)
+sorcery.enhance-characteristic.name: Enhance (characteristic)
+sorcery.fly.name: Fly
+sorcery.form-set-substance.name: Form/Set (Substance)
+sorcery.glow.name: Glow
+sorcery.hamper.name: Hamper
+sorcery.haste.name: Haste
+sorcery.holdfast.name: Holdfast
+sorcery.make-potion.name: Make Potion
+sorcery.make-scroll.name: Make Scroll
+sorcery.make-spell-matrix.name: Make Spell Matrix
+sorcery.mirage.name: Mirage
+sorcery.mystic-vision.name: Mystic Vision
+sorcery.neutralise-magic.name: Neutralise Magic
+sorcery.other-world-portal-other-world.name: Other World Portal (Other World)
+sorcery.palsy.name: Palsy
+sorcery.poison-antidote.name: Poison Antidote
+sorcery.protective-sphere.name: Protective Sphere
+sorcery.remove-disease.name: Remove Disease
+sorcery.sense-projection.name: (Sense) Projection
+sorcery.sense-substance.name: Sense (Substance)
+sorcery.shapechange-species-to-species.name: Shapechange (Species) to (Species)
+sorcery.skin-of-life.name: Skin of Life
+sorcery.smother.name: Smother
+sorcery.spell-resistance.name: Spell Resistance
+sorcery.spirit-resistance.name: Spirit Resistance
+sorcery.summon-other-world-creature.name: Summon (Other World creature)
+sorcery.tap-characteristic.name: Tap (characteristic)
+sorcery.teleport.name: Teleport
+sorcery.time-travel-time-period.name: Time Travel (Time Period)
+sorcery.treat-wounds.name: Treat Wounds
+sorcery.venom.name: Venom
+divine.earth-scream.name: Earth Scream
+divine.absorption.name: Absorption
+divine.berserk.name: Berserk
+divine.block-fertility.name: Block Fertility
+divine.breathe-water.name: Breathe Water
+divine.call-elemental.name: Call (Elemental)
+divine.call-undead.name: Call (Undead)
+divine.consecrate.name: Consecrate
+divine.create-blessed-items.name: Create Blessed Items
+divine.create-idol.name: Create Idol
+divine.create-the-crystal-ship.name: Create the Crystal Ship
+divine.dismiss-magic.name: Dismiss Magic
+divine.divination.name: Divination
+divine.divine-heal.name: Divine Heal
+divine.enhance-fertility.name: Enhance Fertility
+divine.enhance-unit.name: Enhance Unit
+divine.excommunicate.name: Excommunicate
+divine.exorcism.name: Exorcism
+divine.extension.name: Extension
+divine.fear.name: Fear
+divine.find-type.name: Find (Type)
+divine.illusion.name: Illusion
+divine.invisibility.name: Invisibility
+divine.jigsaw.name: Jigsaw
+divine.lightning-strike.name: Lightning Strike
+divine.madness.name: Madness
+divine.mindblast.name: Mindblast
+divine.mindlink.name: Mindlink
+divine.miraculous-item.name: Miraculous Item
+divine.mythic-journey.name: Mythic Journey
+divine.mischief.name: Mischief
+divine.puppet.name: Puppet
+divine.purity-religion-creed.name: Purity (Religion/Creed)
+divine.quicksand.name: Quicksand
+divine.radiant-appearance.name: Radiant Appearance
+divine.repair-and-replace.name: Repair and Replace
+divine.reflection.name: Reflection
+divine.resurrect.name: Resurrect
+divine.rout.name: Rout
+divine.see-past.name: See Past
+divine.shield.name: Shield
+divine.soul-sight.name: Soul Sight
+divine.stink-bomb.name: Stink Bomb
+divine.spirit-block.name: Spirit Block
+divine.sun-disc.name: Sun Disc
+divine.sunspear.name: Sunspear
+divine.sureshot.name: Sureshot
+divine.thunders-voice.name: Thunder’s Voice
+divine.touch-of-death.name: Touch of Death
+divine.treasury.name: Treasury
+divine.true-weapon.name: True (Weapon)
+divine.ward-camp.name: Ward Camp
+divine.wax-effigy.name: Wax Effigy
+divine.whirlwind.name: Whirlwind
+skills.shamanism.name: Shamanism
+
+tags.magic.name: Magic
+types.skill.fields.restricted.name: Only on a magic path
+
+fields.magic.personalCasting.name: Personal Magic Casting
+fields.magic.sorceryCasting.name: Sorcery Casting
+fields.magic.shamanism.name: Shamanism
+fields.religion.skill.name: Religion (Own)
+fields.magic.specialist.name: Personal Magic specialist
+fields.magic.specialist.values.none.name: None
+fields.magic.specialist.values.shaman.name: Shaman
+fields.magic.specialist.values.wise.name: Wise
+fields.sorcery.rank.name: Sorcery rank
+fields.sorcery.rank.values.none.name: None
+fields.sorcery.rank.values.apprentice.name: Apprentice
+fields.sorcery.rank.values.adept.name: Adept
+fields.sorcery.rank.values.magus.name: Magus
+fields.religion.name.name: Religion
+fields.religion.rank.name: Religious rank
+fields.religion.rank.values.none.name: None
+fields.religion.rank.values.lay.name: Lay member
+fields.religion.rank.values.initiate.name: Initiate
+fields.religion.rank.values.priest.name: Priest
+fields.religion.rank.values.holy-warrior.name: Holy Warrior
+fields.magic.personal.known.name: Personal Magic known (magnitude)
+fields.magic.personal.limit.name: Personal Magic limit (magnitude)
+fields.magic.sorcery.known.name: Sorcery spells known
+fields.magic.divine.known.name: Divine Magic known (magnitude)
+fields.magic.focus.limit.name: Spells a wand or staff can focus
+fields.magic.focused.name: Spells focused
+
+types.personal.name: Personal Magic spell
+types.sorcery.name: Sorcery spell
+types.divine.name: Divine Magic spell
+types.personal.state.magnitude.name: Magnitude known
+types.personal.state.specialty.name: Descriptor
+types.sorcery.state.focused.name: Focused by the wand or staff
+types.sorcery.state.specialty.name: Descriptor
+types.divine.state.magnitude.name: Magnitude known
+types.divine.state.spent.name: Magnitude spent
+types.divine.state.specialty.name: Descriptor
+
+groups.magic.label: Magic
+groups.personal.label: Personal Magic
+groups.sorcery.label: Sorcery
+groups.divine.label: Divine Magic
+
+constraints.personal-magic-limit: More Personal Magic than POW allows (twice POW for a Wise)
+constraints.creation-personal-magic: More than six points of Personal Magic at creation
+constraints.personal-spell-magnitude: A fixed spell is known at its magnitude; a variable one at 6 at most (a Wise has no limit)
+constraints.divine-spell-magnitude: A Divine spell above magnitude 2 needs a Priest, or a fixed spell at its magnitude
+constraints.personal-spell-needs-specialty: This spell needs its descriptor
+constraints.sorcery-spell-needs-specialty: This spell needs its descriptor
+constraints.divine-spell-needs-specialty: This spell needs its descriptor
+constraints.divine-needs-rank: Divine Magic needs an Initiate, a Priest or a Holy Warrior
+constraints.sorcery-needs-rank: Sorcery spells need an Apprentice or higher
+constraints.sorcery-alone: A sorcerer gives up Personal and Divine Magic and the Shaman's and Wise's ways
+constraints.wise-no-divine: A Wise learns no Divine Magic
+constraints.focus-limit: More spells focused than the wand or staff can hold
+
+actions.create-character.steps.spells.prompt: 'Personal Magic: six points of magnitude (each spell at its magnitude)'
+actions.create-character.steps.spellMagnitude.prompt: 'Raise a variable spell +1 (six points in all, 6 at most a spell)'
+
+actions.cast-personal.name: Cast (Personal Magic)
+actions.cast-personal.params.known.name: Magnitude known
+actions.cast-personal.params.variable.name: Variable
+actions.cast-personal.params.magnitude.name: Magnitude cast (at most the one known)
+actions.cast-personal.params.duress.name: Under duress (casting test)
+actions.cast-personal.params.magic.name: Magic modifier (%)
+actions.cast-personal.params.modifier.name: Other modifier (%)
+actions.cast-personal.results.cast.name: Cast
+actions.cast-personal.results.failed.name: Failed (1 magic point lost)
+actions.cast-personal.results.fumbled.name: Fumbled (the full cost lost)
+actions.cast-personal.results.not-enough-magic.name: Not enough magic points
+
+actions.cast-sorcery.name: Cast (Sorcery)
+actions.cast-sorcery.params.focused.name: Focused by the wand or staff
+actions.cast-sorcery.params.magnitude.name: Magnitude (1 to 10, 15, 20)
+actions.cast-sorcery.params.duration.name: Duration
+actions.cast-sorcery.params.duration.values.5-minutes.name: 5 minutes (default)
+actions.cast-sorcery.params.duration.values.15-minutes.name: 15 minutes (+1)
+actions.cast-sorcery.params.duration.values.1-hour.name: 1 hour (+2)
+actions.cast-sorcery.params.duration.values.6-hours.name: 6 hours (+3)
+actions.cast-sorcery.params.duration.values.12-hours.name: 12 hours (+4)
+actions.cast-sorcery.params.duration.values.1-day.name: 1 day (+5)
+actions.cast-sorcery.params.duration.values.1-week.name: 1 week (+6)
+actions.cast-sorcery.params.duration.values.1-month.name: 1 month (+7)
+actions.cast-sorcery.params.duration.values.1-season.name: 1 season (+8)
+actions.cast-sorcery.params.duration.values.1-year.name: 1 year (+9)
+actions.cast-sorcery.params.duration.values.5-years.name: 5 years (+10)
+actions.cast-sorcery.params.duration.values.permanent.name: Permanent (+10, Master)
+actions.cast-sorcery.params.range.name: Range
+actions.cast-sorcery.params.range.values.10-m.name: 10 m (default)
+actions.cast-sorcery.params.range.values.20-m.name: 20 m (+1)
+actions.cast-sorcery.params.range.values.50-m.name: 50 m (+2)
+actions.cast-sorcery.params.range.values.250-m.name: 250 m (+3)
+actions.cast-sorcery.params.range.values.500-m.name: 500 m (+4)
+actions.cast-sorcery.params.range.values.1-km.name: 1 km (+5)
+actions.cast-sorcery.params.range.values.10-km.name: 10 km (+6)
+actions.cast-sorcery.params.range.values.100-km.name: 100 km (+7)
+actions.cast-sorcery.params.range.values.1000-km.name: 1,000 km (+8)
+actions.cast-sorcery.params.range.values.5000-km.name: 5,000 km (+9)
+actions.cast-sorcery.params.range.values.10000-km.name: 10,000 km (+10)
+actions.cast-sorcery.params.range.values.planetary.name: Planetary (+10, Master)
+actions.cast-sorcery.params.useFocus.name: Cast with the wand or staff (+20% if focused)
+actions.cast-sorcery.params.duress.name: Under duress (casting test)
+actions.cast-sorcery.params.magic.name: Magic modifier (%)
+actions.cast-sorcery.params.modifier.name: Other modifier (%)
+actions.cast-sorcery.results.cast.name: Cast
+actions.cast-sorcery.results.failed.name: Failed (1 magic point lost)
+actions.cast-sorcery.results.fumbled.name: Fumbled (the full cost lost)
+actions.cast-sorcery.results.beyond-skill.name: Manipulation beyond the Sorcery Casting skill
+actions.cast-sorcery.results.not-enough-magic.name: Not enough magic points
+
+actions.cast-divine.name: Cast (Divine Magic)
+actions.cast-divine.params.known.name: Magnitude known
+actions.cast-divine.params.spent.name: Magnitude spent
+actions.cast-divine.params.variable.name: Variable
+actions.cast-divine.params.magnitude.name: Magnitude cast (splitting a variable spell)
+actions.cast-divine.results.cast.name: Cast
+actions.regain-divine.name: Regain the spell
+actions.regain-divine.params.fortune.name: By spending a fortune point (else a worshipper duty performed)
+actions.regain-divine.results.regained.name: Regained
+actions.regain-divine.results.no-fortune.name: No fortune point left
+
+actions.learn-personal-spell.name: Learn a Personal Magic spell
+actions.learn-personal-spell.params.magnitude.name: Magnitude (variable spells)
+actions.learn-personal-spell.params.specialty.name: Descriptor (Detect (Type)…)
+actions.learn-personal-spell.steps.spell.prompt: Spell (1 growth point a magnitude; free at creation)
+actions.learn-personal-spell.results.learned.name: Learned
+actions.learn-personal-spell.results.not-enough-points.name: Not enough growth points
+actions.raise-personal-spell.name: Raise the magnitude (+1, 1 growth point)
+actions.raise-personal-spell.results.raised.name: Raised
+actions.raise-personal-spell.results.not-enough-points.name: Not enough growth points
+actions.raise-personal-spell.results.at-limit.name: At the limit
+actions.learn-sorcery-spell.name: Learn a Sorcery spell
+actions.learn-sorcery-spell.params.specialty.name: Descriptor (Animate (Substance)…)
+actions.learn-sorcery-spell.steps.spell.prompt: Spell (3 growth points)
+actions.learn-sorcery-spell.results.learned.name: Learned
+actions.learn-sorcery-spell.results.not-enough-points.name: Not enough growth points
+actions.learn-divine-spell.name: Learn a Divine Magic spell
+actions.learn-divine-spell.params.magnitude.name: Magnitude (variable spells)
+actions.learn-divine-spell.params.specialty.name: Descriptor (Call (Elemental)…)
+actions.learn-divine-spell.steps.spell.prompt: Spell (2 growth points a magnitude)
+actions.learn-divine-spell.results.learned.name: Learned
+actions.raise-divine-spell.name: Raise the magnitude (+1, 2 growth points)
+actions.raise-divine-spell.results.raised.name: Raised
+actions.raise-divine-spell.results.not-enough-points.name: Not enough growth points
+actions.raise-divine-spell.results.at-limit.name: At the limit (2 below Priest)
+
+actions.become-specialist.name: Become a Shaman or a Wise
+actions.become-specialist.params.path.name: Path
+actions.become-specialist.params.path.values.shaman.name: Shaman
+actions.become-specialist.params.path.values.wise.name: Wise
+actions.become-specialist.results.became.name: Done
+actions.become-specialist.results.requirements-not-met.name: 'Requirements not met (POW 14, Personal Magic Casting 50%, over 50% for a Wise)'
+actions.become-specialist.results.not-enough-points.name: Not enough growth points (5)
+actions.sorcery-rank.name: Rise in Sorcery
+actions.sorcery-rank.results.promoted.name: Promoted
+actions.sorcery-rank.results.requirements-not-met.name: 'Requirements not met (Apprentice 25%; Adept 50%, POW 15, 5 spells; Magus 90%, 10 spells)'
+actions.sorcery-rank.results.not-enough-points.name: Not enough growth points
+actions.religion-rank.name: Rank in a religion
+actions.religion-rank.params.rank.name: Rank
+actions.religion-rank.params.rank.values.lay.name: Lay member (Religion 20%)
+actions.religion-rank.params.rank.values.initiate.name: Initiate (Religion 40%, 2 growth points)
+actions.religion-rank.params.rank.values.priest.name: Priest (Religion 75%, 5 growth points)
+actions.religion-rank.params.rank.values.holy-warrior.name: Holy Warrior (Religion 50%, a combat skill 75%, 5 growth points)
+actions.religion-rank.params.religion.name: Religion
+actions.religion-rank.results.joined.name: Done
+actions.religion-rank.results.requirements-not-met.name: Requirements not met
+actions.religion-rank.results.not-enough-points.name: Not enough growth points
+actions.leave-religion.name: Leave the religion (its Divine Magic is lost)
+actions.leave-religion.results.left.name: Left
+
+actions.spirit-combat.name: Spirit combat
+actions.spirit-combat.params.opponentResult.name: The spirit's result
+actions.spirit-combat.params.opponentResult.values.critical.name: Critical success
+actions.spirit-combat.params.opponentResult.values.success.name: Success
+actions.spirit-combat.params.opponentResult.values.failure.name: Failure
+actions.spirit-combat.params.opponentResult.values.fumble.name: Fumble
+actions.spirit-combat.params.opponentRoll.name: The spirit's roll
+actions.spirit-combat.params.opponentExtraDice.name: The spirit's extra D6 (one for every ten POW above 20)
+actions.spirit-combat.params.spiritShield.name: Spirit Shield magnitude
+actions.spirit-combat.results.won.name: Won
+actions.spirit-combat.results.lost.name: Lost
+actions.spirit-combat.results.standoff.name: Standoff
+actions.spirit-combat.results.nobody.name: Nobody wins
+
+types.personal.fields.magnitude.name: 'Magnitude'
+types.personal.fields.variable.name: 'Variable'
+types.personal.fields.resist.name: 'Resist'
+types.personal.fields.touch.name: 'Touch'
+types.personal.fields.instant.name: 'Instant'
+types.personal.fields.permanent.name: 'Permanent'
+types.personal.fields.concentration.name: 'Concentration'
+types.personal.fields.ranged.name: 'Ranged'
+types.personal.fields.area.name: 'Area (m)'
+types.personal.fields.areaSpecial.name: 'Area (as described)'
+types.personal.fields.duration.name: 'Duration (minutes)'
+types.personal.fields.common.name: 'Common (every religion)'
+types.personal.fields.generic.name: 'Taken once per descriptor'
+types.personal.fields.resist.values.dodge.name: Dodge
+types.personal.fields.resist.values.persistence.name: Persistence
+types.personal.fields.resist.values.resilience.name: Resilience
+types.personal.fields.resist.values.persistence-or-resilience.name: Persistence or Resilience
+types.sorcery.fields.magnitude.name: 'Magnitude'
+types.sorcery.fields.variable.name: 'Variable'
+types.sorcery.fields.resist.name: 'Resist'
+types.sorcery.fields.touch.name: 'Touch'
+types.sorcery.fields.instant.name: 'Instant'
+types.sorcery.fields.permanent.name: 'Permanent'
+types.sorcery.fields.concentration.name: 'Concentration'
+types.sorcery.fields.ranged.name: 'Ranged'
+types.sorcery.fields.area.name: 'Area (m)'
+types.sorcery.fields.areaSpecial.name: 'Area (as described)'
+types.sorcery.fields.duration.name: 'Duration (minutes)'
+types.sorcery.fields.common.name: 'Common (every religion)'
+types.sorcery.fields.generic.name: 'Taken once per descriptor'
+types.sorcery.fields.resist.values.dodge.name: Dodge
+types.sorcery.fields.resist.values.persistence.name: Persistence
+types.sorcery.fields.resist.values.resilience.name: Resilience
+types.sorcery.fields.resist.values.persistence-or-resilience.name: Persistence or Resilience
+types.divine.fields.magnitude.name: 'Magnitude'
+types.divine.fields.variable.name: 'Variable'
+types.divine.fields.resist.name: 'Resist'
+types.divine.fields.touch.name: 'Touch'
+types.divine.fields.instant.name: 'Instant'
+types.divine.fields.permanent.name: 'Permanent'
+types.divine.fields.concentration.name: 'Concentration'
+types.divine.fields.ranged.name: 'Ranged'
+types.divine.fields.area.name: 'Area (m)'
+types.divine.fields.areaSpecial.name: 'Area (as described)'
+types.divine.fields.duration.name: 'Duration (minutes)'
+types.divine.fields.common.name: 'Common (every religion)'
+types.divine.fields.generic.name: 'Taken once per descriptor'
+types.divine.fields.resist.values.dodge.name: Dodge
+types.divine.fields.resist.values.persistence.name: Persistence
+types.divine.fields.resist.values.resilience.name: Resilience
+types.divine.fields.resist.values.persistence-or-resilience.name: Persistence or Resilience
+
+fields.armour.worn.name: Armour points of the armour worn
+fields.hp.base.name: Hit points (without Vigour)
+fields.spell.armour.name: Armour points from spells
+fields.spell.close.name: Close Combat bonus from spells (%)
+fields.spell.unarmed.name: Unarmed Combat bonus from spells (%)
+fields.spell.ranged.name: Ranged Combat bonus from spells (%)
+fields.spell.dodge.name: Dodge bonus from spells (%)
+fields.spell.persistence.name: Persistence bonus from spells (%)
+fields.spell.damage.name: Damage bonus from spells
+fields.spell.fireblade.name: Fireblade (+1D10 fire damage)
+fields.spell.trueWeapon.name: True (Weapon) (weapon dice doubled)
+fields.spell.pierce.name: Armour points ignored (Pierce)
+fields.spell.move.name: Movement from spells (m)
+fields.spell.hp.name: Hit points from Vigour
+fields.spell.damageResistance.name: Damage Resistance
+fields.spell.spiritShield.name: Spirit Shield
+fields.state.demoralised.name: Demoralised (combat skills halved)
+fields.state.befuddled.name: Befuddled (INT skills -20%)
+fields.mp.borrowed.name: Magic points drawn from stores, ready to cast
+fields.mp.locked.name: Magic points held in magic places
+fields.magic.sanctuary.name: Has made a sanctuary
+fields.magic.apotheosis.name: Pinnacle of the path
+fields.magic.apotheosis.values.none.name: None
+fields.magic.apotheosis.values.great-spirit.name: Great Spirit
+fields.magic.apotheosis.values.one-with-reality.name: One with Reality
+fields.magic.apotheosis.values.transcended.name: Transcended Magus
+fields.magic.apotheosis.values.ascended-immortal.name: Ascended Immortal
+fields.magic.apotheosis.values.ascended-deity.name: Ascended Deity
+fields.magic.transcended.name: Transcended (damage to magic points)
+fields.magic.powUnlimited.name: POW without maximum
+
+types.store.name: Magic point store
+types.store.fields.ofPow.name: Holds up to POW (sorcerer's stone)
+types.store.fields.spirit.name: A spirit or a place, not an object
+types.store.state.capacity.name: Capacity (0 for no limit)
+types.store.state.mp.name: Magic points stored
+types.store.state.reusable.name: Reusable
+types.sorcery.state.magnitude.name: Magnitude (a spell on the character)
+groups.stores.label: Magic point stores
+stores.sorcerers-stone.name: Sorcerer's stone
+stores.magic-point-store.name: Magic point store
+stores.place-of-power.name: Place of power
+stores.bound-magic-spirit.name: Bound magic spirit
+gear.sorcerers-wand.name: Sorcerer's wand
+weapons.sorcerers-staff.name: Sorcerer's staff
+
+actions.skill-test.params.spell.name: Bonus from spells (%)
+actions.skill-test.params.intBased.name: Based on INT (-20% when befuddled)
+actions.cast-personal.params.onSelf.name: Cast on oneself (its effects on the sheet)
+actions.cast-sorcery.params.onSelf.name: Cast on oneself (its effects on the sheet)
+actions.cast-divine.params.onSelf.name: Cast on oneself (its effects on the sheet)
+actions.take-damage.params.pierce.name: Armour points the attack ignores (Pierce)
+actions.take-damage.results.resisted.name: Stopped by Damage Resistance
+actions.take-damage.results.to-magic.name: Taken to magic points (transcended)
+actions.magic-healing.results.no-effect.name: No effect (a Magus's magical body)
+
+actions.end-spell.name: End the spell
+actions.end-spell.params.entry.name: Spell on the character
+actions.end-spell.results.ended.name: Ended
+actions.spell-received.name: Spell received
+actions.spell-received.params.kind.name: Magic
+actions.spell-received.params.kind.values.personal.name: Personal Magic
+actions.spell-received.params.kind.values.sorcery.name: Sorcery
+actions.spell-received.params.kind.values.divine.name: Divine Magic
+actions.spell-received.params.magnitude.name: Magnitude
+actions.spell-received.params.specialty.name: Descriptor
+actions.spell-received.steps.personal.prompt: Spell
+actions.spell-received.steps.sorcery.prompt: Spell
+actions.spell-received.steps.divine.prompt: Spell
+actions.spell-received.results.received.name: Received
+
+actions.make-store.name: Make a magic point store
+actions.make-store.params.amount.name: Magic points put in (its maximum)
+actions.make-store.params.reusable.name: Reusable (1 growth point)
+actions.make-store.results.made.name: Made
+actions.make-store.results.not-enough-magic.name: Not enough magic points
+actions.make-store.results.not-enough-points.name: Not enough growth points
+actions.draw-store.name: Draw magic points
+actions.draw-store.params.held.name: Magic points stored
+actions.draw-store.params.amount.name: Magic points to draw
+actions.draw-store.results.drawn.name: Drawn
+actions.charge-store.name: Refill the store
+actions.charge-store.params.held.name: Magic points stored
+actions.charge-store.params.room.name: Room left
+actions.charge-store.params.amount.name: Magic points to put in
+actions.charge-store.results.charged.name: Refilled
+
+actions.create-magic-place.name: Create a magic place (Wise)
+actions.create-magic-place.params.place.name: Place
+actions.create-magic-place.params.place.values.seclusion.name: Seclusion (1 magic point a day)
+actions.create-magic-place.params.place.values.sanctuary.name: Sanctuary (1 magic point an hour)
+actions.create-magic-place.params.place.values.power.name: Place of power (a store)
+actions.create-magic-place.params.amount.name: Magic points
+actions.create-magic-place.params.haste.name: In haste (Personal Magic Casting test)
+actions.create-magic-place.results.created.name: Created
+actions.create-magic-place.results.failed.name: Failed
+actions.create-magic-place.results.not-enough-magic.name: Not enough magic points
+actions.end-magic-place.name: End a seclusion or sanctuary
+actions.end-magic-place.params.amount.name: Magic points it held
+actions.end-magic-place.results.ended.name: Ended
+
+actions.apotheosis.name: Reach the pinnacle of the path
+actions.apotheosis.params.kind.name: Pinnacle
+actions.apotheosis.params.kind.values.great-spirit.name: 'Great Spirit (Shaman: Shamanism 100%, POW at maximum, ten spells)'
+actions.apotheosis.params.kind.values.one-with-reality.name: 'One with Reality (Wise: Personal Magic Casting 100%, POW at maximum, ten spells, a sanctuary)'
+actions.apotheosis.params.kind.values.ascended-immortal.name: 'Ascended Immortal (Religion 100%, POW at maximum, ten points of Divine Magic, 10 growth points)'
+actions.apotheosis.params.kind.values.ascended-deity.name: 'Ascended Deity (also a Religion (Other) at 100%, 20 growth points)'
+actions.apotheosis.results.achieved.name: Achieved
+actions.apotheosis.results.requirements-not-met.name: Requirements not met
+actions.apotheosis.results.not-enough-points.name: Not enough growth points
+
+tags.potency.name: Potency
+tags.social.name: Social combat
+groups.conditions.label: Fatigue and hardship
+groups.social.label: Social combat
+
+fields.fatigue.level.name: Fatigue
+fields.fatigue.level.values.none.name: Rested
+fields.fatigue.level.values.fatigued.name: Fatigued (-20%, DEX and INT -3, movement -1/4)
+fields.fatigue.level.values.heavy.name: Heavily fatigued (-50%, DEX and INT -3, movement -1/4)
+fields.state.exposure.name: Exposed
+fields.state.starving.name: Starving
+fields.state.thirsty.name: Thirsty
+fields.state.deprived.name: Exposed, starving or thirsty (no healing)
+fields.state.diseased.name: Diseased
+fields.breath.rounds.name: Breath held (combat rounds)
+fields.skill.athletics.name: Athletics
+fields.skill.naturalLore.name: Natural Lore
+fields.skill.influence.name: Influence
+fields.oratory.audience.name: Oratory audience
+fields.oratory.won.name: Audience won over
+fields.oratory.penalty.name: Last oratory failed (-20%)
+fields.fastTalk.failures.name: Fast Talk attempts failed (-20% each)
+fields.social.score.name: Prolonged social combat score
+
+actions.fatigue-test.name: Fatigue test (Resilience)
+actions.fatigue-test.params.heavyActivity.name: Heavy activity while fatigued (-20%)
+actions.fatigue-test.params.difficulty.name: Difficulty
+actions.fatigue-test.params.difficulty.values.easy.name: Easy (+50%)
+actions.fatigue-test.params.difficulty.values.simple.name: Simple (+20%)
+actions.fatigue-test.params.difficulty.values.normal.name: Normal
+actions.fatigue-test.params.difficulty.values.difficult.name: Difficult (-20%)
+actions.fatigue-test.params.difficulty.values.hard.name: Hard (-50%)
+actions.fatigue-test.params.modifier.name: Other modifier (%)
+actions.fatigue-test.results.fine.name: Not fatigued
+actions.fatigue-test.results.fatigued.name: Fatigued
+actions.fatigue-test.results.heavily-fatigued.name: Heavily fatigued
+actions.fatigue-test.results.unconscious.name: Unconscious (3D6 minutes)
+actions.rest-fatigue.name: Rest off fatigue (20 - CON hours)
+actions.rest-fatigue.params.hours.name: Hours of complete rest
+actions.rest-fatigue.results.rested.name: Rested
+actions.rest-fatigue.results.not-enough-rest.name: Not enough rest
+actions.deprivation.name: A day of exposure, starvation or thirst (1D6 each)
+actions.deprivation.results.suffered.name: Suffered
+actions.travel-day.name: A day's travel
+actions.travel-day.params.offRoad.name: Off road or hard conditions (Natural Lore test)
+actions.travel-day.params.mounted.name: Mount's daily distance (km, 0 on foot)
+actions.travel-day.results.travelled.name: Travelled
+actions.travel-day.results.slowed.name: Slowed (half the distance)
+actions.travel-day.results.lost.name: Lost or in danger (no progress)
+actions.fall.name: Fall
+actions.fall.params.metres.name: Metres fallen
+actions.fall.params.soft.name: Soft surface (half the distance)
+actions.fall.params.surprised.name: Surprised (no Athletics test)
+actions.fall.results.landed.name: Landed on one's feet
+actions.fall.results.fell.name: Fell (prone)
+actions.suffocate.name: Suffocation (a round past holding one's breath)
+actions.suffocate.params.round.name: Rounds past holding one's breath (-10% each)
+actions.suffocate.params.substance.name: Substance
+actions.suffocate.params.substance.values.water.name: Water (2D6)
+actions.suffocate.params.substance.values.vacuum.name: Vacuum (2D6)
+actions.suffocate.params.substance.values.smoke.name: Thick smoke (1D6)
+actions.suffocate.params.substance.values.poison-gas.name: Poison gas (the poison)
+actions.suffocate.params.substance.values.poison-smoke.name: Poisonous thick smoke (1D6 and the poison)
+actions.suffocate.results.held.name: Held on
+actions.suffocate.results.inhaled.name: Inhaled
+actions.burn.name: Fire and heat (a round)
+actions.burn.params.source.name: Source
+actions.burn.params.source.values.flame.name: Flame (1)
+actions.burn.params.source.values.large-flame.name: Large flame (1D4)
+actions.burn.params.source.values.small-fire.name: Small fire (1D6)
+actions.burn.params.source.values.large-fire.name: Large fire (2D6)
+actions.burn.params.source.values.inferno.name: Inferno (3D6)
+actions.burn.params.metalArmour.name: Metal armour (no protection)
+actions.burn.results.burnt.name: Burnt
+actions.resist-potency.name: Resilience against a Potency
+actions.resist-potency.params.potency.name: Potency
+actions.resist-potency.params.healer.name: Healer's Healing skill (a tenth added)
+actions.resist-potency.results.resisted.name: Resisted
+actions.resist-potency.results.succumbed.name: Succumbed
+actions.resist-poison.name: Resist a poison
+actions.resist-poison.params.potency.name: Potency
+actions.resist-poison.params.damage.name: Damage of its full effect
+actions.resist-poison.params.healer.name: Healer's Healing skill (a tenth added)
+actions.resist-poison.results.resisted.name: Resisted
+actions.resist-poison.results.poisoned.name: Poisoned
+actions.resist-disease.name: Resist a disease
+actions.resist-disease.params.potency.name: Potency
+actions.resist-disease.params.damage.name: Damage of its effects
+actions.resist-disease.params.healer.name: Healer's Healing skill (a tenth added)
+actions.resist-disease.results.resisted.name: Resisted
+actions.resist-disease.results.recovered.name: Over the worst of it
+actions.resist-disease.results.sick.name: Sick (another test after its delay)
+
+actions.fast-talk.name: Fast Talk
+actions.fast-talk.params.distant.name: Beyond two metres (-20%)
+actions.fast-talk.params.opponentResult.name: The target's result (Influence, Persistence or Lore)
+actions.fast-talk.params.opponentResult.values.critical.name: Critical success
+actions.fast-talk.params.opponentResult.values.success.name: Success
+actions.fast-talk.params.opponentResult.values.failure.name: Failure
+actions.fast-talk.params.opponentResult.values.fumble.name: Fumble
+actions.fast-talk.params.opponentRoll.name: The target's roll
+actions.fast-talk.params.magic.name: Magic modifier (%)
+actions.fast-talk.params.modifier.name: Other modifier (%)
+actions.fast-talk.results.convinced.name: Convinced (for 1D20 minutes)
+actions.fast-talk.results.convinced-for-good.name: Convinced for good
+actions.fast-talk.results.not-convinced.name: Not convinced (-20% next time)
+actions.fast-talk.results.exposed.name: Seen through
+actions.fast-talk.results.no-credibility.name: No credibility left
+actions.oratory-start.name: Start an oratory
+actions.oratory-start.params.audience.name: Audience
+actions.oratory-start.results.started.name: Started
+actions.oratory.name: Oratory (an exchange)
+actions.oratory.params.condition.name: Condition (one)
+actions.oratory.params.condition.values.none.name: None
+actions.oratory.params.condition.values.favourable.name: Favourable (+20%)
+actions.oratory.params.condition.values.adverse.name: Adverse (-20%)
+actions.oratory.params.distant.name: Beyond two metres (-20%)
+actions.oratory.params.magic.name: Magic modifier (%)
+actions.oratory.results.swayed.name: Swayed some
+actions.oratory.results.unconvinced.name: Unconvinced (-20% next time)
+actions.oratory.results.won-the-audience.name: Won the audience
+actions.oratory.results.lost-the-audience.name: Lost the audience
+actions.oratory-defence.name: The defending orator's reply
+actions.oratory-defence.params.result.name: Its result
+actions.oratory-defence.params.result.values.critical.name: Critical success (wins back 10)
+actions.oratory-defence.params.result.values.success.name: Success (wins back 1D10)
+actions.oratory-defence.params.result.values.failure.name: Failure
+actions.oratory-defence.params.result.values.fumble.name: Fumble (loses 10)
+actions.oratory-defence.results.replied.name: Replied
+actions.intimidate.name: Intimidate
+actions.intimidate.params.condition.name: Condition (one)
+actions.intimidate.params.condition.values.none.name: None
+actions.intimidate.params.condition.values.motive.name: A motive behind it (+20%)
+actions.intimidate.params.condition.values.tougher.name: Target with more Influence or Persistence (-20%)
+actions.intimidate.params.condition.values.stronger.name: Target more powerful, or a group at full strength (-50%)
+actions.intimidate.params.distant.name: Beyond two metres (-20%)
+actions.intimidate.params.gestures.name: Understood only through gestures (-20%)
+actions.intimidate.params.magic.name: Magic modifier (%)
+actions.intimidate.results.caves.name: Caves in (surrenders or flees)
+actions.intimidate.results.convinced.name: Intimidated
+actions.intimidate.results.not-intimidated.name: Not intimidated
+actions.intimidate.results.digs-in.name: Digs in for the rest of the Quest
+actions.social-exchange.name: Prolonged social combat (an exchange)
+actions.social-exchange.params.outcome.name: Outcome
+actions.social-exchange.params.outcome.values.critical.name: Won with a critical (+2)
+actions.social-exchange.params.outcome.values.won.name: Won (+1)
+actions.social-exchange.params.outcome.values.lost.name: Lost
+actions.social-exchange.params.outcome.values.fumble.name: Fumbled (-2)
+actions.social-exchange.params.reset.name: First exchange (start from 0)
+actions.social-exchange.results.recorded.name: Recorded
+weapons.natural-head-butt.name: Head Butt (natural)
+weapons.natural-kick.name: Kick (natural)
+weapons.natural-bite.name: Bite (natural)
+weapons.natural-gore.name: Gore (natural)
+weapons.natural-claw.name: Claw (natural)
+species.human.name: Human
+species.human.description: Characteristics by points (8 each and 30 points) or by dice.
+species.beastling.name: Beastling
+species.beastling.description: A head butt (1D6).
+species.centaur.name: Centaur
+species.centaur.description: Movement 20 m; a kick (1D6).
+species.duck.name: Duck
+species.duck.description: 'Movement 10 m. Masters of swimming: Athletics counts as 100% to swim.'
+species.dwarf.name: Dwarf
+species.dwarf.description: 'Earth Sense: always knows how deep underground they are and whether the tunnels are sound. Dark Sight: sees in the dark as by day.'
+species.elf.name: Elf
+species.goblin.name: Goblin
+species.goblin.description: 'Night Sight: sees at night as by day.'
+species.lizardman.name: Lizardman
+species.lizardman.description: Scales (2 AP); a bite (1D6).
+species.merpeople.name: Merpeople
+species.merpeople.description: Swims 20 m, crawls 7 m on land; breathes under water as in the air.
+species.minotaur.name: Minotaur
+species.minotaur.description: Movement 20 m; tough hide (3 AP); a gore and a head butt (1D6 each).
+species.orc.name: Orc
+species.orc.description: 'Night Vision: sees in the dark as by day.'
+species.pixie.name: Pixie
+species.pixie.description: Flies 30 m. Highly magical.
+species.satyr.name: Satyr
+species.satyr.description: A head butt (1D6).
+species.troll.name: Troll
+species.troll.description: 'Movement 23 m; tough hide (3 AP); a claw (1D6). Regeneration: 1D6 hit points a combat round, not of damage by fire. Night Vision.'
+
+types.species.name: Species
+types.species.fields.str.name: STR dice
+types.species.fields.con.name: CON dice
+types.species.fields.dex.name: DEX dice
+types.species.fields.siz.name: SIZ dice
+types.species.fields.int.name: INT dice
+types.species.fields.pow.name: POW dice
+types.species.fields.cha.name: CHA dice
+types.species.fields.avgStr.name: Average STR
+types.species.fields.avgCon.name: Average CON
+types.species.fields.avgDex.name: Average DEX
+types.species.fields.avgSiz.name: Average SIZ
+types.species.fields.avgInt.name: Average INT
+types.species.fields.avgPow.name: Average POW
+types.species.fields.avgCha.name: Average CHA
+types.species.fields.human.name: Human
+types.species.fields.move.name: Movement rate (m)
+types.species.fields.fly.name: Flying (m)
+types.species.fields.swim.name: Swimming (m)
+types.species.fields.naturalAp.name: Natural armour (AP)
+types.species.fields.natural.name: Natural weapons
+types.species.fields.regenerate.name: Regeneration a combat round
+types.weapon.fields.natural.name: Natural weapon
+groups.species.label: Species
+fields.charmax.str.name: STR maximum
+fields.charmax.con.name: CON maximum
+fields.charmax.dex.name: DEX maximum
+fields.charmax.siz.name: SIZ maximum
+fields.charmax.int.name: INT maximum
+fields.charmax.pow.name: POW maximum
+fields.charmax.cha.name: CHA maximum
+fields.move.fly.name: Flying (m)
+fields.move.swim.name: Swimming (m)
+fields.species.nonHuman.name: Non-human
+constraints.characteristic-maximum: A characteristic above the species' maximum (the highest roll plus three)
+constraints.one-species: Only one species
+actions.create-character.steps.species.prompt: "Species (a non-human only with the Referee's permission)"
+actions.regenerate.name: Regenerate (a combat round)
+actions.regenerate.params.dice.name: Hit points
+actions.regenerate.results.regenerated.name: Regenerated

@@ -1,0 +1,5 @@
+id: personal.cushion-fall
+type: personal
+fields:
+  magnitude: 2
+  variable: false

@@ -1,0 +1,11 @@
+id: personal.demoralise
+type: personal
+fields:
+  magnitude: 2
+  variable: false
+  resist: persistence
+effects:
+  - target: state.demoralised
+    op: add
+    value: 1
+    scope: applied

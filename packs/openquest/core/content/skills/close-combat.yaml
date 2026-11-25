@@ -1,0 +1,6 @@
+id: skills.close-combat
+type: skill
+fields:
+  char1: chars.dex
+  char2: chars.str
+  group: combat

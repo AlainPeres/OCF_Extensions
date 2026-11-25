@@ -1,0 +1,8 @@
+id: personal.hinder-skill
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  resist: persistence
+  ranged: true
+  generic: true

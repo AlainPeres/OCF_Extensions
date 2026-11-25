@@ -1,0 +1,5 @@
+id: sorcery.teleport
+type: sorcery
+fields:
+  resist: dodge
+  instant: true

@@ -1,0 +1,6 @@
+id: skills.influence
+type: skill
+fields:
+  char1: chars.cha
+  plus: 10
+  group: practical

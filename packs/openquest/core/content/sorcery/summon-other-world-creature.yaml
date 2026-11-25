@@ -1,0 +1,5 @@
+id: sorcery.summon-other-world-creature
+type: sorcery
+fields:
+  resist: persistence
+  generic: true

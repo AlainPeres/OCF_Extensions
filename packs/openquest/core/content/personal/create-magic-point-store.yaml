@@ -1,0 +1,6 @@
+id: personal.create-magic-point-store
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  permanent: true

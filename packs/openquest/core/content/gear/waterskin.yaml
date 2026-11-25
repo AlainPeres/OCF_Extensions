@@ -1,0 +1,5 @@
+id: gear.waterskin
+type: gear
+fields:
+  enc: 1
+  cost: 0.5

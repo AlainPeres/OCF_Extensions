@@ -1,0 +1,9 @@
+id: weapons.small-shield
+type: weapon
+fields:
+  kind: close
+  damage: 1d4
+  hands: one
+  enc: 1
+  cost: 50
+  shield: small

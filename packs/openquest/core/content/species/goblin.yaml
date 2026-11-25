@@ -1,0 +1,17 @@
+id: species.goblin
+type: species
+fields:
+  str: 2d6 + 3
+  con: 2d6 + 3
+  dex: 5d6
+  siz: 2d6
+  int: 3d6
+  pow: 2d6 + 3
+  cha: 2d6
+  avgStr: 10
+  avgCon: 10
+  avgDex: 17
+  avgSiz: 7
+  avgInt: 11
+  avgPow: 10
+  avgCha: 7

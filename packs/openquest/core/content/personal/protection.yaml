@@ -1,0 +1,10 @@
+id: personal.protection
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+effects:
+  - target: spell.armour
+    op: add
+    value: self.magnitude
+    scope: applied

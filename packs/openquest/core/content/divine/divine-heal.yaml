@@ -1,0 +1,7 @@
+id: divine.divine-heal
+type: divine
+fields:
+  magnitude: 2
+  variable: false
+  touch: true
+  instant: true

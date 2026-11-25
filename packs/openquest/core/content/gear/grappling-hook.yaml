@@ -1,0 +1,4 @@
+id: gear.grappling-hook
+type: gear
+fields:
+  cost: 5

@@ -1,0 +1,108 @@
+# Characteristics and attributes (Characters chapter, steps 2 and 3).
+fields:
+  # The seven characteristics. Creation sets them by points (8 each, 30 to spread, 3 to 18, INT
+  # and SIZ at least 8) or by dice (3D6, SIZ and INT 2D6+6).
+  chars.str: { type: integer, input: true, default: 8, min: 0, tags: [characteristic] }
+  chars.con: { type: integer, input: true, default: 8, min: 0, tags: [characteristic] }
+  chars.dex: { type: integer, input: true, default: 8, min: 0, tags: [characteristic] }
+  chars.siz: { type: integer, input: true, default: 8, min: 0, tags: [characteristic] }
+  chars.int: { type: integer, input: true, default: 8, min: 0, tags: [characteristic] }
+  chars.pow: { type: integer, input: true, default: 8, min: 0, tags: [characteristic] }
+  chars.cha: { type: integer, input: true, default: 8, min: 0, tags: [characteristic] }
+
+  # Damage modifier by STR + SIZ: -1D6 up to 10, -1D4 up to 15, none up to 25, +1D4 up to 30,
+  # +1D6 up to 45, then one more D6 for every 15.
+  damage.strSiz: { type: integer, formula: chars.str + chars.siz }
+  damage.modifier:
+    type: dice
+    formula: >-
+      damage.strSiz <= 10 ? -1d6 : damage.strSiz <= 15 ? -1d4 : damage.strSiz <= 25 ? 0d6
+        : damage.strSiz <= 30 ? 1d4 : (floor((damage.strSiz - 16) / 15))d6
+
+  # Hit points: (SIZ + CON) / 2, rounded up. Damage taken is kept as wounds; at zero hit points
+  # or fewer the wounds are mortal.
+  # Vigour adds hit points, at most as many again.
+  hp.base: { type: integer, formula: 'ceil((chars.siz + chars.con) / 2)' }
+  hp.max: { type: integer, formula: 'hp.base + min(spell.hp, hp.base)' }
+  hp.wounds: { type: integer, input: true, default: 0, min: 0 }
+  hp.current: { type: integer, formula: hp.max - hp.wounds }
+
+  # Magic points: POW, also their maximum. At zero the character is unconscious until one comes
+  # back.
+  mp.max: { type: integer, formula: chars.pow }
+  mp.spent: { type: integer, input: true, default: 0, min: 0, max: mp.max }
+  mp.current: { type: integer, formula: mp.max - mp.spent }
+
+  # Movement rate in metres a combat round: 15 for humans, a species' own otherwise (species.yaml).
+  # Halved while overloaded.
+  move.base: { type: integer, formula: 15 }
+  move.rate:
+    type: integer
+    formula: >-
+      max(1, floor((state.overloaded ? move.base / 2 : move.base)
+        * (fatigue.level == 'none' ? 1 : 0.75)) + spell.move)
+
+  # States. A mortal wound (zero hit points or fewer) kills by the end of the next round unless
+  # the character is stabilised (Healing) or healed by magic; surgery (Healing) then lets it heal
+  # naturally. Unconsciousness is set and cleared by the actions and the player.
+  state.mortal: { type: boolean, formula: hp.current <= 0 }
+  state.stabilised: { type: boolean, input: true, default: false }
+  state.treated: { type: boolean, input: true, default: false }
+  state.unconscious: { type: boolean, input: true, default: false }
+  state.drained: { type: boolean, formula: mp.current <= 0 }
+
+  # Armour points: the worn armour's (armours don't layer, so the best one counts), plus magic
+  # (Protection, Shield).
+  armour.worn: { type: integer, formula: 0 }
+  armour.ap: { type: integer, formula: armour.worn + spell.armour }
+
+  # Encumbrance: up to STR + SIZ without penalty; over it the character is overloaded (-20% to
+  # physical tests, movement halved), and can't carry more than twice it. Items too light to
+  # have an ENC count for nothing here (twenty of them would make 1 ENC).
+  enc.total:
+    { type: integer, formula: 'sumCopies(copy.fields.enc * copy.quantity, has(copy.fields.enc))' }
+  enc.limit: { type: integer, formula: chars.str + chars.siz }
+  state.overloaded: { type: boolean, formula: enc.total > enc.limit }
+  enc.tooHeavy: { type: boolean, formula: enc.total > 2 * enc.limit }
+
+  # Fortune points: 2 at the start, awarded by the Referee, spent once.
+  fortune.points: { type: integer, input: true, default: 2, min: 0 }
+
+  # Money in silver pieces (5 lead bits = 1 copper penny, 10 copper pennies = 1 silver piece,
+  # 20 silver pieces = 1 gold ducat). With the optional Wealth rule, the Wealth skill stands for
+  # the character's resources instead.
+  money.silver: { type: decimal, input: true, default: 0, min: 0 }
+  wealth.used: { type: boolean, input: true, default: false }
+
+  # The totals of the skills the combat actions use (a skill copy's own total can't feed a
+  # field): base + creation points + growth, at most 100%.
+  combat.close:
+    type: integer
+    formula: >-
+      min(100, chars.dex + chars.str
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.close-combat))
+  combat.ranged:
+    type: integer
+    formula: >-
+      min(100, chars.dex + chars.int
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.ranged-combat))
+  combat.unarmed:
+    type: integer
+    formula: >-
+      min(100, chars.dex + chars.str
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.unarmed-combat))
+  resist.dodge:
+    type: integer
+    formula: >-
+      min(100, chars.dex + 10
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.dodge))
+  resist.persistence:
+    type: integer
+    formula: >-
+      min(100, chars.pow + 10
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.persistence))
+  resist.resilience:
+    type: integer
+    formula: >-
+      min(100, chars.con + chars.pow
+        + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.resilience))

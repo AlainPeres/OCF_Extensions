@@ -1,0 +1,5 @@
+id: divine.rout
+type: divine
+fields:
+  magnitude: 3
+  variable: false

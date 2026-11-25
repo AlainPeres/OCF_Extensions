@@ -1,0 +1,8 @@
+id: weapons.bastard-sword
+type: weapon
+fields:
+  kind: close
+  damage: 1d10
+  hands: one-or-two
+  enc: 3
+  cost: 250

@@ -1,0 +1,6 @@
+id: personal.truth-seeker
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  instant: true

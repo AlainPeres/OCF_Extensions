@@ -1,0 +1,128 @@
+# The basic skill test (Skills chapter): D100 rolled under the skill. Both dice the same (11, 22…
+# 99, and 00, read as 100) make a success critical and a failure a fumble. A skill modified to 0
+# or less always fails; 00 is always a fumble, even for a skill modified to 100% or more, except
+# for a Master (a skill at 100% before modifiers), who doesn't roll: an automatic critical.
+resultBands:
+  test:
+    - id: critical
+      when: 'roll.total <= flags.target && roll.total != 100 && roll.total % 11 == 0'
+    - id: success
+      success: true
+      when: 'roll.total <= flags.target && roll.total != 100'
+    - id: fumble
+      when: 'roll.total % 11 == 0 || roll.total == 100'
+    - id: failure
+      when: true
+
+actions:
+  # One difficulty modifier (Easy +50%, Simple +20%, Difficult -20%, Hard -50%), then one magic
+  # modifier (the strongest bonus or penalty), an assistant's +20% and any other modifier (the
+  # combat situations): the modified skill is at most 100%. An overloaded character tests a
+  # physical skill at -20%; a fatigued character every skill at -20% (-50% heavily fatigued). A
+  # critical or a fumble earns a growth point at once.
+  - id: skill-test
+    tags: [test]
+    params:
+      score: { type: integer }
+      difficulty: { type: enum, values: [easy, simple, normal, difficult, hard], default: normal }
+      magic: { type: integer, default: 0 }
+      assisted: { type: boolean, default: false }
+      modifier: { type: integer, default: 0 }
+      master: { type: boolean, default: false }
+      physical: { type: boolean, default: false }
+      # The spells' bonus to this skill (Coordination's to Dodge, Fanaticism's to Persistence…).
+      spell: { type: integer, default: 0 }
+      # A skill based on INT: -20% while befuddled.
+      intBased: { type: boolean, default: false }
+    results: { bands: test }
+    steps:
+      - id: target
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              target: >-
+                min(100, params.score
+                  + [50, 20, 0, -20, -50][indexOf(['easy', 'simple', 'normal', 'difficult', 'hard'], params.difficulty)]
+                  + params.magic + (params.assisted ? 20 : 0) + params.modifier
+                  + (params.physical && state.overloaded ? -20 : 0) + params.spell
+                  + (params.intBased && state.befuddled > 0 ? -20 : 0)
+                  + (fatigue.level == 'fatigued' ? -20 : fatigue.level == 'heavy' ? -50 : 0))
+      - {
+          id: mastered,
+          kind: outcome,
+          when: params.master,
+          result: "'critical'",
+          data: { target: 100 },
+        }
+      - id: check
+        kind: roll
+        tags: [test]
+        better: low
+        bands: test
+        parts:
+          - dice: 1d100
+      - id: growth
+        kind: changes
+        when: "steps.check.band == 'critical' || steps.check.band == 'fumble'"
+        to: self
+        changes:
+          - { type: adjust, field: growth.points, by: 1 }
+          - { type: adjust, field: growth.earned, by: 1 }
+      - id: result
+        kind: outcome
+        result: steps.check.band
+        data:
+          roll: steps.check.total
+          target: flags.target
+
+  # An opposed test: this character's test against the opponent's result and roll, which the
+  # player enters (each sheet makes its own rolls). A higher level of result wins (critical,
+  # success, failure, fumble); on the same level two successes go to the higher roll, two
+  # failures to the lower, two fumbles to nobody, and a tie to the player. Against a Master, only
+  # a critical wins (a success loses, a failure or fumble is a fumble); two Masters roll, and
+  # only a critical breaks the standoff. A Master against a non-Master wins.
+  - id: opposed-test
+    tags: [test]
+    params:
+      score: { type: integer }
+      difficulty: { type: enum, values: [easy, simple, normal, difficult, hard], default: normal }
+      magic: { type: integer, default: 0 }
+      modifier: { type: integer, default: 0 }
+      master: { type: boolean, default: false }
+      opponentResult: { type: enum, values: [critical, success, failure, fumble], default: failure }
+      opponentRoll: { type: integer, default: 50, min: 1, max: 100 }
+      opponentMaster: { type: boolean, default: false }
+    results: [won, lost, standoff, nobody]
+    steps:
+      - id: mine
+        kind: action
+        use: skill-test
+        params:
+          score: params.score
+          difficulty: params.difficulty
+          magic: params.magic
+          modifier: params.modifier
+          master: params.master && !params.opponentMaster
+      - id: compare
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              mine: indexOf(['fumble', 'failure', 'success', 'critical'], steps.mine.result)
+              theirs: indexOf(['fumble', 'failure', 'success', 'critical'], params.opponentResult)
+              roll: 'has(steps.mine.data.roll) ? steps.mine.data.roll : 0'
+      - id: result
+        kind: outcome
+        result: >-
+          params.master && params.opponentMaster
+            ? (steps.mine.result == 'critical' ? 'won' : 'standoff')
+          : params.opponentMaster ? (steps.mine.result == 'critical' ? 'won' : 'lost')
+          : params.master ? 'won'
+          : flags.mine == 0 && flags.theirs == 0 ? 'nobody'
+          : flags.mine > flags.theirs ? 'won'
+          : flags.mine < flags.theirs ? 'lost'
+          : flags.mine >= 2 ? (flags.roll >= params.opponentRoll ? 'won' : 'lost')
+          : flags.roll <= params.opponentRoll ? 'won' : 'lost'
+        data:
+          mine: steps.mine.result

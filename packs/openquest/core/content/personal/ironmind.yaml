@@ -1,0 +1,5 @@
+id: personal.ironmind
+type: personal
+fields:
+  magnitude: 3
+  variable: false

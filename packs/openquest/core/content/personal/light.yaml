@@ -1,0 +1,6 @@
+id: personal.light
+type: personal
+fields:
+  magnitude: 1
+  variable: false
+  area: 10

@@ -1,0 +1,6 @@
+id: divine.radiant-appearance
+type: divine
+fields:
+  magnitude: 2
+  variable: false
+  duration: 1440

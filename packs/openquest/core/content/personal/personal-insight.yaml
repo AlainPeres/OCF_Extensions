@@ -1,0 +1,5 @@
+id: personal.personal-insight
+type: personal
+fields:
+  magnitude: 2
+  variable: false

@@ -1,0 +1,8 @@
+id: weapons.greatsword
+type: weapon
+fields:
+  kind: close
+  damage: 2d8
+  hands: two
+  enc: 4
+  cost: 300

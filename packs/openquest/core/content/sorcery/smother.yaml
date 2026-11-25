@@ -1,0 +1,5 @@
+id: sorcery.smother
+type: sorcery
+fields:
+  resist: resilience
+  concentration: true

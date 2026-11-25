@@ -1,0 +1,12 @@
+id: divine.berserk
+type: divine
+fields:
+  magnitude: 2
+  variable: false
+  touch: true
+  duration: 15
+effects:
+  - target: spell.close
+    op: add
+    value: 50
+    scope: applied

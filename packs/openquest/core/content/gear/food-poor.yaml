@@ -1,0 +1,4 @@
+id: gear.food-poor
+type: gear
+fields:
+  cost: 0.1

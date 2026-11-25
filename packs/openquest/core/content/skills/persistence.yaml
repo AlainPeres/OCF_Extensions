@@ -1,0 +1,6 @@
+id: skills.persistence
+type: skill
+fields:
+  char1: chars.pow
+  plus: 10
+  group: resistance

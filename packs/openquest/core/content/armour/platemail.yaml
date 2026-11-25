@@ -1,0 +1,6 @@
+id: armour.platemail
+type: armour
+fields:
+  ap: 6
+  enc: 12
+  cost: 9000

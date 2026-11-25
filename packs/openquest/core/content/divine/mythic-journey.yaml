@@ -1,0 +1,7 @@
+id: divine.mythic-journey
+type: divine
+fields:
+  magnitude: 4
+  variable: false
+  duration: 1440
+  common: true

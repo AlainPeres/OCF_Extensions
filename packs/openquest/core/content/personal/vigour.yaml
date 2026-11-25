@@ -1,0 +1,11 @@
+id: personal.vigour
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  touch: true
+effects:
+  - target: spell.hp
+    op: add
+    value: 2 * self.magnitude
+    scope: applied

@@ -1,0 +1,5 @@
+id: sorcery.treat-wounds
+type: sorcery
+fields:
+  touch: true
+  instant: true

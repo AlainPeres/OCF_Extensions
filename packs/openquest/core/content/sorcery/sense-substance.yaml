@@ -1,0 +1,5 @@
+id: sorcery.sense-substance
+type: sorcery
+fields:
+  concentration: true
+  generic: true

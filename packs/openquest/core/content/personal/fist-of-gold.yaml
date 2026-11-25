@@ -1,0 +1,5 @@
+id: personal.fist-of-gold
+type: personal
+fields:
+  magnitude: 1
+  variable: true

@@ -1,0 +1,5 @@
+id: sorcery.venom
+type: sorcery
+fields:
+  resist: resilience
+  touch: true

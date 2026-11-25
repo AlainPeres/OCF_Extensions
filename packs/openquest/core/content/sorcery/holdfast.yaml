@@ -1,0 +1,4 @@
+id: sorcery.holdfast
+type: sorcery
+fields:
+  touch: true

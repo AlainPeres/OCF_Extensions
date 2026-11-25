@@ -1,0 +1,8 @@
+id: divine.find-type
+type: divine
+fields:
+  magnitude: 1
+  variable: false
+  ranged: true
+  duration: 15
+  generic: true

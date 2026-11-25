@@ -1,0 +1,7 @@
+id: sorcery.tap-characteristic
+type: sorcery
+fields:
+  resist: persistence
+  touch: true
+  concentration: true
+  generic: true

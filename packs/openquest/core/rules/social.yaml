@@ -1,0 +1,219 @@
+# Social combat (Combat chapter): Fast Talk, Oratory, Intimidation and prolonged social combats,
+# all with Influence. Beyond two metres (up to fifty) Influence is at -20%, unless a Master;
+# understood only through gestures, -20% and only Intimidation.
+fields:
+  # Oratory: the audience, how many are won over, and the -20% after a failed attempt.
+  oratory.audience: { type: integer, input: true, default: 0, min: 0 }
+  oratory.won: { type: integer, input: true, default: 0, min: 0 }
+  oratory.penalty: { type: boolean, input: true, default: false }
+  # Fast Talk: attempts already failed against this target (-20% each).
+  fastTalk.failures: { type: integer, input: true, default: 0, min: 0 }
+  # A prolonged social combat: the exchanges won (a critical 2, a fumble -2).
+  social.score: { type: integer, input: true, default: 0 }
+
+actions:
+  # Fast Talk: opposed Influence against the target's Influence, Persistence or Lore (its
+  # result and roll entered). Won: convinced for 1D20 minutes; with a critical, for good. Lost:
+  # another argument, at -20% more each time, until Influence is 0. A fumble: the target sees
+  # through it.
+  - id: fast-talk
+    tags: [social]
+    params:
+      distant: { type: boolean, default: false }
+      opponentResult: { type: enum, values: [critical, success, failure, fumble], default: failure }
+      opponentRoll: { type: integer, default: 50, min: 1, max: 100 }
+      magic: { type: integer, default: 0 }
+      modifier: { type: integer, default: 0 }
+    results: [convinced, convinced-for-good, not-convinced, exposed, no-credibility]
+    steps:
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              score: 'skill.influence - 20 * fastTalk.failures + (params.distant && skill.influence < 100 ? -20 : 0)'
+      - { id: done, kind: outcome, when: flags.score <= 0, result: "'no-credibility'" }
+      - id: test
+        kind: action
+        use: opposed-test
+        params:
+          score: flags.score
+          master: skill.influence >= 100 && fastTalk.failures == 0
+          magic: params.magic
+          modifier: params.modifier
+          opponentResult: params.opponentResult
+          opponentRoll: params.opponentRoll
+      - id: minutes
+        kind: roll
+        when: "steps.test.result == 'won' && steps.test.data.mine != 'critical'"
+        tags: [social]
+        parts: [{ dice: 1d20 }]
+      - id: count
+        kind: changes
+        changes:
+          - type: set
+            field: fastTalk.failures
+            value: "steps.test.result == 'won' ? 0 : fastTalk.failures + 1"
+      - id: result
+        kind: outcome
+        result: >-
+          steps.test.data.mine == 'fumble' ? 'exposed'
+            : steps.test.result != 'won' ? 'not-convinced'
+            : steps.test.data.mine == 'critical' ? 'convinced-for-good' : 'convinced'
+        data:
+          minutes: 'has(steps.minutes) ? steps.minutes.total : 0'
+
+  # Oratory: an audience to win over, 1D10 at a time. One +20% or -20% condition applies
+  # (a good performance, a backing skill or motive, a sympathetic audience; a hostile one,
+  # adverse conditions); after a failure the next attempt is at -20%. A critical wins ten more,
+  # a fumble loses ten. The defending orator's turn is oratory-defence.
+  - id: oratory-start
+    tags: [social]
+    params:
+      audience: { type: integer, min: 1 }
+    results: [started]
+    steps:
+      - id: start
+        kind: changes
+        changes:
+          - { type: set, field: oratory.audience, value: params.audience }
+          - { type: set, field: oratory.won, value: 0 }
+          - { type: set, field: oratory.penalty, value: false }
+      - id: result
+        kind: outcome
+        result: "'started'"
+
+  - id: oratory
+    tags: [social]
+    available: oratory.audience > 0
+    params:
+      condition: { type: enum, values: [none, favourable, adverse], default: none }
+      distant: { type: boolean, default: false }
+      magic: { type: integer, default: 0 }
+    results: [swayed, unconvinced, won-the-audience, lost-the-audience]
+    steps:
+      - id: test
+        kind: action
+        use: skill-test
+        params:
+          score: skill.influence
+          master: skill.influence >= 100
+          magic: params.magic
+          modifier: >-
+            (params.condition == 'favourable' ? 20 : params.condition == 'adverse' ? -20 : 0)
+              + (oratory.penalty ? -20 : 0) + (params.distant && skill.influence < 100 ? -20 : 0)
+      - id: swayed
+        kind: roll
+        when: "steps.test.result == 'success'"
+        tags: [social]
+        parts: [{ dice: 1d10 }]
+      - id: count
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              won: >-
+                max(0, min(oratory.audience, oratory.won
+                  + (steps.test.result == 'critical' ? 10 : steps.test.result == 'fumble' ? -10
+                    : has(steps.swayed) ? steps.swayed.total : 0)))
+      - id: apply
+        kind: changes
+        changes:
+          - { type: set, field: oratory.won, value: flags.won }
+          - type: set
+            field: oratory.penalty
+            value: "steps.test.result == 'failure' || steps.test.result == 'fumble'"
+      - id: result
+        kind: outcome
+        result: >-
+          flags.won >= oratory.audience ? 'won-the-audience'
+            : steps.test.result == 'fumble' && oratory.won == 0 ? 'lost-the-audience'
+            : steps.test.result == 'success' || steps.test.result == 'critical' ? 'swayed' : 'unconvinced'
+        data: { won: flags.won, audience: oratory.audience }
+
+  # The defending orator's reply, as its result was rolled: a success wins back 1D10 (rolled
+  # here), a critical ten, a fumble gives ten to the character.
+  - id: oratory-defence
+    tags: [social]
+    available: oratory.audience > 0
+    params:
+      result: { type: enum, values: [critical, success, failure, fumble], default: failure }
+    results: [replied]
+    steps:
+      - id: back
+        kind: roll
+        when: "params.result == 'success'"
+        tags: [social]
+        parts: [{ dice: 1d10 }]
+      - id: count
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              won: >-
+                max(0, min(oratory.audience, oratory.won
+                  - (params.result == 'critical' ? 10 : params.result == 'fumble' ? -10
+                    : has(steps.back) ? steps.back.total : 0)))
+      - id: apply
+        kind: changes
+        changes:
+          - { type: set, field: oratory.won, value: flags.won }
+      - id: result
+        kind: outcome
+        result: "'replied'"
+        data: { won: flags.won, audience: oratory.audience }
+
+  # Intimidation: an Influence test (not opposed). One modifier: a motive behind it +20%, a
+  # target with more Influence or Persistence -20%, a stronger target or a group at full strength
+  # -50%. A critical: the target surrenders or flees; a fumble: it won't yield to the character
+  # for the rest of the Quest.
+  - id: intimidate
+    tags: [social, combat]
+    params:
+      condition: { type: enum, values: [none, motive, tougher, stronger], default: none }
+      distant: { type: boolean, default: false }
+      gestures: { type: boolean, default: false }
+      magic: { type: integer, default: 0 }
+    results: [caves, convinced, not-intimidated, digs-in]
+    steps:
+      - id: test
+        kind: action
+        use: skill-test
+        params:
+          score: skill.influence
+          master: skill.influence >= 100
+          magic: params.magic
+          modifier: >-
+            [0, 20, -20, -50][indexOf(['none', 'motive', 'tougher', 'stronger'], params.condition)]
+              + (params.distant && skill.influence < 100 ? -20 : 0) + (params.gestures ? -20 : 0)
+      - id: result
+        kind: outcome
+        result: >-
+          steps.test.result == 'critical' ? 'caves' : steps.test.result == 'success' ? 'convinced'
+            : steps.test.result == 'fumble' ? 'digs-in' : 'not-intimidated'
+
+  # A prolonged social combat (a campaign, a courtship): each exchange is any contest, its
+  # outcome recorded here; a critical scores two, a fumble takes two off. The side with the most
+  # wins at the end takes it.
+  - id: social-exchange
+    tags: [social]
+    params:
+      outcome: { type: enum, values: [critical, won, lost, fumble], default: won }
+      reset: { type: boolean, default: false }
+    results: [recorded]
+    steps:
+      - id: record
+        kind: changes
+        changes:
+          - type: set
+            field: social.score
+            value: >-
+              (params.reset ? 0 : social.score)
+                + [2, 1, 0, -2][indexOf(['critical', 'won', 'lost', 'fumble'], params.outcome)]
+      - id: result
+        kind: outcome
+        result: "'recorded'"
+        data:
+          score: >-
+            (params.reset ? 0 : social.score)
+              + [2, 1, 0, -2][indexOf(['critical', 'won', 'lost', 'fumble'], params.outcome)]

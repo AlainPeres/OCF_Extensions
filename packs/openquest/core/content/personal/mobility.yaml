@@ -1,0 +1,10 @@
+id: personal.mobility
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+effects:
+  - target: spell.move
+    op: add
+    value: 2 * self.magnitude
+    scope: applied

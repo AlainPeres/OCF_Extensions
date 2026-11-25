@@ -1,0 +1,4 @@
+id: gear.lock-picks
+type: gear
+fields:
+  cost: 75

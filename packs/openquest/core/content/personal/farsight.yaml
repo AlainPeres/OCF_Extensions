@@ -1,0 +1,6 @@
+id: personal.farsight
+type: personal
+fields:
+  magnitude: 1
+  variable: true
+  concentration: true

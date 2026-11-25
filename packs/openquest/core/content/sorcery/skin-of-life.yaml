@@ -1,0 +1,4 @@
+id: sorcery.skin-of-life
+type: sorcery
+fields:
+  touch: true

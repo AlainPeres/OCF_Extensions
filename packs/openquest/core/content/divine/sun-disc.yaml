@@ -1,0 +1,7 @@
+id: divine.sun-disc
+type: divine
+fields:
+  magnitude: 1
+  variable: false
+  resist: dodge
+  ranged: true

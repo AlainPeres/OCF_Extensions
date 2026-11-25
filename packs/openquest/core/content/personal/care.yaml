@@ -1,0 +1,6 @@
+id: personal.care
+type: personal
+fields:
+  magnitude: 2
+  variable: false
+  touch: true

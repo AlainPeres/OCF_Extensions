@@ -1,0 +1,5 @@
+id: sorcery.animate-substance
+type: sorcery
+fields:
+  concentration: true
+  generic: true

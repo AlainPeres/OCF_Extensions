@@ -1,0 +1,17 @@
+id: species.orc
+type: species
+fields:
+  str: 4d6
+  con: 3d6
+  dex: 4d6
+  siz: 2d6 + 3
+  int: 3d6
+  pow: 2d6 + 3
+  cha: 2d6
+  avgStr: 14
+  avgCon: 11
+  avgDex: 14
+  avgSiz: 10
+  avgInt: 11
+  avgPow: 10
+  avgCha: 7

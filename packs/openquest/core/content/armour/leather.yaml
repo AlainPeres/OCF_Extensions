@@ -1,0 +1,6 @@
+id: armour.leather
+type: armour
+fields:
+  ap: 2
+  enc: 3
+  cost: 500

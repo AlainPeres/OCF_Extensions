@@ -1,0 +1,5 @@
+id: skills.sorcery-casting
+type: skill
+fields:
+  char1: chars.int
+  group: magic

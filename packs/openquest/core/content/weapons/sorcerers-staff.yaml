@@ -1,0 +1,7 @@
+id: weapons.sorcerers-staff
+type: weapon
+fields:
+  kind: close
+  damage: 1d10
+  hands: two
+  enc: 2

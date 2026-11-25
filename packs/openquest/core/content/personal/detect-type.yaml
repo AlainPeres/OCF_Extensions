@@ -1,0 +1,7 @@
+id: personal.detect-type
+type: personal
+fields:
+  magnitude: 1
+  variable: false
+  concentration: true
+  generic: true

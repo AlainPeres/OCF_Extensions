@@ -1,0 +1,8 @@
+id: weapons.longsword
+type: weapon
+fields:
+  kind: close
+  damage: 1d8
+  hands: one
+  enc: 2
+  cost: 150

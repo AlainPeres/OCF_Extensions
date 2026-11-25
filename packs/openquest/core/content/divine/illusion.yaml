@@ -1,0 +1,7 @@
+id: divine.illusion
+type: divine
+fields:
+  magnitude: 1
+  variable: true
+  ranged: true
+  duration: 15

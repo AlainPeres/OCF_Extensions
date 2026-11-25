@@ -1,0 +1,332 @@
+# Physical combat (Combat chapter) and the weapons and armour of the Equipment chapter.
+contentTypes:
+  weapon:
+    carried: true
+    equippable: true
+    fields:
+      # Close (Close Combat), missile or thrown (Ranged Combat).
+      kind: { type: enum, values: [close, missile, thrown], required: true }
+      damage: { type: dice, required: true }
+      hands: { type: enum, values: [one, two, one-or-two], required: true }
+      enc: { type: integer, default: 0, min: 0 }
+      # Cost in silver pieces.
+      cost: { type: decimal, default: 0, min: 0 }
+      # Effective range in metres (missile weapons); a thrown weapon's is STR x rangeStr metres.
+      # Up to double the range the attack is at -20%, no further.
+      range: { type: integer, min: 0 }
+      rangeStr: { type: integer, min: 1 }
+      # Combat rounds to fire one missile (a heavy crossbow's 1/3 CR is 3).
+      rounds: { type: integer, default: 1, min: 1 }
+      # Driven by a mechanism (crossbows): no damage modifier.
+      mechanism: { type: boolean, default: false }
+      # A close weapon also made for throwing: its thrown damage and range (STR x rangeStr m).
+      thrownDamage: { type: dice }
+      # A shield's size: a small one parries close attacks, medium and large ones parry thrown
+      # missiles and give cover against missiles (-20%, -50%).
+      shield: { type: enum, values: [small, medium, large] }
+      # A natural weapon (horns, claws, bite): a close combat weapon a species is born with.
+      natural: { type: boolean, default: false }
+    actions:
+      - use: attack
+        params:
+          skill: "item.kind == 'close' ? 'close' : 'ranged'"
+      - use: damage
+        params:
+          dice: item.damage
+          thrownDice: 'has(item.thrownDamage) ? item.thrownDamage : item.damage'
+          modifier: '!item.mechanism'
+
+  armour:
+    carried: true
+    equippable: true
+    fields:
+      ap: { type: integer, required: true, min: 0 }
+      enc: { type: integer, default: 0, min: 0 }
+      cost: { type: decimal, default: 0, min: 0 }
+    effectsWhen: self.equipped
+    effects:
+      # Armours don't layer: the best one worn counts.
+      - target: armour.worn
+        op: atLeast
+        value: item.ap
+
+# Situational modifiers of an attack or a defence, as the Referee rules them. Within a group of
+# the ranged table (wind, target movement, visibility, target condition) only one counts.
+situational:
+  - { id: targetProne, type: boolean, default: false, rolls: [test] }
+  - { id: targetHelpless, type: boolean, default: false, rolls: [test] }
+  - { id: higherGround, type: boolean, default: false, rolls: [test] }
+  - { id: lowerGround, type: boolean, default: false, rolls: [test] }
+  - { id: prone, type: boolean, default: false, rolls: [test] }
+  - { id: unstableGround, type: boolean, default: false, rolls: [test] }
+  - { id: underwater, type: boolean, default: false, rolls: [test] }
+  - { id: partialDarkness, type: boolean, default: false, rolls: [test] }
+  - { id: darkness, type: boolean, default: false, rolls: [test] }
+  - { id: mountedVsFoot, type: boolean, default: false, rolls: [test] }
+  - { id: allOutAttack, type: boolean, default: false, rolls: [test] }
+  - { id: greatAttack, type: boolean, default: false, rolls: [test] }
+  - { id: setWeapon, type: boolean, default: false, rolls: [test] }
+  - { id: offHand, type: boolean, default: false, rolls: [test] }
+  - { id: thrownCloseWeapon, type: boolean, default: false, rolls: [test] }
+  - { id: doubleRange, type: boolean, default: false, rolls: [test] }
+  - { id: highWind, type: boolean, default: false, rolls: [test] }
+  - { id: fierceWind, type: boolean, default: false, rolls: [test] }
+  - { id: targetMoved10, type: boolean, default: false, rolls: [test] }
+  - { id: targetMoved30, type: boolean, default: false, rolls: [test] }
+  - { id: largeTarget, type: boolean, default: false, rolls: [test] }
+  - { id: blinded, type: boolean, default: false, rolls: [test] }
+  - { id: coverPartial, type: boolean, default: false, rolls: [test] }
+  - { id: coverExcellent, type: boolean, default: false, rolls: [test] }
+  - { id: coverTotal, type: boolean, default: false, rolls: [test] }
+  - { id: shieldDefence, type: boolean, default: false, rolls: [test] }
+  - { id: fightingRetreat, type: boolean, default: false, rolls: [test] }
+  - { id: fightingRetreatLargeShield, type: boolean, default: false, rolls: [test] }
+  - { id: changingWeapon, type: boolean, default: false, rolls: [test] }
+
+actions:
+  # An attack: a Close Combat or Ranged Combat test with the situation's modifiers. Aiming adds
+  # +20% a round (to at most 100%). A helpless target is hit critically in close combat.
+  - id: attack
+    tags: [combat]
+    params:
+      skill: { type: enum, values: [close, ranged, unarmed], default: close }
+      aimRounds: { type: integer, default: 0, min: 0, max: 5 }
+      magic: { type: integer, default: 0 }
+      modifier: { type: integer, default: 0 }
+    results: { bands: test }
+    steps:
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              score: >-
+                (state.demoralised > 0 ? 0.5 : 1) * (params.skill == 'close' ? combat.close + spell.close
+                  : params.skill == 'ranged' ? combat.ranged + spell.ranged : combat.unarmed + spell.unarmed)
+              close: "params.skill != 'ranged'"
+      - id: situation
+        kind: branch
+        cases:
+          - when: flags.close
+            flags:
+              modifier: >-
+                (situational.targetProne ? 20 : 0) + (situational.higherGround ? 20 : 0)
+                  + (situational.lowerGround ? -20 : 0) + (situational.prone ? -20 : 0)
+                  + (situational.unstableGround ? -20 : 0) + (situational.underwater ? -50 : 0)
+                  + (situational.partialDarkness ? -20 : 0) + (situational.darkness ? -50 : 0)
+                  + (situational.mountedVsFoot ? 20 : 0) + (situational.allOutAttack ? -20 : 0)
+                  + (situational.greatAttack ? 20 : 0) + (situational.setWeapon ? 20 : 0)
+                  + (situational.offHand ? -20 : 0)
+          - when: true
+            flags:
+              modifier: >-
+                (situational.targetProne ? -20 : 0) + (situational.targetHelpless ? 20 : 0)
+                  + (situational.prone ? -50 : 0) + (situational.unstableGround ? -20 : 0)
+                  + (situational.underwater ? -20 : 0) + (situational.partialDarkness ? -20 : 0)
+                  + (situational.darkness ? -50 : 0) + (situational.thrownCloseWeapon ? -20 : 0)
+                  + (situational.doubleRange ? -20 : 0) + (situational.highWind ? -20 : 0)
+                  + (situational.fierceWind ? -50 : 0) + (situational.targetMoved10 ? -20 : 0)
+                  + (situational.targetMoved30 ? -50 : 0) + (situational.largeTarget ? 20 : 0)
+                  + (situational.blinded ? -50 : 0) + (situational.coverPartial ? -20 : 0)
+                  + (situational.coverExcellent ? -50 : 0) + (situational.coverTotal ? -75 : 0)
+                  + 20 * params.aimRounds
+      - id: test
+        kind: action
+        use: skill-test
+        params:
+          score: floor(flags.score)
+          magic: params.magic
+          modifier: params.modifier + flags.modifier
+          master: flags.score >= 100 || (flags.close && situational.targetHelpless)
+          physical: true
+      - id: result
+        kind: outcome
+        result: steps.test.result
+        data:
+          roll: 'has(steps.test.data.roll) ? steps.test.data.roll : 0'
+          target: steps.test.data.target
+
+  # An Unarmed Combat attack (a strike, a hold or a throw, declared first): no weapon to hold it.
+  - id: unarmed-attack
+    tags: [combat]
+    params:
+      magic: { type: integer, default: 0 }
+      modifier: { type: integer, default: 0 }
+    results: { bands: test }
+    steps:
+      - id: attack
+        kind: action
+        use: attack
+        params:
+          skill: "'unarmed'"
+          magic: params.magic
+          modifier: params.modifier
+      - id: result
+        kind: outcome
+        result: steps.attack.result
+        data:
+          roll: steps.attack.data.roll
+          target: steps.attack.data.target
+
+  # A defensive reaction to a hit: Dodge, a parry (Close Combat) or Unarmed Combat. Each defence
+  # after the first in a round is at a cumulative -20%, unless the shield's action spares it.
+  - id: defend
+    tags: [combat]
+    params:
+      reaction: { type: enum, values: [dodge, parry, unarmed], default: dodge }
+      earlierDefences: { type: integer, default: 0, min: 0 }
+      magic: { type: integer, default: 0 }
+      modifier: { type: integer, default: 0 }
+    results: { bands: test }
+    steps:
+      - id: setup
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              score: >-
+                floor((state.demoralised > 0 && params.reaction != 'dodge' ? 0.5 : 1)
+                  * (params.reaction == 'dodge' ? resist.dodge + spell.dodge
+                    : params.reaction == 'parry' ? combat.close + spell.close : combat.unarmed + spell.unarmed))
+              modifier: >-
+                -20 * params.earlierDefences + (situational.higherGround ? 20 : 0)
+                  + (situational.lowerGround ? -20 : 0) + (situational.prone ? -20 : 0)
+                  + (situational.unstableGround ? -20 : 0) + (situational.underwater ? -50 : 0)
+                  + (situational.partialDarkness ? -20 : 0) + (situational.darkness ? -50 : 0)
+                  + (situational.mountedVsFoot ? 20 : 0)
+                  + (params.reaction == 'parry' && situational.shieldDefence ? 20 : 0)
+                  + (params.reaction == 'parry' && situational.changingWeapon ? -20 : 0)
+                  + (params.reaction != 'dodge' && situational.fightingRetreatLargeShield ? 50
+                    : params.reaction != 'dodge' && situational.fightingRetreat ? 20 : 0)
+      - id: test
+        kind: action
+        use: skill-test
+        params:
+          score: flags.score
+          magic: params.magic
+          modifier: params.modifier + flags.modifier
+          master: flags.score >= 100
+          physical: true
+      - id: result
+        kind: outcome
+        result: steps.test.result
+        data:
+          roll: 'has(steps.test.data.roll) ? steps.test.data.roll : 0'
+          target: steps.test.data.target
+
+  # A weapon's damage plus the damage modifier (none for a mechanism). A critical hit does the
+  # maximum of both (and ignores armour: take-damage's ignoreArmour); a Great Attack the maximum
+  # damage modifier; a charge +1D6. Damage the modifier brings below 1 is 1. A close weapon made
+  # for throwing has its own thrown damage (thrown).
+  - id: damage
+    tags: [combat]
+    params:
+      dice: { type: dice }
+      thrownDice: { type: dice, optional: true }
+      thrown: { type: boolean, default: false }
+      modifier: { type: boolean, default: true }
+      critical: { type: boolean, default: false }
+      greatAttack: { type: boolean, default: false }
+      charge: { type: boolean, default: false }
+    results: [dealt]
+    steps:
+      - id: weapon
+        kind: branch
+        cases:
+          - when: params.thrown && has(params.thrownDice)
+            flags: { dice: '(spell.trueWeapon > 0 ? 2 : 1) * params.thrownDice' }
+          - when: true
+            flags: { dice: '(spell.trueWeapon > 0 ? 2 : 1) * params.dice' }
+      - id: roll
+        kind: roll
+        tags: [damage]
+        parts:
+          - dice: >-
+              params.critical
+                ? maxOf(flags.dice) + (params.modifier ? maxOf(damage.modifier) : 0) + (params.charge ? 6 : 0)
+                : flags.dice + (params.modifier ? (params.greatAttack ? maxOf(damage.modifier) : damage.modifier) : 0)
+                  + (params.charge ? 1d6 : 0)
+          - value: spell.damage
+          - dice: '(spell.fireblade > 0 ? 1 : 0)d10'
+      - id: result
+        kind: outcome
+        result: "'dealt'"
+        data:
+          damage: max(1, steps.roll.total)
+          # Armour points the target's armour loses against it (Pierce).
+          pierce: spell.pierce
+
+  # Unarmed Combat's effects once the attack lands: a strike (1D4 + damage modifier, armour
+  # counts), a hold (1D4 + damage modifier at the end of each round, armour doesn't help) or a
+  # throw (2 metres, the damage modifier as damage).
+  - id: unarmed-damage
+    tags: [combat]
+    params:
+      effect: { type: enum, values: [strike, hold, throw], default: strike }
+      critical: { type: boolean, default: false }
+    results: [dealt]
+    steps:
+      - id: roll
+        kind: roll
+        tags: [damage]
+        parts:
+          - dice: >-
+              params.effect == 'throw'
+                ? (params.critical ? maxOf(damage.modifier) : damage.modifier)
+                : params.critical ? 4 + maxOf(damage.modifier) : 1d4 + damage.modifier
+      - id: result
+        kind: outcome
+        result: "'dealt'"
+        data:
+          damage: "params.effect == 'throw' ? max(0, steps.roll.total) : max(1, steps.roll.total)"
+          ignoresArmour: "params.effect == 'hold' || params.critical"
+
+  # Damage taken: less the worn armour's points unless it ignores armour (a critical hit, a
+  # hold) or some of them (Pierce); none at all up to a Damage Resistance's magnitude. A Magus,
+  # transcended, takes damage to magic points. At zero hit points or fewer the wound is mortal: stabilise or heal it by the end of
+  # the next round, or spend a fortune point.
+  - id: take-damage
+    tags: [combat, health]
+    params:
+      amount: { type: integer, min: 0 }
+      ignoreArmour: { type: boolean, default: false }
+      # Armour points the attack ignores (the attacker's Pierce).
+      pierce: { type: integer, default: 0, min: 0 }
+    results: [minor, mortal, resisted, to-magic]
+    steps:
+      - id: net
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              net: >-
+                params.amount <= spell.damageResistance ? 0
+                  : params.ignoreArmour ? params.amount : max(0, params.amount - max(0, armour.ap - params.pierce))
+      - id: resisted
+        kind: outcome
+        when: params.amount > 0 && params.amount <= spell.damageResistance
+        result: "'resisted'"
+      - id: magus
+        kind: changes
+        when: magic.transcended
+        changes:
+          - { type: adjust, field: mp.spent, by: 'min(mp.current, flags.net)' }
+      - id: magusResult
+        kind: outcome
+        when: magic.transcended
+        result: "'to-magic'"
+        data: { amount: flags.net, magicPoints: 'max(0, mp.current - flags.net)' }
+      - id: deal
+        kind: changes
+        to: self
+        changes:
+          - { type: adjust, field: hp.wounds, by: flags.net }
+          - { type: set, when: 'flags.net > 0', field: state.stabilised, value: false }
+          - { type: set, when: 'flags.net > 0', field: state.treated, value: false }
+      - id: result
+        kind: outcome
+        result: "hp.current - flags.net <= 0 ? 'mortal' : 'minor'"
+        data:
+          amount: flags.net
+          absorbed: params.amount - flags.net
+          hitPoints: hp.current - flags.net

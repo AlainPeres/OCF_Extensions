@@ -1,0 +1,11 @@
+id: weapons.heavy-crossbow
+type: weapon
+fields:
+  kind: missile
+  damage: 2d6
+  hands: two
+  enc: 2
+  cost: 350
+  range: 150
+  rounds: 3
+  mechanism: true

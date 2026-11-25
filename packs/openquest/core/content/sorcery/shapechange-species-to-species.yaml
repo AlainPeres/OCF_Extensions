@@ -1,0 +1,6 @@
+id: sorcery.shapechange-species-to-species
+type: sorcery
+fields:
+  resist: resilience
+  touch: true
+  generic: true

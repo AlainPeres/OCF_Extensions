@@ -1,0 +1,5 @@
+id: personal.talk-to-animal
+type: personal
+fields:
+  magnitude: 3
+  variable: false

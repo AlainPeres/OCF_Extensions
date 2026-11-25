@@ -1,0 +1,17 @@
+id: species.dwarf
+type: species
+fields:
+  str: 4d6
+  con: 2d6 + 12
+  dex: 3d6
+  siz: 1d6 + 6
+  int: 2d6 + 6
+  pow: 3d6
+  cha: 3d6
+  avgStr: 14
+  avgCon: 19
+  avgDex: 11
+  avgSiz: 10
+  avgInt: 13
+  avgPow: 11
+  avgCha: 11

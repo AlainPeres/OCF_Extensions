@@ -1,0 +1,4 @@
+id: sorcery.make-potion
+type: sorcery
+fields:
+  permanent: true

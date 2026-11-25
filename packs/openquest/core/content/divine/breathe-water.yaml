@@ -1,0 +1,7 @@
+id: divine.breathe-water
+type: divine
+fields:
+  magnitude: 2
+  variable: false
+  touch: true
+  duration: 15

@@ -1,0 +1,7 @@
+id: personal.frostbite
+type: personal
+fields:
+  magnitude: 2
+  variable: false
+  resist: resilience
+  instant: true

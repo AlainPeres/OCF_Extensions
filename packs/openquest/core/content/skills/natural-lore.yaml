@@ -1,0 +1,6 @@
+id: skills.natural-lore
+type: skill
+fields:
+  char1: chars.int
+  plus: 10
+  group: knowledge

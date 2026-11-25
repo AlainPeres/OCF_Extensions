@@ -1,0 +1,7 @@
+id: divine.mischief
+type: divine
+fields:
+  magnitude: 2
+  variable: false
+  resist: persistence
+  touch: true

@@ -1,0 +1,9 @@
+id: weapons.knife
+type: weapon
+fields:
+  kind: close
+  damage: 1d4 + 1
+  hands: one
+  cost: 20
+  thrownDamage: 1d6
+  rangeStr: 1

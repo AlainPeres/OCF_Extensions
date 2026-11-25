@@ -1,0 +1,5 @@
+id: divine.create-the-crystal-ship
+type: divine
+fields:
+  magnitude: 4
+  variable: false

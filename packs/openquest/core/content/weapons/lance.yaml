@@ -1,0 +1,8 @@
+id: weapons.lance
+type: weapon
+fields:
+  kind: close
+  damage: 1d10
+  hands: two
+  enc: 3
+  cost: 150

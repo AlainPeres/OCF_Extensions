@@ -1,0 +1,11 @@
+id: species.human
+type: species
+fields:
+  str: 3d6
+  con: 3d6
+  dex: 3d6
+  siz: 2d6 + 6
+  int: 2d6 + 6
+  pow: 3d6
+  cha: 3d6
+  human: true

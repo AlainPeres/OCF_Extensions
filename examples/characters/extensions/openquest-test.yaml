@@ -1,0 +1,131 @@
+# An OpenQuest test character, made by the random start.
+specVersion: 0.4.0
+id: openquest-test
+packs:
+  - id: openquest-core
+    version: 0.1.0
+values:
+  openquest-core:chars.str: 10
+  openquest-core:chars.con: 5
+  openquest-core:chars.dex: 9
+  openquest-core:chars.siz: 16
+  openquest-core:chars.int: 11
+  openquest-core:chars.pow: 9
+  openquest-core:chars.cha: 8
+  openquest-core:wealth.used: false
+  openquest-core:money.silver: 130
+  openquest-core:identity.age: 24
+  openquest-core:fortune.points: 2
+  openquest-core:identity.name: Ethelred
+  openquest-core:identity.concept: A wandering sellsword looking for a lord worth serving
+  openquest-core:identity.sagaMotive: Find a lord worth serving
+features:
+  - id: openquest-core-skills-dodge
+    item: openquest-core:skills.dodge
+    state:
+      creation: 20
+  - id: openquest-core-skills-persistence
+    item: openquest-core:skills.persistence
+    state:
+      creation: 10
+  - id: openquest-core-skills-resilience
+    item: openquest-core:skills.resilience
+    state:
+      creation: 20
+  - id: openquest-core-skills-unarmed-combat
+    item: openquest-core:skills.unarmed-combat
+    state:
+      creation: 20
+  - id: openquest-core-skills-close-combat
+    item: openquest-core:skills.close-combat
+    state:
+      creation: 10
+  - id: openquest-core-skills-ranged-combat
+    item: openquest-core:skills.ranged-combat
+    state:
+      creation: 20
+  - id: openquest-core-skills-language-own
+    item: openquest-core:skills.language-own
+    state:
+      creation: 30
+  - id: openquest-core-skills-culture-own
+    item: openquest-core:skills.culture-own
+    state:
+      creation: 10
+  - id: openquest-core-skills-natural-lore
+    item: openquest-core:skills.natural-lore
+    state:
+      creation: 10
+  - id: openquest-core-skills-streetwise
+    item: openquest-core:skills.streetwise
+    state:
+      creation: 10
+  - id: openquest-core-skills-engineering
+    item: openquest-core:skills.engineering
+    state:
+      creation: 15
+  - id: openquest-core-skills-driving
+    item: openquest-core:skills.driving
+    state:
+      creation: 10
+  - id: openquest-core-skills-influence
+    item: openquest-core:skills.influence
+    state:
+      creation: 5
+  - id: openquest-core-skills-craft
+    item: openquest-core:skills.craft
+    state:
+      creation: 5
+  - id: openquest-core-skills-performance
+    item: openquest-core:skills.performance
+    state:
+      creation: 10
+  - id: openquest-core-skills-mechanisms
+    item: openquest-core:skills.mechanisms
+    state:
+      creation: 10
+  - id: openquest-core-skills-athletics
+    item: openquest-core:skills.athletics
+    state:
+      creation: 5
+  - id: openquest-core-skills-perception
+    item: openquest-core:skills.perception
+    state:
+      creation: 5
+  - id: personal-harden-1
+    item: openquest-core:personal.harden
+    state:
+      magnitude: 1
+  - id: personal-dull-weapon-1
+    item: openquest-core:personal.dull-weapon
+    state:
+      magnitude: 1
+  - id: personal-fireblade-1
+    item: openquest-core:personal.fireblade
+    state:
+      magnitude: 4
+inventory:
+  - id: weapons-long-bow-1
+    item: openquest-core:weapons.long-bow
+    equipped: true
+  - id: weapons-war-maul-1
+    item: openquest-core:weapons.war-maul
+    equipped: true
+  - id: armour-leather-1
+    item: openquest-core:armour.leather
+    equipped: true
+  - id: weapons-dagger-1
+    item: openquest-core:weapons.dagger
+    equipped: true
+  - id: gear-backpack-1
+    item: openquest-core:gear.backpack
+  - id: gear-rope-1
+    item: openquest-core:gear.rope
+    quantity: 1
+  - id: gear-food-average-1
+    item: openquest-core:gear.food-average
+    quantity: 14
+  - id: gear-flint-and-tinder-1
+    item: openquest-core:gear.flint-and-tinder
+  - id: gear-waterskin-1
+    item: openquest-core:gear.waterskin

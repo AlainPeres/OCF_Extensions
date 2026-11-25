@@ -1,0 +1,6 @@
+id: divine.quicksand
+type: divine
+fields:
+  magnitude: 2
+  variable: false
+  areaSpecial: true

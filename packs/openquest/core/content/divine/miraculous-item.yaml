@@ -1,0 +1,6 @@
+id: divine.miraculous-item
+type: divine
+fields:
+  magnitude: 1
+  variable: true
+  duration: 60

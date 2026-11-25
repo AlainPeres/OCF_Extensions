@@ -1,0 +1,7 @@
+id: sorcery.energy-projection-type
+type: sorcery
+fields:
+  resist: dodge
+  instant: true
+  ranged: true
+  generic: true

@@ -1,0 +1,5 @@
+id: sorcery.sense-projection
+type: sorcery
+fields:
+  concentration: true
+  generic: true

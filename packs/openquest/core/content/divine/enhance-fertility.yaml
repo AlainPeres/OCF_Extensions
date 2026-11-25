@@ -1,0 +1,6 @@
+id: divine.enhance-fertility
+type: divine
+fields:
+  magnitude: 3
+  variable: false
+  permanent: true

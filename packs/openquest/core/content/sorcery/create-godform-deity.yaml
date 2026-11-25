@@ -1,0 +1,5 @@
+id: sorcery.create-godform-deity
+type: sorcery
+fields:
+  touch: true
+  generic: true
