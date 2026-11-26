@@ -75,6 +75,11 @@ export interface TextOptions {
   optionOrigins?: Readonly<Record<string, Readonly<Record<string, string>>>>;
   /** `ruleset.familyOrigins`: the pack whose text names a value another pack's family gained. */
   familyOrigins?: Readonly<Record<string, Readonly<Record<string, string>>>>;
+  /**
+   * `ruleset.packs`: each pack's scope (itself, then its dependencies, nearest first), where a
+   * tag the pack doesn't name is looked for first.
+   */
+  scopes?: readonly { id: string; scope: readonly string[] }[];
 }
 
 export interface HeadlineItem {
@@ -212,7 +217,10 @@ export interface Text {
   /** `id` is `<pack>:<name>`. */
   templateField(id: string): string;
   templateFieldDescription(id: string): string | undefined;
-  /** `id` qualified, or local with `pack` the pack to look in. */
+  /**
+   * `id` qualified, or local with `pack` the pack to look in; a tag that pack doesn't name (a
+   * dependency's) is looked up in its scope (`scopes`), then in the other packs.
+   */
   tag(id: string, pack?: string): string;
   /** A set field's member or a stored value: content, else a field, else a tag, else the ID. */
   setMember(id: string, pack?: string): string;
@@ -416,12 +424,29 @@ export function createText(options: TextOptions): Text {
     return out === undefined ? id : out.trim() || id;
   };
   const type = (id: string) => lookup(typeKey(id)) ?? id;
-  const tag = (id: string, pack?: string) => lookup(tagKey(id, pack)) ?? id;
+  const scopes = new Map((options.scopes ?? []).map((p) => [p.id, p.scope]));
+  // Tags are shared by every pack: one a dependency declares is named there, so a tag the pack
+  // doesn't name is looked up in its dependencies, nearest first, then in the other packs, the
+  // player's language first.
+  const tagName = (id: string, pack?: string): string | undefined => {
+    const ref = tagKey(id, pack);
+    const own = lookup(ref);
+    if (own !== undefined || !ref.pack) return own;
+    for (const dependency of scopes.get(ref.pack) ?? []) {
+      const found = dependency === ref.pack ? undefined : message(dependency, ref.key);
+      if (found !== undefined) return found;
+    }
+    for (const language of packOrder)
+      for (const [other, messages] of Object.entries(options.packs[language] ?? {})) {
+        const found = other === ref.pack ? undefined : messages[ref.key];
+        if (found !== undefined) return format({ message: found, language });
+      }
+    return undefined;
+  };
+  const tag = (id: string, pack?: string) => tagName(id, pack) ?? id;
   const setMember = (id: string, pack?: string) => {
     const qualified = id.includes(':') || !pack ? id : `${pack}:${id}`;
-    return (
-      lookup(contentKey(qualified)) ?? lookup(fieldKey(qualified)) ?? lookup(tagKey(id, pack)) ?? id
-    );
+    return lookup(contentKey(qualified)) ?? lookup(fieldKey(qualified)) ?? tagName(id, pack) ?? id;
   };
   const action = (id: string) => lookup(actionKey(id)) ?? id;
   const value = (typeId: string, name: string, v: string, of: 'fields' | 'state' = 'fields') =>

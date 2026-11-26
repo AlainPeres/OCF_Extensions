@@ -217,7 +217,8 @@ input: # any other call inputs (action, params, situational, policy, strict, cho
   - `report.homebrew` (as `{ path, op }`).
 - **`checkRelease`** cases give `previous` and `next` (inline releases), and optionally
   `dependencies: { previous, next }`, each a list of pack references.
-  `expected.yaml` compares `ok`, `changes` (exact list of `{ kind, id }`) and `errors` (codes).
+  `expected.yaml` compares `ok`, `changes` (exact list of `{ kind, id }`), `errors` (codes) and
+  `warnings` (exact list of `{ code, release }`, `release` the warning's `data.release`).
 - **`loadRuleset`** cases list `packs`, usually inline. A case without `expected.yaml` expects the
   packs to load. Otherwise `errors` is the exact list of `{ code, cause, path }`: `cause` is
   `data.cause` (the formula error code of a `formula-error`) and `path` the error's JSON Pointer,
@@ -253,6 +254,7 @@ Each pack in `tests/packs/` is test-only, not a game pack.
 | `test-cross`, `test-party`                                | Effects that cross between characters (who applied an entry, changes `to: applied`, clock actions, auras, a pool spent through a link), and the shared party sheet it links                                         |
 | `test-derived-choice`                                     | Content that does one thing or another by a derived value, as a choice its eligibility decides                                                                                                                      |
 | `test-describe`                                           | Actions as `describeAction` reads them                                                                                                                                                                              |
+| `test-draw-steel-foe`                                     | Made-up Draw Steel abilities and effects for the draw-steel-heroes cases: edges against a creature, its view and next-turn durations                                                                                |
 | `test-effects`                                            | Stacking, multiplying and issue order                                                                                                                                                                               |
 | `test-events`                                             | Follow-ups on other characters' events (who dealt the damage, `observe` changes, follow-ups `to: character`, an applier named by formula)                                                                           |
 | `test-field-sets`                                         | Effects on sets of fields, typed stacks carried into rolls, and a field whose tags are computed                                                                                                                     |
