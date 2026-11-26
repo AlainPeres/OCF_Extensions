@@ -458,57 +458,6 @@
         ],
       };
       const EXPERTISE = ['Novice', 'Apprentice', 'Veteran', 'Expert', 'Master'];
-      const ACTION_GROUPS = {
-        Health: [
-          'healing-received',
-          'magic-healing',
-          'natural-healing',
-          'recover-magic',
-          'spend-fortune',
-          'fatigue-test',
-          'rest-fatigue',
-          'deprivation',
-        ],
-        'Combat and tests': ['opposed-test', 'defend', 'unarmed-damage'],
-        'Dangers and travel': [
-          'fall',
-          'suffocate',
-          'burn',
-          'resist-poison',
-          'resist-disease',
-          'travel-day',
-        ],
-        'Social combat': [
-          'fast-talk',
-          'oratory-start',
-          'oratory',
-          'oratory-defence',
-          'intimidate',
-          'social-exchange',
-        ],
-        Magic: [
-          'spell-received',
-          'spirit-combat',
-          'make-store',
-          'create-magic-place',
-          'end-magic-place',
-          'learn-personal-spell',
-          'learn-sorcery-spell',
-          'learn-divine-spell',
-          'become-specialist',
-          'sorcery-rank',
-          'religion-rank',
-          'leave-religion',
-          'apotheosis',
-        ],
-        Growth: [
-          'gain-growth',
-          'improve-skill',
-          'improve-characteristic',
-          'learn-specialty',
-          'end-downtime',
-        ],
-      };
       const SORC = {
         mag: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
         dur: [
@@ -977,34 +926,35 @@
       }
 
       // ---- The other actions, by theme, each with its form
+      // The rules' actions with no control of their own here, under the pack's action groups
+      // (rules/display.yaml), in its order; one in no group goes under "Other", one the pack hides
+      // (a group not shown now) is left out.
+      const OWN_CONTROLS = [
+        'skill-test',
+        'attack',
+        'unarmed-attack',
+        'take-damage',
+        'cast-personal',
+        'cast-sorcery',
+        'cast-divine',
+        'end-spell',
+      ];
       function renderActions(v) {
-        const rules = v.actions.filter((a) => !a.entry && !a.start);
-        const known = new Set(Object.values(ACTION_GROUPS).flat());
-        const groups = {
-          ...ACTION_GROUPS,
-          Other: rules
-            .map((a) => local(a.id))
-            .filter(
-              (id) =>
-                !known.has(id) &&
-                ![
-                  'skill-test',
-                  'attack',
-                  'unarmed-attack',
-                  'take-damage',
-                  'cast-personal',
-                  'cast-sorcery',
-                  'cast-divine',
-                  'end-spell',
-                ].includes(id),
-            ),
-        };
-        $('actionGroups').innerHTML = Object.entries(groups)
-          .map(([g, ids]) => {
-            const list = ids.map((id) => rules.find((a) => local(a.id) === id)).filter(Boolean);
-            if (!list.length) return '';
-            return `<h3>${g}</h3><div class="btns">${list.map((a) => `<button data-form="${esc(a.id)}">${esc(a.name)}</button>`).join('')}</div>`;
-          })
+        const rules = v.actions.filter(
+          (a) => !a.entry && !a.start && !a.hiddenByPack && !OWN_CONTROLS.includes(local(a.id)),
+        );
+        const groups = new Map((v.actionGroups ?? []).map((g) => [g, []]));
+        for (const a of rules) {
+          const g = a.group ?? 'Other';
+          if (!groups.has(g)) groups.set(g, []);
+          groups.get(g).push(a);
+        }
+        $('actionGroups').innerHTML = [...groups]
+          .filter(([, list]) => list.length)
+          .map(
+            ([g, list]) =>
+              `<h3>${esc(g)}</h3><div class="btns">${list.map((a) => `<button data-form="${esc(a.id)}">${esc(a.name)}</button>`).join('')}</div>`,
+          )
           .join('');
         $('actionGroups')
           .querySelectorAll('[data-form]')
