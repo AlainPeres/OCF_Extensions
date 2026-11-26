@@ -1,4 +1,4 @@
-# SagaS extensions
+# Extensions
 
 Additions to the Open Character Format (OCF) repository: a pack for the _Rules of SagaS 0.995 LLL
 (OGL)_ and a pack for _OpenQuest 3rd Edition_ (SRD v1.2, Creative Commons), each with a sheet to
@@ -137,6 +137,7 @@ command that reads the whole tree (`checkout` of another commit, `merge`, `resto
 
 - **Without it,** `git checkout main` stops on `error: invalid path '…/boosts/con.yaml'` and writes
   nothing (`pnpm install` then finds no `package.json`).
+
 - **If it was turned back on and the index broke** (`git status` showing `pnpm-lock.yaml` and
   `pnpm-workspace.yaml` deleted although they are on disk): set it to `false` again, then rebuild
   the index from `HEAD` and reapply the sparse checkout. Neither touches the files on disk:
@@ -457,6 +458,7 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
 Two creation starts, as every OCF pack that starts a sheet has.
 
 - **Guided** (`create-character`): it asks, in order:
+
   1. the power level (150, 250 or 350 points);
   2. the social class (privileged −10, average, less favored +10);
   3. the universe's technological level (TL0–TL8), which limits the skills and gear offered;
@@ -471,11 +473,15 @@ Two creation starts, as every OCF pack that starts a sheet has.
   the characteristics, draws 1d6 + 3 skills to study, raises each one step and spreads the rest
   of the points over them, and takes a weapon and
   an armor. It finishes the creation itself.
+
 - Both record the technological level in `universe.techLevel`, for the advancement actions.
+
 - **`learn-specialty`**: learns a generic skill with a specialty (a text parameter), its initial
   level for an "Other" skill, then its level step by step: with creation points while the
   character is being created, with experience points afterwards.
+
 - **`finish-creation`**: ends a creation the guided start left open.
+
 - **Constraint `creation-within-budget`**: while the character is being created, no more points
   may be spent than the budget allows.
 
@@ -544,6 +550,7 @@ come from the engine.
 
 - **Create** (`sagas-create.html`): point costs come from the pack's formulas; the page
   recodes no rule. Its sections, in order:
+
   1. identity;
   2. creation points (150/250/350 or any number), social class and the universe's technological
      level: what the pack's display hints hide isn't offered (skills, weapons and protections
@@ -559,6 +566,7 @@ come from the engine.
 
 - **Play** (`sagas-play.html`): a play sheet, its sections by theme (character, checks, combat, health and
   dangers, long-term action, progression), the header linking to each:
+
   - identity, with Initiative, Speed and Reflex Dodge in the header;
   - characteristic and skill rolls with difficulty, modifier and situation. Skills are grouped by
     characteristic and filtered (all, points spent, total > 0), with one row per specialty;
@@ -859,6 +867,7 @@ Draw Steel…) shows them in both modes. The page also loads, saves (a loaded ch
 it was, any other to `extensions/`) and shows the YAML.
 
 - **Create**: pick a pack, a new or saved character, and one of the pack's creation starts.
+
   - **Pauses**: each pause becomes a form: a list of options with the recommendation, a budget
     allocation with the cost of each amount, or values to hand out. "Finish automatically" takes
     every recommendation.
@@ -873,6 +882,7 @@ it was, any other to `extensions/`) and shows the YAML.
   two ORC packs (PF2, read from git on Windows: [PF2 in the universal tools](#pf2-in-the-universal-tools)).
 
 - **Play**: load any example character and play it:
+
   - **Actions**: the rules' actions, under the pack's action groups (its display hints, in their
     order; the others under "Other"); in one row without groups. The items' actions stay on
     their copies. One click runs an action with its defaults; "…" opens its form.
