@@ -1,0 +1,45 @@
+id: creatures.ghost
+type: creature
+fields:
+  int: 3d6
+  pow: 3d6
+  cha: 3d6
+  avgInt: 11
+  avgPow: 11
+  avgCha: 11
+  move: 20
+  loot: 0
+  bodiless: true
+  skillNames:
+    - dodge
+    - persistence
+    - deception
+    - perception
+    - personal-magic-casting
+  skillValues:
+    - 40
+    - 50
+    - 50
+    - 40
+    - 65
+  genericSkills:
+    - skills.lore
+    - skills.spirit-combat
+  genericSpecialties:
+    - Spirit World
+    - ''
+  genericValues:
+    - 30
+    - 40
+  spells:
+    - personal.befuddle
+    - personal.demoralise
+    - personal.scare
+  spellMagnitudes:
+    - 2
+    - 2
+    - 2
+  spellSpecialties:
+    - ''
+    - ''
+    - ''

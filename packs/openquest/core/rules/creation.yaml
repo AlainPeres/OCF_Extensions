@@ -21,7 +21,7 @@ constraints:
   # are within its own limits: species.yaml).
   - id: creation-characteristics
     check: >-
-      !character.creating || species.nonHuman || (chars.int >= 8 && chars.siz >= 8
+      !character.creating || species.nonHuman || creature.present || (chars.int >= 8 && chars.siz >= 8
         && minFields(f.value, 'characteristic' in f.tags) >= 3
         && maxFields(f.value, 'characteristic' in f.tags) <= 18)
     data: {}

@@ -1,0 +1,64 @@
+id: creatures.dryad
+type: creature
+fields:
+  str: 2d6
+  con: 3d6
+  dex: 4d6
+  siz: 2d6 + 3
+  int: 3d6 + 6
+  pow: 2d6 + 15
+  cha: 2d6 + 12
+  avgStr: 7
+  avgCon: 11
+  avgDex: 14
+  avgSiz: 10
+  avgInt: 17
+  avgPow: 22
+  avgCha: 19
+  loot: 1
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - perception
+    - performance
+    - deception
+    - close-combat
+    - personal-magic-casting
+  skillValues:
+    - 50
+    - 60
+    - 40
+    - 60
+    - 50
+    - 50
+    - 50
+    - 40
+    - 60
+  attacks:
+    - weapons.quarterstaff
+  spells:
+    - personal.befuddle
+    - personal.clear-path
+    - personal.countermagic
+    - personal.detect-type
+    - personal.enhance-skill
+    - personal.enhance-skill
+    - personal.light
+  spellMagnitudes:
+    - 2
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+  spellSpecialties:
+    - ''
+    - ''
+    - ''
+    - Magic
+    - Performance
+    - Deception
+    - ''

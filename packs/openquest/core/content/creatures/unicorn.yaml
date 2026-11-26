@@ -1,0 +1,41 @@
+id: creatures.unicorn
+type: creature
+fields:
+  str: 2d6 + 12
+  con: 3d6 + 12
+  dex: 3d6 + 3
+  siz: 2d6 + 12
+  int: 2d6 + 6
+  pow: 2d6 + 12
+  cha: 3d6 + 6
+  avgStr: 19
+  avgCon: 22
+  avgDex: 13
+  avgSiz: 19
+  avgInt: 13
+  avgPow: 19
+  avgCha: 17
+  move: 30
+  ap: 1
+  loot: 0
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - unarmed-combat
+  skillValues:
+    - 40
+    - 60
+    - 60
+    - 40
+    - 60
+    - 30
+    - 60
+    - 60
+  attacks:
+    - weapons.cr-horn-1d8
+    - weapons.cr-kick-2d6

@@ -1,0 +1,27 @@
+id: creatures.flightless-bird
+type: creature
+fields:
+  str: 4d6 + 18
+  con: 2d6 + 6
+  dex: 3d6 + 6
+  siz: 4d6 + 12
+  int: '3'
+  pow: 3d6
+  cha: '3'
+  avgStr: 32
+  avgCon: 13
+  avgDex: 17
+  avgSiz: 26
+  avgInt: 3
+  avgPow: 11
+  avgCha: 3
+  move: 20
+  ap: 3
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 45
+  attacks:
+    - weapons.cr-peck-1d8
+    - weapons.cr-kick-1d6
+  animal: true

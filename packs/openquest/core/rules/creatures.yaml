@@ -1,0 +1,199 @@
+# Creatures (Creatures chapter), for the Referee: a creature sheet is a character made with the
+# "creature" start. The creature is a copy on it: its characteristic dice and the average scores
+# in brackets, its movement, armour and Loot Factor, the skills it has at the book's values (each
+# a skill copy's `fixed` value, in place of base + points), its attacks (the book's damage
+# without the damage modifier, which the damage action adds) and its Personal Magic spells.
+# Special rules and its other magic are text. Spirits have no STR, CON, DEX or SIZ: no body, no
+# hit points.
+fields:
+  creature.present: { type: boolean, formula: "countCopies(copy.type == 'creature') > 0" }
+  creature.bodiless:
+    type: boolean
+    formula: "countCopies(copy.type == 'creature' && copy.fields.bodiless) > 0"
+  creature.loot:
+    {
+      type: integer,
+      formula: "maxCopies(copy.fields.loot, copy.type == 'creature' && has(copy.fields.loot))",
+    }
+
+contentTypes:
+  creature:
+    fields:
+      str: { type: dice }
+      con: { type: dice }
+      dex: { type: dice }
+      siz: { type: dice }
+      int: { type: dice }
+      pow: { type: dice }
+      cha: { type: dice }
+      avgStr: { type: integer }
+      avgCon: { type: integer }
+      avgDex: { type: integer }
+      avgSiz: { type: integer }
+      avgInt: { type: integer }
+      avgPow: { type: integer }
+      avgCha: { type: integer }
+      move: { type: integer, default: 15, min: 0 }
+      fly: { type: integer, default: 0, min: 0 }
+      swim: { type: integer, default: 0, min: 0 }
+      ap: { type: integer, default: 0, min: 0 }
+      loot: { type: integer, min: 0 }
+      # A spirit: no body.
+      bodiless: { type: boolean, default: false }
+      # An animal of the Animal Statistics Tables.
+      animal: { type: boolean, default: false }
+      # Its skills at the book's values (local skill IDs and percentages, in step).
+      skillNames: { type: list, of: string, default: [] }
+      skillValues: { type: list, of: integer, default: [] }
+      # Skills with a descriptor (Lore (Undead)…), in step: the skill, its descriptor, its value.
+      genericSkills: { type: list, of: skill, default: [] }
+      genericSpecialties: { type: list, of: string, default: [] }
+      genericValues: { type: list, of: integer, default: [] }
+      # Its attacks: the pack's weapons, or its own (weapons.cr-…).
+      attacks: { type: list, of: weapon, default: [] }
+      # Its Personal Magic spells, their magnitudes and descriptors, in step.
+      spells: { type: list, of: personal, default: [] }
+      spellMagnitudes: { type: list, of: integer, default: [] }
+      spellSpecialties: { type: list, of: string, default: [] }
+      # Regeneration a combat round (a Troll's 1D6; not damage by fire).
+      regenerate: { type: dice }
+    actions:
+      - use: regenerate
+        available: has(item.regenerate) && hp.wounds > 0
+        params:
+          dice: item.regenerate
+    effects:
+      - { target: charmax.str, op: set, value: 'has(item.str) ? maxOf(item.str) + 3 : 999' }
+      - { target: charmax.con, op: set, value: 'has(item.con) ? maxOf(item.con) + 3 : 999' }
+      - { target: charmax.dex, op: set, value: 'has(item.dex) ? maxOf(item.dex) + 3 : 999' }
+      - { target: charmax.siz, op: set, value: 'has(item.siz) ? maxOf(item.siz) + 3 : 999' }
+      - { target: charmax.int, op: set, value: 'has(item.int) ? maxOf(item.int) + 3 : 999' }
+      - { target: charmax.pow, op: set, value: 'has(item.pow) ? maxOf(item.pow) + 3 : 999' }
+      - { target: charmax.cha, op: set, value: 'has(item.cha) ? maxOf(item.cha) + 3 : 999' }
+      - { target: move.base, op: set, value: item.move }
+      - { target: move.fly, op: set, value: item.fly }
+      - { target: move.swim, op: set, value: item.swim }
+      - { target: armour.worn, op: atLeast, value: item.ap }
+
+creation:
+  - { id: creature, action: create-creature }
+
+actions:
+  # A creature sheet: the creature, then its characteristics, the averages or rolled; its skills
+  # at the book's values, its attacks (ready) and its Personal Magic spells. The sheet is finished
+  # at once: the Referee plays it.
+  - id: create-creature
+    tags: [creation]
+    available: character.creating
+    results: [created]
+    steps:
+      - id: creature
+        kind: choice
+        options: { content: { type: creature } }
+        recommend: options[0]
+        changes:
+          - { type: addItem, entry: { item: picked.id } }
+      - id: method
+        kind: choice
+        options:
+          - { id: creature-average, flags: { dice: false } }
+          - { id: creature-dice, flags: { dice: true } }
+        recommend: "'creature-average'"
+      - id: rolled
+        kind: branch
+        cases:
+          - when: true
+            flags: { dice: 'has(flags.dice) && flags.dice' }
+      - id: str
+        kind: roll
+        when: flags.dice && has(steps.creature.item.str)
+        tags: [characteristic]
+        parts: [{ dice: steps.creature.item.str }]
+      - id: con
+        kind: roll
+        when: flags.dice && has(steps.creature.item.con)
+        tags: [characteristic]
+        parts: [{ dice: steps.creature.item.con }]
+      - id: dex
+        kind: roll
+        when: flags.dice && has(steps.creature.item.dex)
+        tags: [characteristic]
+        parts: [{ dice: steps.creature.item.dex }]
+      - id: siz
+        kind: roll
+        when: flags.dice && has(steps.creature.item.siz)
+        tags: [characteristic]
+        parts: [{ dice: steps.creature.item.siz }]
+      - id: int
+        kind: roll
+        when: flags.dice && has(steps.creature.item.int)
+        tags: [characteristic]
+        parts: [{ dice: steps.creature.item.int }]
+      - id: pow
+        kind: roll
+        when: flags.dice && has(steps.creature.item.pow)
+        tags: [characteristic]
+        parts: [{ dice: steps.creature.item.pow }]
+      - id: cha
+        kind: roll
+        when: flags.dice && has(steps.creature.item.cha)
+        tags: [characteristic]
+        parts: [{ dice: steps.creature.item.cha }]
+      - id: characteristics
+        kind: changes
+        changes:
+          - type: set
+            field: chars.str
+            value: 'has(steps.str) ? steps.str.total : has(steps.creature.item.avgStr) ? steps.creature.item.avgStr : 0'
+          - type: set
+            field: chars.con
+            value: 'has(steps.con) ? steps.con.total : has(steps.creature.item.avgCon) ? steps.creature.item.avgCon : 0'
+          - type: set
+            field: chars.dex
+            value: 'has(steps.dex) ? steps.dex.total : has(steps.creature.item.avgDex) ? steps.creature.item.avgDex : 0'
+          - type: set
+            field: chars.siz
+            value: 'has(steps.siz) ? steps.siz.total : has(steps.creature.item.avgSiz) ? steps.creature.item.avgSiz : 0'
+          - type: set
+            field: chars.int
+            value: 'has(steps.int) ? steps.int.total : has(steps.creature.item.avgInt) ? steps.creature.item.avgInt : 0'
+          - type: set
+            field: chars.pow
+            value: 'has(steps.pow) ? steps.pow.total : has(steps.creature.item.avgPow) ? steps.creature.item.avgPow : 0'
+          - type: set
+            field: chars.cha
+            value: 'has(steps.cha) ? steps.cha.total : has(steps.creature.item.avgCha) ? steps.creature.item.avgCha : 0'
+          - { type: set, field: fortune.points, value: 0 }
+      - id: kit
+        kind: changes
+        changes:
+          - type: setState
+            forEach: steps.creature.item.skillNames
+            entry: { formula: "'openquest-core-skills-' + x" }
+            key: fixed
+            value: 'steps.creature.item.skillValues[i]'
+          - type: addItem
+            forEach: steps.creature.item.genericSkills
+            entry:
+              item: x
+              state:
+                specialty: 'steps.creature.item.genericSpecialties[i]'
+                fixed: 'steps.creature.item.genericValues[i]'
+          - type: addItem
+            forEach: steps.creature.item.attacks
+            entry: { item: x, equipped: true }
+          - type: addItem
+            forEach: steps.creature.item.spells
+            entry:
+              item: x
+              state:
+                magnitude: 'steps.creature.item.spellMagnitudes[i]'
+                specialty: 'steps.creature.item.spellSpecialties[i]'
+      - id: finish
+        kind: changes
+        sheet: proposed
+        changes:
+          - { type: finishCreation }
+      - id: result
+        kind: outcome
+        result: "'created'"

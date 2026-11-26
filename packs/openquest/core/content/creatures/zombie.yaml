@@ -1,0 +1,27 @@
+id: creatures.zombie
+type: creature
+fields:
+  str: 3d6 + 12
+  con: 1d6
+  dex: 1d6 + 3
+  siz: 3d6
+  int: 1d3
+  pow: '0'
+  cha: 1d3
+  avgStr: 23
+  avgCon: 4
+  avgDex: 7
+  avgSiz: 10
+  avgInt: 2
+  avgPow: 0
+  avgCha: 2
+  move: 7
+  loot: 0
+  skillNames:
+    - dodge
+    - unarmed-combat
+  skillValues:
+    - 0
+    - 50
+  attacks:
+    - weapons.cr-fist-1d4

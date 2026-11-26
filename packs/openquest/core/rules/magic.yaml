@@ -6,22 +6,30 @@ fields:
   magic.personalCasting:
     type: integer
     formula: >-
-      min(100, chars.pow * 3
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.personal-magic-casting && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.personal-magic-casting && copy.state.fixed >= 0)
+        : min(100, chars.pow * 3
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.personal-magic-casting))
   magic.sorceryCasting:
     type: integer
     formula: >-
-      min(100, chars.int
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.sorcery-casting && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.sorcery-casting && copy.state.fixed >= 0)
+        : min(100, chars.int
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.sorcery-casting))
   magic.shamanism:
     type: integer
     formula: >-
-      countCopies(copy.item == @skills.shamanism) == 0 ? 0 : min(100, chars.int + chars.pow
+      countCopies(copy.item == @skills.shamanism) == 0 ? 0 : sumCopies(copy.state.fixed + 1, copy.item == @skills.shamanism && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.shamanism && copy.state.fixed >= 0)
+        : min(100, chars.int + chars.pow
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.shamanism))
+  # A creature's (or spirit's) Spirit Combat, when it has one.
+  magic.spiritCombat:
+    type: integer
+    formula: 'sumCopies(copy.state.fixed, copy.item == @skills.spirit-combat && copy.state.fixed >= 0)'
   religion.skill:
     type: integer
     formula: >-
-      min(100, chars.int + 10
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.religion-own && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.religion-own && copy.state.fixed >= 0)
+        : min(100, chars.int + 10
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.religion-own))
 
   # The magic paths: a specialist of Personal Magic (Shaman or Wise), a rank of Sorcery, a
@@ -165,11 +173,11 @@ contentTypes:
 
 constraints:
   - id: personal-magic-limit
-    check: magic.personal.known <= magic.personal.limit
+    check: magic.personal.known <= magic.personal.limit || creature.present
     data: {}
   # Six points of Personal Magic at creation.
   - id: creation-personal-magic
-    check: '!character.creating || magic.personal.known <= 6'
+    check: '!character.creating || magic.personal.known <= 6 || creature.present'
     data: {}
   # A fixed spell is known at its magnitude; a variable one from it, to 6 (a Wise has no limit).
   - id: personal-spell-magnitude
@@ -824,8 +832,8 @@ actions:
         kind: action
         use: opposed-test
         params:
-          score: 'magic.shamanism > 0 ? magic.shamanism : resist.persistence'
-          master: '(magic.shamanism > 0 ? magic.shamanism : resist.persistence) >= 100'
+          score: 'magic.spiritCombat > 0 ? magic.spiritCombat : magic.shamanism > 0 ? magic.shamanism : resist.persistence'
+          master: '(magic.spiritCombat > 0 ? magic.spiritCombat : magic.shamanism > 0 ? magic.shamanism : resist.persistence) >= 100'
           opponentResult: params.opponentResult
           opponentRoll: params.opponentRoll
       - id: hurt

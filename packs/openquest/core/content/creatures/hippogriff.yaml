@@ -1,0 +1,42 @@
+id: creatures.hippogriff
+type: creature
+fields:
+  str: 4d6 + 24
+  con: 3d6 + 6
+  dex: 3d6 + 6
+  siz: 4d6 + 18
+  int: '7'
+  pow: 2d6 + 6
+  cha: '5'
+  avgStr: 38
+  avgCon: 17
+  avgDex: 17
+  avgSiz: 32
+  avgInt: 7
+  avgPow: 13
+  avgCha: 5
+  move: 20
+  fly: 37
+  ap: 1
+  loot: 0
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - unarmed-combat
+  skillValues:
+    - 40
+    - 40
+    - 50
+    - 60
+    - 50
+    - 10
+    - 60
+    - 60
+  attacks:
+    - weapons.cr-fore-claw-2d6
+    - weapons.cr-bite-1d8

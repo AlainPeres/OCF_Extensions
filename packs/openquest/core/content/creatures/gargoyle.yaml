@@ -1,0 +1,40 @@
+id: creatures.gargoyle
+type: creature
+fields:
+  str: 5d6 + 12
+  con: 3d6
+  dex: 3d6
+  siz: 5d6
+  int: 1d6
+  pow: 3d6
+  cha: 1d6
+  avgStr: 29
+  avgCon: 11
+  avgDex: 11
+  avgSiz: 17
+  avgInt: 4
+  avgPow: 11
+  avgCha: 4
+  fly: 20
+  ap: 6
+  loot: 0
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - unarmed-combat
+  skillValues:
+    - 25
+    - 40
+    - 40
+    - 40
+    - 40
+    - 30
+    - 40
+    - 50
+  attacks:
+    - weapons.cr-claw-1d6

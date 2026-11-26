@@ -1,0 +1,44 @@
+id: creatures.troll
+type: creature
+fields:
+  str: 4d6 + 12
+  con: 3d6 + 9
+  dex: 2d6
+  siz: 4d6 + 12
+  int: 1d6 + 3
+  pow: 3d6
+  cha: 2d6
+  avgStr: 26
+  avgCon: 20
+  avgDex: 7
+  avgSiz: 26
+  avgInt: 6
+  avgPow: 11
+  avgCha: 7
+  move: 23
+  ap: 3
+  loot: 1
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - close-combat
+    - unarmed-combat
+  skillValues:
+    - 25
+    - 25
+    - 60
+    - 40
+    - 20
+    - 20
+    - 20
+    - 40
+    - 40
+  attacks:
+    - weapons.club
+    - weapons.cr-claw-1d6
+  regenerate: 1d6

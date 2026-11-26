@@ -1,0 +1,26 @@
+id: creatures.hawk
+type: creature
+fields:
+  str: 1d3
+  con: 2d3
+  dex: 3d6 + 18
+  siz: 1d2
+  int: '4'
+  pow: 2d6
+  cha: '4'
+  avgStr: 2
+  avgCon: 4
+  avgDex: 27
+  avgSiz: 2
+  avgInt: 4
+  avgPow: 7
+  avgCha: 4
+  fly: 30
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 50
+  attacks:
+    - weapons.cr-claw-1d6
+    - weapons.cr-bite-1d4
+  animal: true

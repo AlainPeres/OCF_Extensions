@@ -1,0 +1,25 @@
+id: creatures.giant-beetle
+type: creature
+fields:
+  str: 2d6 + 12
+  con: 3d6 + 6
+  dex: 2d6 + 6
+  siz: 3d6 + 6
+  int: '2'
+  pow: 1d6 + 6
+  cha: '2'
+  avgStr: 19
+  avgCon: 17
+  avgDex: 13
+  avgSiz: 17
+  avgInt: 2
+  avgPow: 9
+  avgCha: 2
+  ap: 5
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 50
+  attacks:
+    - weapons.cr-bite-1d8
+  animal: true

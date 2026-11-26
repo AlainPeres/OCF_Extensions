@@ -1,0 +1,56 @@
+id: creatures.lizardman
+type: creature
+fields:
+  str: 3d6 + 6
+  con: 3d6
+  dex: 2d6 + 3
+  siz: 3d6
+  int: 2d6 + 6
+  pow: 3d6
+  cha: 2d6
+  avgStr: 17
+  avgCon: 11
+  avgDex: 10
+  avgSiz: 11
+  avgInt: 13
+  avgPow: 11
+  avgCha: 7
+  ap: 2
+  loot: 3
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - close-combat
+    - ranged-combat
+    - unarmed-combat
+    - personal-magic-casting
+  skillValues:
+    - 45
+    - 25
+    - 30
+    - 45
+    - 45
+    - 35
+    - 35
+    - 45
+    - 35
+    - 25
+    - 33
+  attacks:
+    - weapons.battleaxe
+    - weapons.sling
+    - weapons.cr-bite-1d6
+  spells:
+    - personal.heal
+    - personal.weapon-enhance
+  spellMagnitudes:
+    - 2
+    - 2
+  spellSpecialties:
+    - ''
+    - ''

@@ -1,0 +1,25 @@
+id: creatures.giant-ant
+type: creature
+fields:
+  str: 4d6
+  con: 3d6 + 6
+  dex: 2d6 + 6
+  siz: 2d6
+  int: '2'
+  pow: 1d6 + 3
+  cha: '5'
+  avgStr: 14
+  avgCon: 17
+  avgDex: 13
+  avgSiz: 7
+  avgInt: 2
+  avgPow: 6
+  avgCha: 5
+  ap: 5
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 50
+  attacks:
+    - weapons.cr-bite-1d6
+  animal: true

@@ -1,0 +1,26 @@
+id: creatures.wolf
+type: creature
+fields:
+  str: 3d6
+  con: 3d6 + 3
+  dex: 3d6 + 3
+  siz: 2d6 + 3
+  int: '5'
+  pow: 3d6
+  cha: '5'
+  avgStr: 11
+  avgCon: 14
+  avgDex: 13
+  avgSiz: 10
+  avgInt: 5
+  avgPow: 11
+  avgCha: 5
+  move: 20
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 50
+  attacks:
+    - weapons.cr-bite-1d8
+    - weapons.cr-claw-1d6
+  animal: true

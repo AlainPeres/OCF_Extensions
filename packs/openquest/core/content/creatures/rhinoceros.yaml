@@ -1,0 +1,28 @@
+id: creatures.rhinoceros
+type: creature
+fields:
+  str: 2d6 + 21
+  con: 3d6
+  dex: 2d6
+  siz: 2d6 + 21
+  int: '3'
+  pow: 3d6
+  cha: '3'
+  avgStr: 26
+  avgCon: 11
+  avgDex: 7
+  avgSiz: 26
+  avgInt: 3
+  avgPow: 11
+  avgCha: 3
+  move: 20
+  ap: 5
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 50
+  attacks:
+    - weapons.cr-bite-1d6
+    - weapons.cr-gore-1d8
+    - weapons.cr-trample-1d12
+  animal: true

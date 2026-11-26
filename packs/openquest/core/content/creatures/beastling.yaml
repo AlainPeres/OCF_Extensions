@@ -1,0 +1,54 @@
+id: creatures.beastling
+type: creature
+fields:
+  str: 2d6 + 6
+  con: 1d6 + 12
+  dex: 3d6
+  siz: 1d6 + 12
+  int: 2d6 + 6
+  pow: 3d6
+  cha: 2d6
+  avgStr: 13
+  avgCon: 16
+  avgDex: 11
+  avgSiz: 16
+  avgInt: 13
+  avgPow: 11
+  avgCha: 7
+  ap: 2
+  loot: 2
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - deception
+    - close-combat
+    - ranged-combat
+    - unarmed-combat
+    - personal-magic-casting
+  skillValues:
+    - 40
+    - 30
+    - 30
+    - 70
+    - 40
+    - 50
+    - 50
+    - 60
+    - 33
+  attacks:
+    - weapons.club
+    - weapons.shortspear
+    - weapons.medium-shield
+    - weapons.sling
+    - weapons.cr-head-butt-1d6
+  spells:
+    - personal.heal
+    - personal.protection
+  spellMagnitudes:
+    - 2
+    - 2
+  spellSpecialties:
+    - ''
+    - ''

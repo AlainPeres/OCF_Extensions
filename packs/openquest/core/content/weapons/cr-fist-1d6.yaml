@@ -1,0 +1,8 @@
+id: weapons.cr-fist-1d6
+type: weapon
+fields:
+  kind: close
+  damage: 1d6
+  hands: one
+  natural: true
+  skill: unarmed

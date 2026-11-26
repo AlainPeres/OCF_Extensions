@@ -45,7 +45,7 @@ fields:
   # States. A mortal wound (zero hit points or fewer) kills by the end of the next round unless
   # the character is stabilised (Healing) or healed by magic; surgery (Healing) then lets it heal
   # naturally. Unconsciousness is set and cleared by the actions and the player.
-  state.mortal: { type: boolean, formula: hp.current <= 0 }
+  state.mortal: { type: boolean, formula: 'hp.current <= 0 && !creature.bodiless' }
   state.stabilised: { type: boolean, input: true, default: false }
   state.treated: { type: boolean, input: true, default: false }
   state.unconscious: { type: boolean, input: true, default: false }
@@ -79,30 +79,36 @@ fields:
   combat.close:
     type: integer
     formula: >-
-      min(100, chars.dex + chars.str
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.close-combat && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.close-combat && copy.state.fixed >= 0)
+        : min(100, chars.dex + chars.str
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.close-combat))
   combat.ranged:
     type: integer
     formula: >-
-      min(100, chars.dex + chars.int
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.ranged-combat && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.ranged-combat && copy.state.fixed >= 0)
+        : min(100, chars.dex + chars.int
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.ranged-combat))
   combat.unarmed:
     type: integer
     formula: >-
-      min(100, chars.dex + chars.str
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.unarmed-combat && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.unarmed-combat && copy.state.fixed >= 0)
+        : min(100, chars.dex + chars.str
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.unarmed-combat))
   resist.dodge:
     type: integer
     formula: >-
-      min(100, chars.dex + 10
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.dodge && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.dodge && copy.state.fixed >= 0)
+        : min(100, chars.dex + 10
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.dodge))
   resist.persistence:
     type: integer
     formula: >-
-      min(100, chars.pow + 10
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.persistence && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.persistence && copy.state.fixed >= 0)
+        : min(100, chars.pow + 10
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.persistence))
   resist.resilience:
     type: integer
     formula: >-
-      min(100, chars.con + chars.pow
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.resilience && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.resilience && copy.state.fixed >= 0)
+        : min(100, chars.con + chars.pow
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.resilience))

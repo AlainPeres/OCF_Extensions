@@ -1,0 +1,19 @@
+id: creatures.elemental-small
+type: creature
+fields:
+  con: '3'
+  siz: '3'
+  avgCon: 3
+  avgSiz: 3
+  skillNames:
+    - unarmed-combat
+    - dodge
+    - persistence
+    - resilience
+  skillValues:
+    - 25
+    - 100
+    - 30
+    - 100
+  attacks:
+    - weapons.cr-engulf-1d6

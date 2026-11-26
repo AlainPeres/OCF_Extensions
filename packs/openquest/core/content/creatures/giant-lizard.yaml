@@ -1,0 +1,26 @@
+id: creatures.giant-lizard
+type: creature
+fields:
+  str: 2d6 + 12
+  con: 3d6
+  dex: 1d6 + 12
+  siz: 2d6 + 12
+  int: '3'
+  pow: 3d6
+  cha: '3'
+  avgStr: 19
+  avgCon: 11
+  avgDex: 15
+  avgSiz: 19
+  avgInt: 3
+  avgPow: 11
+  avgCha: 3
+  ap: 2
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 25
+  attacks:
+    - weapons.cr-bite-1d6
+    - weapons.cr-kick-1d8
+  animal: true

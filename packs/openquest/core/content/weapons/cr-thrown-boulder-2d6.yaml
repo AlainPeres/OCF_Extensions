@@ -1,0 +1,8 @@
+id: weapons.cr-thrown-boulder-2d6
+type: weapon
+fields:
+  kind: missile
+  damage: 2d6
+  hands: one
+  natural: true
+  range: 100

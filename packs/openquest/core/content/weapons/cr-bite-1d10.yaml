@@ -1,0 +1,8 @@
+id: weapons.cr-bite-1d10
+type: weapon
+fields:
+  kind: close
+  damage: 1d10
+  hands: one
+  natural: true
+  skill: unarmed

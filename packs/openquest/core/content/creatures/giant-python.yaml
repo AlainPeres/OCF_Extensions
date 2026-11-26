@@ -1,0 +1,26 @@
+id: creatures.giant-python
+type: creature
+fields:
+  str: 3d6 + 24
+  con: 3d6
+  dex: 2d6 + 6
+  siz: 3d6
+  int: '3'
+  pow: 3d6
+  cha: '3'
+  avgStr: 35
+  avgCon: 11
+  avgDex: 13
+  avgSiz: 11
+  avgInt: 3
+  avgPow: 11
+  avgCha: 3
+  ap: 3
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 50
+  attacks:
+    - weapons.cr-bite-1d4
+    - weapons.cr-constrict-1d8
+  animal: true

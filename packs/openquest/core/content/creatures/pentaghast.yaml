@@ -1,0 +1,36 @@
+id: creatures.pentaghast
+type: creature
+fields:
+  str: 3d6 + 6
+  con: 4d6 + 6
+  dex: 4d6 + 6
+  siz: 2d6 + 6
+  int: 6d6
+  pow: 3d6 + 6
+  cha: 3d6 + 6
+  avgStr: 17
+  avgCon: 20
+  avgDex: 20
+  avgSiz: 13
+  avgInt: 21
+  avgPow: 20
+  avgCha: 20
+  ap: 2
+  loot: 0
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - athletics
+    - deception
+    - unarmed-combat
+  skillValues:
+    - 90
+    - 100
+    - 100
+    - 100
+    - 100
+    - 80
+  attacks:
+    - weapons.cr-kick-1d6
+    - weapons.cr-bite-1d8

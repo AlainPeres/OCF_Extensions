@@ -1,0 +1,26 @@
+id: creatures.horse
+type: creature
+fields:
+  str: 2d6 + 18
+  con: 3d6 + 6
+  dex: 2d6 + 3
+  siz: 2d6 + 18
+  int: '4'
+  pow: 3d6
+  cha: '5'
+  avgStr: 25
+  avgCon: 17
+  avgDex: 10
+  avgSiz: 25
+  avgInt: 4
+  avgPow: 11
+  avgCha: 5
+  move: 30
+  ap: 2
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 40
+  attacks:
+    - weapons.cr-kick-1d6
+  animal: true

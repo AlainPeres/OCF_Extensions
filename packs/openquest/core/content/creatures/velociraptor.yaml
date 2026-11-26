@@ -1,0 +1,28 @@
+id: creatures.velociraptor
+type: creature
+fields:
+  str: 4d6 + 12
+  con: 3d6 + 3
+  dex: 4d6
+  siz: 3d6 + 6
+  int: '4'
+  pow: 2d6 + 6
+  cha: '3'
+  avgStr: 26
+  avgCon: 14
+  avgDex: 14
+  avgSiz: 17
+  avgInt: 4
+  avgPow: 13
+  avgCha: 3
+  move: 30
+  ap: 5
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 50
+  attacks:
+    - weapons.cr-bite-1d8
+    - weapons.cr-claw-1d6
+    - weapons.cr-fore-claw-1d4
+  animal: true

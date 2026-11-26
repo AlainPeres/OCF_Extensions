@@ -1,0 +1,58 @@
+id: creatures.elf
+type: creature
+fields:
+  str: 2d6 + 3
+  con: 3d6
+  dex: 3d6 + 6
+  siz: 2d6 + 3
+  int: 3d6 + 6
+  pow: 2d6 + 6
+  cha: 3d6
+  avgStr: 10
+  avgCon: 11
+  avgDex: 17
+  avgSiz: 10
+  avgInt: 17
+  avgPow: 13
+  avgCha: 11
+  ap: 2
+  loot: 1
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - healing
+    - close-combat
+    - ranged-combat
+    - personal-magic-casting
+  skillValues:
+    - 55
+    - 55
+    - 20
+    - 80
+    - 55
+    - 55
+    - 30
+    - 50
+    - 60
+    - 80
+    - 40
+  attacks:
+    - weapons.longspear
+    - weapons.short-bow
+  spells:
+    - personal.heal
+    - personal.protection
+    - personal.weapon-enhance
+  spellMagnitudes:
+    - 5
+    - 3
+    - 3
+  spellSpecialties:
+    - ''
+    - ''
+    - ''

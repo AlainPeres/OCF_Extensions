@@ -1,0 +1,50 @@
+id: creatures.gorgon
+type: creature
+fields:
+  str: 4d6
+  con: 3d6 + 6
+  dex: 3d6 + 6
+  siz: 4d6
+  int: 3d6
+  pow: 1d6 + 12
+  cha: 1d6
+  avgStr: 14
+  avgCon: 17
+  avgDex: 17
+  avgSiz: 14
+  avgInt: 11
+  avgPow: 16
+  avgCha: 4
+  fly: 20
+  ap: 8
+  loot: 5
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - athletics
+    - deception
+    - perception
+    - unarmed-combat
+    - personal-magic-casting
+  skillValues:
+    - 50
+    - 35
+    - 45
+    - 65
+    - 60
+    - 50
+    - 75
+    - 75
+  attacks:
+    - weapons.cr-talons-1d6
+    - weapons.cr-serpent-hair-1d4
+  spells:
+    - personal.weapon-enhance
+    - personal.heal
+  spellMagnitudes:
+    - 4
+    - 5
+  spellSpecialties:
+    - ''
+    - ''

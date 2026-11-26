@@ -1,0 +1,39 @@
+id: creatures.basilisk
+type: creature
+fields:
+  str: 2d3
+  con: 2d6 + 6
+  dex: 2d6
+  siz: 1d3
+  int: '3'
+  pow: 1d6 + 12
+  cha: '3'
+  avgStr: 4
+  avgCon: 13
+  avgDex: 7
+  avgSiz: 2
+  avgInt: 3
+  avgPow: 16
+  avgCha: 3
+  ap: 2
+  loot: 5
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - athletics
+    - deception
+    - natural-lore
+    - ranged-combat
+    - unarmed-combat
+  skillValues:
+    - 30
+    - 50
+    - 70
+    - 60
+    - 40
+    - 40
+    - 100
+    - 30
+  attacks:
+    - weapons.cr-bite-1d6

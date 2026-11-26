@@ -19,17 +19,20 @@ fields:
   skill.athletics:
     type: integer
     formula: >-
-      min(100, chars.dex + chars.str
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.athletics && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.athletics && copy.state.fixed >= 0)
+        : min(100, chars.dex + chars.str
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.athletics))
   skill.naturalLore:
     type: integer
     formula: >-
-      min(100, chars.int + 10
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.natural-lore && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.natural-lore && copy.state.fixed >= 0)
+        : min(100, chars.int + 10
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.natural-lore))
   skill.influence:
     type: integer
     formula: >-
-      min(100, chars.cha + 10
+      sumCopies(copy.state.fixed + 1, copy.item == @skills.influence && copy.state.fixed >= 0) > 0 ? sumCopies(copy.state.fixed, copy.item == @skills.influence && copy.state.fixed >= 0)
+        : min(100, chars.cha + 10
         + sumCopies(copy.state.creation + copy.state.growth, copy.item == @skills.influence))
 
 # Fatigue makes the character sluggish: DEX and INT -3 while it lasts.

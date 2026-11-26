@@ -1,0 +1,38 @@
+id: creatures.healing-spirit
+type: creature
+fields:
+  int: 2d6
+  pow: 4d6
+  cha: 3d6
+  avgInt: 7
+  avgPow: 14
+  avgCha: 11
+  move: 30
+  loot: 0
+  bodiless: true
+  skillNames:
+    - dodge
+    - persistence
+    - personal-magic-casting
+  skillValues:
+    - 40
+    - 50
+    - 100
+  genericSkills:
+    - skills.lore
+    - skills.lore
+    - skills.spirit-combat
+  genericSpecialties:
+    - Disease
+    - Spirit World
+    - ''
+  genericValues:
+    - 100
+    - 60
+    - 50
+  spells:
+    - personal.heal
+  spellMagnitudes:
+    - 6
+  spellSpecialties:
+    - ''

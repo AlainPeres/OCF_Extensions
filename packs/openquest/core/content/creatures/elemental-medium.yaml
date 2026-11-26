@@ -1,0 +1,20 @@
+id: creatures.elemental-medium
+type: creature
+fields:
+  con: '9'
+  siz: '9'
+  avgCon: 9
+  avgSiz: 9
+  move: 20
+  skillNames:
+    - unarmed-combat
+    - dodge
+    - persistence
+    - resilience
+  skillValues:
+    - 45
+    - 90
+    - 60
+    - 100
+  attacks:
+    - weapons.cr-engulf-2d6

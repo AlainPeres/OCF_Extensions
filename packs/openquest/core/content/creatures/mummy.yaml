@@ -1,0 +1,48 @@
+id: creatures.mummy
+type: creature
+fields:
+  str: 3d6 + 12
+  con: 3d6 + 12
+  dex: 2d6
+  siz: 2d6 + 6
+  int: 2d6 + 6
+  pow: '0'
+  cha: '1'
+  avgStr: 23
+  avgCon: 23
+  avgDex: 7
+  avgSiz: 13
+  avgInt: 13
+  avgPow: 0
+  avgCha: 1
+  ap: 2
+  loot: 4
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - athletics
+    - deception
+    - perception
+    - close-combat
+    - unarmed-combat
+    - sorcery-casting
+  skillValues:
+    - 30
+    - 80
+    - 50
+    - 10
+    - 10
+    - 40
+    - 80
+    - 60
+    - 75
+  genericSkills:
+    - skills.lore
+  genericSpecialties:
+    - Undead
+  genericValues:
+    - 65
+  attacks:
+    - weapons.war-maul
+    - weapons.cr-fist-1d6

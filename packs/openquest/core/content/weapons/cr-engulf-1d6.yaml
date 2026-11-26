@@ -1,0 +1,9 @@
+id: weapons.cr-engulf-1d6
+type: weapon
+fields:
+  kind: close
+  damage: 1d6
+  hands: one
+  natural: true
+  skill: unarmed
+  mechanism: true

@@ -1,0 +1,54 @@
+id: creatures.ghoul
+type: creature
+fields:
+  str: 4d6
+  con: 3d6
+  dex: 3d6
+  siz: 2d6 + 6
+  int: 3d6
+  pow: 3d6
+  cha: 1d6
+  avgStr: 14
+  avgCon: 11
+  avgDex: 11
+  avgSiz: 13
+  avgInt: 11
+  avgPow: 11
+  avgCha: 4
+  loot: 1
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - athletics
+    - deception
+    - perception
+    - unarmed-combat
+    - personal-magic-casting
+  skillValues:
+    - 40
+    - 30
+    - 40
+    - 40
+    - 60
+    - 30
+    - 60
+    - 40
+  genericSkills:
+    - skills.lore
+  genericSpecialties:
+    - Undead
+  genericValues:
+    - 75
+  attacks:
+    - weapons.cr-claw-1d4
+    - weapons.cr-bite-1d6
+  spells:
+    - personal.sap-energy
+    - personal.scare
+  spellMagnitudes:
+    - 1
+    - 2
+  spellSpecialties:
+    - ''
+    - ''

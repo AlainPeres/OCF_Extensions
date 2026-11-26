@@ -1,0 +1,25 @@
+id: creatures.dog
+type: creature
+fields:
+  str: 2d6 + 6
+  con: 3d6
+  dex: 2d6 + 6
+  siz: 1d6
+  int: '5'
+  pow: 1d6 + 6
+  cha: '5'
+  avgStr: 13
+  avgCon: 11
+  avgDex: 13
+  avgSiz: 3
+  avgInt: 5
+  avgPow: 9
+  avgCha: 5
+  move: 20
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 40
+  attacks:
+    - weapons.cr-bite-1d6
+  animal: true

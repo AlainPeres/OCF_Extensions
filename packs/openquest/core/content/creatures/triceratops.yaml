@@ -1,0 +1,27 @@
+id: creatures.triceratops
+type: creature
+fields:
+  str: 6d6 + 30
+  con: 3d10 + 12
+  dex: 2d6 + 3
+  siz: 6d6 + 30
+  int: '3'
+  pow: 3d6
+  cha: '3'
+  avgStr: 51
+  avgCon: 28
+  avgDex: 10
+  avgSiz: 48
+  avgInt: 3
+  avgPow: 11
+  avgCha: 3
+  move: 30
+  ap: 10
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 50
+  attacks:
+    - weapons.cr-tail-lash-1d12
+    - weapons.cr-gore-1d10
+  animal: true

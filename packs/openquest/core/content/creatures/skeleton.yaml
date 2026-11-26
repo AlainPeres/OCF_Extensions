@@ -1,0 +1,32 @@
+id: creatures.skeleton
+type: creature
+fields:
+  str: 2d6 + 6
+  con: 1d6
+  dex: 3d6
+  siz: 3d6
+  int: '0'
+  pow: '0'
+  cha: '0'
+  avgStr: 13
+  avgCon: 4
+  avgDex: 11
+  avgSiz: 11
+  avgInt: 0
+  avgPow: 0
+  avgCha: 0
+  ap: 2
+  loot: 0
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - close-combat
+  skillValues:
+    - 10
+    - 100
+    - 100
+    - 35
+  attacks:
+    - weapons.longsword
+    - weapons.medium-shield

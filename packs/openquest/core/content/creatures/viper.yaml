@@ -1,0 +1,24 @@
+id: creatures.viper
+type: creature
+fields:
+  str: 2d6 + 6
+  con: 2d6
+  dex: 3d6 + 18
+  siz: 2d6
+  int: '3'
+  pow: 2d6 + 6
+  cha: '3'
+  avgStr: 13
+  avgCon: 6
+  avgDex: 27
+  avgSiz: 7
+  avgInt: 3
+  avgPow: 13
+  avgCha: 3
+  move: 30
+  ap: 1
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 60
+  animal: true

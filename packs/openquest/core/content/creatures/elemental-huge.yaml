@@ -1,0 +1,20 @@
+id: creatures.elemental-huge
+type: creature
+fields:
+  con: '50'
+  siz: '50'
+  avgCon: 50
+  avgSiz: 50
+  move: 45
+  skillNames:
+    - unarmed-combat
+    - dodge
+    - persistence
+    - resilience
+  skillValues:
+    - 100
+    - 30
+    - 100
+    - 100
+  attacks:
+    - weapons.cr-engulf-4d6

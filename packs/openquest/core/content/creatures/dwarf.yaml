@@ -1,0 +1,48 @@
+id: creatures.dwarf
+type: creature
+fields:
+  str: 4d6
+  con: 2d6 + 12
+  dex: 3d6
+  siz: 1d6 + 6
+  int: 2d6 + 6
+  pow: 3d6
+  cha: 3d6
+  avgStr: 14
+  avgCon: 19
+  avgDex: 11
+  avgSiz: 10
+  avgInt: 13
+  avgPow: 11
+  avgCha: 11
+  ap: 5
+  loot: 3
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - craft
+    - athletics
+    - engineering
+    - mechanisms
+    - close-combat
+    - ranged-combat
+    - unarmed-combat
+    - sorcery-casting
+  skillValues:
+    - 20
+    - 40
+    - 55
+    - 70
+    - 50
+    - 35
+    - 40
+    - 65
+    - 45
+    - 35
+    - 40
+  attacks:
+    - weapons.warhammer
+    - weapons.battleaxe
+    - weapons.medium-shield
+    - weapons.light-crossbow

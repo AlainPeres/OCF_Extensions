@@ -1,0 +1,8 @@
+id: weapons.cr-tail-1d20
+type: weapon
+fields:
+  kind: close
+  damage: 1d20
+  hands: one
+  natural: true
+  skill: unarmed

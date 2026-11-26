@@ -1,0 +1,27 @@
+id: creatures.tyrannosaurus
+type: creature
+fields:
+  str: 4d6 + 40
+  con: 5d6 + 30
+  dex: 2d6 + 3
+  siz: 4d6 + 30
+  int: '3'
+  pow: 2d6 + 6
+  cha: '3'
+  avgStr: 52
+  avgCon: 47
+  avgDex: 10
+  avgSiz: 42
+  avgInt: 3
+  avgPow: 13
+  avgCha: 3
+  move: 30
+  ap: 10
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 60
+  attacks:
+    - weapons.cr-bite-1d10
+    - weapons.cr-stomp-1d10
+  animal: true

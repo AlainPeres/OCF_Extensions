@@ -1,0 +1,74 @@
+id: creatures.hag
+type: creature
+fields:
+  str: 6d6
+  con: 3d6
+  dex: 3d6
+  siz: 3d6
+  int: 2d6 + 12
+  pow: 2d6 + 21
+  cha: 1d6
+  avgStr: 21
+  avgCon: 11
+  avgDex: 11
+  avgSiz: 11
+  avgInt: 19
+  avgPow: 28
+  avgCha: 3
+  loot: 3
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - perception
+    - deception
+    - close-combat
+    - personal-magic-casting
+  skillValues:
+    - 50
+    - 60
+    - 40
+    - 40
+    - 50
+    - 110
+    - 55
+    - 75
+  genericSkills:
+    - skills.lore
+    - skills.lore
+  genericSpecialties:
+    - Magic
+    - Undead
+  genericValues:
+    - 40
+    - 40
+  attacks:
+    - weapons.cr-claw-2d6
+  spells:
+    - personal.befuddle
+    - personal.countermagic
+    - personal.darkwall
+    - personal.detect-type
+    - personal.disruption
+    - personal.enhance-skill
+    - personal.extinguish
+    - personal.hinder-skill
+  spellMagnitudes:
+    - 2
+    - 1
+    - 2
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+  spellSpecialties:
+    - ''
+    - ''
+    - ''
+    - Magic
+    - ''
+    - Deception
+    - ''
+    - Perception

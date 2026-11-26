@@ -1,0 +1,32 @@
+id: creatures.disease-spirit
+type: creature
+fields:
+  int: 2d6
+  pow: 3d6 + 6
+  cha: 3d6
+  avgInt: 7
+  avgPow: 17
+  avgCha: 11
+  move: 30
+  loot: 0
+  bodiless: true
+  skillNames:
+    - dodge
+    - persistence
+    - deception
+  skillValues:
+    - 40
+    - 50
+    - 30
+  genericSkills:
+    - skills.lore
+    - skills.lore
+    - skills.spirit-combat
+  genericSpecialties:
+    - Disease
+    - Spirit World
+    - ''
+  genericValues:
+    - 100
+    - 40
+    - 50

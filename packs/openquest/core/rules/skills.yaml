@@ -24,6 +24,9 @@ contentTypes:
       # Raised during the current downtime: a skill goes up +5% at most between two Quests.
       raised: { type: boolean, default: false }
       specialty: { type: string, default: '' }
+      # A value set as such (a creature's skill at the book's percentage), in place of base, points
+      # and growth; -1 when not set.
+      fixed: { type: integer, default: -1, min: -1 }
     computed:
       base:
         type: integer
@@ -36,7 +39,9 @@ contentTypes:
             : item.char2 == @chars.con ? chars.con : item.char2 == @chars.dex ? chars.dex
             : item.char2 == @chars.siz ? chars.siz : item.char2 == @chars.int ? chars.int
             : item.char2 == @chars.pow ? chars.pow : chars.cha)) * item.times + item.plus
-      total: { type: integer, formula: 'min(100, self.base + self.creation + self.growth)' }
+      total:
+        type: integer
+        formula: 'self.fixed >= 0 ? self.fixed : min(100, self.base + self.creation + self.growth)'
       # Expertise: 0 Novice (0-25%), 1 Apprentice (26-50%), 2 Veteran (51-75%), 3 Expert
       # (76-99%), 4 Master (100%).
       expertise:

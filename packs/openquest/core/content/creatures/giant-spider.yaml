@@ -1,0 +1,25 @@
+id: creatures.giant-spider
+type: creature
+fields:
+  str: 2d6 + 12
+  con: 3d6 + 6
+  dex: 2d6 + 9
+  siz: 4d6 + 12
+  int: '8'
+  pow: 3d6
+  cha: '2'
+  avgStr: 19
+  avgCon: 17
+  avgDex: 16
+  avgSiz: 26
+  avgInt: 8
+  avgPow: 11
+  avgCha: 2
+  ap: 4
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 50
+  attacks:
+    - weapons.cr-bite-1d6
+  animal: true

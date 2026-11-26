@@ -1,0 +1,26 @@
+id: creatures.cattle
+type: creature
+fields:
+  str: 4d6 + 6
+  con: 2d6 + 9
+  dex: 2d6
+  siz: 2d6 + 9
+  int: '4'
+  pow: 2d6
+  cha: '4'
+  avgStr: 20
+  avgCon: 15
+  avgDex: 7
+  avgSiz: 15
+  avgInt: 4
+  avgPow: 7
+  avgCha: 4
+  ap: 2
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 40
+  attacks:
+    - weapons.cr-charge-1d8
+    - weapons.cr-trample-1d8
+  animal: true

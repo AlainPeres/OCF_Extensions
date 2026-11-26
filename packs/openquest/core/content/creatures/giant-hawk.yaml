@@ -1,0 +1,28 @@
+id: creatures.giant-hawk
+type: creature
+fields:
+  str: 6d6 + 21
+  con: 5d6 + 15
+  dex: 3d6 + 9
+  siz: 6d6 + 21
+  int: '4'
+  pow: 3d6
+  cha: '4'
+  avgStr: 39
+  avgCon: 33
+  avgDex: 18
+  avgSiz: 39
+  avgInt: 4
+  avgPow: 11
+  avgCha: 4
+  move: 20
+  fly: 30
+  ap: 3
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 80
+  attacks:
+    - weapons.cr-claw-1d8
+    - weapons.cr-bite-1d6
+  animal: true

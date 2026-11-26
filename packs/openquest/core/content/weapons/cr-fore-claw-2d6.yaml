@@ -1,0 +1,8 @@
+id: weapons.cr-fore-claw-2d6
+type: weapon
+fields:
+  kind: close
+  damage: 2d6
+  hands: one
+  natural: true
+  skill: unarmed

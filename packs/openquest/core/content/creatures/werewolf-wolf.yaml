@@ -1,0 +1,40 @@
+id: creatures.werewolf-wolf
+type: creature
+fields:
+  str: 6d6
+  con: 3d6
+  dex: 3d6
+  siz: 2d6 + 6
+  int: 1d6 + 3
+  pow: 3d6
+  cha: 3d6
+  avgStr: 22
+  avgCon: 11
+  avgDex: 11
+  avgSiz: 13
+  avgInt: 6
+  avgPow: 11
+  avgCha: 11
+  move: 30
+  ap: 1
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - unarmed-combat
+  skillValues:
+    - 60
+    - 60
+    - 60
+    - 80
+    - 60
+    - 60
+    - 60
+    - 60
+  attacks:
+    - weapons.cr-bite-1d8
+    - weapons.cr-claw-1d6

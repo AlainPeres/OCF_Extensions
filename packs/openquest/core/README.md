@@ -32,6 +32,8 @@ Attribution):
 - non-human adventurers: 13 species besides humans (Beastling, Centaur, Duck, Dwarf, Elf, Goblin,
   Lizardman, Merpeople, Minotaur, Orc, Pixie, Satyr, Troll), with their dice, averages,
   movement, natural armour and weapons and characteristic maximums; `regenerate` for a Troll;
+- creature sheets for the Referee: 72 creatures and animals (the `creature` start), with their
+  characteristics, skills at the book's values, attacks, armour, movement and Personal Magic;
 - creation (`create-character`), guided and random: the species, characteristics by points or by dice, cash or
   the Wealth skill, the four skill pools +5% at a time (30 at most a skill), six points of
   Personal Magic, an arms package, the age; `learn-specialty` for a skill with a descriptor,
@@ -48,4 +50,4 @@ Attribution):
 Not yet modelled: the effects of spells that don't change a number of the sheet, or aim at one
 skill or characteristic (the player adds them as a modifier), the familiar and the Allied Spirit
 (each its own character), the effects of poisons and diseases other than damage, ships,
-creatures.
+creatures' special abilities (text).

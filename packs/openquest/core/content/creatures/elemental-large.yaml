@@ -1,0 +1,20 @@
+id: creatures.elemental-large
+type: creature
+fields:
+  con: '21'
+  siz: '21'
+  avgCon: 21
+  avgSiz: 21
+  move: 30
+  skillNames:
+    - unarmed-combat
+    - dodge
+    - persistence
+    - resilience
+  skillValues:
+    - 80
+    - 60
+    - 80
+    - 100
+  attacks:
+    - weapons.cr-engulf-3d6

@@ -1,0 +1,40 @@
+id: creatures.manticore
+type: creature
+fields:
+  str: 4d6 + 12
+  con: 4d6 + 6
+  dex: 3d6
+  siz: 4d6 + 12
+  int: 3d6
+  pow: 3d6
+  cha: '7'
+  avgStr: 26
+  avgCon: 20
+  avgDex: 11
+  avgSiz: 26
+  avgInt: 11
+  avgPow: 11
+  avgCha: 7
+  move: 20
+  ap: 1
+  loot: 4
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - athletics
+    - deception
+    - perception
+    - unarmed-combat
+  skillValues:
+    - 25
+    - 65
+    - 45
+    - 25
+    - 50
+    - 60
+    - 75
+  attacks:
+    - weapons.cr-claw-1d6
+    - weapons.cr-gore-1d8
+    - weapons.cr-poison-sting-1d6

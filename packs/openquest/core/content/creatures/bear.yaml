@@ -1,0 +1,27 @@
+id: creatures.bear
+type: creature
+fields:
+  str: 3d6 + 15
+  con: 2d6 + 6
+  dex: 3d6
+  siz: 3d6 + 15
+  int: '5'
+  pow: 3d6
+  cha: '5'
+  avgStr: 25
+  avgCon: 13
+  avgDex: 11
+  avgSiz: 25
+  avgInt: 5
+  avgPow: 11
+  avgCha: 5
+  move: 20
+  ap: 3
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 60
+  attacks:
+    - weapons.cr-bite-1d8
+    - weapons.cr-claw-1d6
+  animal: true

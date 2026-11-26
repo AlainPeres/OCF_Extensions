@@ -1,0 +1,27 @@
+id: creatures.elephant
+type: creature
+fields:
+  str: 6d6 + 24
+  con: 3d6 + 15
+  dex: 3d6
+  siz: 6d6 + 30
+  int: '6'
+  pow: 2d6 + 6
+  cha: '5'
+  avgStr: 45
+  avgCon: 24
+  avgDex: 11
+  avgSiz: 48
+  avgInt: 6
+  avgPow: 13
+  avgCha: 5
+  move: 20
+  ap: 3
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 45
+  attacks:
+    - weapons.cr-trample-1d12
+    - weapons.cr-tusk-1d10
+  animal: true

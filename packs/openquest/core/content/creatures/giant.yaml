@@ -1,0 +1,57 @@
+id: creatures.giant
+type: creature
+fields:
+  str: 9d6 + 18
+  con: 6d6 + 18
+  dex: 2d6 + 3
+  siz: 9d6 + 18
+  int: 3d6
+  pow: 3d6
+  cha: 2d6
+  avgStr: 49
+  avgCon: 39
+  avgDex: 10
+  avgSiz: 49
+  avgInt: 11
+  avgPow: 11
+  avgCha: 7
+  move: 30
+  ap: 3
+  loot: 4
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - close-combat
+    - ranged-combat
+    - unarmed-combat
+    - personal-magic-casting
+  skillValues:
+    - 10
+    - 25
+    - 80
+    - 20
+    - 50
+    - 5
+    - 40
+    - 90
+    - 35
+    - 75
+    - 33
+  attacks:
+    - weapons.cr-huge-club-2d6
+    - weapons.cr-thrown-boulder-2d6
+    - weapons.cr-stomp-1d6
+  spells:
+    - personal.weapon-enhance
+    - personal.strength
+  spellMagnitudes:
+    - 3
+    - 5
+  spellSpecialties:
+    - ''
+    - ''

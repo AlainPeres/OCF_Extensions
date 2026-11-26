@@ -1,0 +1,73 @@
+id: creatures.dragon
+type: creature
+fields:
+  str: 20d6
+  con: 10d6
+  dex: 4d6
+  siz: 10d6 + 30
+  int: 6d6
+  pow: 4d6 + 12
+  cha: 6d6
+  avgStr: 70
+  avgCon: 35
+  avgDex: 14
+  avgSiz: 65
+  avgInt: 21
+  avgPow: 26
+  avgCha: 21
+  move: 30
+  fly: 45
+  ap: 12
+  loot: 5
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - culture-own
+    - athletics
+    - influence
+    - perception
+    - unarmed-combat
+    - personal-magic-casting
+    - sorcery-casting
+  skillValues:
+    - 30
+    - 100
+    - 100
+    - 100
+    - 100
+    - 100
+    - 100
+    - 100
+    - 100
+    - 85
+    - 85
+  attacks:
+    - weapons.cr-bite-1d10
+    - weapons.cr-claw-1d8
+    - weapons.cr-tail-1d20
+  spells:
+    - personal.befuddle
+    - personal.beast-call
+    - personal.heal
+    - personal.protection
+    - personal.second-sight
+    - personal.talk-to-animal
+    - personal.tongues
+  spellMagnitudes:
+    - 2
+    - 2
+    - 6
+    - 5
+    - 3
+    - 3
+    - 2
+  spellSpecialties:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''

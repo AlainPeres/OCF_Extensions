@@ -1,0 +1,8 @@
+id: weapons.cr-horn-1d8
+type: weapon
+fields:
+  kind: close
+  damage: 1d8
+  hands: one
+  natural: true
+  skill: unarmed

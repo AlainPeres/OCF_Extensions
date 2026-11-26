@@ -1,0 +1,44 @@
+id: creatures.satyr
+type: creature
+fields:
+  str: 5d6
+  con: 4d6
+  dex: 3d6 + 6
+  siz: 2d6 + 6
+  int: 2d6 + 6
+  pow: 4d6
+  cha: 2d6
+  avgStr: 18
+  avgCon: 14
+  avgDex: 17
+  avgSiz: 13
+  avgInt: 13
+  avgPow: 14
+  avgCha: 7
+  ap: 2
+  loot: 1
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - influence
+    - perception
+    - close-combat
+    - unarmed-combat
+  skillValues:
+    - 35
+    - 50
+    - 50
+    - 75
+    - 45
+    - 60
+    - 75
+    - 60
+    - 35
+    - 55
+  attacks:
+    - weapons.shortsword
+    - weapons.cr-head-butt-1d6

@@ -1,0 +1,42 @@
+id: creatures.griffin
+type: creature
+fields:
+  str: 8d6
+  con: 3d6 + 12
+  dex: 3d6 + 12
+  siz: 8d6
+  int: '6'
+  pow: 2d6 + 6
+  cha: '7'
+  avgStr: 28
+  avgCon: 22
+  avgDex: 22
+  avgSiz: 28
+  avgInt: 6
+  avgPow: 13
+  avgCha: 7
+  move: 20
+  fly: 30
+  ap: 3
+  loot: 0
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - unarmed-combat
+  skillValues:
+    - 40
+    - 80
+    - 70
+    - 60
+    - 80
+    - 30
+    - 50
+    - 70
+  attacks:
+    - weapons.cr-bite-1d8
+    - weapons.cr-claw-1d6

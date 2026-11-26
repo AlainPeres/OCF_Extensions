@@ -1,0 +1,62 @@
+id: creatures.pixie
+type: creature
+fields:
+  str: 2d3
+  con: 3d6
+  dex: 4d6
+  siz: 1d6
+  int: 3d6
+  pow: 2d6 + 6
+  cha: 3d6
+  avgStr: 4
+  avgCon: 11
+  avgDex: 14
+  avgSiz: 4
+  avgInt: 11
+  avgPow: 13
+  avgCha: 11
+  fly: 30
+  loot: 0
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - close-combat
+    - ranged-combat
+    - personal-magic-casting
+  skillValues:
+    - 60
+    - 60
+    - 20
+    - 80
+    - 60
+    - 60
+    - 60
+    - 10
+    - 25
+    - 85
+  attacks:
+    - weapons.dagger
+    - weapons.sling
+  spells:
+    - personal.befuddle
+    - personal.babel
+    - personal.demoralise
+    - personal.fist-of-gold
+    - personal.glue
+  spellMagnitudes:
+    - 2
+    - 2
+    - 2
+    - 1
+    - 1
+  spellSpecialties:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''

@@ -26,10 +26,12 @@ contentTypes:
       shield: { type: enum, values: [small, medium, large] }
       # A natural weapon (horns, claws, bite): a close combat weapon a species is born with.
       natural: { type: boolean, default: false }
+      # The skill it attacks with, when not its kind's (a creature's bite: Unarmed Combat).
+      skill: { type: enum, values: [close, ranged, unarmed] }
     actions:
       - use: attack
         params:
-          skill: "item.kind == 'close' ? 'close' : 'ranged'"
+          skill: "has(item.skill) ? item.skill : item.kind == 'close' ? 'close' : 'ranged'"
       - use: damage
         params:
           dice: item.damage

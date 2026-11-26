@@ -1204,3 +1204,221 @@ actions.create-character.steps.species.prompt: "Species (a non-human only with t
 actions.regenerate.name: Regenerate (a combat round)
 actions.regenerate.params.dice.name: Hit points
 actions.regenerate.results.regenerated.name: Regenerated
+weapons.cr-bite-1d6.name: Bite (1D6)
+creatures.basilisk.name: Basilisk
+creatures.basilisk.description: 'Corrosive Blood: Any non-magical weapon hitting the basilisk corrodes in the creature’s blood, completely disintegrating after 1D4 rounds. The basilisk’s poison and corrosive blood are magical effects, which lose their special properties a few minutes after leaving the basilisk’s body, making it virtually impossible to use the creature as a source for making lethal compounds. Basilisk Venom:  Type: Ingested or smeared. Delay: Immediate. Potency: 65. Full Effect: 1D4 Hit Point damage, applies –6 penalty to victim’s CON. Duration: 6D10 minutes. Death Gaze: A basilisk can kill with a glance. In combat, the basilisk glares at a single opponent each round. If the basilisk overcomes the target in an opposed test of its Persistence against the target’s Resilience, the target dies instantly. Using the gaze attack costs no magic points, and the basilisk may normally attack in any round in which it uses the gaze attack. This attack penetrates magical defences as if it were a Magnitude 6 Personal Magic spell. If the target successfully resists the gaze attack, they are unharmed, though they may be targeted again.'
+creatures.bloodweed.name: Bloodweed
+creatures.bloodweed.description: 'Bloodsucking bite: The bloodweed’s bite causes blood loss which also drains 1D6 Magic Points.'
+weapons.cr-head-butt-1d6.name: Head Butt (1D6)
+creatures.beastling.name: Beastling
+creatures.beastling.description: 'Personal Magic 33%: Heal 2, Protection 2. Divine Magic: Berserk.'
+weapons.cr-kick-1d6.name: Kick (1D6)
+creatures.centaur.name: Centaur
+creatures.centaur.description: 'Personal Magic 40%: Heal 4, Protection 2. Divine Magic: Berserk.'
+weapons.cr-claws-1d4.name: Claws (1D4)
+creatures.chreker.name: Chreker
+weapons.cr-bite-1d10.name: Bite (1D10)
+weapons.cr-claw-1d8.name: Claw (1D8)
+weapons.cr-tail-1d20.name: Tail (1D20)
+creatures.dragon.name: Dragon
+creatures.dragon.description: 'Breathe Flame: The dragon may breathe flame over an area as a Combat Action. The flame will cover a cone in front of the dragon, which stretches for its POW in metres. At its furthest extent, the cone is equal to the creature’s POW in width. Any creature caught in the flame suffers 4D6 fire damage, though on a successful Dodge roll a character may dive for cover to halve this damage and AP counts as normal. The dragon may only breathe flame once per hour. Further attempts to breathe flame within this time period require the creature to make a Resilience test, with a cumulative –20% penalty for every attempt. Personal Magic 85%: Befuddle [2], Beast Call [2], Heal 6, Protection 5, Second Sight [3], Talk to Animals [3], Tongues [2]. Sorcery 85%: Damage Boosting, Damage Resistance, Dominate Human, Shape change Dragon to Human, Mystic Vision.'
+creatures.dwarf.name: Dwarf
+creatures.dwarf.description: 'Earth Sense: Dwarves can automatically sense how deep they are underground and whether or not the tunnels or chambers they are in are structurally sound. Dark Sight: Dwarves see in the dark as if it is the day. Sorcery 40%: Damage Resistance, Damage Boosting, Heal Wounds.'
+creatures.duck.name: Duck
+creatures.duck.description: '*Ducks are masters of swimming, which is normally measured by the Athletics skill, and is considered to be at 100% for any skill test. Personal Magic 30%: Weapon Enhance, Walk on Water, Water Breathe. Divine Magic: Call Small Undine 1.'
+creatures.elf.name: Elf
+creatures.elf.description: 'Personal Magic 40%: Heal 5, Multi-missile 4, Protection 3, Weapon Enhance 3.'
+weapons.cr-claw-1d6.name: Claw (1D6)
+creatures.gargoyle.name: Gargoyle
+creatures.gargoyle.description: 'Statue-Like Stillness: The Gargoyle has a +50% modifier when using Deception to appear like a statue upon inspection.'
+weapons.cr-claw-1d4.name: Claw (1D4)
+creatures.ghoul.name: Ghoul
+creatures.ghoul.description: 'Ghoul Venom:  Type: Ingested or smeared. Delay: 1D3 Combat Rounds. Potency: 22. Full Effect: Paralysis. Duration: 1D10 hours or until healing is administered that restores at least 1 Hit Point. Ghoul Howl: Ghouls employ a blood-chilling howl in combat. When a ghoul howls, every creature in a radius equal to the ghoul’s POW in metres becomes Demoralised (as the Personal Magic spell). This costs the ghoul no magic points and does not require a skill test to use successfully. Personal Magic 40%: Sap Energy, Scare. Ranged Combat (special, see below): Howl (see Demoralise below).'
+weapons.cr-huge-club-2d6.name: Huge Club (2D6)
+weapons.cr-thrown-boulder-2d6.name: Thrown Boulder (2D6)
+weapons.cr-stomp-1d6.name: Stomp (1D6)
+creatures.giant.name: Giant
+creatures.giant.description: 'Personal Magic Casting 33%: Weapon Enhance 3, Strength 5. Divine Magic: Quicksand, Repair and Replace.'
+creatures.goblin.name: Goblin
+creatures.goblin.description: 'Night Sight: Goblins can see at night as if it was day.'
+weapons.cr-talons-1d6.name: Talons (1D6)
+weapons.cr-serpent-hair-1d4.name: Serpent hair (1D4)
+creatures.gorgon.name: Gorgon
+creatures.gorgon.description: 'Petrifying Gaze Attack: The Gorgon’s gaze attack is an automatic attack at the beginning of every round. Every susceptible creature must make an opposed Resilience test against the Gorgon’s Persistence or be turned to stone. Gorgon Serpent Venom:  Type: Ingested or smeared. Delay: 1D3 Combat Rounds. Potency: 34. Full Effect: 1D3 Hit Point damage, applies –3 penalty to victim’s CON. Duration: 6D10 minutes. Personal Magic 75%: Weapon Enhance 4, Heal 5. Divine Magic: Absorption 3, Fear, Heal Body. Ranged Combat (Special, see below): Gaze attack (Petrification).'
+weapons.cr-bite-1d8.name: Bite (1D8)
+creatures.griffin.name: Griffin
+weapons.cr-fore-claw-2d6.name: Fore claw (2D6)
+creatures.hippogriff.name: Hippogriff
+creatures.lizardman.name: Lizardman
+creatures.lizardman.description: 'Personal Magic 33%: Heal 2, Weapon Enhance 2.'
+creatures.merpeople.name: Merpeople
+creatures.merpeople.description: 'Merpeople can breathe underwater as well as in the air when they surface. Personal Magic 33%: Beast Call [2], Weapon Enhance 3. Divine Magic: Call Small Undine 1.'
+weapons.cr-gore-1d8.name: Gore (1D8)
+weapons.cr-poison-sting-1d6.name: Poison Sting (1D6)
+creatures.manticore.name: Manticore
+creatures.manticore.description: 'Manticore poison:  Type: Ingested. Delay: 1D3 Combat Rounds. Potency: 50. Full Effect: 1D4 Hit Point damage, applies –3 penalty to victim’s CON. Duration: 5D10 minutes.'
+weapons.cr-gore-1d6.name: Gore (1D6)
+creatures.minotaur.name: Minotaur
+creatures.minotaur.description: 'Personal Magic Casting 33%: Beast Call [2], Fanaticism [2]. Divine Magic: Berserk.'
+weapons.cr-fist-1d6.name: Fist (1D6)
+creatures.mummy.name: Mummy
+creatures.mummy.description: 'An _Ignite_ spell will work on a mummy’s body. A strike with a fiery weapon, such as a sword with a _Fireblade_ spell on it, or even a torch, will ignite the mummy if the hit causes damage. The damage done by the initial hit is taken each combat round as fire damage unless the fire is put out. To put out a fire, the mummy must take one combat round to roll on the ground or immerse itself in water. During this time, it may not make any other actions or reactions. Healing spells are ineffective on mummies, though a _Repair_ spell will fix any damage done (in 1D10 hit point increments). When a creature becomes a mummy, its STR and CON are doubled. The statistics above represent a human mummy, though any sentient creature willing to undergo the process may become a mummy. Sorcery Casting 75%: Tap POW, Mirage, Neutralise Magic, Venom.'
+creatures.dryad.name: Dryad
+creatures.dryad.description: 'A dryad controls all of the plants within her grove. She can cause them to move slowly, grow surprisingly rapidly, or blossom or bear fruit out of season. This power cannot be used as a direct attack. Personal Magic 60%: Befuddle, Clear Path, Countermagic, Detect Magic, Enhance Performance, Enhance Deception, Light.'
+weapons.cr-claw-2d6.name: Claw (2D6)
+creatures.hag.name: Hag
+creatures.hag.description: 'A hag can create a shade out of the darkness of her lair. Doing this costs one magic point per point of SIZ the shade has. A hag can only manifest one shade at a time, though if it is destroyed she can create another. Personal Magic 75%: Befuddle, Countermagic, Darkwall, Detect Magic, Disruption, Enhance Deception, Extinguish, Hinder Perception.'
+creatures.naiad.name: Naiad
+creatures.naiad.description: 'A naiad can transform herself into an undine. Doing this takes a round and costs one magic point per point of SIZ the undine has. If the undine is destroyed, the naiad is unharmed but is immediately forced back to her own body of water. Personal Magic 60%: Befuddle, Countermagic, Dull Weapon, Detect Magic, Enhance Performance, Extinguish, Heal, Protection, Slow, Water Breath.'
+weapons.cr-unarmed-1d6.name: Unarmed (1D6)
+creatures.oread.name: Oread
+creatures.oread.description: 'An oread can transform herself into a gnome. Doing this takes a round and costs 1 magic point per point of SIZ the gnome has. If the gnome is destroyed, the oread is unharmed but is immediately forced back to her own hill, mountain or valley. Personal Magic 70%: Countermagic, Dull Weapon, Detect Magic, Extinguish, Pierce, Protection, Repair, Slow, Vigour, Weapon Enhance.'
+creatures.orc.name: Orc
+creatures.orc.description: 'Night Vision: Orcs have Night Vision so they can see in the Dark as if it was the day.'
+creatures.pentaghast.name: Pentaghast
+creatures.pentaghast.description: 'Scream: Anyone in an area of fifty meters who can hear the Pentaghast’s scream is subject to nausea and vomiting for 1D4 rounds on a failed Resilience roll. Once the targets have either successfully or unsuccessfully resisted the scream, they are no longer affected by it. Mocking laughter: Anyone who can hear the pentaghast’s terrible laughter is subject to a _Demoralize_ spell. The demon can laugh once every two combat rounds. Create Puppet: Once per day a pentaghast is able to create a humanoid puppet out of dung. The puppet is guided by the pentaghast’s will. Use a standard species template (e.g. human, dwarf, elf, orc, etc.) to provide stats and base skills for the puppet, but use the knowledge skills of the demon. Such puppets tend to be heavily scented with perfume, to hide the smell of the dung, so are only detected on a successful Perception test. The Gift of Tongues: The Pentaghast is able to speak all languages and mimic flawlessly the speech of any person it has previously heard. Damage Immunity: The Pentaghast is only damaged by magic and is immune to non-magical poisons and disease.'
+creatures.pixie.name: Pixie
+creatures.pixie.description: 'Personal Magic 85%: Befuddle, Babel, Demoralise, Fist of Gold, Glue.'
+creatures.troll.name: Troll
+creatures.troll.description: 'Regeneration: Trolls regenerate damage done to them quite quickly. They heal 1D6 Hit Points per Combat Round. This regeneration will not work on damage caused by fire. Night Vision: Trolls also have Night Vision so they can see in the Dark as if it was the day.'
+creatures.satyr.name: Satyr
+creatures.sea-serpent.name: Sea Serpent
+creatures.skeleton.name: Skeleton
+creatures.skeleton.description: Skeletons have a score of 0 for INT, POW and CHA, as they have no intelligence, will or personalities of their own. Skeletons are also immune to disease, fatigue, poisons and mind control magic. A skeleton has the same MR the creature had in life but, as a skeleton, it cannot fly or swim (if the creature had those abilities while alive). Skeletons never suffer Fatigue.
+creatures.slime.name: Slime
+creatures.slime.description: A slime can only be killed by fire or magic. Normal weapons merely pass through the slime’s rancid tissue, without causing damage. Because of a slime’s caustic nature, neither acid nor poison has any effect on it. Non-fiery _Weapon Enhance_ spells do no damage to a slime. _Disruption_ and similar spells have their normal effect. A slime’s body retains its full acidic properties for a number of days after death equal to the creature’s CON. It attacks by moving next to its intended victim and attempting to envelop them. This attack has a base 75% chance of success, though the victim may use his Dodge skill or his Athletics skill to jump out of the way. Using Athletics rather than Dodge incurs a –40% penalty. A slime’s attack may not be parried – the creature will simply slide around the parrying weapon to engulf its foe. Every round a creature is enmeshed by a slime, that creature will take acid damage equal to the SIZ of the Slime. Armour will protect against this damage for the first round, after which it is dissolved by the Slime’s acid unless it is enchanted in some way or another. A character caught by a slime may attempt to escape by making another Dodge or Athletics skill t…
+creatures.disease-spirit.name: Disease Spirit
+creatures.disease-spirit.description: A disease spirit is, in essence, a disease, either mundane or magical. After covertly possessing its victim, the possessed one will be forced to make Resilience tests to resist the effects of the disease. The disease cannot be thrown off until the disease spirit is ousted. Also, the spirit will nearly always choose to apply its POW as a penalty to the possessed one’s Resilience tests. If the possessed one dies while being possessed by a disease spirit, there is a percentage chance equal to the spirit’s POW that they will arise as a new disease spirit in 2D6 hours.
+creatures.ghost.name: Ghost
+creatures.ghost.description: 'Ghosts can only be affected by magic spells which either dominate or drive them off, or by characters who can engage in Spirit Combat. Personal Magic Casting 65%: Befuddle, Demoralise, Scare 4.'
+creatures.healing-spirit.name: Healing Spirit
+creatures.healing-spirit.description: 'The natural enemy of disease spirits, a healing spirit is only capable of entering Spirit Combat with a disease spirit already covertly possessing a creature. If the healing spirit can bring the disease spirit to zero Hit Points, it will force it to leave its host. The healing spirit will then depart as well, for it cannot permanently possess any creature. If a healing spirit is used on an individual who is sick from a mundane illness (rather than from a disease spirit), it will add its POW as a percentage bonus to the individual’s chance of success on their next Resilience test to throw off the effects of the disease. Personal Magic 100%: Heal 6.'
+creatures.magic-spirit.name: Magic Spirit
+creatures.passion-spirits.name: Passion Spirits (Fear, Madness, Pain)
+weapons.cr-horn-1d8.name: Horn (1D8)
+weapons.cr-kick-2d6.name: Kick (2D6)
+creatures.unicorn.name: Unicorn
+creatures.vampire.name: Vampire
+creatures.vampire.description: 'Night vision: Vampires can see in the dark and at night as if it were day by sensing life energy. Shapeshifting: Vampires have the ability to shapeshift into mist at will. As a single Combat Action, the vampire (and every non-living item on his person) dissolves into a thin greenish fog, approximately the same SIZ as they were in the flesh. As a mist, the vampire is immune to all types of physical damage, but cannot take any action except moving up to their MR. In mist form, a vampire moves at the same speed as they would normally and is unaffected by strong winds. Additionally, vampires still take damage from sunlight in mist form. As well as the ability to transform into mist, some vampires manifest the ability to shapeshift into wolves and bats as well. As with the mist transformation, such changes take a Combat Action to perform. Upon death, the vampire collapses to the ground and turns to mist at the beginning of the next Combat Round. Before then, it can be destroyed permanently by driving a stake through its heart (the only way to prevent it from turning to mist) and decapitating it. Vampires and Sunlight: As creatures of the night, vampires cannot stand the touch of natu…'
+weapons.cr-fist-1d4.name: Fist (1D4)
+creatures.zombie.name: Zombie
+creatures.zombie.description: Zombies are immune to fatigue, disease, poisons and mind control.
+weapons.cr-sting-1d6.name: Sting (1D6)
+creatures.wyvern.name: Wyvern
+creatures.wyvern.description: 'Wyvern Sting Poison:  Type: Ingested. Delay: 1D2 Combat Rounds. Potency: 60. Full Effect: 1D6 Hit Point damage, applies –4 penalty to victim’s CON. Duration: 6D10 minutes.'
+creatures.giant-ant.name: Giant Ant
+creatures.bear.name: Bear
+creatures.big-cat.name: Big Cat (Lion, Tiger, etc.)
+creatures.giant-beetle.name: Giant Beetle
+weapons.cr-charge-1d8.name: Charge (1D8)
+weapons.cr-trample-1d8.name: Trample (1D8)
+creatures.cattle.name: Cattle
+weapons.cr-claw-1d10.name: Claw (1D10)
+creatures.giant-crab.name: Giant Crab
+creatures.giant-crocodile.name: Giant Crocodile
+weapons.cr-peck-1d8.name: Peck (1D8)
+creatures.flightless-bird.name: Flightless Bird
+creatures.dog.name: Dog
+weapons.cr-trample-1d12.name: Trample (1D12)
+weapons.cr-tusk-1d10.name: Tusk (1D10)
+creatures.elephant.name: Elephant
+creatures.elephant.description: 45% Trample 1D12, Tusk 1D10, Trunk Grapple
+weapons.cr-bite-1d4.name: Bite (1D4)
+creatures.hawk.name: Hawk
+creatures.giant-hawk.name: Giant Hawk
+creatures.horse.name: Horse
+weapons.cr-kick-1d8.name: Kick (1D8)
+creatures.giant-lizard.name: Giant Lizard
+weapons.cr-arm-1d4.name: Arm (1D4)
+creatures.giant-octopus.name: Giant Octopus
+creatures.pteranodon.name: Pteranodon
+weapons.cr-constrict-1d8.name: Constrict (1D8)
+creatures.giant-python.name: Giant Python
+creatures.rhinoceros.name: Rhinoceros
+creatures.giant-spider.name: Giant Spider
+creatures.giant-spider.description: "50% Bite 1D6 + Venom (see above), Webbing (Entangles: Athletics vs rolled attack to escape or spider's POW × 2 as Hit Points to destroy)"
+weapons.cr-tail-lash-1d12.name: Tail lash (1D12)
+weapons.cr-gore-1d10.name: Gore (1D10)
+creatures.triceratops.name: Triceratops
+weapons.cr-stomp-1d10.name: Stomp (1D10)
+creatures.tyrannosaurus.name: Tyrannosaurus
+weapons.cr-fore-claw-1d4.name: Fore claw (1D4)
+creatures.velociraptor.name: Velociraptor
+creatures.viper.name: Viper
+creatures.viper.description: 60% Bite + Venom (see above)
+creatures.wolf.name: Wolf
+weapons.cr-engulf-1d6.name: Engulf (1D6)
+creatures.elemental-small.name: Elemental (Small)
+creatures.elemental-small.description: 'Engulfs every opponent within 1 m: undines drown, salamanders burn, gnomes crush, sylphs bluster (Resilience against hit points), shades frighten (Persistence against magic points). Its damage has no damage modifier. Immune to disease and poison; sees the invisible (+50% to detect hidden characters); nearly invisible in its own element (Deception 90%).'
+weapons.cr-engulf-2d6.name: Engulf (2D6)
+creatures.elemental-medium.name: Elemental (Medium)
+creatures.elemental-medium.description: 'Engulfs every opponent within 3 m: undines drown, salamanders burn, gnomes crush, sylphs bluster (Resilience against hit points), shades frighten (Persistence against magic points). Its damage has no damage modifier. Immune to disease and poison; sees the invisible (+50% to detect hidden characters); nearly invisible in its own element (Deception 90%).'
+weapons.cr-engulf-3d6.name: Engulf (3D6)
+creatures.elemental-large.name: Elemental (Large)
+creatures.elemental-large.description: 'Engulfs every opponent within 7 m: undines drown, salamanders burn, gnomes crush, sylphs bluster (Resilience against hit points), shades frighten (Persistence against magic points). Its damage has no damage modifier. Immune to disease and poison; sees the invisible (+50% to detect hidden characters); nearly invisible in its own element (Deception 90%).'
+weapons.cr-engulf-4d6.name: Engulf (4D6)
+creatures.elemental-huge.name: Elemental (Huge)
+creatures.elemental-huge.description: 'Engulfs every opponent within 17 m: undines drown, salamanders burn, gnomes crush, sylphs bluster (Resilience against hit points), shades frighten (Persistence against magic points). Its damage has no damage modifier. Immune to disease and poison; sees the invisible (+50% to detect hidden characters); nearly invisible in its own element (Deception 90%).'
+creatures.werewolf.name: Werewolf (human form)
+creatures.werewolf-wolf.name: Werewolf (wolf form)
+creatures.werewolf.description: 'Night Vision. Shape-shifting at will in a combat round (forced on nights of a full moon): STR doubled and INT halved as a wolf. Only silver or magic harms a werewolf.'
+creatures.werewolf-wolf.description: 'Night Vision. Shape-shifting at will in a combat round (forced on nights of a full moon): STR doubled and INT halved as a wolf. Only silver or magic harms a werewolf.'
+
+types.creature.name: Creature
+types.creature.fields.str.name: STR dice
+types.creature.fields.con.name: CON dice
+types.creature.fields.dex.name: DEX dice
+types.creature.fields.siz.name: SIZ dice
+types.creature.fields.int.name: INT dice
+types.creature.fields.pow.name: POW dice
+types.creature.fields.cha.name: CHA dice
+types.creature.fields.avgStr.name: Average STR
+types.creature.fields.avgCon.name: Average CON
+types.creature.fields.avgDex.name: Average DEX
+types.creature.fields.avgSiz.name: Average SIZ
+types.creature.fields.avgInt.name: Average INT
+types.creature.fields.avgPow.name: Average POW
+types.creature.fields.avgCha.name: Average CHA
+types.creature.fields.move.name: Movement rate (m)
+types.creature.fields.fly.name: Flying (m)
+types.creature.fields.swim.name: Swimming (m)
+types.creature.fields.ap.name: Armour points
+types.creature.fields.loot.name: Loot Factor
+types.creature.fields.bodiless.name: No body (a spirit)
+types.creature.fields.animal.name: Animal
+types.creature.fields.skillNames.name: Skills
+types.creature.fields.skillValues.name: Skill values (%)
+types.creature.fields.genericSkills.name: Other skills
+types.creature.fields.genericSpecialties.name: Their descriptors
+types.creature.fields.genericValues.name: Their values (%)
+types.creature.fields.attacks.name: Attacks
+types.creature.fields.spells.name: Personal Magic spells
+types.creature.fields.spellMagnitudes.name: Their magnitudes
+types.creature.fields.spellSpecialties.name: Their descriptors
+types.skill.state.fixed.name: Set value (%, -1 when not set)
+types.weapon.fields.skill.name: Attacks with
+types.weapon.fields.skill.values.close.name: Close Combat
+types.weapon.fields.skill.values.ranged.name: Ranged Combat
+types.weapon.fields.skill.values.unarmed.name: Unarmed Combat
+skills.spirit-combat.name: Spirit Combat
+fields.creature.present.name: A creature
+fields.creature.bodiless.name: No body (a spirit)
+fields.creature.loot.name: Loot Factor
+fields.magic.spiritCombat.name: Spirit Combat
+groups.creature.label: Creature
+creation.creature.name: Creature (for the Referee)
+creation.creature.description: "A creature of the Creatures chapter: its average characteristics or rolled, its skills at the book's values, its attacks and spells. The sheet is finished at once."
+actions.create-creature.name: Create a creature
+actions.create-creature.results.created.name: Created
+actions.create-creature.steps.creature.prompt: Creature
+actions.create-creature.steps.method.prompt: Characteristics
+actions.create-creature.options.creature-average.name: The averages in brackets
+actions.create-creature.options.creature-dice.name: Rolled
+actions.create-creature.steps.str.name: Strength
+actions.create-creature.steps.con.name: Constitution
+actions.create-creature.steps.dex.name: Dexterity
+actions.create-creature.steps.siz.name: Size
+actions.create-creature.steps.int.name: Intelligence
+actions.create-creature.steps.pow.name: Power
+actions.create-creature.steps.cha.name: Charisma
+types.creature.fields.regenerate.name: Regeneration a combat round

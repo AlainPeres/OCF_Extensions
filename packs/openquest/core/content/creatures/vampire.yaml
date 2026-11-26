@@ -1,0 +1,56 @@
+id: creatures.vampire
+type: creature
+fields:
+  str: 3d6 + 12
+  con: 3d6 + 12
+  dex: 3d6
+  siz: 2d6 + 6
+  int: 2d6 + 6
+  pow: '0'
+  cha: 3d6
+  avgStr: 23
+  avgCon: 23
+  avgDex: 11
+  avgSiz: 13
+  avgInt: 13
+  avgPow: 0
+  avgCha: 11
+  ap: 5
+  loot: 4
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - culture-own
+    - athletics
+    - deception
+    - perception
+    - close-combat
+    - unarmed-combat
+    - personal-magic-casting
+    - sorcery-casting
+  skillValues:
+    - 40
+    - 80
+    - 80
+    - 80
+    - 50
+    - 80
+    - 80
+    - 50
+    - 60
+    - 75
+    - 75
+  attacks:
+    - weapons.longsword
+    - weapons.medium-shield
+    - weapons.cr-bite-1d6
+  spells:
+    - personal.darkwall
+    - personal.tongues
+  spellMagnitudes:
+    - 2
+    - 2
+  spellSpecialties:
+    - ''
+    - ''

@@ -1,0 +1,55 @@
+id: creatures.minotaur
+type: creature
+fields:
+  str: 3d6 + 12
+  con: 1d6 + 12
+  dex: 3d6
+  siz: 3d6 + 12
+  int: 2d6
+  pow: 3d6
+  cha: 2d6
+  avgStr: 23
+  avgCon: 16
+  avgDex: 11
+  avgSiz: 23
+  avgInt: 7
+  avgPow: 11
+  avgCha: 7
+  move: 20
+  ap: 3
+  loot: 3
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - natural-lore
+    - athletics
+    - deception
+    - perception
+    - close-combat
+    - unarmed-combat
+    - personal-magic-casting
+  skillValues:
+    - 60
+    - 40
+    - 75
+    - 65
+    - 60
+    - 10
+    - 40
+    - 60
+    - 60
+    - 33
+  attacks:
+    - weapons.great-axe
+    - weapons.cr-gore-1d6
+    - weapons.cr-head-butt-1d6
+  spells:
+    - personal.beast-call
+    - personal.fanaticism
+  spellMagnitudes:
+    - 2
+    - 2
+  spellSpecialties:
+    - ''
+    - ''

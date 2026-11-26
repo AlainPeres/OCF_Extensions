@@ -1,0 +1,27 @@
+id: creatures.big-cat
+type: creature
+fields:
+  str: 3d6 + 12
+  con: 3d6
+  dex: 3d6 + 6
+  siz: 2d6 + 12
+  int: '5'
+  pow: 3d6
+  cha: '5'
+  avgStr: 24
+  avgCon: 11
+  avgDex: 17
+  avgSiz: 19
+  avgInt: 5
+  avgPow: 11
+  avgCha: 5
+  move: 20
+  ap: 2
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 60
+  attacks:
+    - weapons.cr-bite-1d8
+    - weapons.cr-claw-1d6
+  animal: true

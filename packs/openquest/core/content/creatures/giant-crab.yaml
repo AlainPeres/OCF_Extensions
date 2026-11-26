@@ -1,0 +1,26 @@
+id: creatures.giant-crab
+type: creature
+fields:
+  str: 3d6 + 24
+  con: 3d6 + 6
+  dex: 2d6
+  siz: 3d6 + 24
+  int: '2'
+  pow: 3d6
+  cha: '2'
+  avgStr: 35
+  avgCon: 17
+  avgDex: 7
+  avgSiz: 35
+  avgInt: 2
+  avgPow: 11
+  avgCha: 2
+  swim: 2
+  ap: 6
+  skillNames:
+    - unarmed-combat
+  skillValues:
+    - 50
+  attacks:
+    - weapons.cr-claw-1d10
+  animal: true

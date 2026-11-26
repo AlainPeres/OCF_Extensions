@@ -62,7 +62,7 @@ display:
             @religion.skill, @magic.specialist, @sorcery.rank, @religion.name, @religion.rank,
             @magic.personal.known, @magic.personal.limit, @magic.sorcery.known,
             @magic.divine.known, @magic.focus.limit, @magic.focused, @mp.borrowed, @mp.locked,
-            @magic.apotheosis]
+            @magic.apotheosis, @magic.spiritCombat, @creature.loot]
     - id: conditions
       priority: 3
       members:
@@ -77,6 +77,10 @@ display:
         where: >-
           item.id in [@skill.influence, @fastTalk.failures, @oratory.audience, @oratory.won,
             @oratory.penalty, @social.score]
+    - id: creature
+      kind: content
+      priority: 1
+      members: { type: creature }
     - id: species
       kind: content
       priority: 1

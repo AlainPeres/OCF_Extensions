@@ -1,0 +1,35 @@
+id: creatures.slime
+type: creature
+fields:
+  str: 1d6
+  con: 3d6
+  dex: 1d6
+  siz: 6d6
+  int: '1'
+  pow: 3d6
+  cha: '1'
+  avgStr: 4
+  avgCon: 11
+  avgDex: 4
+  avgSiz: 21
+  avgInt: 1
+  avgPow: 11
+  avgCha: 1
+  move: 7
+  loot: 1
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - athletics
+    - perception
+    - deception
+    - unarmed-combat
+  skillValues:
+    - 10
+    - 40
+    - 85
+    - 30
+    - 75
+    - 75
+    - 75

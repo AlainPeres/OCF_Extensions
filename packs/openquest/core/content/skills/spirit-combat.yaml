@@ -1,0 +1,7 @@
+id: skills.spirit-combat
+type: skill
+fields:
+  char1: chars.pow
+  times: 3
+  group: magic
+  restricted: true

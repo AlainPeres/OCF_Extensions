@@ -1,0 +1,41 @@
+id: creatures.wyvern
+type: creature
+fields:
+  str: 4d6 + 12
+  con: 2d6 + 12
+  dex: 2d6 + 6
+  siz: 4d6 + 12
+  int: '7'
+  pow: 3d6
+  cha: '6'
+  avgStr: 26
+  avgCon: 19
+  avgDex: 13
+  avgSiz: 26
+  avgInt: 7
+  avgPow: 11
+  avgCha: 6
+  move: 20
+  fly: 30
+  ap: 5
+  loot: 1
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - athletics
+    - deception
+    - perception
+    - unarmed-combat
+  skillValues:
+    - 50
+    - 35
+    - 50
+    - 50
+    - 10
+    - 60
+    - 60
+  attacks:
+    - weapons.cr-bite-1d10
+    - weapons.cr-sting-1d6
+    - weapons.cr-claw-1d6

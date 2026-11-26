@@ -1,0 +1,37 @@
+id: creatures.sea-serpent
+type: creature
+fields:
+  str: 8d6 + 30
+  con: 4d6 + 21
+  dex: 2d6
+  siz: 6d6 + 15
+  int: '3'
+  pow: 6d6
+  cha: '3'
+  avgStr: 58
+  avgCon: 35
+  avgDex: 7
+  avgSiz: 36
+  avgInt: 3
+  avgPow: 21
+  avgCha: 3
+  move: 0
+  swim: 20
+  ap: 5
+  loot: 3
+  skillNames:
+    - dodge
+    - persistence
+    - resilience
+    - athletics
+    - deception
+    - unarmed-combat
+  skillValues:
+    - 40
+    - 40
+    - 80
+    - 60
+    - 65
+    - 60
+  attacks:
+    - weapons.cr-bite-1d6

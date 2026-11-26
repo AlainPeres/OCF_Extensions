@@ -1,0 +1,27 @@
+id: creatures.passion-spirits
+type: creature
+fields:
+  int: 2d6 + 3
+  pow: 3d6 + 6
+  cha: 4d6
+  avgInt: 10
+  avgPow: 17
+  avgCha: 14
+  move: 30
+  loot: 0
+  bodiless: true
+  skillNames:
+    - dodge
+    - persistence
+  skillValues:
+    - 40
+    - 50
+  genericSkills:
+    - skills.lore
+    - skills.spirit-combat
+  genericSpecialties:
+    - Spirit World
+    - ''
+  genericValues:
+    - 60
+    - 55
