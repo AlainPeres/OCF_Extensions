@@ -408,7 +408,10 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
   point of AP above the RA (7.4), using the bullet protection against bullets or impact.
 - **`creation.yaml`**: the creation starts and their actions (below).
 - **`advancement.yaml`**: the evolution of the characters ([below](#advancement-rulesadvancementyaml)).
-- **`display.yaml`**: display hints (never part of the calculations). Content groups keep to the
+- **`display.yaml`**: display hints (never part of the calculations). Field groups, for the sheets
+  that follow them (`universal-play`): identity, characteristics, secondary characteristics, bonuses,
+  shock thresholds and protection, health, combat, martial arts (with a style), a long-term action
+  (while one is on), progression, creation points (while creating). Content groups keep to the
   universe's technological level: skills of that level (and any raised above it), weapons and
   armor of that level; what lies above goes to hidden groups (`showWhen: 'false'`), so an app
   doesn't show it. A carried weapon above the level still shows: a group holding a copy that
