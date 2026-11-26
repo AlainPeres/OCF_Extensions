@@ -308,25 +308,26 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 
 ## What was added
 
-| Path                                                         | What                                                                 |
-| ------------------------------------------------------------ | -------------------------------------------------------------------- |
-| `packs/sagas/core/`                                          | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor)      |
-| `scripts/extensions/sagas/sagas-create-cli.ts`               | SagaS character creation in the terminal                             |
-| `scripts/extensions/sagas/sagas-create.ts` + `.html`         | SagaS character creation in the browser                              |
-| `scripts/extensions/sagas/sagas-play.ts` + `.html`           | SagaS play sheet in the browser                                      |
-| `scripts/extensions/sagas/sagas-lib.ts`                      | The SagaS pages' own routes: their data, a random character          |
-| `scripts/extensions/universal-lib.ts`                        | Shared server of the universal, SagaS and OpenQuest tools            |
-| `scripts/extensions/display-lib.ts`                          | What a pack's display hints hide, for the SagaS and universal tools  |
-| `scripts/extensions/universal-create.ts` + `.html`           | Character creator for any pack                                       |
-| `scripts/extensions/universal-play.ts` + `.html`             | Play sheet for any pack and character                                |
-| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md`  | The rules the pack models (OGL)                                      |
-| `packs/openquest/core/`                                      | The `openquest-core` pack (rules, 32 skills, 43 weapons, 163 spells) |
-| `scripts/extensions/openquest/`                              | The OpenQuest 3 SRD chapters the pack models (Markdown)              |
-| `scripts/extensions/openquest/openquest-create.ts` + `.html` | OpenQuest character creation in the browser                          |
-| `scripts/extensions/openquest/openquest-play.ts` + `.html`   | OpenQuest play sheet in the browser                                  |
-| `scripts/extensions/validate-pack.ts`                        | `pnpm validate`'s checks on one pack and its characters              |
-| `examples/characters/extensions/`                            | SagaS example characters and the characters the tools save           |
-| `.vscode/launch.json`, `.vscode/settings.json`               | Run and debug the current TS file from VS Code                       |
+| Path                                                        | What                                                                 |
+| ----------------------------------------------------------- | -------------------------------------------------------------------- |
+| `packs/sagas/core/`                                         | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor)      |
+| `scripts/extensions/sagas/sagas-create-cli.ts`              | SagaS character creation in the terminal                             |
+| `scripts/extensions/sagas/sagas.ts` + `.html`               | SagaS sheet: Create and Play in one page                             |
+| `scripts/extensions/sagas/sagas-create.html`                | The SagaS sheet's Create mode                                        |
+| `scripts/extensions/sagas/sagas-play.html`                  | The SagaS sheet's Play mode                                          |
+| `scripts/extensions/sagas/sagas-lib.ts`                     | The SagaS pages' own routes: their data, a random character          |
+| `scripts/extensions/universal-lib.ts`                       | Shared server of the universal, SagaS and OpenQuest tools            |
+| `scripts/extensions/display-lib.ts`                         | What a pack's display hints hide, for the SagaS and universal tools  |
+| `scripts/extensions/universal.ts` + `.html`                 | Universal sheet for any pack: Create and Play                        |
+| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                      |
+| `packs/openquest/core/`                                     | The `openquest-core` pack (rules, 32 skills, 43 weapons, 163 spells) |
+| `scripts/extensions/openquest/`                             | The OpenQuest 3 SRD chapters the pack models (Markdown)              |
+| `scripts/extensions/openquest/openquest.ts` + `.html`       | OpenQuest sheet: Create and Play in one page                         |
+| `scripts/extensions/openquest/openquest-create.html`        | The OpenQuest sheet's Create mode                                    |
+| `scripts/extensions/openquest/openquest-play.html`          | The OpenQuest sheet's Play mode                                      |
+| `scripts/extensions/validate-pack.ts`                       | `pnpm validate`'s checks on one pack and its characters              |
+| `examples/characters/extensions/`                           | SagaS example characters and the characters the tools save           |
+| `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                       |
 
 Our files stay apart from OCF's: scripts in `scripts/extensions/`, characters in
 `examples/characters/extensions/`. `pnpm validate` reads `examples/characters/` with its
@@ -351,12 +352,9 @@ server (127.0.0.1 only) and opens the page in the browser. `--port N` changes th
 | Tool                  | Port | Options                                                                                                   |
 | --------------------- | ---- | --------------------------------------------------------------------------------------------------------- |
 | `sagas-create-cli.ts` | —    | `--random`, `--points 150\|250\|350`, `--tl 0–8`, `--id ID`, `--out FILE`; type `q` at any prompt to quit |
-| `sagas-create.ts`     | 5174 | `--port`, `--no-open`                                                                                     |
-| `sagas-play.ts`       | 5175 | `--port`, `--no-open`                                                                                     |
-| `universal-create.ts` | 5176 | `--port`, `--no-open`                                                                                     |
-| `universal-play.ts`   | 5177 | `--port`, `--no-open`                                                                                     |
-| `openquest-create.ts` | 5178 | `--port`, `--no-open`                                                                                     |
-| `openquest-play.ts`   | 5179 | `--port`, `--no-open`                                                                                     |
+| `sagas.ts`            | 5180 | `--port`, `--no-open`                                                                                     |
+| `openquest.ts`        | 5181 | `--port`, `--no-open`                                                                                     |
+| `universal.ts`        | 5176 | `--port`, `--no-open`                                                                                     |
 
 Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
 without asking). The SagaS tools read and write that folder only. The universal tools list OCF's
@@ -410,7 +408,7 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
 - **`creation.yaml`**: the creation starts and their actions (below).
 - **`advancement.yaml`**: the evolution of the characters ([below](#advancement-rulesadvancementyaml)).
 - **`display.yaml`**: display hints (never part of the calculations). Field groups, for the sheets
-  that follow them (`universal-play`): identity, characteristics, secondary characteristics, bonuses,
+  that follow them (the universal sheet in Play): identity, characteristics, secondary characteristics, bonuses,
   shock thresholds and protection, health, combat, martial arts (with a style), a long-term action
   (while one is on), progression, creation points (while creating). Action groups, by their tags:
   checks, combat, health and rest, dangers, the long-term action, progression (with learning a
@@ -517,8 +515,13 @@ translation.
 
 ## The SagaS tools
 
-`sagas-create.ts` and `sagas-play.ts` are the universal tools' server (`universal-lib.ts`) with a
-page of their own, like the OpenQuest tools. Unlike those, the SagaS pages keep the character
+**`sagas.ts`** is the SagaS sheet: one page with two modes, Create
+(`sagas-create.html`) and Play (`sagas-play.html`), switched in its header. Each mode is its page, framed
+and kept loaded, so each keeps what it shows; changing modes passes the character on when it changed since it was last passed on (a load, a roll, an edit), the file it came from with it. Each page asks for its own data (`/api/data?for=create|play`). The pages are unchanged
+but for a small hook (`window.ocfCharacter`) the sheet uses.
+
+The sheet is the universal tools' server (`universal-lib.ts`) with pages of its own, like the
+OpenQuest sheet. Unlike those, the SagaS pages keep the character
 themselves and send it with each request: they use the server's stateless calls.
 
 | Call                                                 | Does                                                                                           |
@@ -530,7 +533,8 @@ themselves and send it with each request: they use the server's stateless calls.
 | `POST /api/yaml-file {character}`                    | The character as YAML                                                                          |
 | `POST /api/save-file {character, file?, overwrite?}` | Saves to `extensions/` (`<id>.yaml` by default); 409 if the file exists without `overwrite`    |
 
-`serve(title, page, port, {pack, routes})` takes the default pack and the routes only SagaS needs
+`serve(title, page, port, {pack, routes, pages})` takes the default pack, the other pages it serves
+(a sheet's modes, `/create` and `/play`) and the routes only SagaS needs
 (`sagas-lib.ts`): `/api/data` (characteristics, skills, weapons and armor as the pack's files
 write them, their names, the situations, the technological levels) and, for `sagas-create`,
 `/api/random?points&tl&id`. Nothing of the rules is recoded there: the costs, totals and actions
@@ -548,7 +552,7 @@ come from the engine. `sagas-create-cli.ts` stays on its own.
   without questions, at `--tl` (default 2). Point costs come from the pack's formulas; the script
   recodes no rule.
 
-- **`sagas-create.ts`**: the same in the browser. Its sections, in order:
+- **Create** (`sagas-create.html`): the same in the browser. Its sections, in order:
   1. identity;
   2. creation points (150/250/350 or any number), social class and the universe's technological
      level: what the pack's display hints hide isn't offered (skills, weapons and protections
@@ -562,7 +566,7 @@ come from the engine. `sagas-create-cli.ts` stays on its own.
   A live summary of the points and rules issues runs alongside, with a random character button,
   load and save.
 
-- **`sagas-play.ts`**: a play sheet, its sections by theme (character, checks, combat, health and
+- **Play** (`sagas-play.html`): a play sheet, its sections by theme (character, checks, combat, health and
   dangers, long-term action, progression), the header linking to each:
   - identity, with Initiative, Speed and Reflex Dodge in the header;
   - characteristic and skill rolls with difficulty, modifier and situation. Skills are grouped by
@@ -590,8 +594,8 @@ Pack ID `openquest-core`, version 0.1.0, spec 0.4.0, from the _OpenQuest 3rd Edi
 Resource Document_ v1.2 (D101 Games). Its READ ME says the SRD has been under a Creative Commons
 license since 09/03/2023. The pack declares `CC-BY-4.0` with a credit line. The SRD's "How to Use
 the SRD" PDF, not in `scripts/extensions/openquest/`, gives the exact variant: change `license`,
-`credit` and `LICENSE` if it differs. There are no dedicated tools: `universal-create` and
-`universal-play` show it, and `examples/characters/extensions/openquest-test.yaml` is a character
+`credit` and `LICENSE` if it differs. There are no dedicated tools: the universal sheet
+shows it, and `examples/characters/extensions/openquest-test.yaml` is a character
 made by its random start. `pnpm validate` passes with no error or warning.
 
 ### Rules (`rules/`)
@@ -803,11 +807,16 @@ and transport's costs. Breaking objects is an Athletics test. Creatures' special
 
 ## The OpenQuest tools
 
-Both are the universal tools' server (`universal-lib.ts`) with a page of their own: the pack's
+**`openquest.ts`** is the OpenQuest sheet: one page with two modes, Create
+(`openquest-create.html`) and Play (`openquest-play.html`), switched in its header. Each mode is its page, framed
+and kept loaded, so each keeps what it shows; the character is the server's session: changing modes gives the other page the session, which sets its own mode (`/api/mode`), so the play actions show in Play only. The pages are unchanged
+but for a small hook (`window.ocfCharacter`) the sheet uses.
+
+The sheet is the universal tools' server (`universal-lib.ts`) with pages of its own: the pack's
 actions, pauses and texts come from the engine, the page lays them out for OpenQuest. They list
 the characters of `examples/characters/` that use `openquest-core` and save to `extensions/`.
 
-- **`openquest-create.ts`** (port 5178): a new character (or one being created), then the guided
+- **Create** (`openquest-create.html`): a new character (or one being created), then the guided
   or random start.
   - Each pause of the guided start is asked in turn: the species, the method, the
     characteristic points (with each one's limit), cash or Wealth, the arms package and weapons,
@@ -820,7 +829,7 @@ the characters of `examples/characters/` that use `openquest-core` and save to `
     motives, age, background…).
   - Beside it, the sheet as it stands: species, characteristics, attributes, the pools spent
     against their size, the skills by group with their totals, spells and equipment.
-- **`openquest-play.ts`** (port 5179): a play sheet in three columns.
+- **Play** (`openquest-play.html`): a play sheet in three columns.
   - The character: characteristics, hit and magic points, armour, damage modifier, movement,
     fortune, growth, encumbrance and money; the conditions as badges (mortal wound, unconscious,
     fatigue…); every input field under "Edit the sheet"; the equipment.
@@ -848,25 +857,32 @@ They work for any pack under `packs/`, with nothing of a pack written in their c
 says what to ask (`startAction` pauses, `describeAction` parameters) and the pack's i18n gives the
 text (`@opencharacter/text`, `describeNeed`).
 
-- **`universal-create.ts`**: pick a pack, a new or saved character, and one of the pack's
-  creation starts.
+**`universal.ts`** is one page with two modes, switched in its header. A new character starts in
+Create; a loaded one in Create while it is being created, else in Play. The mode is the server
+session's (`/api/mode`): in Create, the pack's action groups are read as while creating, even once
+the character is finished (after a random start, or one loaded), so a pack that hides its actions
+of play while creating (SagaS, OpenQuest) keeps them out of Create. A pack that doesn't (Fate, 5e,
+Draw Steel…) shows them in both modes. The page also loads, saves (a loaded character back where
+it was, any other to `extensions/`) and shows the YAML.
+
+- **Create**: pick a pack, a new or saved character, and one of the pack's creation starts.
   - **Pauses**: each pause becomes a form: a list of options with the recommendation, a budget
     allocation with the cost of each amount, or values to hand out. "Finish automatically" takes
     every recommendation.
-  - **Actions**: with the pack's action groups, the actions of the groups shown now, under each
-    group's heading (an action only hidden groups hold is left out: SagaS hides its actions of play
-    while creating). The groups are read as while creating even for a finished character (after a random start, or one loaded): the actions of play are for `universal-play`. Without groups, the actions tagged `creation` come first and the others are
-    folded away. Forms are
-    built from the action's parameters.
-  - **Input fields** can be edited, and the character is shown and saved.
+  - **Actions**: with the pack's action groups, the actions of the groups shown, under each
+    group's heading, the others folded away; without groups, the actions tagged `creation` come
+    first and the others are folded away. One click opens the action's form, built from its
+    parameters.
+  - **Input fields** can be edited; beside them, the character as it stands: rules issues, fields
+    by group, the copies as one table per content type with their total in its own column.
 
   The guided and random starts of the 14 packs on disk were tested, and the random starts of the
   two ORC packs (PF2, read from git on Windows: [PF2 in the universal tools](#pf2-in-the-universal-tools)).
 
-- **`universal-play.ts`**: load any example character and play it:
+- **Play**: load any example character and play it:
   - **Actions**: the rules' actions, under the pack's action groups (its display hints, in their
     order; the others under "Other"); in one row without groups. The items' actions stay on
-    their copies.
+    their copies. One click runs an action with its defaults; "…" opens its form.
   - **Sheet**: fields by display group and rules issues.
   - **Abilities** and **Items**: the character's copies in its two lists, `features` (skills,
     spells, class features…) and `inventory` (what it carries, the types marked `carried`), each
@@ -885,15 +901,17 @@ text (`@opencharacter/text`, `describeNeed`).
       carry, greyed, with their fields; no actions of their own: a rules action adds them).
     - The three sections fold (click their title); the filters and folds are kept between
       sessions.
-  - **Actions**: the rules' actions, and each item's actions on its own line. One click runs an
-    action with its defaults; "…" opens its form.
   - **Situation**: the situational choices apply to the next action.
   - **Log**: each roll's dice, faces, total and band, the outcome's data, and which fields changed.
     Changes meant for another character are listed but not applied.
   - **Offers**: the rules' follow-ups can be run or dismissed.
-  - **Input fields** can be edited, and the character is saved back.
+  - **Input fields** can be edited.
 
   Tested on the 30 example characters on disk, and the 19 ORC ones read from git on Windows.
+
+There is no "Improve" mode: OCF has no common mark for a pack's advancement actions (SagaS,
+OpenQuest and a few others tag them `advancement`, Fate `milestone`, others nothing), so they stay
+in Play, under the group each pack gives them.
 
 Limits of the universal tools:
 
@@ -1174,7 +1192,7 @@ Rename it first (`opencharacter` → `opencharacter_old`), then test the copy:
 
 ```powershell
 pnpm validate
-node --import tsx --conditions @opencharacter/source scripts/extensions/universal-play.ts
+node --import tsx --conditions @opencharacter/source scripts/extensions/universal.ts
 ```
 
 If everything works while the original has another name, the copy no longer depends on it. Delete
