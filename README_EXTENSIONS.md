@@ -411,7 +411,9 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
 - **`display.yaml`**: display hints (never part of the calculations). Field groups, for the sheets
   that follow them (`universal-play`): identity, characteristics, secondary characteristics, bonuses,
   shock thresholds and protection, health, combat, martial arts (with a style), a long-term action
-  (while one is on), progression, creation points (while creating). Content groups keep to the
+  (while one is on), progression, creation points (while creating). Action groups, by their tags:
+  checks, combat, health and rest, dangers, the long-term action, progression (with learning a
+  generic skill), creation (while creating; the others then hidden). Content groups keep to the
   universe's technological level: skills of that level (and any raised above it), weapons and
   armor of that level; what lies above goes to hidden groups (`showWhen: 'false'`), so an app
   doesn't show it. A carried weapon above the level still shows: a group holding a copy that
@@ -540,7 +542,8 @@ translation.
   A live summary of the points and rules issues runs alongside, with a random character button,
   load and save.
 
-- **`sagas-play.ts`**: a play sheet:
+- **`sagas-play.ts`**: a play sheet, its sections by theme (character, checks, combat, health and
+  dangers, long-term action, progression), the header linking to each:
   - identity, with Initiative, Speed and Reflex Dodge in the header;
   - characteristic and skill rolls with difficulty, modifier and situation. Skills are grouped by
     characteristic and filtered (all, points spent, total > 0), with one row per specialty;
@@ -697,7 +700,8 @@ made by its random start. `pnpm validate` passes with no error or warning.
   (the defending orator's result), `intimidate` (a test, its one modifier) and
   `social-exchange` (a prolonged social combat's score); -20% beyond two metres unless a Master.
 - **`gear.yaml`**, **`display.yaml`**, **`tags.yaml`**: general items (ENC, cost, what a
-  container holds); the sheet's groups; the tags.
+  container holds); the sheet's groups, fields and actions (tests, combat, health and rest,
+  dangers and travel, social combat, magic, growth, creation); the tags.
 
 ### Content (`content/`)
 
@@ -827,7 +831,10 @@ text (`@opencharacter/text`, `describeNeed`).
   - **Pauses**: each pause becomes a form: a list of options with the recommendation, a budget
     allocation with the cost of each amount, or values to hand out. "Finish automatically" takes
     every recommendation.
-  - **Actions**: the actions tagged `creation` come first and the others are folded away. Forms are
+  - **Actions**: with the pack's action groups, the actions of the groups shown now, under each
+    group's heading (an action only hidden groups hold is left out: SagaS hides its actions of play
+    while creating); without groups, the actions tagged `creation` come first and the others are
+    folded away. Forms are
     built from the action's parameters.
   - **Input fields** can be edited, and the character is shown and saved.
 
@@ -835,6 +842,9 @@ text (`@opencharacter/text`, `describeNeed`).
   two ORC packs (PF2, read from git on Windows: [PF2 in the universal tools](#pf2-in-the-universal-tools)).
 
 - **`universal-play.ts`**: load any example character and play it:
+  - **Actions**: the rules' actions, under the pack's action groups (its display hints, in their
+    order; the others under "Other"); in one row without groups. The items' actions stay on
+    their copies.
   - **Sheet**: fields by display group and rules issues.
   - **Abilities** and **Items**: the character's copies in its two lists, `features` (skills,
     spells, class features…) and `inventory` (what it carries, the types marked `carried`), each
