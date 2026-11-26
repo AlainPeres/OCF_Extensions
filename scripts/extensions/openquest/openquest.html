@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenQuest</title>
+    <style>
+      :root {
+        --bg: #f6f5f2;
+        --card: #fff;
+        --ink: #1d1d1f;
+        --muted: #6b6b70;
+        --line: #deddd8;
+        --accent: #2f5d8a;
+        --accent-ink: #fff;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #17181a;
+          --card: #222326;
+          --ink: #ececee;
+          --muted: #a0a0a6;
+          --line: #38393d;
+          --accent: #6ea4d8;
+          --accent-ink: #111;
+        }
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.45 system-ui,
+          sans-serif;
+      }
+      #modes {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--card);
+        border-bottom: 1px solid var(--line);
+      }
+      #modes h1 {
+        font-size: 16px;
+        margin: 0;
+      }
+      .seg {
+        display: inline-flex;
+      }
+      .seg button {
+        font: inherit;
+        padding: 4px 14px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--ink);
+        cursor: pointer;
+        margin-left: -1px;
+      }
+      .seg button:first-child {
+        border-radius: 6px 0 0 6px;
+        margin-left: 0;
+      }
+      .seg button:last-child {
+        border-radius: 0 6px 6px 0;
+      }
+      .seg button.on {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--accent-ink);
+      }
+      #note {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      iframe {
+        flex: 1;
+        width: 100%;
+        border: 0;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="modes">
+      <h1>OpenQuest</h1>
+      <span class="seg">
+        <button data-mode="create">Create</button>
+        <button data-mode="play">Play</button>
+      </span>
+      <span id="note"></span>
+    </div>
+    <iframe id="create" src="/create" title="Create"></iframe>
+    <iframe id="play" src="/play" title="Play" class="hidden"></iframe>
+    <script>
+      // Each mode is its page (/create, /play), framed; the frames stay loaded, so each keeps what
+      // it shows. Changing modes passes the character on: the server's session (its ID); the other page takes it and sets its own mode.
+      const frames = {
+        create: document.getElementById('create'),
+        play: document.getElementById('play'),
+      };
+      const hook = (m) => frames[m].contentWindow?.ocfCharacter;
+      // Each page's own title goes: this header names the game.
+      for (const f of Object.values(frames))
+        f.addEventListener('load', () =>
+          f.contentDocument.head.insertAdjacentHTML(
+            'beforeend',
+            '<style>header h1 { display: none; }</style>',
+          ),
+        );
+      let mode = 'create';
+      try {
+        mode = localStorage.getItem('openquest.mode') === 'play' ? 'play' : 'create';
+      } catch {}
+      const seen = { create: 0, play: 0 }; // each page's version when last passed on or given
+      function show(m) {
+        mode = m;
+        for (const [k, f] of Object.entries(frames)) f.classList.toggle('hidden', k !== m);
+        for (const b of document.querySelectorAll('.seg button'))
+          b.classList.toggle('on', b.dataset.mode === m);
+        try {
+          localStorage.setItem('openquest.mode', m);
+        } catch {}
+      }
+      async function switchTo(m) {
+        if (m === mode) return;
+        const from = hook(mode);
+        const to = hook(m);
+        const note = document.getElementById('note');
+        note.textContent = '';
+        try {
+          const given = from?.get();
+          if (given && to && passOn(from, given, m)) {
+            await to.set(given);
+            note.textContent = 'Character passed on from ' + mode + '.';
+          }
+          if (from && 'version' in from) seen[mode] = from.version;
+          if (to && 'version' in to) seen[m] = to.version;
+        } catch (e) {
+          note.textContent = 'The character could not be passed on: ' + e.message;
+        }
+        show(m);
+      }
+      // The session, if the other page doesn't have it yet; its mode is set either way.
+      const passOn = (from, given, m) => true;
+      for (const b of document.querySelectorAll('.seg button'))
+        b.onclick = () => switchTo(b.dataset.mode);
+      show(mode);
+    </script>
+  </body>
+</html>

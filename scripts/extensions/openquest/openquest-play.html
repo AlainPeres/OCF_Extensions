@@ -565,6 +565,12 @@
       const st = (c, label) => (c.state.find((s) => s.label === label) || {}).value;
       const actionsFor = (v, entry) => v.actions.filter((a) => a.entry === entry);
 
+      // The OpenQuest sheet (openquest.html) frames this page as one of its modes: the character is
+      // the server's session, so the other mode takes it by its ID and sets its own mode.
+      window.ocfCharacter = {
+        get: () => state && { sid: state.sid },
+        set: ({ sid }) => call('/api/mode', { sid, mode: 'play' }),
+      };
       function render(v) {
         state = v;
         $('main').classList.remove('hidden');

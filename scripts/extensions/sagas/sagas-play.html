@@ -1042,7 +1042,22 @@
       const P = (id) => `${D.pack}:${id}`;
       const V = (f) => sheet.values[f];
       const itemOf = (id) => D.items[id];
+      // The SagaS sheet (sagas.html) frames this page as one of its modes: it takes the
+      // character from here, and gives it, when the mode changes. `version` counts the changes, so
+      // a character nobody touched isn't passed on.
+      const sheetMode = (window.ocfCharacter = {
+        version: 0,
+        get: () => ch && { character: ch, file },
+        set: async ({ character, file: f }) => {
+          ch = structuredClone(character);
+          sheet = await api('/api/compute', { character: ch });
+          file = f;
+          setDirty(true);
+          render();
+        },
+      });
       const setDirty = (d) => {
+        if (d) sheetMode.version++;
         dirty = d;
         $('dirty').textContent = d ? 'Unsaved changes' : '';
       };
@@ -1807,6 +1822,7 @@
         sheet = await api('/api/compute', { character: ch });
         file = f;
         setDirty(false);
+        sheetMode.version++;
         render();
         toast(`Loaded ${f}`);
       }
@@ -2119,7 +2135,7 @@
       foldSections('sagas-play');
 
       (async () => {
-        D = await api('/api/data');
+        D = await api('/api/data?for=play');
         $('situational').innerHTML = D.situational
           .map(
             (s) => `<label><input type="checkbox" data-sit="${esc(s.id)}"> ${esc(s.name)}</label>`,
@@ -2134,6 +2150,7 @@
           files.map((f) => `<option>${esc(f)}</option>`).join('');
         const first = files.find((f) => !f.endsWith('/sagas-test.yaml')) ?? files[0];
         if (first) await loadFile(first);
+        sheetMode.version = 0; // the first character, loaded on its own: nothing to pass on
       })();
     </script>
   </body>

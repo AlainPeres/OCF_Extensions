@@ -653,9 +653,22 @@
         }, 60);
       };
       const change = () => {
+        sheetMode.version++;
         renderInputs();
         recompute();
       };
+      // The SagaS sheet (sagas.html) frames this page as one of its modes: it takes the
+      // character from here, and gives it, when the mode changes. `version` counts the changes, so
+      // a character nobody touched isn't passed on.
+      const sheetMode = (window.ocfCharacter = {
+        version: 0,
+        get: () => ch && { character: ch },
+        set: ({ character }) => {
+          ch = { features: [], inventory: [], values: {}, ...structuredClone(character) };
+          for (const f of ch.features) f.state ??= { learning: 0 };
+          change();
+        },
+      });
 
       // --- Rendering -----------------------------------------------------------------------------------
       const V = (f) => sheet.values[f];
@@ -1251,7 +1264,7 @@
       foldSections('sagas-create');
 
       (async () => {
-        D = await api('/api/data');
+        D = await api('/api/data?for=create');
         const chars = [...new Set(D.skills.map((s) => s.fields.characteristic))];
         $('skillChar').innerHTML += chars
           .map((c) => `<option value="${esc(c)}">${esc(charName(c))}</option>`)
@@ -1260,6 +1273,7 @@
         bind();
         refreshList();
         change();
+        sheetMode.version = 0; // the empty character: nothing to pass on
       })();
     </script>
   </body>

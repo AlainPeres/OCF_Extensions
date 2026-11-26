@@ -443,6 +443,12 @@
         Number((c.state.find((s) => /Creation points/.test(s.label)) || {}).value || 0);
       const computed = (c, k) => (c.computed.find((x) => x.key === k) || {}).value;
 
+      // The OpenQuest sheet (openquest.html) frames this page as one of its modes: the character is
+      // the server's session, so the other mode takes it by its ID and sets its own mode.
+      window.ocfCharacter = {
+        get: () => state && { sid: state.sid },
+        set: ({ sid }) => call('/api/mode', { sid, mode: 'create' }),
+      };
       function render(v) {
         state = v;
         $('secEmpty').classList.add('hidden');

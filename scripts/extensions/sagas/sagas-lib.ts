@@ -1,5 +1,5 @@
-// What only the SagaS pages need from the server, as routes of the universal tools' server
-// (universal-lib.ts): the data each page builds on (characteristics, skills, weapons and armor as
+// What only the SagaS sheet's pages need from the server, as routes of the universal tools'
+// server (universal-lib.ts): the data each mode's page builds on (characteristics, skills, weapons and armor as
 // the pack's files write them, their names, the technological levels…) and sagas-create's random
 // character. Everything else (computing the sheet, running actions, files) is the universal
 // server's stateless calls.
@@ -168,9 +168,9 @@ function randomCharacter(points: number, id: string, tl: number): Character {
   return ch;
 }
 
-/** sagas-create's own routes: its data, and a random character. */
-export const createRoutes = (path: string, query: URLSearchParams) => {
-  if (path === '/api/data') return createData;
+/** The SagaS sheet's routes (sagas.ts): each mode's data (`?for=create|play`), a random character. */
+export const sheetRoutes = (path: string, query: URLSearchParams) => {
+  if (path === '/api/data') return query.get('for') === 'play' ? playData : createData;
   if (path === '/api/random') {
     const points = Number(query.get('points') ?? 150);
     const tl = Math.min(8, Math.max(0, Number(query.get('tl') ?? 2) || 0));
@@ -178,6 +178,3 @@ export const createRoutes = (path: string, query: URLSearchParams) => {
   }
   return undefined;
 };
-
-/** sagas-play's own route: its data. */
-export const playRoutes = (path: string) => (path === '/api/data' ? playData : undefined);
