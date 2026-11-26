@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Universal Play Sheet</title>
+    <title>Universal Sheet</title>
     <style>
       :root {
         --bg: #f6f5f2;
@@ -42,6 +42,13 @@
           14px/1.45 system-ui,
           sans-serif;
       }
+      /* What one mode only shows. */
+      body[data-mode='create'] .only-play,
+      body[data-mode='play'] .only-create,
+      body:not([data-mode]) .only-play,
+      body:not([data-mode]) .only-create {
+        display: none;
+      }
       header {
         display: flex;
         flex-wrap: wrap;
@@ -57,6 +64,12 @@
       header h1 {
         font-size: 16px;
         margin: 0 12px 0 0;
+      }
+      header .sep {
+        width: 1px;
+        align-self: stretch;
+        background: var(--line);
+        margin: 0 4px;
       }
       #who {
         font-weight: 600;
@@ -164,11 +177,21 @@
         display: flex;
         flex-direction: column;
         gap: 4px;
-        max-height: 380px;
+        max-height: 420px;
         overflow: auto;
       }
       .options button {
         text-align: left;
+      }
+      .start {
+        display: block;
+        width: 100%;
+        text-align: left;
+        margin-bottom: 6px;
+      }
+      .start small {
+        display: block;
+        color: var(--muted);
       }
       .msg {
         padding: 6px 10px;
@@ -200,9 +223,22 @@
         padding: 5px 0;
         border-bottom: 1px solid var(--line);
       }
-      .copy .state {
+      .copy .state,
+      table.copies .state {
         color: var(--muted);
         font-size: 12px;
+      }
+      table.copies td {
+        padding: 3px 4px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      table.copies .score {
+        font-weight: 700;
+        font-size: 15px;
+        width: 3.5em;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
       }
       .actGroup h3 {
         margin: 8px 0 2px;
@@ -243,9 +279,11 @@
         margin: 2px 10px 2px 0;
         font-size: 13px;
       }
-      #filter {
-        width: 100%;
-        margin-bottom: 6px;
+      pre {
+        white-space: pre-wrap;
+        font-size: 12px;
+        max-height: 400px;
+        overflow: auto;
       }
       details > summary {
         cursor: pointer;
@@ -253,7 +291,7 @@
       .hidden {
         display: none;
       }
-      /* Segmented filter buttons: the active one in the accent colour. */
+      /* Segmented buttons (the mode, the filters): the active one in the accent colour. */
       .seg {
         display: inline-flex;
       }
@@ -299,16 +337,31 @@
   </head>
   <body>
     <header>
-      <h1>Universal Play Sheet</h1>
+      <h1>Universal Sheet</h1>
       <select id="pack" title="Pack"></select>
-      <select id="charList" title="Character"></select>
-      <button class="primary" id="btnLoad">Load</button>
-      <button id="btnSave" disabled>Save</button>
+      <select id="charList" title="Saved characters"></select>
+      <button id="btnLoad">Load</button>
+      <span class="sep"></span>
+      <input id="newId" placeholder="file ID (optional)" size="16" />
+      <button id="btnNew" title="Pick a pack first">New character</button>
+      <span class="sep"></span>
+      <span class="seg hidden" id="modes">
+        <button data-mode="create" title="Creation: starts, pauses, the creation actions">
+          Create
+        </button>
+        <button data-mode="play" title="Play: the sheet, every action of play, the log">
+          Play
+        </button>
+      </span>
       <span id="who"></span>
     </header>
     <main>
       <div>
         <div id="messages"></div>
+        <section id="secStart" class="hidden only-create">
+          <h2>Creation</h2>
+          <div id="starts"></div>
+        </section>
         <section id="secPause" class="hidden">
           <h2 id="pauseAction"></h2>
           <h3 id="pauseTitle"></h3>
@@ -319,11 +372,11 @@
           <h3 id="formTitle"></h3>
           <div id="formBody"></div>
         </section>
-        <section id="secOffers" class="hidden">
+        <section id="secOffers" class="hidden only-play">
           <h2>The rules offer</h2>
           <div id="offers"></div>
         </section>
-        <section id="secSituation" class="hidden">
+        <section id="secSituation" class="hidden only-play">
           <details>
             <summary>
               <h2 style="display: inline">Situation</h2>
@@ -338,8 +391,12 @@
         <section id="secActions" class="hidden">
           <h2>Actions</h2>
           <div class="row" id="actions"></div>
+          <details id="otherBox" class="only-create">
+            <summary class="muted">Other actions</summary>
+            <div class="row" id="otherActions"></div>
+          </details>
         </section>
-        <section id="secSheet" class="hidden">
+        <section id="secSheet" class="hidden only-play">
           <details class="fold" data-fold="sheet" open>
             <summary>
               <h2>Sheet <span id="status" class="badge"></span></h2>
@@ -350,7 +407,7 @@
         </section>
         <!-- The character's copies, in its two lists: features (abilities, skills, spells…) and
              inventory (what it carries). Each list has its own filters. -->
-        <section id="secFeatures" class="hidden">
+        <section id="secFeatures" class="hidden only-play">
           <details class="fold" data-fold="features" open>
             <summary>
               <h2>Abilities <small class="muted" data-count="features"></small></h2>
@@ -358,7 +415,7 @@
             <div class="copyPanel" data-list="features"></div>
           </details>
         </section>
-        <section id="secInventory" class="hidden">
+        <section id="secInventory" class="hidden only-play">
           <details class="fold" data-fold="inventory" open>
             <summary>
               <h2>Items <small class="muted" data-count="inventory"></small></h2>
@@ -368,13 +425,29 @@
         </section>
         <section id="secInputs" class="hidden">
           <details>
-            <summary><h2 style="display: inline">Edit input fields</h2></summary>
+            <summary><h2 style="display: inline">Input fields</h2></summary>
             <table id="inputs"></table>
           </details>
         </section>
       </div>
       <div>
-        <section>
+        <section id="secFile" class="hidden">
+          <h2>File</h2>
+          <div class="row">
+            <input id="saveFile" placeholder="file name" size="30" />
+            <button class="primary" id="btnSave">Save to examples/characters</button>
+            <button id="btnYaml">Show YAML</button>
+          </div>
+          <pre id="yaml" class="hidden"></pre>
+        </section>
+        <section id="secSummary" class="hidden only-create">
+          <h2>Character <span id="sumStatus" class="badge"></span></h2>
+          <div id="sumIssues"></div>
+          <div id="sumGroups"></div>
+          <h2 style="margin-top: 12px">Content</h2>
+          <div id="sumCopies"></div>
+        </section>
+        <section class="only-play">
           <h2>Log <button class="small" id="btnClear" style="float: right">Clear</button></h2>
           <div id="log"><p class="muted">Rolls and outcomes appear here.</p></div>
         </section>
@@ -390,18 +463,18 @@
       const store = {
         get: (k) => {
           try {
-            return localStorage.getItem('up.' + k);
+            return localStorage.getItem('us.' + k);
           } catch {
             return null;
           }
         },
         set: (k, v) => {
           try {
-            localStorage.setItem('up.' + k, v);
+            localStorage.setItem('us.' + k, v);
           } catch {}
         },
       };
-      let state = null;
+      let state = null; // the server's last view
       const log = [];
       const situ = {}; // situational choices for the next action
 
@@ -434,13 +507,21 @@
         }
       }
 
-      // ---- Loading
+      // ---- Packs and characters
       async function init() {
         const packs = await api('/api/packs');
         $('pack').innerHTML =
           '<option value="">All packs</option>' +
-          packs.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
-        $('pack').value = store.get('pack') || '';
+          packs
+            .map(
+              (p) =>
+                `<option value="${esc(p.id)}">${esc(p.name)}${p.creation ? '' : ' (no creation start)'}</option>`,
+            )
+            .join('');
+        const last = store.get('pack');
+        if (last !== null && (last === '' || packs.some((p) => p.id === last)))
+          $('pack').value = last;
+        packChanged();
         await listCharacters();
       }
       async function listCharacters() {
@@ -451,64 +532,135 @@
         const last = store.get('file');
         if (last && list.includes(last)) $('charList').value = last;
       }
+      // A new character needs a pack.
+      function packChanged() {
+        $('btnNew').disabled = !$('pack').value;
+        $('btnNew').title = $('pack').value ? 'Start a new character' : 'Pick a pack first';
+      }
       $('pack').onchange = () => {
         store.set('pack', $('pack').value);
+        packChanged();
         listCharacters();
       };
-      $('btnLoad').onclick = async () => {
+      function clearLog() {
+        log.length = 0;
+        renderLog();
+      }
+      $('btnNew').onclick = () => {
+        clearLog();
+        call('/api/new', { pack: $('pack').value, id: $('newId').value.trim() });
+      };
+      $('btnLoad').onclick = () => {
         if (!$('charList').value) return;
         store.set('file', $('charList').value);
-        log.length = 0;
-        renderLog();
-        await call('/api/load', { pack: $('pack').value, file: $('charList').value });
+        clearLog();
+        call('/api/load', { pack: $('pack').value, file: $('charList').value });
       };
-      $('btnSave').onclick = async () => {
-        try {
-          const r = await api('/api/save', { sid: state.sid, file: state.file });
-          flash('Saved: ' + r.saved);
-        } catch (e) {
-          flash(e.message, 'err');
-        }
-      };
-      $('btnClear').onclick = () => {
-        log.length = 0;
-        renderLog();
-      };
+      for (const b of $('modes').children)
+        b.onclick = () => state && call('/api/mode', { sid: state.sid, mode: b.dataset.mode });
+      $('btnClear').onclick = clearLog;
 
       // ---- Rendering
       function render(v) {
         state = v;
-        $('btnSave').disabled = false;
+        const mode = v.mode;
+        document.body.dataset.mode = mode;
+        $('modes').classList.remove('hidden');
+        for (const b of $('modes').children) b.classList.toggle('on', b.dataset.mode === mode);
         $('who').textContent = `${v.character.id}${v.file ? ` — ${v.file}` : ''}`;
+        $('formBody').innerHTML = '';
         $('secForm').classList.add('hidden');
-        flash(v.error || '', 'err');
+        // Play reports each action in the log; Create in a message.
+        flash(v.error || (mode === 'create' ? v.message : '') || '', v.error ? 'err' : 'ok');
         if (v.outcome) {
           log.unshift(v.outcome);
           renderLog();
         }
         const busy = !!v.paused;
+        // Creation starts, while the character is being created and nothing is paused.
+        $('secStart').classList.toggle('hidden', !(v.creating && !busy && v.starts.length));
+        $('starts').innerHTML = v.starts
+          .map(
+            (s, i) =>
+              `<button class="start" data-i="${i}"><b>${esc(s.name)}</b>${s.random ? ' <span class="badge">automatic</span>' : ''}<small>${esc(s.description)}</small></button>`,
+          )
+          .join('');
+        $('starts')
+          .querySelectorAll('button')
+          .forEach(
+            (b) =>
+              (b.onclick = () => {
+                const s = v.starts[b.dataset.i];
+                call('/api/start', { sid: v.sid, start: s.id, startPack: s.pack });
+              }),
+          );
         renderPause(v);
-        renderOffers(v, busy);
-        renderSituation(v, busy);
-        // The rules' actions; the items' are on their copies below.
-        const rulesActs = v.actions.filter((a) => !a.entry && !a.start && !a.hiddenByPack);
-        $('secActions').classList.toggle('hidden', busy || !rulesActs.length);
-        // By the pack's action groups (display hints), in their order, the others last; without
-        // groups, one row.
-        const grouped = (v.actionGroups ?? []).length > 0;
+        if (mode === 'create') renderCreateActions(v, busy);
+        else {
+          renderOffers(v, busy);
+          renderSituation(v, busy);
+          renderPlayActions(v, busy);
+          renderSheet(v, busy);
+        }
+        renderInputs(v, busy);
+        renderFile(v);
+        if (mode === 'create') renderSummary(v);
+      }
+
+      // ---- Actions
+      // The pack's display hints may hide some now (SagaS: the actions of play while creating;
+      // the server reads the groups as while creating in Create, even for a finished character).
+      // The items' actions are on their copies, in Play; the creation starts' own actions run from
+      // the starts.
+      const rulesActions = (v) => v.actions.filter((a) => !a.start && !a.entry && !a.hiddenByPack);
+
+      /** By group, in the pack's order; `run` makes each action's buttons. */
+      const byGroup = (v, list, buttons, other = true) =>
+        [...v.actionGroups, ...(other ? [undefined] : [])]
+          .map((g) => {
+            const in_ = list.map((a, i) => [a, i]).filter(([a]) => a.group === g);
+            if (!in_.length) return '';
+            return `<div class="actGroup"><h3>${esc(g ?? 'Other')}</h3><div class="row">${in_.map(([a, i]) => buttons(a, i)).join('')}</div></div>`;
+          })
+          .join('');
+
+      // Create: with the pack's action groups, the grouped ones lead and the rest is folded away;
+      // without, those tagged `creation` lead. One click opens the action's form.
+      function renderCreateActions(v, busy) {
+        const acts = rulesActions(v);
+        const grouped = acts.some((a) => a.group);
+        const main = grouped ? acts.filter((a) => a.group) : acts.filter((a) => a.forCreation);
+        const other = grouped ? acts.filter((a) => !a.group) : acts.filter((a) => !a.forCreation);
+        $('secActions').classList.toggle('hidden', busy || !acts.length);
+        const button = (a, i) => `<button data-i="${i}">${esc(a.label)}</button>`;
         $('actions').classList.toggle('row', !grouped);
         $('actions').innerHTML = grouped
-          ? [...v.actionGroups, undefined]
-              .map((g) => {
-                const list = rulesActs.map((a, i) => [a, i]).filter(([a]) => a.group === g);
-                if (!list.length) return '';
-                return `<div class="actGroup"><h3>${esc(g ?? 'Other')}</h3><div class="row">${list.map(([a, i]) => actionButtons(a, `r${i}`)).join('')}</div></div>`;
-              })
-              .join('')
-          : rulesActs.map((a, i) => actionButtons(a, `r${i}`)).join('');
-        bindActions($('actions'), rulesActs, 'r');
-        renderSheet(v, busy);
-        renderInputs(v, busy);
+          ? byGroup(v, main, button, false)
+          : main.map(button).join('');
+        $('actions')
+          .querySelectorAll('button')
+          .forEach((b) => (b.onclick = () => openForm(main[b.dataset.i])));
+        $('otherActions').innerHTML = other.map(button).join('');
+        $('otherActions')
+          .querySelectorAll('button')
+          .forEach((b) => (b.onclick = () => openForm(other[b.dataset.i])));
+        $('actions').classList.toggle('hidden', !main.length);
+        $('otherBox').classList.toggle('hidden', !other.length);
+        if (!main.length) $('otherBox').open = true; // nothing tagged: show them all
+      }
+
+      // Play: by the pack's action groups, the others last; without groups, one row. One click
+      // runs with the defaults, "…" opens the form.
+      function renderPlayActions(v, busy) {
+        const acts = rulesActions(v);
+        $('secActions').classList.toggle('hidden', busy || !acts.length);
+        const grouped = (v.actionGroups ?? []).length > 0;
+        $('actions').classList.remove('hidden');
+        $('actions').classList.toggle('row', !grouped);
+        $('actions').innerHTML = grouped
+          ? byGroup(v, acts, (a, i) => actionButtons(a, `r${i}`))
+          : acts.map((a, i) => actionButtons(a, `r${i}`)).join('');
+        bindActions($('actions'), acts, 'r');
       }
 
       /** A run button (with the defaults) and a "…" button that opens the action's form. */
@@ -531,16 +683,13 @@
         for (const k of Object.keys(situ)) delete situ[k];
         return s;
       }
+      const describe = (a) =>
+        api('/api/describe', { sid: state.sid, action: a.id, entry: a.entry, source: a.source });
       /** Runs at once unless a parameter has to be given; then opens the form. */
       async function quickRun(a) {
         let d;
         try {
-          d = await api('/api/describe', {
-            sid: state.sid,
-            action: a.id,
-            entry: a.entry,
-            source: a.source,
-          });
+          d = await describe(a);
         } catch (e) {
           return flash(e.message, 'err');
         }
@@ -556,6 +705,7 @@
         });
       }
 
+      // ---- What the rules offer (Play)
       function renderOffers(v, busy) {
         $('secOffers').classList.toggle('hidden', busy || !v.offers.length);
         $('offers').innerHTML = v.offers
@@ -607,6 +757,7 @@
           );
       }
 
+      // ---- The situation (Play)
       function renderSituation(v, busy) {
         $('secSituation').classList.toggle('hidden', busy || !v.situational.length);
         for (const k of Object.keys(situ))
@@ -635,27 +786,28 @@
         count();
       }
 
+      // ---- The sheet (Play): fields by display group, then the copies in their two lists
+      const issuesHtml = (v) =>
+        (v.issues.length
+          ? `<ul class="issues">${v.issues.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`
+          : '') + (v.pending ? `<p class="muted">${v.pending} choice(s) still pending.</p>` : '');
       function renderSheet(v, busy) {
         $('secSheet').classList.remove('hidden');
         $('status').textContent = v.creating ? 'being created' : '';
         $('status').classList.toggle('hidden', !v.creating);
-        $('issues').innerHTML =
-          (v.issues.length
-            ? `<ul class="issues">${v.issues.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`
-            : '') + (v.pending ? `<p class="muted">${v.pending} choice(s) still pending.</p>` : '');
+        $('issues').innerHTML = issuesHtml(v);
         $('groups').innerHTML = v.groups
           .map(
             (g) =>
               `<div><h3>${esc(g.label)}</h3><table>${g.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td></tr>`).join('')}</table></div>`,
           )
           .join('');
-        // The two lists of copies, each copy with its own actions.
         lastView = v;
         const itemActs = v.actions.filter((a) => a.entry);
         for (const list of LISTS) renderList(v, list, itemActs, busy);
       }
 
-      // ---- Abilities and Items: the character's copies by list, with their filters
+      // ---- Abilities and Items (Play): the character's copies by list, with their filters
       const LISTS = ['features', 'inventory'];
       // The filters each list offers. Abilities: by mode only (all, changed, total > 0). Items:
       // by type, and by mode (all, changed, not held: the pack's items of the type not carried).
@@ -854,6 +1006,8 @@
           store.set(`fold.${d.dataset.fold}`, d.open ? 'open' : 'closed'),
         );
       }
+
+      // ---- The log (Play)
       function renderLog() {
         if (!log.length) {
           $('log').innerHTML = '<p class="muted">Rolls and outcomes appear here.</p>';
@@ -871,6 +1025,69 @@
     </div>`,
           )
           .join('');
+      }
+
+      // ---- The character as it stands (Create): fields by group, the copies one table per type
+      function renderSummary(v) {
+        $('secSummary').classList.remove('hidden');
+        $('sumStatus').textContent = v.creating ? 'being created' : 'created';
+        $('sumIssues').innerHTML = issuesHtml(v);
+        $('sumGroups').innerHTML = v.groups
+          .map(
+            (g) =>
+              `<h3>${esc(g.label)}</h3><table>${g.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td></tr>`).join('')}</table>`,
+          )
+          .join('');
+        $('sumCopies').innerHTML = renderCopies(v);
+      }
+      // The copies by content type, one table each: the name, the copy's score (its computed
+      // `total` when it has one, else its first computed number: a skill's total) in its own
+      // column, and the rest of its state and computed values, quieter. Copies the pack's display
+      // hints hide are counted, not listed.
+      function renderCopies(v) {
+        const shown = v.copies.filter((c) => !c.hidden);
+        if (!shown.length) return '<p class="muted">Nothing yet.</p>';
+        const hidden = v.copies.length - shown.length;
+        const byType = new Map();
+        for (const c of shown) byType.set(c.type, [...(byType.get(c.type) ?? []), c]);
+        const scoreOf = (c) => {
+          const total = c.computed.find((x) => x.key === 'total');
+          return total ? total.value : c.score;
+        };
+        return (
+          [...byType]
+            .map(([type, list]) => {
+              const rows = list
+                .map((c) => {
+                  const score = scoreOf(c);
+                  const details = [
+                    ...c.state
+                      .filter(
+                        (s) =>
+                          s.value !== '' &&
+                          s.value !== '0' &&
+                          s.value !== 'false' &&
+                          s.value !== '-1',
+                      )
+                      .map((s) => `${esc(s.label)} ${esc(s.value)}`),
+                    ...c.computed
+                      .filter(
+                        (x) =>
+                          x.key !== 'total' &&
+                          String(x.value) !== String(score) &&
+                          x.value !== 'false',
+                      )
+                      .map((x) =>
+                        x.value === 'true' ? esc(x.key) : `${esc(x.key)} ${esc(x.value)}`,
+                      ),
+                  ];
+                  return `<tr><td>${esc(c.label)}${c.equipped ? ' <span class="badge">equipped</span>' : ''}${c.quantity > 1 ? ` ×${esc(c.quantity)}` : ''}${details.length ? `<div class="state">${details.join(' · ')}</div>` : ''}</td><td class="num score">${score ?? ''}</td></tr>`;
+                })
+                .join('');
+              return `<h3>${esc(type)} <small class="muted">(${list.length})</small></h3><table class="copies">${rows}</table>`;
+            })
+            .join('') + (hidden ? `<p class="muted">${hidden} hidden by the pack.</p>` : '')
+        );
       }
 
       // ---- Pauses (a choice or an allocation during an action)
@@ -911,16 +1128,27 @@
         } else if (p.kind === 'allocate') {
           renderAllocate(p, body, footer, answer);
         } else {
-          body.innerHTML = `<p>${esc(p.dice || '')}</p>` + footer(false);
+          body.innerHTML =
+            `<p>${esc(p.dice || '')}</p><p class="muted">The engine rolls the dice for this page.</p>` +
+            footer(false);
         }
         $('pCancel').onclick = () => call('/api/cancel', { sid: v.sid });
       }
+
       function renderAllocate(p, body, footer, answer) {
         const a = p.allocate;
         const rec = a.recommended || {};
         if (a.values) {
+          // Each value to a different field.
+          const opts = (sel) =>
+            `<option value=""></option>` +
+            a.values
+              .map(
+                (x, i) => `<option value="${i}" ${sel === i ? 'selected' : ''}>${esc(x)}</option>`,
+              )
+              .join('');
+          const pre = {}; // recommended value index per field
           const used = new Set();
-          const pre = {};
           for (const f of a.fields)
             if (rec[f.id] !== undefined) {
               const i = a.values.findIndex((x, j) => x === rec[f.id] && !used.has(j));
@@ -929,17 +1157,15 @@
                 pre[f.id] = i;
               }
             }
-          const opts = (sel) =>
-            '<option value=""></option>' +
-            a.values
-              .map(
-                (x, i) => `<option value="${i}" ${sel === i ? 'selected' : ''}>${esc(x)}</option>`,
-              )
-              .join('');
           body.innerHTML =
             `<p class="muted">Give each value to a different field: ${a.values.map(esc).join(', ')}.</p>
-      <table>${a.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td><td><select data-id="${esc(f.id)}">${opts(pre[f.id])}</select></td></tr>`).join('')}</table>
-      <div class="row"><button class="primary" id="aOk">Confirm</button></div>` +
+      <table><tr><th></th><th class="num">Now</th><th>Value</th></tr>${a.fields
+        .map(
+          (f) =>
+            `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td><td><select data-id="${esc(f.id)}">${opts(pre[f.id])}</select></td></tr>`,
+        )
+        .join('')}</table>
+      <div class="row"><button class="primary" id="aOk">Confirm</button><span id="aInfo" class="muted"></span></div>` +
             footer(a.recommended !== undefined);
           const read = () => {
             const amounts = {};
@@ -953,31 +1179,65 @@
             });
             return { amounts, ok: ok && seen.size === a.values.length };
           };
-          const check = () => ($('aOk').disabled = !read().ok);
+          const check = () => {
+            const r = read();
+            $('aOk').disabled = !r.ok;
+            $('aInfo').textContent = r.ok ? '' : 'Use every value once.';
+          };
           body.querySelectorAll('select').forEach((s) => (s.onchange = check));
           check();
           $('aOk').onclick = () => answer({ amounts: read().amounts });
         } else {
+          // A budget: the cost of each amount is in `costs`, from 0 to the field's limit.
           body.innerHTML =
-            `<table><tr><th></th><th class="num">Now</th><th class="num">Add</th><th class="num">Cost</th></tr>${a.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td><td class="num"><input type="number" min="0" ${f.limit !== undefined ? `max="${f.limit}"` : ''} value="${rec[f.id] ?? 0}" data-id="${esc(f.id)}"></td><td class="num" data-cost="${esc(f.id)}"></td></tr>`).join('')}</table>
-      <div class="row"><b id="aSpent"></b><span class="muted">/ ${esc(a.budget)}</span><button class="primary" id="aOk">Confirm</button></div>` +
+            `<table><tr><th></th><th class="num">Now</th><th class="num">Add</th><th class="num">Cost</th><th class="num">Result</th></tr>${a.fields
+              .map(
+                (f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td>
+        <td class="num"><input type="number" min="0" ${f.limit !== undefined ? `max="${f.limit}"` : ''} value="${rec[f.id] ?? 0}" data-id="${esc(f.id)}"></td>
+        <td class="num" data-cost="${esc(f.id)}"></td><td class="num" data-res="${esc(f.id)}"></td></tr>`,
+              )
+              .join('')}</table>
+      <div class="row"><b id="aSpent"></b><span class="muted">/ ${esc(a.budget)} ${a.spend === 'upTo' ? '(at most)' : '(all of it)'}</span></div>
+      <div class="row"><button class="primary" id="aOk">Confirm</button><button id="aZero">Clear</button>${a.recommended ? '<button id="aRec">Recommendation</button>' : ''}</div>` +
             footer(a.recommended !== undefined);
           const fields = Object.fromEntries(a.fields.map((f) => [f.id, f]));
+          const cost = (f, n) => (n <= 0 ? 0 : f.costs && n < f.costs.length ? f.costs[n] : NaN);
           const check = () => {
             let spent = 0;
+            let ok = true;
             body.querySelectorAll('input[data-id]').forEach((i) => {
               const f = fields[i.dataset.id];
               const n = Math.max(0, Math.floor(Number(i.value) || 0));
-              const c = n <= 0 ? 0 : f.costs && n < f.costs.length ? f.costs[n] : NaN;
+              const c = cost(f, n);
+              if (f.limit !== undefined && n > f.limit) ok = false;
               spent += c;
-              body.querySelector(`[data-cost="${CSS.escape(f.id)}"]`).textContent = n ? c : '';
+              body.querySelector(`[data-cost="${CSS.escape(f.id)}"]`).textContent = n
+                ? Number.isNaN(c)
+                  ? '?'
+                  : c
+                : '';
+              body.querySelector(`[data-res="${CSS.escape(f.id)}"]`).textContent = n
+                ? f.value + n
+                : '';
             });
             const fits =
               !Number.isNaN(spent) && (a.spend === 'upTo' ? spent <= a.budget : spent === a.budget);
-            $('aSpent').textContent = `Spent: ${Number.isNaN(spent) ? '?' : spent}`;
-            $('aOk').disabled = !fits;
+            $('aSpent').textContent = Number.isNaN(spent) ? 'Spent: ?' : `Spent: ${spent}`;
+            $('aSpent').style.color = fits && ok ? '' : 'var(--bad)';
+            $('aOk').disabled = !(fits && ok);
           };
           body.querySelectorAll('input[data-id]').forEach((i) => (i.oninput = check));
+          $('aZero').onclick = () => {
+            body.querySelectorAll('input[data-id]').forEach((i) => (i.value = 0));
+            check();
+          };
+          if (a.recommended)
+            $('aRec').onclick = () => {
+              body
+                .querySelectorAll('input[data-id]')
+                .forEach((i) => (i.value = rec[i.dataset.id] ?? 0));
+              check();
+            };
           check();
           $('aOk').onclick = () => {
             const amounts = {};
@@ -997,12 +1257,7 @@
         let d = described;
         if (!d) {
           try {
-            d = await api('/api/describe', {
-              sid: state.sid,
-              action: a.id,
-              entry: a.entry,
-              source: a.source,
-            });
+            d = await describe(a);
           } catch (e) {
             return flash(e.message, 'err');
           }
@@ -1087,6 +1342,38 @@
               }),
           );
       }
+
+      // ---- File: save (a loaded character back where it was, any other to extensions/), YAML
+      function renderFile(v) {
+        $('secFile').classList.remove('hidden');
+        if (!$('saveFile').value || $('saveFile').dataset.sid !== v.sid) {
+          $('saveFile').value = v.file || `extensions/${v.character.id}.yaml`;
+          $('saveFile').dataset.sid = v.sid;
+        }
+        if (!$('yaml').classList.contains('hidden')) showYaml();
+      }
+      async function showYaml() {
+        $('yaml').textContent = await api('/api/yaml', { sid: state.sid });
+      }
+      $('btnYaml').onclick = async () => {
+        $('yaml').classList.toggle('hidden');
+        if (!$('yaml').classList.contains('hidden')) showYaml();
+      };
+      $('btnSave').onclick = async () => {
+        try {
+          const file = $('saveFile').value.trim();
+          const r = await api('/api/save', { sid: state.sid, file }).catch(async (e) => {
+            if (!/already exists/.test(e.message) || !confirm(e.message + '. Overwrite?')) throw e;
+            return api('/api/save', { sid: state.sid, file, overwrite: true });
+          });
+          flash('Saved: ' + r.saved);
+          state.file = r.saved.replace(/^examples\/characters\//, '');
+          $('who').textContent = `${state.character.id} — ${state.file}`;
+          listCharacters();
+        } catch (e) {
+          flash(e.message, 'err');
+        }
+      };
 
       init().catch((e) => flash(e.message, 'err'));
     </script>

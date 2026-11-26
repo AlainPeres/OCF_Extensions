@@ -1,5 +1,5 @@
-// Shared server of universal-create and universal-play: any pack of packs/, in the browser, with
-// nothing of the pack written here. It loads a pack with its dependencies and English text, keeps
+// Server of the universal sheet (universal.ts), and of the SagaS and OpenQuest tools: any pack of
+// packs/, in the browser, with nothing of the pack written here. It loads a pack with its dependencies and English text, keeps
 // the character and any paused action per session, runs actions with the engine (startAction /
 // continueAction) and hands each pause to the page with its text (describeNeed): a choice, an
 // allocation (a budget or a list of values). Finished actions' changes for the character are
@@ -7,6 +7,10 @@
 // from describeAction; input fields are set with `set` changes. Characters are listed from
 // examples/characters/ (OCF's) and examples/characters/extensions/ (ours); a loaded one is saved
 // back where it was, a new one to extensions/.
+//
+// Each session has a mode, create or play (/api/mode): in create mode, the pack's action groups
+// are read as while creating, even once the character is finished, so the actions of play stay
+// out of it. A new character starts in create mode, a loaded one in the mode its state calls for.
 //
 // Pages of a game's own (the SagaS tools) may keep the character themselves: the stateless calls
 // (/api/compute, /api/act, /api/file, /api/save-file, /api/yaml-file) take it in each request.
@@ -236,13 +240,12 @@ interface Session {
   /** The running action, for the outcome's text. */
   action?: { id: string; entry?: string };
   file?: string | undefined;
+  /** The page's mode: in create mode, the action groups are read as while creating. */
+  mode?: 'create' | 'play';
 }
 const sessions = new Map<string, Session>();
-/**
- * Set by `serve`'s `creationView` (universal-create): the pack's action groups are read as if
- * the character were being created, finished or not (a random start or a loaded character).
- */
-let creationView = false;
+/** A session's mode: the one the page chose, else the character's state's. */
+const modeOf = (S: Session) => S.mode ?? (S.character.creating === true ? 'create' : 'play');
 const PAUSE = { choices: 'pause', allocations: 'pause' }; // dice are rolled by the engine
 
 function newCharacter(L: Loaded, id: string) {
@@ -392,9 +395,9 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
   const actionGroups: string[] = [];
   // Held by a group the hints hide now (SagaS: the actions of play while creating), by no shown one.
   const inHiddenGroup = new Set<string>();
-  // In the creator, the groups as a character being created sees them: the actions of play stay
+  // In create mode, the groups as a character being created sees them: the actions of play stay
   // hidden once the character is finished too.
-  const asCreated = creationView && S.character.creating !== true;
+  const asCreated = modeOf(S) === 'create' && S.character.creating !== true;
   const groupSheet: Any = asCreated ? computeSheet(R, { ...S.character, creating: true }) : sheet;
   for (const g of groupSheet.groups ?? [])
     if (Array.isArray(g.actions) && g.shown === false)
@@ -478,6 +481,7 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
     file: S.file,
     character: S.character,
     creating: !!S.character.creating,
+    mode: modeOf(S),
     groups,
     copies,
     // The pack's content types with items, for the "Not held" list (/api/catalog).
@@ -766,8 +770,8 @@ export function actFor(character: Any, input: Any, pack?: string) {
 /** Options of `serve`: a default pack, and a game's own routes (null: not theirs). */
 export interface ServeOptions {
   pack?: string;
-  /** The pack's action groups as while creating, even for a finished character (universal-create). */
-  creationView?: boolean;
+  /** Other pages, by path (`/create`), as files of scripts/extensions/: a game's sheet's modes. */
+  pages?: Record<string, string>;
   routes?: (path: string, query: URLSearchParams, body: Any) => unknown;
 }
 
@@ -833,7 +837,6 @@ export function serve(
 ) {
   const argv = process.argv.slice(2);
   const port = Number(argv[argv.indexOf('--port') + 1]) || defaultPort;
-  creationView = options.creationView === true;
   const pagePath = join(import.meta.dirname, page);
 
   const server = createServer(async (req, res) => {
@@ -842,6 +845,13 @@ export function serve(
       const p = url.pathname;
       if (p === '/' || p === '/index.html')
         return send(res, 200, readFileSync(pagePath, 'utf8'), 'text/html; charset=utf-8');
+      if (options.pages?.[p])
+        return send(
+          res,
+          200,
+          readFileSync(join(import.meta.dirname, options.pages[p]), 'utf8'),
+          'text/html; charset=utf-8',
+        );
       if (p === '/api/packs') return send(res, 200, packList());
       if (p === '/api/characters') {
         const pack = url.searchParams.get('pack');
@@ -900,6 +910,7 @@ export function serve(
         sessions.set(sid, {
           pack: b.pack,
           character: newCharacter(L, safeName(b.id || `${b.pack}-${Date.now().toString(36)}`)),
+          mode: 'create',
         });
         return send(res, 200, view(sid));
       }
@@ -921,6 +932,13 @@ export function serve(
         return send(res, 200, view(sid));
       }
       if (p === '/api/view') return send(res, 200, view((session(b.sid), b.sid)));
+      if (p === '/api/mode') {
+        // The page's mode: create or play.
+        if (b.mode !== 'create' && b.mode !== 'play')
+          return send(res, 400, { error: `unknown mode ${b.mode}` });
+        session(b.sid).mode = b.mode;
+        return send(res, 200, view(b.sid));
+      }
       if (p === '/api/catalog') {
         // The pack's items of one content type the character holds no copy of, by name, with
         // their fields as text (a skill's characteristic, initial level, technological level…).
