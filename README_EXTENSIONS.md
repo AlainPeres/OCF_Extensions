@@ -311,7 +311,6 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 | Path                                                        | What                                                                 |
 | ----------------------------------------------------------- | -------------------------------------------------------------------- |
 | `packs/sagas/core/`                                         | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor)      |
-| `scripts/extensions/sagas/sagas-create-cli.ts`              | SagaS character creation in the terminal                             |
 | `scripts/extensions/sagas/sagas.ts` + `.html`               | SagaS sheet: Create and Play in one page                             |
 | `scripts/extensions/sagas/sagas-create.html`                | The SagaS sheet's Create mode                                        |
 | `scripts/extensions/sagas/sagas-play.html`                  | The SagaS sheet's Play mode                                          |
@@ -349,12 +348,11 @@ In VS Code, open the file and press F5 (launch configuration "Exécuter le fichi
 server (127.0.0.1 only) and opens the page in the browser. `--port N` changes the port and
 `--no-open` doesn't open the browser. Ctrl+C stops the server.
 
-| Tool                  | Port | Options                                                                                                   |
-| --------------------- | ---- | --------------------------------------------------------------------------------------------------------- |
-| `sagas-create-cli.ts` | —    | `--random`, `--points 150\|250\|350`, `--tl 0–8`, `--id ID`, `--out FILE`; type `q` at any prompt to quit |
-| `sagas.ts`            | 5180 | `--port`, `--no-open`                                                                                     |
-| `openquest.ts`        | 5181 | `--port`, `--no-open`                                                                                     |
-| `universal.ts`        | 5176 | `--port`, `--no-open`                                                                                     |
+| Tool           | Port | Options               |
+| -------------- | ---- | --------------------- |
+| `sagas.ts`     | 5180 | `--port`, `--no-open` |
+| `openquest.ts` | 5181 | `--port`, `--no-open` |
+| `universal.ts` | 5176 | `--port`, `--no-open` |
 
 Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
 without asking). The SagaS tools read and write that folder only. The universal tools list OCF's
@@ -536,23 +534,12 @@ themselves and send it with each request: they use the server's stateless calls.
 `serve(title, page, port, {pack, routes, pages})` takes the default pack, the other pages it serves
 (a sheet's modes, `/create` and `/play`) and the routes only SagaS needs
 (`sagas-lib.ts`): `/api/data` (characteristics, skills, weapons and armor as the pack's files
-write them, their names, the situations, the technological levels) and, for `sagas-create`,
+write them, their names, the situations, the technological levels) and, for Create,
 `/api/random?points&tl&id`. Nothing of the rules is recoded there: the costs, totals and actions
-come from the engine. `sagas-create-cli.ts` stays on its own.
+come from the engine.
 
-- **`sagas-create-cli.ts`**: asks, in the terminal:
-  1. creation points, social class and the universe's technological level (TL0–TL8);
-  2. identity;
-  3. characteristics and secondary bonuses;
-  4. skills: a specialty for a generic one, an initial level for an "Other" one;
-  5. equipment.
-
-  It shows the points left after each answer, and offers only the skills and gear of the
-  technological level, which it saves (`universe.techLevel`). `--random` makes a character
-  without questions, at `--tl` (default 2). Point costs come from the pack's formulas; the script
-  recodes no rule.
-
-- **Create** (`sagas-create.html`): the same in the browser. Its sections, in order:
+- **Create** (`sagas-create.html`): point costs come from the pack's formulas; the page
+  recodes no rule. Its sections, in order:
   1. identity;
   2. creation points (150/250/350 or any number), social class and the universe's technological
      level: what the pack's display hints hide isn't offered (skills, weapons and protections

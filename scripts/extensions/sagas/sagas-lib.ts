@@ -108,7 +108,7 @@ const addGear = (ch: Character, item: Item) => {
 /** Skills and gear exist from their technological level on. */
 const inUniverse = (item: Item, tl: number) => Number(item.fields.techLevel ?? 0) <= tl;
 
-/** Same roll as sagas-create-cli.ts --random, among the skills and gear of the universe's level. */
+/** A random character: characteristics, skills and gear of the universe's level, within the points. */
 function randomCharacter(points: number, id: string, tl: number): Character {
   const ch: Character = {
     specVersion: '0.4.0',
