@@ -1422,3 +1422,12 @@ actions.create-creature.steps.int.name: Intelligence
 actions.create-creature.steps.pow.name: Power
 actions.create-creature.steps.cha.name: Charisma
 types.creature.fields.regenerate.name: Regeneration a combat round
+
+groups.act-tests.label: Tests
+groups.act-combat.label: Combat
+groups.act-health.label: Health and rest
+groups.act-dangers.label: Dangers and travel
+groups.act-social.label: Social combat
+groups.act-magic.label: Magic
+groups.act-advancement.label: Growth
+groups.act-creation.label: Creation

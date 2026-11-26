@@ -4,8 +4,66 @@
 # on every sheet: one above the level shows only once raised (its points kept, say after a change
 # of universe). Weapons and armor above it go to hidden groups too, so an app doesn't offer them;
 # one the character carries still shows (a group holding a copy that isn't standard always does).
+# While the character is being created, only the creation actions show: the actions of play
+# (checks, combat, health, dangers, the long-term action, progression) wait for the character.
 display:
   groups:
+    - id: act-checks
+      kind: actions
+      priority: 20
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          'check' in item.tags && !('combat' in item.tags) && !(item.id in ['sagas-core:long-start', 'sagas-core:long-step'])
+    - id: act-combat
+      kind: actions
+      priority: 21
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          ('combat' in item.tags || 'damage' in item.tags) && !('danger' in item.tags)
+    - id: act-health
+      kind: actions
+      priority: 22
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          'health' in item.tags && !('danger' in item.tags)
+    - id: act-dangers
+      kind: actions
+      priority: 23
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          'danger' in item.tags
+    - id: act-long-term
+      kind: actions
+      priority: 24
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          item.id in ['sagas-core:long-start', 'sagas-core:long-step']
+    - id: act-advancement
+      kind: actions
+      priority: 25
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          'advancement' in item.tags || item.id == 'sagas-core:learn-specialty'
+    - id: act-creation
+      kind: actions
+      priority: 26
+      showWhen: 'character.creating'
+      members:
+        type: action
+        where: >-
+          'creation' in item.tags
     - id: identity
       priority: 0
       members:

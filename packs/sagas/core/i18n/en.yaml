@@ -661,3 +661,11 @@ groups.martial-arts.label: Martial arts
 groups.long-term.label: Long-term action
 groups.progression.label: Progression
 groups.creation-points.label: Creation points
+
+groups.act-checks.label: Checks
+groups.act-combat.label: Combat
+groups.act-health.label: Health and rest
+groups.act-dangers.label: Dangers
+groups.act-long-term.label: Long-term action
+groups.act-advancement.label: Progression
+groups.act-creation.label: Creation

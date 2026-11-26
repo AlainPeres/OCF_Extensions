@@ -1,7 +1,74 @@
 # How a sheet shows the character (display hints: never part of the calculations). Wealth is a
 # skill only with the optional Wealth rule; without it the skill is hidden.
+# While the character is being created, only the creation actions show (with learning a Personal
+# Magic spell and a rank in a religion): the actions of play wait for the character.
 display:
   groups:
+    - id: act-tests
+      kind: actions
+      priority: 20
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          'test' in item.tags
+    - id: act-combat
+      kind: actions
+      priority: 21
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          'combat' in item.tags && !('magic' in item.tags) && !('social' in item.tags)
+    - id: act-health
+      kind: actions
+      priority: 22
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          'health' in item.tags && !('combat' in item.tags) && !(item.id in ['openquest-core:fall', 'openquest-core:suffocate', 'openquest-core:burn', 'openquest-core:resist-poison', 'openquest-core:resist-disease', 'openquest-core:travel-day', 'openquest-core:deprivation'])
+    - id: act-dangers
+      kind: actions
+      priority: 23
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          item.id in ['openquest-core:fall', 'openquest-core:suffocate', 'openquest-core:burn', 'openquest-core:resist-poison', 'openquest-core:resist-disease', 'openquest-core:travel-day', 'openquest-core:deprivation']
+    - id: act-social
+      kind: actions
+      priority: 24
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          'social' in item.tags
+    - id: act-magic
+      kind: actions
+      priority: 25
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          'magic' in item.tags && !('advancement' in item.tags)
+    - id: act-advancement
+      kind: actions
+      priority: 26
+      showWhen: '!character.creating'
+      members:
+        type: action
+        where: >-
+          'advancement' in item.tags || item.id == 'openquest-core:learn-specialty'
+    - id: act-creation
+      kind: actions
+      priority: 27
+      showWhen: 'character.creating'
+      members:
+        type: action
+        where: >-
+          'creation' in item.tags || item.id in ['openquest-core:learn-personal-spell',
+            'openquest-core:religion-rank']
     - id: identity
       priority: 0
       members:
