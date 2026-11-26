@@ -285,23 +285,24 @@ setup](#github-setup) before pushing, and restart a running tool.
 
 ## OCF version
 
-Merged with this commit of the OCF repository, `upstream/main` on 2026-11-24:
+Merged with this commit of the OCF repository, `upstream/main` on 2026-11-26:
 
-|                 |                                                                                           |
-| --------------- | ----------------------------------------------------------------------------------------- |
-| Repository      | <https://github.com/pixelqueue/opencharacter> (branch `main`)                             |
-| Commit          | `48b479696591feabe321fdfc03a1ef07d291861e`                                                |
-| Date            | 2026-11-23                                                                                |
-| Message         | Build(deps-dev): Bump the dev-dependencies group across 1 directory with 5 updates (#278) |
-| Release tag     | `@opencharacter/5e-srd-5.1@0.4.0` (the latest; no release since)                          |
-| Spec and engine | 0.4.0                                                                                     |
+|                 |                                                                  |
+| --------------- | ---------------------------------------------------------------- |
+| Repository      | <https://github.com/pixelqueue/opencharacter> (branch `main`)    |
+| Commit          | `5a560a87e9f0fc5b1db739ab1b7865de478de2ad`                       |
+| Date            | 2026-11-24                                                       |
+| Message         | Engine and text: add-on pack bugs (#281) (#283)                  |
+| Release tag     | `@opencharacter/5e-srd-5.1@0.4.0` (the latest; no release since) |
+| Spec and engine | 0.4.0                                                            |
 
 History of the merges:
 
-| Date       | OCF commit | What it brought                                                                                         |
-| ---------- | ---------- | ------------------------------------------------------------------------------------------------------- |
-| 2026-11-02 | `c3a1de41` | The base: Version Packages (#209)                                                                       |
-| 2026-11-24 | `48b47969` | Dependency updates only: semver, intl-messageformat, astro, starlight, oxfmt 0.79, oxlint, vitest, vite |
+| Date       | OCF commit | What it brought                                                                                                      |
+| ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-02 | `c3a1de41` | The base: Version Packages (#209)                                                                                    |
+| 2026-11-24 | `48b47969` | Dependency updates only: semver, intl-messageformat, astro, starlight, oxfmt 0.79, oxlint, vitest, vite              |
+| 2026-11-26 | `5a560a87` | Engine and text: add-on pack bug fixes; Draw Steel: edges against a creature, next-turn durations; conformance cases |
 
 A later OCF commit may change the spec or the engine and break the pack or the tools: merge as in
 [After cloning](#after-cloning), then run the checks and the tools. To see which OCF commit a clone
