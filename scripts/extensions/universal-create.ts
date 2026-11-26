@@ -9,4 +9,4 @@
 
 import { serve } from './universal-lib.ts';
 
-serve('Universal creator', 'universal-create.html', 5176);
+serve('Universal creator', 'universal-create.html', 5176, { creationView: true });

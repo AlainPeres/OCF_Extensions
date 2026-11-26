@@ -238,6 +238,11 @@ interface Session {
   file?: string | undefined;
 }
 const sessions = new Map<string, Session>();
+/**
+ * Set by `serve`'s `creationView` (universal-create): the pack's action groups are read as if
+ * the character were being created, finished or not (a random start or a loaded character).
+ */
+let creationView = false;
 const PAUSE = { choices: 'pause', allocations: 'pause' }; // dice are rolled by the engine
 
 function newCharacter(L: Loaded, id: string) {
@@ -387,15 +392,21 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
   const actionGroups: string[] = [];
   // Held by a group the hints hide now (SagaS: the actions of play while creating), by no shown one.
   const inHiddenGroup = new Set<string>();
-  for (const g of sheet.groups ?? [])
+  // In the creator, the groups as a character being created sees them: the actions of play stay
+  // hidden once the character is finished too.
+  const asCreated = creationView && S.character.creating !== true;
+  const groupSheet: Any = asCreated ? computeSheet(R, { ...S.character, creating: true }) : sheet;
+  for (const g of groupSheet.groups ?? [])
     if (Array.isArray(g.actions) && g.shown === false)
       for (const i of g.actions)
-        if (sheet.actions?.[i]) inHiddenGroup.add(actionKey(sheet.actions[i]));
-  for (const g of sheet.groups ?? []) {
+        if (groupSheet.actions?.[i]) inHiddenGroup.add(actionKey(groupSheet.actions[i]));
+  // An action a character being created doesn't have at all (SagaS: advancement) is hidden too.
+  const whileCreating = new Set((groupSheet.actions ?? []).map(actionKey));
+  for (const g of groupSheet.groups ?? []) {
     if (!Array.isArray(g.actions) || g.shown === false) continue;
     const label = groupLabel(g.id);
     for (const i of g.actions) {
-      const a = sheet.actions?.[i];
+      const a = groupSheet.actions?.[i];
       if (!a || groupOfAction.has(actionKey(a))) continue;
       groupOfAction.set(actionKey(a), label);
       if (!actionGroups.includes(label)) actionGroups.push(label);
@@ -419,7 +430,9 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
         name: t.action(a.action),
         start: !a.entry && (R.creation ?? []).some((s: Any) => s.action === a.action),
         group: groupOfAction.get(actionKey(a)),
-        hiddenByPack: !groupOfAction.has(actionKey(a)) && inHiddenGroup.has(actionKey(a)),
+        hiddenByPack:
+          !groupOfAction.has(actionKey(a)) &&
+          (inHiddenGroup.has(actionKey(a)) || (asCreated && !whileCreating.has(actionKey(a)))),
         forCreation: tags.some((x) => x === 'creation' || x.endsWith(':creation')),
       };
     });
@@ -753,6 +766,8 @@ export function actFor(character: Any, input: Any, pack?: string) {
 /** Options of `serve`: a default pack, and a game's own routes (null: not theirs). */
 export interface ServeOptions {
   pack?: string;
+  /** The pack's action groups as while creating, even for a finished character (universal-create). */
+  creationView?: boolean;
   routes?: (path: string, query: URLSearchParams, body: Any) => unknown;
 }
 
@@ -818,6 +833,7 @@ export function serve(
 ) {
   const argv = process.argv.slice(2);
   const port = Number(argv[argv.indexOf('--port') + 1]) || defaultPort;
+  creationView = options.creationView === true;
   const pagePath = join(import.meta.dirname, page);
 
   const server = createServer(async (req, res) => {

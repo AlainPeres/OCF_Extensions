@@ -855,7 +855,7 @@ text (`@opencharacter/text`, `describeNeed`).
     every recommendation.
   - **Actions**: with the pack's action groups, the actions of the groups shown now, under each
     group's heading (an action only hidden groups hold is left out: SagaS hides its actions of play
-    while creating); without groups, the actions tagged `creation` come first and the others are
+    while creating). The groups are read as while creating even for a finished character (after a random start, or one loaded): the actions of play are for `universal-play`. Without groups, the actions tagged `creation` come first and the others are
     folded away. Forms are
     built from the action's parameters.
   - **Input fields** can be edited, and the character is shown and saved.
