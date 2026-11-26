@@ -7,6 +7,10 @@
 // from describeAction; input fields are set with `set` changes. Characters are listed from
 // examples/characters/ (OCF's) and examples/characters/extensions/ (ours); a loaded one is saved
 // back where it was, a new one to extensions/.
+//
+// Pages of a game's own (the SagaS tools) may keep the character themselves: the stateless calls
+// (/api/compute, /api/act, /api/file, /api/save-file, /api/yaml-file) take it in each request.
+// `serve` also takes a default pack and routes of a game's own (sagas-lib.ts).
 
 import {
   applyChanges,
@@ -141,7 +145,7 @@ const english = (dir: string): Messages =>
       .map(readYaml),
   );
 
-interface Loaded {
+export interface Loaded {
   id: string;
   ruleset: Any;
   text: Text;
@@ -150,7 +154,7 @@ interface Loaded {
 const loadedPacks = new Map<string, Loaded>();
 
 /** The pack and its dependencies, dependencies first. */
-function loadPack(id: string): Loaded {
+export function loadPack(id: string): Loaded {
   const hit = loadedPacks.get(id);
   if (hit) return hit;
   const order: string[] = [];
@@ -182,6 +186,13 @@ function loadPack(id: string): Loaded {
   loadedPacks.set(id, loaded);
   return loaded;
 }
+
+/** A pack's English messages, by key (i18n/en.yaml and i18n/en/*.yaml). */
+export const packMessages = (id: string): Messages => {
+  const dir = packDirs.get(id);
+  if (!dir) throw new Error(`pack ${id} not found under packs/`);
+  return english(dir);
+};
 
 const local = (qid: string) => qid.slice(qid.indexOf(':') + 1);
 const packOf = (qid: string) => qid.slice(0, qid.indexOf(':'));
@@ -641,6 +652,111 @@ function describe(
 }
 
 // ---------------------------------------------------------------------------------------------
+// Stateless calls: the page keeps the character and sends it with each request.
+
+/** The character's pack: the one asked for, else its last one. */
+const packFor = (character: Any, pack?: string): string => {
+  const ids: string[] = (character?.packs ?? []).map((x: Any) => x.id);
+  const id = pack && (ids.includes(pack) || !ids.length) ? pack : ids.at(-1);
+  if (!id) throw new Error('the character names no pack');
+  return id;
+};
+
+/**
+ * The sheet as a page of a game's own uses it: values without the pack's prefix, the copies'
+ * computed values, the issues, and what the pack's display hints hide: copies, and the pack's
+ * items not held that would be hidden once held (gear above a level, a skill to learn…).
+ */
+export function computeFor(character: Any, pack?: string) {
+  const id = packFor(character, pack);
+  const L = loadPack(id);
+  const s: Any = computeSheet(L.ruleset, character);
+  const values: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(s.values ?? {}) as Any)
+    values[k.startsWith(`${id}:`) ? k.slice(id.length + 1) : k] = v?.value;
+  const held = new Set(allCopies(character).map((c: Any) => c.item));
+  const standard = new Set((s.standardCopies ?? []).map((x: Any) => x.item));
+  const candidates = Object.keys(L.ruleset.content).filter((q) => !held.has(q) && !standard.has(q));
+  return {
+    values,
+    copies: s.copies,
+    issues: [...(s.errors ?? []), ...(s.issues ?? [])],
+    hidden: [...hiddenCopies(s)],
+    hiddenItems: [...hiddenItems(L.ruleset, character, s, candidates)],
+  };
+}
+
+/**
+ * A character file with its standard copies under their fixed IDs (the qualified item ID with
+ * hyphens: sagas-core-skills-dodge): older files named them freely ("dodge").
+ */
+export function adoptStandardIds(character: Any, pack?: string) {
+  const L = loadPack(packFor(character, pack));
+  const s: Any = computeSheet(L.ruleset, character);
+  const entryOf = new Map((s.standardCopies ?? []).map((x: Any) => [x.item, x.entry]));
+  for (const c of character.features ?? []) {
+    const e = entryOf.get(c.item);
+    if (e && c.id !== e && !(character.features ?? []).some((o: Any) => o !== c && o.id === e))
+      c.id = e;
+  }
+  return character;
+}
+
+/**
+ * Runs one action on the character the page sends; the changes it proposes for the character are
+ * applied. With `answers` (the page's picks), the choices pause and take them in turn; a pause
+ * left over that can end with "#done" (a repeated step) ends there. The rolls come back with
+ * their dice, band and degree.
+ */
+export function actFor(character: Any, input: Any, pack?: string) {
+  const L = loadPack(packFor(character, pack));
+  const run = input.answers?.length ? { ...input, policy: { choices: 'pause' } } : input;
+  let r: Any = startAction(L.ruleset, character, run);
+  for (let n = 0; r.status === 'paused' && n < 100; n++) {
+    const options = (r.needs?.options ?? []).map((o: Any) => (typeof o === 'string' ? o : o.id));
+    if (!options.includes('#done')) break;
+    r = continueAction(L.ruleset, r, { option: '#done' } as Any, run.policy);
+  }
+  if (r.status !== 'finished')
+    return { result: { status: r.status, errors: r.errors, needs: r.needs }, character };
+  const rolls = (r.log ?? [])
+    .filter((l: Any) => l.kind === 'dice')
+    .map((l: Any) => ({
+      step: l.step,
+      total: l.total,
+      band: l.band,
+      degree: l.bandValue,
+      score: l.summary?.flags?.score,
+      modifier: l.summary?.flags?.modifier,
+      parts: (l.items ?? []).map((i: Any) =>
+        i.kind === 'dice'
+          ? { dice: (i.faces ?? []).map((x: Any) => ({ v: x.value, x: !!x.exploded })) }
+          : { flat: i.value },
+      ),
+    }));
+  let next = character;
+  const changes = (r.proposedChanges ?? [])
+    .filter((c: Any) => c.to === 'self')
+    .map((c: Any) => c.change);
+  let applyErrors: unknown;
+  if (changes.length) {
+    const applied: Any = applyChanges(L.ruleset, character, changes);
+    if (applied.ok && applied.character) next = applied.character;
+    else applyErrors = applied.errors;
+  }
+  return {
+    result: { status: r.status, outcome: r.outcome, rolls, changes, applyErrors },
+    character: next,
+  };
+}
+
+/** Options of `serve`: a default pack, and a game's own routes (null: not theirs). */
+export interface ServeOptions {
+  pack?: string;
+  routes?: (path: string, query: URLSearchParams, body: Any) => unknown;
+}
+
+// ---------------------------------------------------------------------------------------------
 // HTTP
 
 const send = (
@@ -694,7 +810,12 @@ const yamlIn = (dir: string, prefix = '') =>
     .map((f) => prefix + f);
 
 /** Serves `page` (next to this file) and the API on 127.0.0.1; `--port` and `--no-open` from argv. */
-export function serve(title: string, page: string, defaultPort: number) {
+export function serve(
+  title: string,
+  page: string,
+  defaultPort: number,
+  options: ServeOptions = {},
+) {
   const argv = process.argv.slice(2);
   const port = Number(argv[argv.indexOf('--port') + 1]) || defaultPort;
   const pagePath = join(import.meta.dirname, page);
@@ -719,8 +840,43 @@ export function serve(title: string, page: string, defaultPort: number) {
         );
         return send(res, 200, list);
       }
-      if (req.method !== 'POST') return send(res, 404, { error: 'not found' });
+      if (p === '/api/file') {
+        // A character file, its standard copies under their fixed IDs.
+        const file = charFile(url.searchParams.get('file') ?? '');
+        return send(res, 200, adoptStandardIds(readYaml(charPath(file)), options.pack));
+      }
+      if (req.method !== 'POST') {
+        const own = options.routes?.(p, url.searchParams, undefined);
+        if (own !== undefined && own !== null) return send(res, 200, own);
+        return send(res, 404, { error: 'not found' });
+      }
       const b = await body(req);
+
+      // Stateless calls: the character comes with the request.
+      if (p === '/api/compute')
+        return send(res, 200, computeFor(b.character, b.pack ?? options.pack));
+      if (p === '/api/act') {
+        const out = actFor(b.character, b.input ?? {}, b.pack ?? options.pack);
+        return send(res, 200, { ...out, sheet: computeFor(out.character, b.pack ?? options.pack) });
+      }
+      if (p === '/api/yaml-file')
+        return send(res, 200, stringify(b.character), 'text/yaml; charset=utf-8');
+      if (p === '/api/save-file') {
+        // To extensions/: the file given, else <id>.yaml; an existing one only with `overwrite`.
+        const id = safeName(String(b.character?.id ?? ''));
+        if (!id) return send(res, 400, { error: 'the character has no ID' });
+        let file = charFile(b.file || `${EXT}/${id}.yaml`).replace(/(\.yaml)?$/, '.yaml');
+        if (!file.startsWith(`${EXT}/`)) file = `${EXT}/${file}`;
+        const path = charPath(file);
+        if (existsSync(path) && !b.overwrite) return send(res, 409, { error: 'exists', file });
+        mkdirSync(join(charsDir, EXT), { recursive: true });
+        writeFileSync(path, stringify(b.character));
+        return send(res, 200, { file: `examples/characters/${file}` });
+      }
+      {
+        const own = options.routes?.(p, url.searchParams, b);
+        if (own !== undefined && own !== null) return send(res, 200, own);
+      }
 
       if (p === '/api/new') {
         const L = loadPack(b.pack);
