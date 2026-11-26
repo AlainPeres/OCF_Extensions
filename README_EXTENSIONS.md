@@ -1,8 +1,8 @@
 # SagaS extensions
 
 Additions to the Open Character Format (OCF) repository: a pack for the _Rules of SagaS 0.995 LLL
-(OGL)_ and browser and terminal tools to create and play characters, and a pack for _OpenQuest 3rd
-Edition_ (SRD v1.2, Creative Commons), played with the universal tools. This repository
+(OGL)_ and a pack for _OpenQuest 3rd Edition_ (SRD v1.2, Creative Commons), each with a sheet to
+create and play characters in the browser, and a universal sheet for any pack. This repository
 (<https://github.com/AlainPeres/OCF_Extensions>, the `origin` remote) keeps OCF's whole history,
 with OCF's repository as the `upstream` remote. None of the additions is part of OCF; the rest of
 the repo (spec, engine, other packs) is OCF's, unchanged.
@@ -14,9 +14,9 @@ Everything runs from the repo's TypeScript sources, so nothing needs a build: th
 
 | System          | Procedure                                                  | What you get                                      | Tested                             |
 | --------------- | ---------------------------------------------------------- | ------------------------------------------------- | ---------------------------------- |
-| Linux           | [Linux](#linux)                                            | Everything: 16 packs, ORC included                | Not yet                            |
-| macOS           | [macOS](#macos)                                            | Everything: 16 packs, ORC included                | Not yet                            |
-| Windows         | [Windows](#windows)                                        | 14 packs on disk; ORC only in the universal tools | Yes, clone from GitHub, 2026-11-23 |
+| Linux           | [Linux](#linux)                                            | Everything: 17 packs, ORC included                | Not yet                            |
+| macOS           | [macOS](#macos)                                            | Everything: 17 packs, ORC included                | Not yet                            |
+| Windows         | [Windows](#windows)                                        | 15 packs on disk; ORC only in the universal tools | Yes, clone from GitHub, 2026-11-23 |
 | Windows via WSL | [Windows, cloned through WSL](#windows-cloned-through-wsl) | As Windows; a full clone stays in WSL             | Yes, 2026-11-24                    |
 
 Linux and macOS take the same commands. Windows needs a few more (no checkout at first,
@@ -49,14 +49,14 @@ pnpm validate
 What you should get:
 
 - `pnpm install` ends with `Done in …`;
-- `pnpm validate` ends with `Validated 16 pack(s) […] 49 character file(s) and 1 export(s): 0
-  error(s), 0 warning(s)` (the 16 packs include `orc-2e` and `orc-sf-2e`; the 49 characters, OCF's
-  examples, the 19 ORC ones and ours in `extensions/`);
+- `pnpm validate` ends with `Validated 17 pack(s) […] 51 character file(s) and 1 export(s): 0
+  error(s), 0 warning(s)` (the 17 packs include `orc-2e` and `orc-sf-2e`; the 51 characters, OCF's
+  examples, the 19 ORC ones and our 4 in `extensions/`);
 - `git status` says `nothing to commit, working tree clean`.
 
 No sparse checkout and no `core.protectNTFS`: every file is on disk, and the universal tools read
 the ORC packs from it. `pnpm test` runs, but a few OCF tests that list the official packs fail
-because of `packs/sagas/core` ([GitHub setup](#github-setup)).
+because of `packs/sagas/core` and `packs/openquest/core` ([GitHub setup](#github-setup)).
 
 ### macOS
 
@@ -104,7 +104,7 @@ Step by step:
    esbuild` is pnpm 10's default and harmless.
 7. **The two `rmdir`** remove the links pnpm makes to the missing ORC packs
    ([pnpm's links to the ORC packs](#pnpms-links-to-the-orc-packs)). They print nothing.
-8. **`pnpm validate`** takes a few seconds, then ends with `Validated 14 pack(s) […] 30 character
+8. **`pnpm validate`** takes a few seconds, then ends with `Validated 15 pack(s) […] 32 character
    file(s) and 1 export(s): 0 error(s), 0 warning(s)`.
 
 `git status` then says `nothing to commit, working tree clean`, with `You are in a sparse checkout
@@ -116,8 +116,9 @@ In Git Bash instead of PowerShell, the commands are the same except the two `rmd
 fastest; Windows Explorer works too, with Shift+Delete
 ([Deleting a folder that holds junctions](#deleting-a-folder-that-holds-junctions)).
 
-What works: the SagaS tools, the universal tools (which even load the ORC packs, from git: [PF2 in
-the universal tools](#pf2-in-the-universal-tools)), `pnpm validate` on the 14 packs on disk,
+What works: the SagaS and OpenQuest sheets, the universal sheet (which even loads the ORC packs,
+from git: [PF2 in the universal tools](#pf2-in-the-universal-tools)), `pnpm validate` on the 15
+packs on disk,
 `pnpm typecheck`, and merges from `upstream`. What doesn't: `pnpm validate` and `pnpm test` on the
 ORC packs, editing them, and `pnpm lint` on OCF's files ([GitHub setup](#github-setup)).
 
@@ -241,7 +242,7 @@ git status                             # nothing to commit, working tree clean, 
 pnpm install --frozen-lockfile
 cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-2e
 cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-sf-2e
-pnpm validate                          # Validated 14 pack(s) […] 30 character file(s) […] 0 error(s)
+pnpm validate                          # Validated 15 pack(s) […] 32 character file(s) […] 0 error(s)
 ```
 
 - The copied `.git` comes from Linux, without a sparse checkout, so git first sees the left-out
@@ -325,7 +326,7 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 | `scripts/extensions/openquest/openquest-create.html`        | The OpenQuest sheet's Create mode                                    |
 | `scripts/extensions/openquest/openquest-play.html`          | The OpenQuest sheet's Play mode                                      |
 | `scripts/extensions/validate-pack.ts`                       | `pnpm validate`'s checks on one pack and its characters              |
-| `examples/characters/extensions/`                           | SagaS example characters and the characters the tools save           |
+| `examples/characters/extensions/`                           | SagaS and OpenQuest example characters, and those the sheets save    |
 | `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                       |
 
 Our files stay apart from OCF's: scripts in `scripts/extensions/`, characters in
@@ -355,9 +356,10 @@ server (127.0.0.1 only) and opens the page in the browser. `--port N` changes th
 | `universal.ts` | 5176 | `--port`, `--no-open` |
 
 Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
-without asking). The SagaS tools read and write that folder only. The universal tools list OCF's
-example characters (`examples/characters/`) and ours (`extensions/…`); a loaded character is saved
-back where it was, and a new one, or one saved under another name, goes to `extensions/`.
+without asking). The SagaS and OpenQuest sheets list the characters of `examples/characters/` that
+use their pack. The universal sheet lists OCF's example characters (`examples/characters/`) and ours
+(`extensions/…`); a loaded character is saved back where it was, and a new one, or one saved under
+another name, goes to `extensions/`.
 
 ## The SagaS pack (`packs/sagas/core`)
 
@@ -476,8 +478,8 @@ Two creation starts, as every OCF pack that starts a sheet has.
 - **Constraint `creation-within-budget`**: while the character is being created, no more points
   may be spent than the budget allows.
 
-The three creation actions carry the `creation` tag, which the universal creator uses to show them
-first.
+The three creation actions carry the `creation` tag, which the universal sheet's Create mode uses to
+show them first when a pack has no action groups.
 
 ### Advancement (`rules/advancement.yaml`)
 
@@ -501,8 +503,8 @@ learned with `learn-specialty`, which asks it (and its initial level). The train
 the book says ("total skill level"). Not modelled: the referee's agreement on each choice, and the
 limit on simultaneous studies (`study.limit`, shown as a reminder). Characters made before this
 have `universe.techLevel` 2 by default: `set-tech-level` corrects it. Files written before the
-standard copies named a skill's copy freely (`dodge`): `sagas-create` and `sagas-play` rename it
-when they load it (`sagas-core-skills-dodge`); the two characters in `extensions/` are converted.
+standard copies named a skill's copy freely (`dodge`): the SagaS sheet renames it when it loads it
+(`sagas-core-skills-dodge`); the two characters in `extensions/` are converted.
 
 ### Not yet modelled
 
@@ -513,14 +515,15 @@ translation.
 
 ## The SagaS tools
 
-**`sagas.ts`** is the SagaS sheet: one page with two modes, Create
-(`sagas-create.html`) and Play (`sagas-play.html`), switched in its header. Each mode is its page, framed
-and kept loaded, so each keeps what it shows; changing modes passes the character on when it changed since it was last passed on (a load, a roll, an edit), the file it came from with it. Each page asks for its own data (`/api/data?for=create|play`). The pages are unchanged
-but for a small hook (`window.ocfCharacter`) the sheet uses.
+**`sagas.ts`** is the SagaS sheet: one page with two modes, Create (`sagas-create.html`) and Play
+(`sagas-play.html`), switched in its header. Each mode is its page, framed and kept loaded, so each
+keeps what it shows. Changing modes passes the character on when it changed since it was last
+passed on (a load, a roll, an edit), with the file it came from. Each page asks for its own data
+(`/api/data?for=create|play`) and has a small hook (`window.ocfCharacter`) the sheet uses.
 
 The sheet is the universal tools' server (`universal-lib.ts`) with pages of its own, like the
-OpenQuest sheet. Unlike those, the SagaS pages keep the character
-themselves and send it with each request: they use the server's stateless calls.
+OpenQuest sheet. Unlike it, the SagaS pages keep the character themselves and send it with each
+request: they use the server's stateless calls.
 
 | Call                                                 | Does                                                                                           |
 | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -581,9 +584,9 @@ Pack ID `openquest-core`, version 0.1.0, spec 0.4.0, from the _OpenQuest 3rd Edi
 Resource Document_ v1.2 (D101 Games). Its READ ME says the SRD has been under a Creative Commons
 license since 09/03/2023. The pack declares `CC-BY-4.0` with a credit line. The SRD's "How to Use
 the SRD" PDF, not in `scripts/extensions/openquest/`, gives the exact variant: change `license`,
-`credit` and `LICENSE` if it differs. There are no dedicated tools: the universal sheet
-shows it, and `examples/characters/extensions/openquest-test.yaml` is a character
-made by its random start. `pnpm validate` passes with no error or warning.
+`credit` and `LICENSE` if it differs. The OpenQuest sheet ([below](#the-openquest-tools)) and
+the universal sheet show it; `examples/characters/extensions/openquest-test.yaml` is a character
+made by its random start, `openquest-dragon.yaml` a creature. `pnpm validate` passes with no error or warning.
 
 ### Rules (`rules/`)
 
@@ -795,13 +798,15 @@ and transport's costs. Breaking objects is an Athletics test. Creatures' special
 ## The OpenQuest tools
 
 **`openquest.ts`** is the OpenQuest sheet: one page with two modes, Create
-(`openquest-create.html`) and Play (`openquest-play.html`), switched in its header. Each mode is its page, framed
-and kept loaded, so each keeps what it shows; the character is the server's session: changing modes gives the other page the session, which sets its own mode (`/api/mode`), so the play actions show in Play only. The pages are unchanged
-but for a small hook (`window.ocfCharacter`) the sheet uses.
+(`openquest-create.html`) and Play (`openquest-play.html`), switched in its header. Each mode is
+its page, framed and kept loaded, so each keeps what it shows. The character is the server's
+session: changing modes gives the other page the session, which sets its own mode (`/api/mode`),
+so the play actions show in Play only. Each page has a small hook (`window.ocfCharacter`) the
+sheet uses.
 
 The sheet is the universal tools' server (`universal-lib.ts`) with pages of its own: the pack's
-actions, pauses and texts come from the engine, the page lays them out for OpenQuest. They list
-the characters of `examples/characters/` that use `openquest-core` and save to `extensions/`.
+actions, pauses and texts come from the engine, the pages lay them out for OpenQuest. It lists the
+characters of `examples/characters/` that use `openquest-core` and saves to `extensions/`.
 
 - **Create** (`openquest-create.html`): a new character (or one being created), then the guided
   or random start.
@@ -836,7 +841,7 @@ the characters of `examples/characters/` that use `openquest-core` and save to `
 
 For these pages, the universal server's view also gives each copy's item, the step of a pause
 and the content applied to the character (`applied`, with its state): additions the universal
-pages don't use.
+sheet doesn't use.
 
 ## The universal tools
 
@@ -863,7 +868,7 @@ it was, any other to `extensions/`) and shows the YAML.
   - **Input fields** can be edited; beside them, the character as it stands: rules issues, fields
     by group, the copies as one table per content type with their total in its own column.
 
-  The guided and random starts of the 14 packs on disk were tested, and the random starts of the
+  The guided and random starts of the 15 packs on disk were tested, and the random starts of the
   two ORC packs (PF2, read from git on Windows: [PF2 in the universal tools](#pf2-in-the-universal-tools)).
 
 - **Play**: load any example character and play it:
@@ -894,7 +899,7 @@ it was, any other to `extensions/`) and shows the YAML.
   - **Offers**: the rules' follow-ups can be run or dismissed.
   - **Input fields** can be edited.
 
-  Tested on the 30 example characters on disk, and the 19 ORC ones read from git on Windows.
+  Tested on the 32 example characters on disk, and the 19 ORC ones read from git on Windows.
 
 There is no "Improve" mode: OCF has no common mark for a pack's advancement actions (SagaS,
 OpenQuest and a few others tag them `advancement`, Fate `milestone`, others nothing), so they stay
@@ -905,14 +910,12 @@ Limits of the universal tools:
 - Handoff pauses (another character's turn in an action) aren't answered.
 - Only on/off situational choices are offered.
 - Pending choices outside an action are counted but not answered.
-- A pack without fields display groups (SagaS has content groups only) shows its fields in one
-  table.
+- A pack without fields display groups shows its fields in one table.
 
 ## VS Code setup
 
 - `.vscode/launch.json`: "Exécuter le fichier TS courant (tsx)" runs the open file with
-  `--import tsx --conditions @opencharacter/source`, in the integrated terminal (so prompts can
-  read input).
+  `--import tsx --conditions @opencharacter/source`, in the integrated terminal.
 - `.vscode/settings.json`: Code Runner runs TypeScript the same way, in the terminal, after saving.
   `yaml.schemaStore.enable: false` stops SchemaStore from validating every `dice.yaml` against an
   unrelated schema.
@@ -926,10 +929,12 @@ that adds a pack:
 - **CI is disabled** (Actions → CI → Disable workflow). OCF's tests treat every pack under
   `packs/` as an official one: `build.test.ts` and `validate.test.ts` expect an exact list of
   packs, `packages.test.ts` expects 19 published packages, and `licenses.test.ts` expects the
-  `@opencharacter/packs` bundle's LICENSE to name every pack. With `packs/sagas/core` they fail.
+  `@opencharacter/packs` bundle's LICENSE to name every pack. With `packs/sagas/core` and
+  `packs/openquest/core` they fail.
   Adapting them would mean changing OCF's files and conflicts on every merge from `upstream`.
 - **Release is disabled** too. On every push to `main` it would try to publish to npm, under the
-  `@opencharacter` scope, every package not yet there, `@opencharacter/sagas-core` included.
+  `@opencharacter` scope, every package not yet there, `@opencharacter/sagas-core` and
+  `@opencharacter/openquest-core` included.
 - **Website** (`pages.yml`) runs only by hand; it stays as is.
 - **Dependabot is off**: `.github/dependabot.yml` is removed and its settings are off (Settings →
   Code security). Dependency updates come with the merges from `upstream`.
@@ -962,7 +967,7 @@ homebrew, or using a pack it didn't load, are left to `pnpm validate`.
 `pnpm lint` runs `oxfmt --check` on every file. With `core.autocrlf`, OCF's files are CRLF on
 disk, so on Windows it flags almost all of them; check only the files you changed, as above.
 
-On Windows, `pnpm test` fails in many places that have nothing to do with SagaS: the ORC packs
+On Windows, `pnpm test` fails in many places that have nothing to do with our packs: the ORC packs
 are missing, paths use `\`, symlinks need rights, and `git archive` stops on `con.yaml`.
 
 ## Windows notes
@@ -980,7 +985,7 @@ git sparse-checkout list    # /*  !packs/orc/  !examples/characters/orc-*.yaml
 
 The consequences:
 
-- the ORC packs (`orc-2e`, `orc-sf-2e`) aren't on disk, so `pnpm validate` checks 14 packs;
+- the ORC packs (`orc-2e`, `orc-sf-2e`) aren't on disk, so `pnpm validate` checks 15 packs;
 - the ORC example characters (`examples/characters/orc-*.yaml`) aren't on disk either, since their
   pack is missing. Git knows they are left out on purpose, so `git status` stays clean;
 - the tests that read the ORC packs fail with `ENOENT … packs/orc/2e/pack.yaml`;
@@ -1026,7 +1031,7 @@ files are on disk and this doesn't kick in.
 - The version read is the commit checked out (`HEAD`): after `git merge upstream/main`, restart the
   tool to get the new one.
 - The first load of `orc-2e` takes about 6 seconds (over 4,600 content files).
-- Only the universal tools do this: `pnpm validate` and `pnpm test` still skip the ORC packs, and
+- Only the universal server does this: `pnpm validate` and `pnpm test` still skip the ORC packs, and
   the packs can't be edited on Windows.
 
 ### pnpm's links to the ORC packs
