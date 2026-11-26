@@ -671,6 +671,17 @@ made by its random start. `pnpm validate` passes with no error or warning.
   - poisons and diseases: `resist-poison` and `resist-disease`, Resilience against the Potency,
     both rolled on the sheet (the potency is no character), with a healer's tenth of Healing;
     their damage rolled and taken; a disease is tested again after each delay until shaken off.
+- **`creatures.yaml`**: creature sheets, for the Referee. The `creature` type holds a creature
+  of the Creatures chapter: characteristic dice and averages (none for a spirit's STR, CON, DEX
+  and SIZ: no body, so never a mortal wound), movement, flying and swimming, armour, Loot Factor,
+  its skills at the book's values (local skill IDs and percentages in step, and skills with a
+  descriptor: Lore (Undead)…), its attacks, its Personal Magic spells and a Troll's regeneration
+  (`regenerate`, 1D6 a round). The `creature` start
+  (`create-creature`) takes the averages or rolls, sets each skill's `fixed` state (a value in
+  place of base, points and growth: every field that totals a skill reads it first), adds the
+  attacks (ready) and spells, and finishes the sheet at once. A creature's characteristics may
+  pass a human's limits, and its spells the creation's six points. Spirit Combat is a skill of
+  its own (`magic.spiritCombat`), which `spirit-combat` uses first.
 - **`species.yaml`**: non-human adventurers (optional, with the Referee's permission): the
   `species` type (characteristic dice, the averages in brackets, movement, flying and swimming,
   natural armour, natural weapons, a Troll's regeneration). Its effects set each
@@ -696,6 +707,14 @@ made by its random start. `pnpm validate` passes with no error or warning.
   Earth Scream included), their traits read from the chapters' italic lines by a script. A spell
   with a descriptor (Detect (Type), Energy Projection (Type), Call (Elemental)…) is taken once per
   descriptor. Only the names and traits are in the pack: the effects are the book's.
+- **Creatures (72)**: the chapter's 42 (the four nymphs and five spirits each their own), the
+  four sizes of elemental and the werewolf's two forms, and the 24 animals of the Animal
+  Statistics Tables, read from the chapter by a script. Their attacks are the pack's weapons when
+  named so (War Hammer, Light Crossbow…), else their own (`weapons.cr-…`: Bite (1D10)…), natural,
+  with the damage less the damage modifier the book includes; a natural attack listed under
+  Unarmed Combat attacks with it (the weapon's `skill`). Their special rules and the magic not
+  modelled (Sorcery, Divine Magic, a dragon's or vampire's other version) are their description.
+  An elemental's engulfing has no damage modifier; its CON is its SIZ, so its hit points are.
 
 ### Creation (`rules/creation.yaml`)
 
@@ -751,8 +770,9 @@ Enhance and Diminish (characteristic): the player adds them as a modifier), the 
 familiar and the priest's Allied Spirit (each its own character), the other effects of
 Transcendence and Ascension (immortality, immunities), a poison's or disease's effects other
 than damage (a characteristic penalty, sleep: the player notes them), the illumination rules
-beyond the combat situations, ships and naval combat (a vessel isn't a character), creatures, animals and
-transport. Breaking objects is an Athletics test.
+beyond the combat situations, ships and naval combat (a vessel isn't a character), animals'
+and transport's costs. Breaking objects is an Athletics test. Creatures' special abilities
+(breath, gaze, regeneration, possession…) are text: the Referee applies them.
 
 ## The OpenQuest tools
 
