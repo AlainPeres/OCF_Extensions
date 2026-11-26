@@ -194,6 +194,19 @@
         padding: 4px 0;
         border-bottom: 1px solid var(--line);
       }
+      table.copies td {
+        padding: 3px 4px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      table.copies .score {
+        font-weight: 700;
+        font-size: 15px;
+        width: 3.5em;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      table.copies .state,
       .copy .state {
         color: var(--muted);
         font-size: 12px;
@@ -675,21 +688,61 @@
               `<h3>${esc(g.label)}</h3><table>${g.fields.map((f) => `<tr><td>${esc(f.label)}</td><td class="num">${esc(f.value)}</td></tr>`).join('')}</table>`,
           )
           .join('');
-        $('copies').innerHTML = v.copies.length
-          ? v.copies
-              .map(
-                (
-                  c,
-                ) => `<div class="copy"><b>${esc(c.label)}</b> <span class="badge">${esc(c.type)}</span>${c.equipped ? ' <span class="badge">equipped</span>' : ''}${c.quantity !== undefined ? ` ×${esc(c.quantity)}` : ''}
-          ${c.state.length || c.computed.length ? `<div class="state">${[...c.state.map((s) => `${esc(s.label)}: ${esc(s.value)}`), ...c.computed.map((s) => `${esc(s.key)}: ${esc(s.value)}`)].join(' · ')}</div>` : ''}</div>`,
-              )
-              .join('')
-          : '<p class="muted">Nothing yet.</p>';
+        $('copies').innerHTML = renderCopies(v);
         if (!$('saveFile').value || $('saveFile').dataset.sid !== v.sid) {
           $('saveFile').value = v.file || `extensions/${v.character.id}.yaml`;
           $('saveFile').dataset.sid = v.sid;
         }
         if (!$('yaml').classList.contains('hidden')) showYaml();
+      }
+      // The copies by content type, one table each: the name, the copy's score (its computed
+      // `total` when it has one, else its first computed number: a skill's total) in its own
+      // column, and the rest of its state and computed values, quieter. Copies the pack's display
+      // hints hide are counted, not listed.
+      function renderCopies(v) {
+        const shown = v.copies.filter((c) => !c.hidden);
+        if (!shown.length) return '<p class="muted">Nothing yet.</p>';
+        const hidden = v.copies.length - shown.length;
+        const byType = new Map();
+        for (const c of shown) byType.set(c.type, [...(byType.get(c.type) ?? []), c]);
+        const scoreOf = (c) => {
+          const total = c.computed.find((x) => x.key === 'total');
+          return total ? total.value : c.score;
+        };
+        return (
+          [...byType]
+            .map(([type, list]) => {
+              const rows = list
+                .map((c) => {
+                  const score = scoreOf(c);
+                  const details = [
+                    ...c.state
+                      .filter(
+                        (s) =>
+                          s.value !== '' &&
+                          s.value !== '0' &&
+                          s.value !== 'false' &&
+                          s.value !== '-1',
+                      )
+                      .map((s) => `${esc(s.label)} ${esc(s.value)}`),
+                    ...c.computed
+                      .filter(
+                        (x) =>
+                          x.key !== 'total' &&
+                          String(x.value) !== String(score) &&
+                          x.value !== 'false',
+                      )
+                      .map((x) =>
+                        x.value === 'true' ? esc(x.key) : `${esc(x.key)} ${esc(x.value)}`,
+                      ),
+                  ];
+                  return `<tr><td>${esc(c.label)}${c.equipped ? ' <span class="badge">equipped</span>' : ''}${c.quantity > 1 ? ` ×${esc(c.quantity)}` : ''}${details.length ? `<div class="state">${details.join(' · ')}</div>` : ''}</td><td class="num score">${score ?? ''}</td></tr>`;
+                })
+                .join('');
+              return `<h3>${esc(type)} <small class="muted">(${list.length})</small></h3><table class="copies">${rows}</table>`;
+            })
+            .join('') + (hidden ? `<p class="muted">${hidden} hidden by the pack.</p>` : '')
+        );
       }
       async function showYaml() {
         $('yaml').textContent = await api('/api/yaml', { sid: state.sid });
