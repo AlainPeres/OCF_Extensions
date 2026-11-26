@@ -1803,9 +1803,8 @@
 
       // --- Actions ---------------------------------------------------------------------------------
       async function loadFile(f) {
-        const out = await api(`/api/load?file=${encodeURIComponent(f)}`);
-        ch = out.character;
-        sheet = out.sheet;
+        ch = await api(`/api/file?file=${encodeURIComponent(f)}`);
+        sheet = await api('/api/compute', { character: ch });
         file = f;
         setDirty(false);
         render();
@@ -1818,7 +1817,7 @@
         const before = Number(ch.values?.[key] ?? 0);
         ch.values = { ...(ch.values ?? {}), [key]: Math.max(0, before - n) };
         if (!ch.values[key]) delete ch.values[key];
-        sheet = await api('/api/sheet', { character: ch });
+        sheet = await api('/api/compute', { character: ch });
         setDirty(true);
         render();
         logEntry(
@@ -1837,7 +1836,7 @@
         };
         $('btnSave').onclick = async () => {
           if (!ch || !file) return toast('Load a character first');
-          const r = await api('/api/save', { character: ch, file });
+          const r = await api('/api/save-file', { character: ch, file, overwrite: true });
           setDirty(false);
           toast(`Saved: ${r.file}`);
         };
@@ -1997,7 +1996,7 @@
           const key = P('martial.style');
           ch.values = { ...(ch.values ?? {}), [key]: $('martialStyle').value };
           if (ch.values[key] === 'none') delete ch.values[key];
-          sheet = await api('/api/sheet', { character: ch });
+          sheet = await api('/api/compute', { character: ch });
           setDirty(true);
           render();
         });
@@ -2128,11 +2127,12 @@
           .join('');
         for (const el of document.querySelectorAll('[data-sit]')) el.onchange = updateSitCount;
         bind();
-        const files = await api('/api/characters');
+        // The SagaS characters of examples/characters/ (extensions/ included).
+        const files = await api('/api/characters?pack=sagas-core');
         $('loadSelect').innerHTML =
           '<option value="">Load a character…</option>' +
           files.map((f) => `<option>${esc(f)}</option>`).join('');
-        const first = files.find((f) => f !== 'sagas-test.yaml') ?? files[0];
+        const first = files.find((f) => !f.endsWith('/sagas-test.yaml')) ?? files[0];
         if (first) await loadFile(first);
       })();
     </script>

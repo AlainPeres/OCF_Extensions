@@ -1104,7 +1104,8 @@
 
       // --- Actions ---------------------------------------------------------------------------------
       async function refreshList() {
-        const files = await api('/api/characters');
+        // The SagaS characters of examples/characters/ (extensions/ included).
+        const files = await api('/api/characters?pack=sagas-core');
         $('loadSelect').innerHTML =
           '<option value="">Load…</option>' +
           files.map((f) => `<option>${esc(f)}</option>`).join('');
@@ -1194,7 +1195,7 @@
         };
         $('loadSelect').onchange = async (e) => {
           if (!e.target.value) return;
-          const loaded = await api(`/api/load?file=${encodeURIComponent(e.target.value)}`);
+          const loaded = await api(`/api/file?file=${encodeURIComponent(e.target.value)}`);
           ch = { features: [], inventory: [], values: {}, ...loaded };
           for (const f of ch.features) f.state ??= { learning: 0 };
           e.target.value = '';
@@ -1202,7 +1203,7 @@
           toast(`Loaded: ${ch.id}`);
         };
         $('btnYaml').onclick = async () => {
-          const text = await api('/api/yaml', { character: ch });
+          const text = await api('/api/yaml-file', { character: ch });
           const a = Object.assign(document.createElement('a'), {
             href: URL.createObjectURL(new Blob([text], { type: 'text/yaml' })),
             download: `${ch.id}.yaml`,
@@ -1211,7 +1212,7 @@
           URL.revokeObjectURL(a.href);
         };
         $('btnSave').onclick = async () => {
-          const save = (overwrite) => api('/api/save', { character: ch, overwrite });
+          const save = (overwrite) => api('/api/save-file', { character: ch, overwrite });
           try {
             const r = await save(false);
             toast(`Saved: ${r.file}`);
