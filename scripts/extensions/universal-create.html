@@ -397,9 +397,12 @@
         renderPause(v);
         // The actions the rules offer now, those tagged `creation` first, the others folded away; the
         // creation starts' own actions run from the starts.
-        const acts = v.actions.filter((a) => !a.start && !a.entry); // the items' actions are for play
-        const main = acts.filter((a) => a.forCreation);
-        const other = acts.filter((a) => !a.forCreation);
+        // The pack's display hints may hide some now (SagaS: the actions of play while creating);
+        // with action groups, the grouped ones lead and the rest is folded away.
+        const acts = v.actions.filter((a) => !a.start && !a.entry && !a.hiddenByPack); // the items' actions are for play
+        const grouped = acts.some((a) => a.group);
+        const main = grouped ? acts.filter((a) => a.group) : acts.filter((a) => a.forCreation);
+        const other = grouped ? acts.filter((a) => !a.group) : acts.filter((a) => !a.forCreation);
         $('secActions').classList.toggle('hidden', busy || !acts.length);
         const buttons = (list, box) => {
           $(box).innerHTML = list
@@ -410,6 +413,21 @@
             .forEach((b) => (b.onclick = () => openForm(list[b.dataset.i])));
         };
         buttons(main, 'actions');
+        if (grouped) {
+          // A heading per group, in the pack's order.
+          $('actions').innerHTML = (v.actionGroups ?? [])
+            .map((g) => {
+              const list = main.map((a, i) => [a, i]).filter(([a]) => a.group === g);
+              return list.length
+                ? `<div class="actGroup"><h3>${esc(g)}</h3><div class="row">${list.map(([a, i]) => `<button data-i="${i}">${esc(a.label)}</button>`).join('')}</div></div>`
+                : '';
+            })
+            .join('');
+          $('actions')
+            .querySelectorAll('button')
+            .forEach((b) => (b.onclick = () => openForm(main[b.dataset.i])));
+        }
+        $('actions').classList.toggle('row', !grouped);
         buttons(other, 'otherActions');
         $('actions').classList.toggle('hidden', !main.length);
         $('otherBox').classList.toggle('hidden', !other.length);

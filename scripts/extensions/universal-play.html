@@ -204,6 +204,11 @@
         color: var(--muted);
         font-size: 12px;
       }
+      .actGroup h3 {
+        margin: 8px 0 2px;
+        font-size: 13px;
+        color: var(--muted);
+      }
       .copy .acts {
         display: inline-flex;
         gap: 4px;
@@ -486,9 +491,21 @@
         renderOffers(v, busy);
         renderSituation(v, busy);
         // The rules' actions; the items' are on their copies below.
-        const rulesActs = v.actions.filter((a) => !a.entry && !a.start);
+        const rulesActs = v.actions.filter((a) => !a.entry && !a.start && !a.hiddenByPack);
         $('secActions').classList.toggle('hidden', busy || !rulesActs.length);
-        $('actions').innerHTML = rulesActs.map((a, i) => actionButtons(a, `r${i}`)).join('');
+        // By the pack's action groups (display hints), in their order, the others last; without
+        // groups, one row.
+        const grouped = (v.actionGroups ?? []).length > 0;
+        $('actions').classList.toggle('row', !grouped);
+        $('actions').innerHTML = grouped
+          ? [...v.actionGroups, undefined]
+              .map((g) => {
+                const list = rulesActs.map((a, i) => [a, i]).filter(([a]) => a.group === g);
+                if (!list.length) return '';
+                return `<div class="actGroup"><h3>${esc(g ?? 'Other')}</h3><div class="row">${list.map(([a, i]) => actionButtons(a, `r${i}`)).join('')}</div></div>`;
+              })
+              .join('')
+          : rulesActs.map((a, i) => actionButtons(a, `r${i}`)).join('');
         bindActions($('actions'), rulesActs, 'r');
         renderSheet(v, busy);
         renderInputs(v, busy);

@@ -367,6 +367,29 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
       .filter((s: Any) => !s.saved)
       .map((s: Any) => copy({ id: s.entry, item: s.item }, listOf(s.item))),
   ];
+  // The pack's action groups (display hints, `kind: actions`): each listed action's group, the
+  // first shown group holding it, by its label; `actionGroups` keeps their order.
+  const groupLabel = (id: string) =>
+    L.releases.map((r) => t.message(r.manifest.id, `groups.${id}.label`)).find(Boolean) ?? id;
+  const actionKey = (a: Any) => [a.action, a.entry ?? '', a.source ?? ''].join('|');
+  const groupOfAction = new Map<string, string>();
+  const actionGroups: string[] = [];
+  // Held by a group the hints hide now (SagaS: the actions of play while creating), by no shown one.
+  const inHiddenGroup = new Set<string>();
+  for (const g of sheet.groups ?? [])
+    if (Array.isArray(g.actions) && g.shown === false)
+      for (const i of g.actions)
+        if (sheet.actions?.[i]) inHiddenGroup.add(actionKey(sheet.actions[i]));
+  for (const g of sheet.groups ?? []) {
+    if (!Array.isArray(g.actions) || g.shown === false) continue;
+    const label = groupLabel(g.id);
+    for (const i of g.actions) {
+      const a = sheet.actions?.[i];
+      if (!a || groupOfAction.has(actionKey(a))) continue;
+      groupOfAction.set(actionKey(a), label);
+      if (!actionGroups.includes(label)) actionGroups.push(label);
+    }
+  }
   // The actions available now, the rules' and the items' (`entry`, the copy).
   // `start`: run from a creation start; `forCreation`: tagged `creation` (local or qualified).
   const actions = (sheet.actions ?? [])
@@ -384,6 +407,8 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
         label: actionLabel(L, S.character, sheet, ref),
         name: t.action(a.action),
         start: !a.entry && (R.creation ?? []).some((s: Any) => s.action === a.action),
+        group: groupOfAction.get(actionKey(a)),
+        hiddenByPack: !groupOfAction.has(actionKey(a)) && inHiddenGroup.has(actionKey(a)),
         forCreation: tags.some((x) => x === 'creation' || x.endsWith(':creation')),
       };
     });
@@ -450,6 +475,7 @@ function view(sid: string, extra: Record<string, unknown> = {}) {
     issues: (sheet.issues ?? []).map((i: Any) => t.issue(i)),
     pending: (sheet.pending ?? []).length,
     actions,
+    actionGroups,
     situational: (sheet.situational ?? []).map((id: string) => ({ id, label: t.situational(id) })),
     offers,
     inputs,
