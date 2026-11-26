@@ -473,7 +473,7 @@
         renderSheet(v);
       }
       // The start has run once its choices are on the sheet: a species copy.
-      const startedFor = (v) => v.copies.some((c) => tid(c) === 'species');
+      const startedFor = (v) => v.copies.some((c) => ['species', 'creature'].includes(tid(c)));
 
       function renderPause(v) {
         const p = v.paused;
@@ -711,8 +711,10 @@
           ? `<ul class="issues">${v.issues.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`
           : '';
         const val = values(v);
-        const sp = v.copies.find((c) => tid(c) === 'species');
-        $('species').textContent = sp ? `Species: ${sp.label}` : '';
+        const sp = v.copies.find((c) => ['species', 'creature'].includes(tid(c)));
+        $('species').textContent = sp
+          ? `${tid(sp) === 'creature' ? 'Creature' : 'Species'}: ${sp.label}`
+          : '';
         $('chars').innerHTML = ['str', 'con', 'dex', 'siz', 'int', 'pow', 'cha']
           .map(
             (c) =>

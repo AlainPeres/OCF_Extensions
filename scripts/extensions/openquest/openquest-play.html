@@ -623,7 +623,7 @@
         const f = fieldsOf(v);
         const name = f['identity.name']?.value || v.character.id;
         $('who').textContent = name;
-        const sp = v.copies.find((c) => tid(c) === 'species');
+        const sp = v.copies.find((c) => ['species', 'creature'].includes(tid(c)));
         $('identity').innerHTML =
           `<b style="font-size:17px">${esc(name)}</b> <span class="muted">${esc(sp ? sp.label : f['identity.species']?.value || '')}${f['identity.concept']?.value ? ' — ' + esc(f['identity.concept'].value) : ''}</span>`;
         $('issues').innerHTML = v.issues.length
