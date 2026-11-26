@@ -314,7 +314,8 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 | `scripts/extensions/sagas/sagas-create-cli.ts`               | SagaS character creation in the terminal                             |
 | `scripts/extensions/sagas/sagas-create.ts` + `.html`         | SagaS character creation in the browser                              |
 | `scripts/extensions/sagas/sagas-play.ts` + `.html`           | SagaS play sheet in the browser                                      |
-| `scripts/extensions/universal-lib.ts`                        | Shared server of the two universal tools                             |
+| `scripts/extensions/sagas/sagas-lib.ts`                      | The SagaS pages' own routes: their data, a random character          |
+| `scripts/extensions/universal-lib.ts`                        | Shared server of the universal, SagaS and OpenQuest tools            |
 | `scripts/extensions/display-lib.ts`                          | What a pack's display hints hide, for the SagaS and universal tools  |
 | `scripts/extensions/universal-create.ts` + `.html`           | Character creator for any pack                                       |
 | `scripts/extensions/universal-play.ts` + `.html`             | Play sheet for any pack and character                                |
@@ -515,6 +516,25 @@ social interactions and chases (oppositions and long-term actions), structures, 
 translation.
 
 ## The SagaS tools
+
+`sagas-create.ts` and `sagas-play.ts` are the universal tools' server (`universal-lib.ts`) with a
+page of their own, like the OpenQuest tools. Unlike those, the SagaS pages keep the character
+themselves and send it with each request: they use the server's stateless calls.
+
+| Call                                                 | Does                                                                                           |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `GET /api/characters?pack=sagas-core`                | The characters of `examples/characters/` that use the pack                                     |
+| `GET /api/file?file=`                                | A character file, its standard copies under their fixed IDs                                    |
+| `POST /api/compute {character}`                      | The sheet: values without the pack's prefix, copies, issues, what the hints hide               |
+| `POST /api/act {character, input}`                   | Runs one action, applies its changes to the character: the result, the character and its sheet |
+| `POST /api/yaml-file {character}`                    | The character as YAML                                                                          |
+| `POST /api/save-file {character, file?, overwrite?}` | Saves to `extensions/` (`<id>.yaml` by default); 409 if the file exists without `overwrite`    |
+
+`serve(title, page, port, {pack, routes})` takes the default pack and the routes only SagaS needs
+(`sagas-lib.ts`): `/api/data` (characteristics, skills, weapons and armor as the pack's files
+write them, their names, the situations, the technological levels) and, for `sagas-create`,
+`/api/random?points&tl&id`. Nothing of the rules is recoded there: the costs, totals and actions
+come from the engine. `sagas-create-cli.ts` stays on its own.
 
 - **`sagas-create-cli.ts`**: asks, in the terminal:
   1. creation points, social class and the universe's technological level (TL0–TL8);
@@ -814,7 +834,9 @@ the characters of `examples/characters/` that use `openquest-core` and save to `
     character, each with End; the stores, with Draw and Refill.
   - The rolls of each action, its result and what it changed; the other actions by theme
     (health, dangers and travel, social combat, magic, growth), each with its form; a pause (the
-    skill to raise, the spell to learn) is answered on the page.
+    skill to raise, the spell to learn) is answered on the page. The themes are the pack's
+    action groups (`rules/display.yaml`), in its order: an action the page has no control of its
+    own for appears under its group, or under "Other" if it has none.
 
 For these pages, the universal server's view also gives each copy's item, the step of a pause
 and the content applied to the character (`applied`, with its state): additions the universal
