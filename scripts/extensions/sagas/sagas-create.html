@@ -631,6 +631,11 @@
       // skills and gear above it don't exist there.
       const techLevel = () => getV('universe.techLevel', 2);
       const inUniverse = (it) => (it.fields.techLevel ?? 0) <= techLevel();
+      // Only what is above the universe's technological level is tagged: the rest is allowed.
+      const tlTag = (it) =>
+        it && (it.fields.techLevel ?? 0) > techLevel()
+          ? ` <span class="pill" style="color: var(--bad)" title="Above the universe's technological level">TL ${it.fields.techLevel}</span>`
+          : '';
       // What the pack's display hints hide, from the last computed sheet: a copy (a skill above
       // the universe's level, never raised), or an item not held that would be once held.
       const hiddenByPack = (it, copyId) =>
@@ -785,9 +790,7 @@
             sk.fields.generic
               ? '<span class="pill" title="Must be specialized; can be learned once per specialty">generic</span>'
               : '',
-            sk.fields.techLevel
-              ? `<span class="pill"${inUniverse(sk) ? '' : ' style="color: var(--bad)" title="Above the universe\'s technological level"'}>TL ${sk.fields.techLevel}</span>`
-              : '',
+            tlTag(sk),
           ].join(' ');
           const learn = (label) => {
             const b = Object.assign(document.createElement('button'), {
@@ -977,7 +980,7 @@
           const it = itemById(g.item);
           const chip = document.createElement('span');
           chip.className = 'chip';
-          chip.innerHTML = `<label title="Equipped"><input type="checkbox" ${g.equipped ? 'checked' : ''}> ${esc(it?.name ?? g.item)}</label>`;
+          chip.innerHTML = `<label title="Equipped"><input type="checkbox" ${g.equipped ? 'checked' : ''}> ${esc(it?.name ?? g.item)}</label>${tlTag(it)}`;
           chip.querySelector('input').onchange = (e) => {
             g.equipped = e.target.checked;
             change();
@@ -999,8 +1002,8 @@
         const q = $('gearSearch').value.trim().toLowerCase();
         const weapons = kind === 'weapons';
         $('gearHead').innerHTML = weapons
-          ? '<tr><th>Weapon</th><th>Kind</th><th>Skill</th><th class="num">Damage</th><th class="num" title="Maximum effect dice">DMAX</th><th class="num" title="Range on the Universal Table, and its distance">Range</th><th class="num">Min. STR</th><th class="num">TL</th><th></th></tr>'
-          : '<tr><th>Protection</th><th class="num">Protection</th><th class="num">Bullets</th><th class="num">TL</th><th></th></tr>';
+          ? '<tr><th>Weapon</th><th>Kind</th><th>Skill</th><th class="num">Damage</th><th class="num" title="Maximum effect dice">DMAX</th><th class="num" title="Range on the Universal Table, and its distance">Range</th><th class="num">Min. STR</th><th></th></tr>'
+          : '<tr><th>Protection</th><th class="num">Protection</th><th class="num">Bullets</th><th></th></tr>';
         const body = $('gear');
         body.replaceChildren();
         for (const it of D[kind]) {
@@ -1012,8 +1015,8 @@
           const skill = D.skills.find((s) => s.id === f.skill);
           const hasSkill = ch.features.some((x) => x.item === k(f.skill));
           tr.innerHTML = weapons
-            ? `<td>${esc(it.name)}</td><td>${esc(f.kind ?? '')}</td><td>${esc(skill?.name ?? '—')}${hasSkill ? ' ✓' : ''}</td><td class="num">${f.damageBonus ?? ''}</td><td class="num">${f.dmax ?? ''}</td><td class="num">${rangeText(f)}</td><td class="num">${f.strReq ?? ''}</td><td class="num">${f.techLevel ?? ''}</td><td></td>`
-            : `<td>${esc(it.name)}</td><td class="num">${f.protection ?? ''}</td><td class="num">${f.bulletProtection ?? ''}</td><td class="num">${f.techLevel ?? ''}</td><td></td>`;
+            ? `<td>${esc(it.name)}${tlTag(it)}</td><td>${esc(f.kind ?? '')}</td><td>${esc(skill?.name ?? '—')}${hasSkill ? ' ✓' : ''}</td><td class="num">${f.damageBonus ?? ''}</td><td class="num">${f.dmax ?? ''}</td><td class="num">${rangeText(f)}</td><td class="num">${f.strReq ?? ''}</td><td></td>`
+            : `<td>${esc(it.name)}${tlTag(it)}</td><td class="num">${f.protection ?? ''}</td><td class="num">${f.bulletProtection ?? ''}</td><td></td>`;
           const add = Object.assign(document.createElement('button'), {
             className: 'small',
             textContent: 'Add',
@@ -1062,6 +1065,10 @@
           ['Psychical hit points', V('hp.psychical.max')],
           ['Physical shock threshold', V('shock.physical')],
           ['Psychical shock threshold', V('shock.psychical')],
+          ['Protection', V('protection')],
+          ['Bullet protection', V('armor.bullets')],
+          ['Resilient armor (RA)', V('armor.resilient')],
+          ['Maximum impact bonus', V('impact.max')],
           ['Strength bonus', V('bonus.str')],
           ['Presence bonus', V('bonus.pre')],
           ['Reflex Dodge', V('dodge.reflex')],

@@ -551,6 +551,8 @@
           <div class="grid" id="chars"></div>
           <h2 style="margin-top: 14px">Secondary characteristics</h2>
           <div class="grid" id="secondary"></div>
+          <h2 style="margin-top: 14px">Derived values</h2>
+          <div class="grid" id="derived"></div>
         </section>
 
         <section>
@@ -626,6 +628,18 @@
               </tr>
             </thead>
             <tbody id="weapons"></tbody>
+          </table>
+          <table style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>Protection</th>
+                <th class="num">Protection</th>
+                <th class="num" title="Against bullets and impact">Bullets</th>
+                <th class="num" title="Resilient armor: armor piercing counts only above it">RA</th>
+                <th class="num" title="Shield parry bonus: contact / projectile">Parry</th>
+              </tr>
+            </thead>
+            <tbody id="armors"></tbody>
           </table>
         </section>
 
@@ -1157,6 +1171,11 @@
       const xp = () => V('xp.current') ?? 0;
       const techLevel = () => V('universe.techLevel') ?? 2;
       const tlName = (n) => D.techLevels[n] ?? `TL${n}`;
+      // Only what is above the universe's technological level is tagged: the rest is allowed.
+      const tlTag = (it) =>
+        it && (it.fields.techLevel ?? 0) > techLevel()
+          ? ` <span class="badge" style="color: var(--bad)" title="Above the universe's technological level">TL ${it.fields.techLevel}</span>`
+          : '';
       /**
        * Fills a select with [value, label, off, short] options, keeping the choice. An `off`
        * option can't be picked; a `short` one (not enough XP) can, so the list always shows a
@@ -1433,8 +1452,52 @@
           }
         }
 
+        // Bonuses, shock thresholds and protection, with what each one is for.
+        $('derived').innerHTML = [
+          ['Strength bonus', 'bonus.str', 'Added to melee damage'],
+          ['Presence bonus', 'bonus.pre', 'Gives the psychical shock threshold'],
+          [
+            'Physical shock threshold',
+            'shock.physical',
+            'Physical damage above it calls for an Endurance shock roll',
+          ],
+          [
+            'Psychical shock threshold',
+            'shock.psychical',
+            'Psychical damage above it calls for a Presence shock roll',
+          ],
+          ['Protection', 'protection', 'The armor worn: subtracted from physical damage'],
+          ['Bullet protection', 'armor.bullets', 'Against bullets and impact'],
+          ['Resilient armor (RA)', 'armor.resilient', 'Armor piercing counts only above it'],
+          [
+            'Maximum impact bonus',
+            'impact.max',
+            '2 x protection + physical shock threshold: the most a charge adds',
+          ],
+          ['Reflex Dodge', 'dodge.reflex', '2 + (Agility + Dodge) / 2'],
+          ['Simultaneous studies', 'study.limit', 'Skills studied at once'],
+        ]
+          .map(
+            ([label, f, tip]) =>
+              `<div class="stat" title="${esc(tip)}"><span class="name">${esc(label)}</span><span class="val">${V(f) ?? '—'}</span></div>`,
+          )
+          .join('');
+
         renderSkills();
         renderProgression();
+
+        // Protections carried: worn ones count (the pack adds them up).
+        const armors = (ch.inventory ?? []).filter(
+          (g) => itemOf(g.item) && itemOf(g.item).fields.protection !== undefined,
+        );
+        $('armors').innerHTML = armors.length
+          ? armors
+              .map((g) => {
+                const f = itemOf(g.item).fields;
+                return `<tr><td>${esc(itemOf(g.item).name)}${tlTag(itemOf(g.item))}${g.equipped === false ? ' <span class="muted">(not worn)</span>' : ''}</td><td class="num">${f.protection}</td><td class="num">${f.bulletProtection ?? ''}</td><td class="num">${f.resilient || ''}</td><td class="num">${f.parryContact || f.parryProjectile ? `+${f.parryContact ?? 0} / +${f.parryProjectile ?? 0}` : ''}</td></tr>`;
+              })
+              .join('')
+          : '<tr><td colspan="5" class="empty">No protection.</td></tr>';
 
         const weapons = $('weapons');
         weapons.replaceChildren();
@@ -1452,7 +1515,7 @@
             (V('chars.str') ?? 0) < (w.fields.strReq ?? 0)
               ? ` <span class="badge warn" title="Strength below the weapon's minimum: −I">STR ${w.fields.strReq}</span>`
               : '';
-          tr.innerHTML = `<td>${esc(w.name)}${g.equipped === false ? ' <span class="muted">(not equipped)</span>' : ''}${weak}</td><td>${esc(skill?.name ?? '—')}${raised ? '' : ' <span class="muted">(initial level)</span>'}</td><td class="num"><b>${total ?? ''}</b></td><td class="num">+${w.fields.damageBonus}${w.fields.kind === 'melee' ? ` +${V('bonus.str')}` : ''}</td><td class="num">${w.fields.dmax}</td><td class="num">${w.fields.ap || ''}</td><td class="num">${rangeText(w.fields)}</td><td></td>`;
+          tr.innerHTML = `<td>${esc(w.name)}${tlTag(w)}${g.equipped === false ? ' <span class="muted">(not equipped)</span>' : ''}${weak}</td><td>${esc(skill?.name ?? '—')}${raised ? '' : ' <span class="muted">(initial level)</span>'}</td><td class="num"><b>${total ?? ''}</b></td><td class="num">+${w.fields.damageBonus}${w.fields.kind === 'melee' ? ` +${V('bonus.str')}` : ''}</td><td class="num">${w.fields.dmax}</td><td class="num">${w.fields.ap || ''}</td><td class="num">${rangeText(w.fields)}</td><td></td>`;
           const cell = tr.lastElementChild;
           const atk = Object.assign(document.createElement('button'), {
             className: 'roll',
