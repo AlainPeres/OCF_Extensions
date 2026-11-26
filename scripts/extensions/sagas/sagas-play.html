@@ -61,6 +61,33 @@
         gap: 10px 18px;
         align-items: center;
       }
+      h2.theme {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin: 22px 0 8px;
+        padding-bottom: 4px;
+        border-bottom: 2px solid var(--line);
+        scroll-margin-top: 70px;
+      }
+      h2.theme:first-child {
+        margin-top: 0;
+      }
+      nav.themes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+        font-size: 13px;
+      }
+      nav.themes a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      nav.themes a:hover {
+        color: var(--text);
+        text-decoration: underline;
+      }
       header h1 {
         font-size: 17px;
         margin: 0;
@@ -471,6 +498,11 @@
       <h1 id="title">SagaS Play</h1>
       <span class="who" id="who"></span>
       <span class="combat" id="combat"></span>
+      <nav class="themes">
+        <a href="#theme-character">Character</a><a href="#theme-checks">Checks</a
+        ><a href="#theme-combat">Combat</a><a href="#theme-health">Health and dangers</a
+        ><a href="#theme-long-term">Long-term action</a><a href="#theme-progression">Progression</a>
+      </nav>
       <span class="spacer"></span>
       <span class="dirty" id="dirty"></span>
       <select id="loadSelect">
@@ -481,6 +513,7 @@
 
     <main>
       <div id="sheet">
+        <h2 class="theme" id="theme-character">Character</h2>
         <section>
           <h2>Identity</h2>
           <dl class="ident">
@@ -494,7 +527,23 @@
             <dd id="idDescription" class="text"></dd>
           </dl>
         </section>
-
+        <section>
+          <h2>Characteristics</h2>
+          <div class="grid" id="chars"></div>
+          <h2 style="margin-top: 14px">Secondary characteristics</h2>
+          <div class="grid" id="secondary"></div>
+          <h2 style="margin-top: 14px">Derived values</h2>
+          <div class="grid" id="derived"></div>
+        </section>
+        <section>
+          <h2>Possessions <small>besides weapons and protections</small></h2>
+          <div id="idPossessions" class="text"></div>
+        </section>
+        <section>
+          <h2>Background</h2>
+          <div id="idBackground" class="text"></div>
+        </section>
+        <h2 class="theme" id="theme-checks">Checks</h2>
         <section>
           <h2>Roll options <small>apply to every check</small></h2>
           <div class="row">
@@ -545,16 +594,6 @@
             </div>
           </details>
         </section>
-
-        <section>
-          <h2>Characteristics</h2>
-          <div class="grid" id="chars"></div>
-          <h2 style="margin-top: 14px">Secondary characteristics</h2>
-          <div class="grid" id="secondary"></div>
-          <h2 style="margin-top: 14px">Derived values</h2>
-          <div class="grid" id="derived"></div>
-        </section>
-
         <section>
           <h2>Skills <small id="skillCount">total = characteristic + learning level</small></h2>
           <div class="row" style="margin-bottom: 8px">
@@ -591,6 +630,7 @@
             <tbody id="skills"></tbody>
           </table>
         </section>
+        <h2 class="theme" id="theme-combat">Combat</h2>
         <section>
           <h2>
             Weapons
@@ -642,7 +682,6 @@
             <tbody id="armors"></tbody>
           </table>
         </section>
-
         <section>
           <h2>Combat <small id="combatInfo"></small></h2>
           <div class="form">
@@ -682,7 +721,7 @@
             <button id="btnProjection">Projection damage</button>
           </div>
         </section>
-
+        <h2 class="theme" id="theme-health">Health and dangers</h2>
         <section>
           <h2>Health <small id="protection"></small></h2>
           <div class="health">
@@ -768,7 +807,6 @@
             </button>
           </div>
         </section>
-
         <section>
           <h2>Dangers <small>damage taken directly, armor ignored but for explosions</small></h2>
           <div class="form">
@@ -820,7 +858,7 @@
             </button>
           </div>
         </section>
-
+        <h2 class="theme" id="theme-long-term">Long-term action</h2>
         <section>
           <h2>Long-term action <small id="longInfo"></small></h2>
           <div class="form">
@@ -843,17 +881,7 @@
             <button id="btnLongStep">Roll</button>
           </div>
         </section>
-
-        <section>
-          <h2>Possessions <small>besides weapons and protections</small></h2>
-          <div id="idPossessions" class="text"></div>
-        </section>
-
-        <section>
-          <h2>Background</h2>
-          <div id="idBackground" class="text"></div>
-        </section>
-
+        <h2 class="theme" id="theme-progression">Progression</h2>
         <section>
           <h2>Progression <small id="xpInfo"></small></h2>
           <div class="form">
