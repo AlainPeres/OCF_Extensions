@@ -1,10 +1,74 @@
-# How a sheet shows the character's copies (display hints: never part of the calculations).
+# How a sheet shows the character (display hints: never part of the calculations): the fields
+# by theme, then the copies.
 # Only what exists at the universe's technological level matters. Every skill is a standard copy
 # on every sheet: one above the level shows only once raised (its points kept, say after a change
 # of universe). Weapons and armor above it go to hidden groups too, so an app doesn't offer them;
 # one the character carries still shows (a group holding a copy that isn't standard always does).
 display:
   groups:
+    - id: identity
+      priority: 0
+      members:
+        type: field
+        where: >-
+          item.id in [@identity.name, @identity.species, @identity.profession, @identity.description, @identity.background, @identity.possessions]
+    - id: characteristics
+      priority: 0
+      members:
+        type: field
+        where: >-
+          item.id in [@chars.str, @chars.agi, @chars.end, @chars.dex, @chars.wit, @chars.wil, @chars.pre, @chars.ins]
+    - id: secondary
+      priority: 0
+      members:
+        type: field
+        where: >-
+          item.id in [@sec.cco, @sec.rco, @sec.spd, @sec.ini, @species.speed]
+    - id: derived
+      priority: 0
+      members:
+        type: field
+        where: >-
+          item.id in [@bonus.str, @bonus.pre, @shock.physical, @shock.psychical, @protection, @armor.bullets, @armor.resilient, @impact.max, @dodge.reflex, @dodge.learning, @study.limit, @breath.rounds]
+    - id: health
+      priority: 0
+      members:
+        type: field
+        where: >-
+          item.id in [@hp.physical.max, @injury.physical, @stun.physical, @damage.physical, @hp.psychical.max, @injury.psychical, @stun.psychical, @damage.psychical, @state.fainted, @state.shaken, @state.stabilized, @state.dying, @state.unconscious, @state.dead, @state.confused, @state.mad]
+    - id: combat
+      priority: 0
+      members:
+        type: field
+        where: >-
+          item.id in [@combat.initiative, @bonus.spd, @shield.contact, @shield.missile, @martial.style]
+    - id: martial-arts
+      priority: 0
+      showWhen: "martial.style != 'none'"
+      members:
+        type: field
+        where: >-
+          item.id in [@martial.learning, @martial.strike, @martial.projection, @martial.hold, @martial.strength.strike, @martial.strength.projection, @martial.strength.hold, @bonus.martial, @martial.dmax, @martial.twoWeapons]
+    - id: long-term
+      priority: 0
+      showWhen: 'long.active'
+      members:
+        type: field
+        where: >-
+          item.id in [@long.total, @long.target, @long.failAt, @long.steps, @long.active]
+    - id: progression
+      priority: 0
+      members:
+        type: field
+        where: >-
+          item.id in [@xp.current, @xp.earned, @universe.techLevel]
+    - id: creation-points
+      priority: 0
+      showWhen: 'character.creating'
+      members:
+        type: field
+        where: >-
+          item.id in [@creation.points, @creation.social, @points.budget, @points.chars, @points.secondary, @points.skills, @points.spent, @points.remaining, @creation.cco, @creation.rco, @creation.spd, @creation.ini]
     - id: skills
       kind: content
       priority: 1

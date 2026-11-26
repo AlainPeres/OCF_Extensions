@@ -650,3 +650,14 @@ situational.parryFastMissile.name: 'Parry a fast missile [-1]'
 situational.parryStrongCreature.name: 'Parry a much stronger opponent (Strength +10) [-2]'
 situational.shieldContact.name: 'Parry with the shield, contact attack [+shield]'
 situational.shieldMissile.name: 'Parry with the shield, missile [+shield]'
+
+groups.identity.label: Identity
+groups.characteristics.label: Characteristics
+groups.secondary.label: Secondary characteristics
+groups.derived.label: Bonuses, shock thresholds and protection
+groups.health.label: Health
+groups.combat.label: Combat
+groups.martial-arts.label: Martial arts
+groups.long-term.label: Long-term action
+groups.progression.label: Progression
+groups.creation-points.label: Creation points
