@@ -344,25 +344,59 @@ sub-folders, so it still checks them.
 
 ## Running the tools
 
-Each tool is a TypeScript file run with `tsx` and the repo's source condition, from the repo root:
+Every tool is a script of `scripts/extensions/`, run from the repo root by Node with `tsx` and the
+repo's source condition (so nothing needs a build):
 
 ```sh
-node --import tsx --conditions @opencharacter/source scripts/extensions/<tool>.ts [options]
+node --import tsx --conditions @opencharacter/source scripts/extensions/<path to the tool> [options]
 ```
 
-The SagaS tools are in `scripts/extensions/sagas/`: `scripts/extensions/sagas/<tool>.ts`; the
-D100 heroic tools in `scripts/extensions/d100/`.
+### The sheets
 
-In VS Code, open the file and press F5 (launch configuration "Exécuter le fichier TS courant
-(tsx)") or the Code Runner ▶ button. Run the `.ts` file, not the `.html`: the script starts a local
-server (127.0.0.1 only) and opens the page in the browser. `--port N` changes the port and
-`--no-open` doesn't open the browser. Ctrl+C stops the server.
+Each starts a local server (127.0.0.1 only) and opens its page in the browser; Ctrl+C in the
+terminal stops it. `--port N` changes the port, `--no-open` doesn't open the browser. Run the
+`.ts` file, not the `.html`: the page needs its server.
 
-| Tool           | Port | Options               |
-| -------------- | ---- | --------------------- |
-| `sagas.ts`     | 5180 | `--port`, `--no-open` |
-| `d100.ts`      | 5181 | `--port`, `--no-open` |
-| `universal.ts` | 5176 | `--port`, `--no-open` |
+| Sheet                                 | Port | Command                                                                                  |
+| ------------------------------------- | ---- | ---------------------------------------------------------------------------------------- |
+| SagaS (Create and Play)               | 5180 | `node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/sagas.ts` |
+| D100 heroic (Create and Play)         | 5181 | `node --import tsx --conditions @opencharacter/source scripts/extensions/d100/d100.ts`   |
+| Universal (any pack, Create and Play) | 5176 | `node --import tsx --conditions @opencharacter/source scripts/extensions/universal.ts`   |
+
+The three can run at once, on their own ports. Two copies of one sheet need `--port` for the
+second.
+
+### The command-line tools
+
+They print their result and end; no server.
+
+| Tool                                | Does                                                                                                                                |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `validate-pack.ts <pack> […]`       | `pnpm validate`'s checks on the packs given (IDs or folders) and their characters                                                   |
+| `check-links.ts <folder> [--all]`   | Before deleting a folder: where its links point ([Deleting a folder that holds junctions](#deleting-a-folder-that-holds-junctions)) |
+| `sagas/bestiary-import.mjs`         | The SagaS bestiary into the pack: creatures, their attacks, species                                                                 |
+| `sagas/bestiary-import.mjs --check` | Each creature through the creature start, against the bestiary                                                                      |
+
+```sh
+node --import tsx --conditions @opencharacter/source scripts/extensions/validate-pack.ts sagas-core d100-heroic
+node --import tsx scripts/extensions/check-links.ts D:\Developpement\FichiersTypescript\OCF_Test
+node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/bestiary-import.mjs
+node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/bestiary-import.mjs --check
+```
+
+### From VS Code
+
+Three ways, all from the repo folder opened in VS Code:
+
+- **F5**: open the tool's `.ts` file (`sagas.ts`, `d100.ts`, `universal.ts`, `validate-pack.ts`…)
+  and press F5. The launch configuration "Exécuter le fichier TS courant (tsx)" runs the open file
+  with the command above, in the integrated terminal, and stops at breakpoints. Shift+F5 stops it.
+  It runs without arguments: for `validate-pack.ts`, `check-links.ts` or `--port`, use the
+  terminal.
+- **Code Runner**: the ▶ button at the top right of the open `.ts` file (the Code Runner
+  extension) does the same, after saving the file. The stop button, or Ctrl+C in the terminal,
+  stops it.
+- **The terminal** (Ctrl+ù, or Terminal → New Terminal): type the command, with any argument.
 
 Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
 without asking). The SagaS and D100 heroic sheets list the characters of `examples/characters/` that
@@ -1042,10 +1076,14 @@ Limits of the universal tools:
 ## VS Code setup
 
 - `.vscode/launch.json`: "Exécuter le fichier TS courant (tsx)" runs the open file with
-  `--import tsx --conditions @opencharacter/source`, in the integrated terminal.
-- `.vscode/settings.json`: Code Runner runs TypeScript the same way, in the terminal, after saving.
-  `yaml.schemaStore.enable: false` stops SchemaStore from validating every `dice.yaml` against an
-  unrelated schema.
+  `--import tsx --conditions @opencharacter/source`, in the integrated terminal (F5).
+- `.vscode/settings.json`:
+  - Code Runner runs TypeScript the same way, in the terminal, after saving (the ▶ button);
+  - `yaml.schemaStore.enable: false` stops SchemaStore from validating every `dice.yaml` against
+    an unrelated schema;
+  - the explorer indents a folder's files by 16 pixels (`workbench.tree.indent`, 8 by default) and
+    always shows the indent guides (`workbench.tree.renderIndentGuides`): a sub-folder's files, such
+    as `examples/characters/extensions/`'s, stand apart from their parent's.
 
 ## GitHub setup
 
