@@ -1,9 +1,9 @@
 # Extensions
 
 Additions to the Open Character Format (OCF) repository: a pack for the _Rules of SagaS 0.995 LLL
-(OGL)_ and a D100 heroic fantasy pack from a System Resource Document under Creative Commons
-Attribution 4.0, each with a sheet to
-create and play characters in the browser, and a universal sheet for any pack. This repository
+(OGL)_, with its bestiary, and a D100 heroic fantasy pack from a System Resource Document under
+Creative Commons Attribution 4.0, each with a sheet to create and play characters in the browser,
+and a universal sheet for any pack. This repository
 (<https://github.com/AlainPeres/OCF_Extensions>, the `origin` remote) keeps OCF's whole history,
 with OCF's repository as the `upstream` remote. None of the additions is part of OCF; the rest of
 the repo (spec, engine, other packs) is OCF's, unchanged.
@@ -21,7 +21,8 @@ Everything runs from the repo's TypeScript sources, so nothing needs a build: th
 | Windows via WSL | [Windows, cloned through WSL](#windows-cloned-through-wsl) | As Windows; a full clone stays in WSL             | Yes, 2026-11-24                    |
 
 Linux and macOS take the same commands. Windows needs a few more (no checkout at first,
-`core.protectNTFS`, a sparse checkout, two links to remove) because of `boosts/con.yaml` ([The ORC packs are left out](#the-orc-packs-are-left-out)).
+`core.protectNTFS`, a sparse checkout, two links to remove) because of `boosts/con.yaml` ([The ORC
+packs are left out](#the-orc-packs-are-left-out)).
 
 ### Requirements
 
@@ -113,14 +114,15 @@ with 74% of tracked files present`.
 
 In Git Bash instead of PowerShell, the commands are the same except the two `rmdir`:
 `cmd //c rmdir 'packages\packs\node_modules\@opencharacter\orc-2e'` (and the same for
-`orc-sf-2e`). To delete a clone later, `cmd /c rmdir /s /q <folder>` from PowerShell is the
-fastest; Windows Explorer works too, with Shift+Delete
-([Deleting a folder that holds junctions](#deleting-a-folder-that-holds-junctions)).
+`orc-sf-2e`). To delete a clone later, use `cmd /c rmdir /s /q <folder>` from PowerShell: it
+never follows a link, and it is the fastest. A clone's links all point inside it, which
+`check-links.ts` confirms ([Deleting a folder that holds
+junctions](#deleting-a-folder-that-holds-junctions)).
 
 What works: the SagaS and D100 heroic sheets, the universal sheet (which even loads the ORC packs,
 from git: [PF2 in the universal tools](#pf2-in-the-universal-tools)), `pnpm validate` on the 15
-packs on disk,
-`pnpm typecheck`, and merges from `upstream`. What doesn't: `pnpm validate` and `pnpm test` on the
+packs on disk, `pnpm typecheck`, and merges from `upstream`. What doesn't: `pnpm validate` and `pnpm
+test` on the
 ORC packs, editing them, and `pnpm lint` on OCF's files ([GitHub setup](#github-setup)).
 
 #### `core.protectNTFS`
@@ -220,7 +222,8 @@ rsync -a --exclude '/packs/orc/' --exclude '/examples/characters/orc-*.yaml' \
 echo $?                           # 0: everything copied
 ```
 
-- `D:\Developpement\FichiersTypescript\OCF_Test` is `/mnt/d/Developpement/FichiersTypescript/OCF_Test`
+- `D:\Developpement\FichiersTypescript\OCF_Test` is
+  `/mnt/d/Developpement/FichiersTypescript/OCF_Test`
   in WSL.
 - The two `--exclude` leave out `packs/orc/` (it holds the two `con.yaml`, which Windows can't
   create) and the 19 ORC example characters (their pack is missing), as a Windows clone does. Their
@@ -265,9 +268,9 @@ The copy is then an ordinary Windows clone: everything in [Windows](#windows) ap
   `rm -rf ~/OCF_Extensions` in Ubuntu (Linux's `rm` doesn't follow links, so it touches nothing
   outside the folder). If kept, don't work in both: push from the Windows copy, and
   `git pull` in WSL before copying again.
-- **To copy again from scratch,** delete the Windows copy first: `cmd /c rmdir /s /q <folder>` from
-  PowerShell, or Windows Explorer with Shift+Delete, slower
-  ([Deleting a folder that holds junctions](#deleting-a-folder-that-holds-junctions)).
+- **To copy again from scratch,** delete the Windows copy first, with `cmd /c rmdir /s /q <folder>`
+  from PowerShell ([Deleting a folder that holds
+  junctions](#deleting-a-folder-that-holds-junctions)).
 - **WSL itself,** if it served only for this: `wsl --unregister Ubuntu-22.04` deletes the
   distribution and **everything** in it.
 
@@ -370,8 +373,9 @@ another name, goes to `extensions/`.
 ## The SagaS pack (`packs/sagas/core`)
 
 Pack ID `sagas-core`, version 0.1.0, spec 0.4.0, licensed under OGL 1.0a (license text and
-section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all English text in
-`i18n/en.yaml`. `pnpm validate` passes with no error or warning.
+section 15 in `pack.yaml`, the bestiary's line included). Mechanics live in `rules/` and
+`content/`, all English text in `i18n/en.yaml`, but the creatures' in `i18n/en/creatures.yaml`.
+`pnpm validate` passes with no error or warning.
 
 ### Rules (`rules/`)
 
@@ -404,7 +408,18 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
   (attack in the back, aim…). `characteristic-check`, `skill-check` and `opposed-check` use it.
   `damage` rolls the degree's dice, capped at the weapon's DMAX. `take-damage` subtracts the
   protection less the armor piercing (or none for an attack that ignores armor), then deals stun
-  or injuries and rolls shock. Recovery (section 5.6): `rest-short` (10 minutes after damage: stun cured, 5 physical injuries healed per degree of an Endurance roll) and `rest-day` (once a day after a sleep: stun cured, the degree of an Endurance roll in physical injuries, +I with complete rest, and of a Presence roll in psychical ones; doubled in a medical institution). A failed shock roll faints (`state.fainted`, physical) or confuses (`state.shaken`, psychical); the rests clear both. A character at its hit points is dying (`state.dying`): `bleed` loses 1 injury every 4 rounds. First aid is rolled by the helper on their own sheet (a skill check), and the patient's player reports it with `first-aid-received`: woken, stabilized (`state.stabilized`, ended by new physical damage), or a fumble (an Endurance shock roll; failed, the injuries go to the death threshold). `resist-poison`: Physical Resistance against the virulence, plus first aid's degree as reported; a final degree of I resists. No sheet acts on another: what one character does to another goes through the players.
+  or injuries and rolls shock. Recovery (section 5.6): `rest-short` (10 minutes after damage: stun
+  cured, 5 physical injuries healed per degree of an Endurance roll) and `rest-day` (once a day
+  after a sleep: stun cured, the degree of an Endurance roll in physical injuries, +I with
+  complete rest, and of a Presence roll in psychical ones; doubled in a medical institution). A
+  failed shock roll faints (`state.fainted`, physical) or confuses (`state.shaken`, psychical);
+  the rests clear both. A character at its hit points is dying (`state.dying`): `bleed` loses 1
+  injury every 4 rounds. First aid is rolled by the helper on their own sheet (a skill check), and
+  the patient's player reports it with `first-aid-received`: woken, stabilized
+  (`state.stabilized`, ended by new physical damage), or a fumble (an Endurance shock roll;
+  failed, the injuries go to the death threshold). `resist-poison`: Physical Resistance against
+  the virulence, plus first aid's degree as reported; a final degree of I resists. No sheet acts
+  on another: what one character does to another goes through the players.
 - **`gear.yaml`**: weapons (kind, skill, damage bonus, required Strength, DMAX, range on the
   Universal Table, armor piercing (AP), technological level; for the examples of 14.3, shots,
   rate of fire, weight, tripod) with their damage action: extra dice for bursts and bullets, a
@@ -412,10 +427,12 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
   and shield parry bonuses count while equipped. `take-damage` halves the protection for each
   point of AP above the RA (7.4), using the bullet protection against bullets or impact.
 - **`creation.yaml`**: the creation starts and their actions (below).
-- **`advancement.yaml`**: the evolution of the characters ([below](#advancement-rulesadvancementyaml)).
+- **`advancement.yaml`**: the evolution of the characters
+  ([below](#advancement-rulesadvancementyaml)).
 - **`display.yaml`**: display hints (never part of the calculations). Field groups, for the sheets
-  that follow them (the universal sheet in Play): identity, characteristics, secondary characteristics, bonuses,
-  shock thresholds and protection, health, combat, martial arts (with a style), a long-term action
+  that follow them (the universal sheet in Play): identity, characteristics, secondary
+  characteristics, bonuses, shock thresholds and protection, health, combat, martial arts (with a
+  style), a long-term action
   (while one is on), progression, creation points (while creating). Action groups, by their tags:
   checks, combat, health and rest, dangers, the long-term action, progression (with learning a
   generic skill), creation (while creating; the others then hidden). Content groups keep to the
@@ -462,7 +479,8 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
 
 ### Creation (`rules/creation.yaml`)
 
-Two creation starts, as every OCF pack that starts a sheet has.
+Three creation starts: the guided and the random one, as every OCF pack that starts a sheet has,
+and the creature start ([Creatures](#creatures-rulescreaturesyaml)).
 
 - **Guided** (`create-character`): it asks, in order:
 
@@ -492,8 +510,9 @@ Two creation starts, as every OCF pack that starts a sheet has.
 - **Constraint `creation-within-budget`**: while the character is being created, no more points
   may be spent than the budget allows; a creature isn't bought with points.
 
-The three creation actions carry the `creation` tag, which the universal sheet's Create mode uses to
-show them first when a pack has no action groups.
+The creation actions (`create-character`, `learn-specialty`, `finish-creation`,
+`create-creature`) carry the `creation` tag, which the universal sheet's Create mode uses to show
+them first when a pack has no action groups.
 
 ### Creatures (`rules/creatures.yaml`)
 
@@ -524,7 +543,8 @@ finishes the sheet at once.
   (venom, grapple, reach…), its skills as written, its special abilities and variants. They are
   the referee's to apply.
 - The bestiary is a draft: after changing it, run the import again
-  (`node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/bestiary-import.mjs`),
+  (`node --import tsx --conditions @opencharacter/source
+  scripts/extensions/sagas/bestiary-import.mjs`),
   then `--check` and `validate-pack.ts sagas-core`.
 
 ### Advancement (`rules/advancement.yaml`)
@@ -545,7 +565,8 @@ value rises with it), and a skill bought with a trainer at full price.
 
 The improvements are offered as soon as the creation is finished, and end with "not enough
 experience points" when the pool can't pay. A generic or "Other" skill's new specialty is
-learned with `learn-specialty`, which asks it (and its initial level). The trainer halves skills only, as
+learned with `learn-specialty`, which asks it (and its initial level). The trainer halves skills
+only, as
 the book says ("total skill level"). Not modelled: the referee's agreement on each choice, and the
 limit on simultaneous studies (`study.limit`, shown as a reminder). Characters made before this
 have `universe.techLevel` 2 by default: `set-tech-level` corrects it. Files written before the
@@ -583,8 +604,9 @@ request: they use the server's stateless calls.
 `serve(title, page, port, {pack, routes, pages})` takes the default pack, the other pages it serves
 (a sheet's modes, `/create` and `/play`) and the routes only SagaS needs
 (`sagas-lib.ts`): `/api/data` (characteristics, skills, weapons and armor as the pack's files
-write them, their names, the situations, the technological levels) and, for Create,
-`/api/random?points&tl&id`. Nothing of the rules is recoded there: the costs, totals and actions
+write them, their names, the situations, the technological levels, and for Create the bestiary's
+creatures) and, for Create, `/api/random?points&tl&id`. Nothing of the rules is recoded there: the
+costs, totals and actions
 come from the engine.
 
 - **Create** (`sagas-create.html`): point costs come from the pack's formulas; the page
@@ -604,20 +626,23 @@ come from the engine.
   load and save. "Creature…" makes a creature sheet of the bestiary (the pack's creature start),
   for the referee; natural weapons aren't offered as gear.
 
-- **Play** (`sagas-play.html`): a play sheet, its sections by theme (character, checks, combat, health and
-  dangers, long-term action, progression), the header linking to each:
+- **Play** (`sagas-play.html`): a play sheet, its sections by theme (character, checks, combat,
+  health and dangers, long-term action, progression), the header linking to each:
 
   - identity, with Initiative, Speed and Reflex Dodge in the header;
   - characteristic and skill rolls with difficulty, modifier and situation. Skills are grouped by
     characteristic and filtered (all, points spent, total > 0), with one row per specialty;
   - weapons with attack, damage and parry, DMAX, AP and range (a creature's attack at its own
-    score, without parry); extra dice (bursts, bullets) and
-    charge for the damage; help, neighboring and simultaneous skills for skill rolls;
+    score, without parry); extra dice (bursts, bullets) and charge for the damage; help,
+    neighboring and simultaneous skills for skill rolls;
   - combat: initiative (kept for the fight), Reflex Dodge, Dodge, martial arts (style, strike and
     projection damage), the combat modifiers among the situations;
   - dangers: fall, holding one's breath and suffocation, flames, explosion; a long-term action
     (start, then a roll a step with a skill, against an opposition);
-  - taking damage with armor piercing, bullets or impact, or ignoring armor; recovery: 10 minutes of rest, a day's rest (complete rest, medical institution), healing by hand; first aid received (woken, stabilized, fumble), bleeding while dying, resisting a poison; badges for fainted, dying, stabilized and confused by a shock;
+  - taking damage with armor piercing, bullets or impact, or ignoring armor; recovery: 10 minutes
+    of rest, a day's rest (complete rest, medical institution), healing by hand; first aid
+    received (woken, stabilized, fumble), bleeding while dying, resisting a poison; badges for
+    fainted, dying, stabilized and confused by a shock;
   - progression, with the pack's advancement actions: experience points at the end of a
     scenario (plus a bonus), a main or secondary characteristic raised (its cost in each option,
     marked when the XP can't pay), a skill raised one step with ▲ in the skills table (with a
@@ -636,8 +661,8 @@ SRD" (`how_to_use_the_openquest_srd.md`). That document sets the terms the pack 
 
 - its **Attribution Notice**, verbatim, is the pack's `credit` (in `pack.yaml` and `LICENSE`);
 - **no trademark outside the license text**: the game's name appears only in that notice, so the
-  pack, its ID and its sheet carry a generic name (as OCF's `orc-2e` does for its game). The pack
-  was `d100-heroic` until 2026-11-27;
+  pack, its ID and its sheet carry a generic name (as OCF's `orc-2e` does for its game). Its
+  former ID, which named the game, changed on 2026-11-27;
 - **no logo**, and **the SRD's text only**: nothing from the full rulebook. A `not-affiliated`
   notice says the pack isn't the publisher's product.
 
@@ -798,7 +823,8 @@ The D100 heroic sheet ([below](#the-d100-heroic-tools)) and the universal sheet 
 
 1. The species: human (the random start's), or one of 13 others. Then the characteristics: by
    points or by dice. A non-human by points starts from its averages with ten points to spread,
-   up to its maximum; by dice it rolls its own. By points, every characteristic starts from 3 (INT and
+   up to its maximum; by dice it rolls its own. By points, every characteristic starts from 3 (INT
+   and
    SIZ from 8) with 55 points to spread, 18 at most: the book's 8 each and 30 points, lowering
    allowed. By dice, 3D6 (SIZ and INT 2D6 + 6). The random start rolls.
 2. Resources: starting cash (4D6 x 10 SP) or the optional Wealth skill.
@@ -927,7 +953,8 @@ it was, any other to `extensions/`) and shows the YAML.
     by group, the copies as one table per content type with their total in its own column.
 
   The guided and random starts of the 15 packs on disk were tested, and the random starts of the
-  two ORC packs (PF2, read from git on Windows: [PF2 in the universal tools](#pf2-in-the-universal-tools)).
+  two ORC packs (PF2, read from git on Windows: [PF2 in the universal
+  tools](#pf2-in-the-universal-tools)).
 
 - **Play**: load any example character and play it:
 
@@ -1085,7 +1112,8 @@ packs: any pack a sparse checkout leaves out is read the same way. On macOS or L
 files are on disk and this doesn't kick in.
 
 - Both packs are listed with their two creation starts, guided and random.
-- The 19 ORC example characters (`orc-*.yaml`: 17 for `orc-2e`, 2 for `orc-sf-2e`) are listed and load. Saving one writes it to
+- The 19 ORC example characters (`orc-*.yaml`: 17 for `orc-2e`, 2 for `orc-sf-2e`) are listed and
+  load. Saving one writes it to
   `examples/characters/extensions/`, since its own place is left out of the checkout.
 - The version read is the commit checked out (`HEAD`): after `git merge upstream/main`, restart the
   tool to get the new one.
@@ -1132,9 +1160,11 @@ like the other packs'). So `pnpm install --frozen-lockfile` works as is, then re
 links ([above](#pnpms-links-to-the-orc-packs)).
 
 Don't run a plain `pnpm install` on Windows: it would rewrite `pnpm-lock.yaml` without the ORC
-packs, which aren't on disk. If a merge from `upstream` ever drops the `packs/sagas/core` entry
-(a frozen install then stops with `ERR_PNPM_OUTDATED_LOCKFILE`), add it back next to
-`packs/swn/revised`:
+packs, which aren't on disk. If a merge from `upstream` ever drops the `packs/sagas/core` or
+`packs/d100/heroic` entry
+(a frozen install then stops with `ERR_PNPM_OUTDATED_LOCKFILE`), add it back in path order
+(`packs/d100/heroic` before `packs/draw-steel/heroes`, `packs/sagas/core` before
+`packs/swn/revised`), the same for both but the path:
 
 ```yaml
 packs/sagas/core:
@@ -1281,5 +1311,6 @@ says nothing of the other way round: the original may hold links into the copy. 
 
 Windows PowerShell 5 reads files in the ANSI code page unless told otherwise, so a
 `Get-Content`/`Set-Content` round trip garbles non-ASCII characters (`→` becomes `â†’`). Pass
-`-Encoding utf8` on reads, or edit files with VS Code or Node. `Set-Content -Encoding utf8` also adds
+`-Encoding utf8` on reads, or edit files with VS Code or Node. `Set-Content -Encoding utf8` also
+adds
 a BOM.
