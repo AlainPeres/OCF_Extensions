@@ -73,6 +73,8 @@ actions:
           - { type: set, field: chars.pre, value: steps.creature.item.pre }
           - { type: set, field: chars.ins, value: steps.creature.item.ins }
           - { type: set, field: species.speed, value: steps.creature.item.speed }
+          # Not "Human", the default: the creature (its copy) says what it is.
+          - { type: set, field: identity.species, value: "''" }
           - { type: set, field: protection, value: steps.creature.item.protection }
       - id: kit
         kind: changes

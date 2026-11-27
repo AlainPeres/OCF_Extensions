@@ -84,7 +84,9 @@ const playData = {
       nameOf(`bands.degree.${b}`),
     ]),
   ),
-  items: Object.fromEntries([...skills, ...allWeapons, ...armors].map((i) => [key(i.id), i])),
+  items: Object.fromEntries(
+    [...skills, ...allWeapons, ...armors, ...readContent('creatures')].map((i) => [key(i.id), i]),
+  ),
   techLevels,
 };
 

@@ -1462,7 +1462,11 @@
         if (!ch) return;
         const name = V('identity.name');
         $('title').textContent = name || ch.id;
-        $('who').textContent = [V('identity.species'), V('identity.profession')]
+        // A creature sheet: the creature's name, its species being empty.
+        const creature = (ch.features ?? [])
+          .map((f) => itemOf(f.item))
+          .find((it) => it && it.id.startsWith('creatures.'));
+        $('who').textContent = [V('identity.species') || creature?.name, V('identity.profession')]
           .filter(Boolean)
           .join(' · ');
         // Always in view during a fight.
@@ -1485,7 +1489,7 @@
           ['idPossessions', 'possessions'],
           ['idBackground', 'background'],
         ]) {
-          const text = V(`identity.${field}`);
+          const text = V(`identity.${field}`) || (field === 'species' ? creature?.name : '');
           $(id).textContent = text || '—';
           $(id).classList.toggle('muted', !text);
         }
