@@ -1,0 +1,7 @@
+id: weapons.cr-hammer-8-3
+type: weapon
+fields:
+  kind: melee
+  damageBonus: 8
+  dmax: 3
+  natural: true

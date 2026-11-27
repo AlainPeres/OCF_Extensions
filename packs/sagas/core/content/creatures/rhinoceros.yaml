@@ -1,0 +1,28 @@
+id: creatures.rhinoceros
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x2
+  str: 25
+  agi: 4
+  end: 14
+  dex: 2
+  wit: 2
+  wil: 6
+  pre: 5
+  ins: 4
+  speed: 12
+  protection: 5
+  skillNames:
+    - perception
+  skillLearning:
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-horn-4-4
+  attackScores:
+    - 11

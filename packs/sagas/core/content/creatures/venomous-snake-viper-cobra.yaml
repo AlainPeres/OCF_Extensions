@@ -1,0 +1,32 @@
+id: creatures.venomous-snake-viper-cobra
+type: creature
+fields:
+  category: animal
+  threat: low
+  size: x1/4
+  str: 1
+  agi: 9
+  end: 4
+  dex: 4
+  wit: 2
+  wil: 3
+  pre: 2
+  ins: 6
+  speed: 2
+  protection: 0
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+  skillLearning:
+    - 4
+    - 4
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-0-4
+  attackScores:
+    - 11

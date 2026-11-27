@@ -1,0 +1,28 @@
+id: creatures.giant-tortoise
+type: creature
+fields:
+  category: animal
+  threat: negligible
+  size: x1
+  str: 17
+  agi: 1
+  end: 14
+  dex: 2
+  wit: 2
+  wil: 5
+  pre: 3
+  ins: 4
+  speed: 0
+  protection: 8
+  skillNames:
+    - dodge
+  skillLearning:
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 8

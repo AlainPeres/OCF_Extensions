@@ -1,0 +1,36 @@
+id: creatures.ghoul
+type: creature
+fields:
+  category: undead
+  threat: moderate
+  size: x1
+  str: 7
+  agi: 7
+  end: 7
+  dex: 5
+  wit: 4
+  wil: 6
+  pre: 3
+  ins: 7
+  speed: 6
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - tracking
+  skillLearning:
+    - 2
+    - 3
+    - 3
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 10
+    - 9

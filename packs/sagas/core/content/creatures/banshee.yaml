@@ -1,0 +1,34 @@
+id: creatures.banshee
+type: creature
+fields:
+  category: undead
+  threat: high
+  size: x1
+  str: 1
+  agi: 8
+  end: 7
+  dex: 4
+  wit: 5
+  wil: 8
+  pre: 10
+  ins: 8
+  speed: 6
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+    - intimidation
+  skillLearning:
+    - 3
+    - 4
+    - 6
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-death-wail-14-4-r6
+    - weapons.cr-chill-touch-4-2-r0
+  attackScores:
+    - 15
+    - 9

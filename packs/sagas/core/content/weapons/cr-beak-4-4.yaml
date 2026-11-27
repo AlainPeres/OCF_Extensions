@@ -1,0 +1,7 @@
+id: weapons.cr-beak-4-4
+type: weapon
+fields:
+  kind: melee
+  damageBonus: 4
+  dmax: 4
+  natural: true

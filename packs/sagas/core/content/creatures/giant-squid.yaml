@@ -1,0 +1,36 @@
+id: creatures.giant-squid
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x8
+  str: 22
+  agi: 5
+  end: 10
+  dex: 5
+  wit: 3
+  wil: 5
+  pre: 3
+  ins: 6
+  speed: 8
+  protection: 1
+  skillNames:
+    - dodge
+    - perception
+    - swimming
+    - stealth
+  skillLearning:
+    - 1
+    - 3
+    - 5
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-tentacle-4-3
+    - weapons.cr-beak-4-4
+  attackScores:
+    - 11
+    - 11

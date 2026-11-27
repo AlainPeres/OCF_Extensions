@@ -1,0 +1,38 @@
+id: creatures.centaur
+type: creature
+fields:
+  category: monster
+  threat: moderate
+  size: x2
+  str: 18
+  agi: 7
+  end: 11
+  dex: 6
+  wit: 5
+  wil: 6
+  pre: 5
+  ins: 7
+  speed: 13
+  protection: 3
+  skillNames:
+    - dodge
+    - perception
+    - survival
+    - run
+  skillLearning:
+    - 2
+    - 3
+    - 4
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-spear-6-4
+    - weapons.cr-hooves-4-3
+    - weapons.cr-longbow-9-4-r9
+  attackScores:
+    - 15
+    - 11
+    - 14

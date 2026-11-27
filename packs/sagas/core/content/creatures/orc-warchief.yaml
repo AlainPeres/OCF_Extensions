@@ -1,0 +1,40 @@
+id: creatures.orc-warchief
+type: creature
+fields:
+  category: people
+  threat: high
+  size: x1
+  str: 10
+  agi: 7
+  end: 8
+  dex: 5
+  wit: 5
+  wil: 8
+  pre: 7
+  ins: 6
+  speed: 6
+  protection: 5
+  skillNames:
+    - dodge
+    - intimidation
+    - command
+    - perception
+    - survival
+    - physical-resistance
+  skillLearning:
+    - 2
+    - 7
+    - 6
+    - 4
+    - 4
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-great-axe-12-3
+    - weapons.cr-axe-8-3
+  attackScores:
+    - 16
+    - 15

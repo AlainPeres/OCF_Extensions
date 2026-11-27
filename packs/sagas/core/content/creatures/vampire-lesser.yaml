@@ -1,0 +1,40 @@
+id: creatures.vampire-lesser
+type: creature
+fields:
+  category: undead
+  threat: high
+  size: x1
+  str: 12
+  agi: 9
+  end: 10
+  dex: 7
+  wit: 8
+  wil: 8
+  pre: 10
+  ins: 9
+  speed: 6
+  protection: 0
+  skillNames:
+    - dodge
+    - charm
+    - persuasion
+    - stealth
+    - perception
+    - intimidation
+  skillLearning:
+    - 3
+    - 6
+    - 5
+    - 4
+    - 4
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 13
+    - 12

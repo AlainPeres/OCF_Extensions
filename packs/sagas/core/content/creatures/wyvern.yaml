@@ -1,0 +1,40 @@
+id: creatures.wyvern
+type: creature
+fields:
+  category: monster
+  threat: high
+  size: x4
+  str: 23
+  agi: 8
+  end: 12
+  dex: 3
+  wit: 3
+  wil: 7
+  pre: 6
+  ins: 8
+  speed: 15
+  protection: 4
+  skillNames:
+    - dodge
+    - perception
+    - intimidation
+  skillLearning:
+    - 2
+    - 5
+    - 3
+  genericSkills:
+    - skills.other-agi
+  genericSpecialties:
+    - Flight
+  genericInitial:
+    - 0
+  genericLearning:
+    - 13
+  attacks:
+    - weapons.cr-bite-2-4
+    - weapons.cr-tail-sting-2-4
+    - weapons.cr-talons-2-4
+  attackScores:
+    - 13
+    - 13
+    - 13

@@ -1,0 +1,40 @@
+id: creatures.greater-demon
+type: creature
+fields:
+  category: monster
+  threat: legendary
+  size: x4
+  str: 26
+  agi: 6
+  end: 16
+  dex: 5
+  wit: 9
+  wil: 12
+  pre: 13
+  ins: 10
+  speed: 12
+  protection: 8
+  skillNames:
+    - intimidation
+    - persuasion
+    - mental-resistance
+    - occultism
+    - perception
+  skillLearning:
+    - 8
+    - 4
+    - 6
+    - 6
+    - 5
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-great-blade-12-3
+    - weapons.cr-claws-2-4
+    - weapons.cr-hellfire-24-5-r8
+  attackScores:
+    - 16
+    - 15
+    - 13

@@ -1,0 +1,30 @@
+id: creatures.rat-swarm
+type: creature
+fields:
+  category: animal
+  threat: low
+  size: x1
+  str: 4
+  agi: 8
+  end: 8
+  dex: 3
+  wit: 3
+  wil: 5
+  pre: 2
+  ins: 7
+  speed: 5
+  protection: 0
+  skillNames:
+    - perception
+    - climb
+  skillLearning:
+    - 4
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-swarm-bites-4-3
+  attackScores:
+    - 9

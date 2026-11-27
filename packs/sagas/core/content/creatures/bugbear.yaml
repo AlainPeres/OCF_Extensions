@@ -1,0 +1,36 @@
+id: creatures.bugbear
+type: creature
+fields:
+  category: people
+  threat: moderate
+  size: x1
+  str: 11
+  agi: 6
+  end: 8
+  dex: 4
+  wit: 4
+  wil: 6
+  pre: 4
+  ins: 6
+  speed: 6
+  protection: 2
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - intimidation
+  skillLearning:
+    - 2
+    - 5
+    - 3
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-morningstar-8-3
+    - weapons.cr-fists-0-2
+  attackScores:
+    - 14
+    - 11

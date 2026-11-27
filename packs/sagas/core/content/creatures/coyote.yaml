@@ -1,0 +1,34 @@
+id: creatures.coyote
+type: creature
+fields:
+  category: animal
+  threat: negligible
+  size: x1/4
+  str: 3
+  agi: 8
+  end: 5
+  dex: 3
+  wit: 3
+  wil: 4
+  pre: 3
+  ins: 7
+  speed: 11
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+    - run
+  skillLearning:
+    - 3
+    - 4
+    - 3
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-0-4
+  attackScores:
+    - 9

@@ -1,0 +1,40 @@
+id: creatures.lizardfolk
+type: creature
+fields:
+  category: people
+  threat: moderate
+  size: x1
+  str: 8
+  agi: 6
+  end: 8
+  dex: 5
+  wit: 4
+  wil: 6
+  pre: 4
+  ins: 6
+  speed: 5
+  protection: 3
+  skillNames:
+    - dodge
+    - swimming
+    - stealth
+    - perception
+    - survival
+  skillLearning:
+    - 2
+    - 4
+    - 3
+    - 3
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-spear-6-4
+    - weapons.cr-bite-2-4
+    - weapons.cr-javelin-6-4-r5
+  attackScores:
+    - 13
+    - 9
+    - 10

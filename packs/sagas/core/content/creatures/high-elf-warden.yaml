@@ -1,0 +1,42 @@
+id: creatures.high-elf-warden
+type: creature
+fields:
+  category: people
+  threat: moderate
+  size: x1
+  str: 5
+  agi: 9
+  end: 5
+  dex: 8
+  wit: 6
+  wil: 6
+  pre: 7
+  ins: 8
+  speed: 6
+  protection: 2
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - survival
+    - tracking
+    - music
+  skillLearning:
+    - 3
+    - 5
+    - 5
+    - 3
+    - 3
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-long-sword-6-4
+    - weapons.cr-longbow-9-4-r9
+    - weapons.cr-dagger-2-4
+  attackScores:
+    - 14
+    - 16
+    - 11

@@ -1,0 +1,8 @@
+id: weapons.cr-fire-breath-36-6-r10
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 36
+  dmax: 6
+  range: 10
+  natural: true

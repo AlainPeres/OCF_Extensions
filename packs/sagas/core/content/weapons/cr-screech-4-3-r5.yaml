@@ -1,0 +1,8 @@
+id: weapons.cr-screech-4-3-r5
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 4
+  dmax: 3
+  range: 5
+  natural: true

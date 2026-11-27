@@ -1,0 +1,8 @@
+id: weapons.cr-sling-4-3-r9
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 4
+  dmax: 3
+  range: 9
+  natural: true

@@ -1,0 +1,28 @@
+id: creatures.triceratops
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x4
+  str: 28
+  agi: 4
+  end: 15
+  dex: 2
+  wit: 2
+  wil: 7
+  pre: 6
+  ins: 6
+  speed: 9
+  protection: 6
+  skillNames:
+    - perception
+  skillLearning:
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-horns-4-4
+  attackScores:
+    - 12

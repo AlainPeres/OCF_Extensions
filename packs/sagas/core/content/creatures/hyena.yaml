@@ -1,0 +1,32 @@
+id: creatures.hyena
+type: creature
+fields:
+  category: animal
+  threat: low
+  size: x1/2
+  str: 8
+  agi: 7
+  end: 8
+  dex: 3
+  wit: 4
+  wil: 5
+  pre: 5
+  ins: 8
+  speed: 11
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+  skillLearning:
+    - 2
+    - 4
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 11

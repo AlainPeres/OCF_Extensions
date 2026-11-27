@@ -1,0 +1,40 @@
+id: creatures.succubus-incubus
+type: creature
+fields:
+  category: monster
+  threat: high
+  size: x1
+  str: 6
+  agi: 8
+  end: 7
+  dex: 7
+  wit: 8
+  wil: 9
+  pre: 12
+  ins: 9
+  speed: 10
+  protection: 0
+  skillNames:
+    - dodge
+    - charm
+    - persuasion
+    - bluff
+    - psychology
+    - perception
+  skillLearning:
+    - 3
+    - 8
+    - 6
+    - 5
+    - 5
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-draining-kiss-6-3-r0
+  attackScores:
+    - 12
+    - 12

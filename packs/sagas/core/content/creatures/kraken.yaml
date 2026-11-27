@@ -1,0 +1,32 @@
+id: creatures.kraken
+type: creature
+fields:
+  category: monster
+  threat: legendary
+  size: x16
+  str: 30
+  agi: 4
+  end: 18
+  dex: 4
+  wit: 4
+  wil: 10
+  pre: 8
+  ins: 7
+  speed: 10
+  protection: 5
+  skillNames:
+    - perception
+    - swimming
+  skillLearning:
+    - 4
+    - 5
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-tentacle-4-3
+    - weapons.cr-beak-4-4
+  attackScores:
+    - 14
+    - 14

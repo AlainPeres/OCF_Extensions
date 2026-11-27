@@ -1,0 +1,38 @@
+id: creatures.housecat
+type: creature
+fields:
+  category: animal
+  threat: negligible
+  size: x1/4
+  str: 1
+  agi: 10
+  end: 3
+  dex: 5
+  wit: 3
+  wil: 3
+  pre: 4
+  ins: 7
+  speed: 10
+  protection: 0
+  skillNames:
+    - dodge
+    - stealth
+    - climb
+    - perception
+    - jump
+  skillLearning:
+    - 5
+    - 4
+    - 3
+    - 4
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-0-4
+    - weapons.cr-bite-0-4
+  attackScores:
+    - 8
+    - 8

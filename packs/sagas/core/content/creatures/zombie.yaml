@@ -1,0 +1,30 @@
+id: creatures.zombie
+type: creature
+fields:
+  category: undead
+  threat: low
+  size: x1
+  str: 7
+  agi: 3
+  end: 9
+  dex: 3
+  wit: 1
+  wil: 6
+  pre: 1
+  ins: 3
+  speed: 3
+  protection: 0
+  skillNames:
+    - perception
+  skillLearning:
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-slam-0-2
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 6
+    - 6

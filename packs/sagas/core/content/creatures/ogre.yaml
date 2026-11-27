@@ -1,0 +1,34 @@
+id: creatures.ogre
+type: creature
+fields:
+  category: people
+  threat: high
+  size: x2
+  str: 21
+  agi: 4
+  end: 10
+  dex: 3
+  wit: 3
+  wil: 5
+  pre: 4
+  ins: 4
+  speed: 7
+  protection: 2
+  skillNames:
+    - intimidation
+    - perception
+    - physical-resistance
+  skillLearning:
+    - 6
+    - 3
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-great-club-12-3
+    - weapons.cr-fists-0-2
+  attackScores:
+    - 14
+    - 11

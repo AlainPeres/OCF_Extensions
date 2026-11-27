@@ -1,0 +1,36 @@
+id: creatures.ghost-wraith
+type: creature
+fields:
+  category: undead
+  threat: high
+  size: x1
+  str: 1
+  agi: 8
+  end: 8
+  dex: 5
+  wit: 5
+  wil: 8
+  pre: 8
+  ins: 8
+  speed: 6
+  protection: 0
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - intimidation
+  skillLearning:
+    - 3
+    - 5
+    - 4
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-draining-touch-8-3-r0
+    - weapons.cr-wail-6-3-r5
+  attackScores:
+    - 9
+    - 13

@@ -1,0 +1,34 @@
+id: creatures.black-bear
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x1
+  str: 14
+  agi: 6
+  end: 12
+  dex: 3
+  wit: 3
+  wil: 6
+  pre: 6
+  ins: 8
+  speed: 10
+  protection: 2
+  skillNames:
+    - perception
+    - tracking
+    - climb
+  skillLearning:
+    - 3
+    - 3
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 12
+    - 10

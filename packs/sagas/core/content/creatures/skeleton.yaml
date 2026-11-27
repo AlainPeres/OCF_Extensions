@@ -1,0 +1,30 @@
+id: creatures.skeleton
+type: creature
+fields:
+  category: undead
+  threat: low
+  size: x1
+  str: 6
+  agi: 6
+  end: 6
+  dex: 5
+  wit: 1
+  wil: 6
+  pre: 1
+  ins: 4
+  speed: 6
+  protection: 1
+  skillNames:
+    - shield
+    - perception
+  skillLearning:
+    - 3
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-rusty-sword-6-4
+  attackScores:
+    - 9

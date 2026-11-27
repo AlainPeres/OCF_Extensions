@@ -1,0 +1,34 @@
+id: creatures.pteranodon
+type: creature
+fields:
+  category: animal
+  threat: low
+  size: x2
+  str: 3
+  agi: 8
+  end: 4
+  dex: 4
+  wit: 3
+  wil: 4
+  pre: 3
+  ins: 8
+  speed: 12
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+  skillLearning:
+    - 2
+    - 5
+  genericSkills:
+    - skills.other-agi
+  genericSpecialties:
+    - Flight
+  genericInitial:
+    - 0
+  genericLearning:
+    - 8
+  attacks:
+    - weapons.cr-beak-2-4
+  attackScores:
+    - 9

@@ -1,0 +1,32 @@
+id: creatures.air-elemental
+type: creature
+fields:
+  category: monster
+  threat: moderate
+  size: x4
+  str: 14
+  agi: 12
+  end: 10
+  dex: 5
+  wit: 3
+  wil: 7
+  pre: 5
+  ins: 6
+  speed: 15
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+  skillLearning:
+    - 3
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-buffet-6-3
+    - weapons.cr-whirlwind-6-3
+  attackScores:
+    - 13
+    - 13

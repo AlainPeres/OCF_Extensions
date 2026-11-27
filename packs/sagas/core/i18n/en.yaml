@@ -669,3 +669,58 @@ groups.act-dangers.label: Dangers
 groups.act-long-term.label: Long-term action
 groups.act-advancement.label: Progression
 groups.act-creation.label: Creation
+
+# Creatures (rules/creatures.yaml); each creature's name and description are in en/creatures.yaml.
+fields.creature.present.name: A creature
+creation.creature.name: 'Creature (for the referee)'
+creation.creature.description: 'A creature of the bestiary, ready to play: its characteristics, skills and attacks as the bestiary gives them. The sheet is finished at once.'
+actions.create-creature.name: Create a creature
+actions.create-creature.results.created.name: Created
+actions.create-creature.steps.creature.prompt: Creature
+actions.natural-attack.name: Attack
+actions.natural-attack.params.score.name: Attack score
+actions.natural-attack.params.modifier.name: Degree modifier
+actions.natural-attack.params.difficulty.name: Difficulty
+actions.natural-attack.params.difficulty.values.obvious.name: 'Obvious (+IV)'
+actions.natural-attack.params.difficulty.values.very-easy.name: 'Very easy (+II)'
+actions.natural-attack.params.difficulty.values.easy.name: 'Easy (+I)'
+actions.natural-attack.params.difficulty.values.normal.name: 'Normal'
+actions.natural-attack.params.difficulty.values.difficult.name: 'Difficult (-I)'
+actions.natural-attack.params.difficulty.values.very-difficult.name: 'Very difficult (-II)'
+actions.natural-attack.params.difficulty.values.extremely-difficult.name: 'Extremely difficult (-III)'
+actions.natural-attack.params.difficulty.values.almost-impossible.name: 'Almost impossible (-IV)'
+actions.natural-attack.params.difficulty.values.theoretically-impossible.name: 'Theoretically impossible (-VIII)'
+types.weapon.fields.natural.name: A creature's attack
+types.weapon.state.score.name: Attack score
+types.creature.name: Creature
+types.creature.fields.category.name: Category
+types.creature.fields.category.values.animal.name: Animal
+types.creature.fields.category.values.people.name: Fantasy people
+types.creature.fields.category.values.undead.name: Undead
+types.creature.fields.category.values.monster.name: Monster
+types.creature.fields.threat.name: Threat
+types.creature.fields.threat.values.negligible.name: Negligible
+types.creature.fields.threat.values.low.name: Low
+types.creature.fields.threat.values.moderate.name: Moderate
+types.creature.fields.threat.values.high.name: High
+types.creature.fields.threat.values.deadly.name: Deadly
+types.creature.fields.threat.values.legendary.name: Legendary
+types.creature.fields.size.name: Size (to a human)
+types.creature.fields.str.name: STR
+types.creature.fields.agi.name: AGI
+types.creature.fields.end.name: END
+types.creature.fields.dex.name: DEX
+types.creature.fields.wit.name: WIT
+types.creature.fields.wil.name: WIL
+types.creature.fields.pre.name: PRE
+types.creature.fields.ins.name: INS
+types.creature.fields.speed.name: Species base Speed
+types.creature.fields.protection.name: Protection
+types.creature.fields.skillNames.name: Skills
+types.creature.fields.skillLearning.name: Learning levels
+types.creature.fields.genericSkills.name: Generic skills
+types.creature.fields.genericSpecialties.name: Specialties
+types.creature.fields.genericInitial.name: Initial levels
+types.creature.fields.genericLearning.name: Learning levels (generic skills)
+types.creature.fields.attacks.name: Attacks
+types.creature.fields.attackScores.name: Attack scores

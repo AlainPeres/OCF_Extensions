@@ -1,0 +1,42 @@
+id: creatures.komodo-dragon-giant-lizard
+type: creature
+fields:
+  category: animal
+  threat: low
+  size: x1
+  str: 9
+  agi: 6
+  end: 8
+  dex: 3
+  wit: 2
+  wil: 5
+  pre: 3
+  ins: 8
+  speed: 5
+  protection: 2
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+    - stealth
+    - climb
+    - swimming
+    - run
+  skillLearning:
+    - 2
+    - 4
+    - 3
+    - 2
+    - 2
+    - 0
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+    - weapons.cr-claws-2-4
+  attackScores:
+    - 9
+    - 9

@@ -1,0 +1,32 @@
+id: creatures.water-elemental
+type: creature
+fields:
+  category: monster
+  threat: moderate
+  size: x2
+  str: 16
+  agi: 6
+  end: 14
+  dex: 3
+  wit: 3
+  wil: 8
+  pre: 5
+  ins: 5
+  speed: 10
+  protection: 2
+  skillNames:
+    - perception
+    - swimming
+  skillLearning:
+    - 2
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-slam-4-3
+    - weapons.cr-engulf-0-1
+  attackScores:
+    - 11
+    - 11

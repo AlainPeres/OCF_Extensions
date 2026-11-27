@@ -1,0 +1,7 @@
+id: weapons.cr-bite-2-4
+type: weapon
+fields:
+  kind: melee
+  damageBonus: 2
+  dmax: 4
+  natural: true

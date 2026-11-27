@@ -1,0 +1,42 @@
+id: creatures.dragon-adult
+type: creature
+fields:
+  category: monster
+  threat: legendary
+  size: x8
+  str: 28
+  agi: 5
+  end: 16
+  dex: 3
+  wit: 9
+  wil: 12
+  pre: 14
+  ins: 10
+  speed: 14
+  protection: 10
+  skillNames:
+    - perception
+    - intimidation
+    - persuasion
+    - mental-resistance
+    - occultism
+  skillLearning:
+    - 6
+    - 8
+    - 4
+    - 6
+    - 6
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-4-4
+    - weapons.cr-claws-4-4
+    - weapons.cr-tail-4-3
+    - weapons.cr-fire-breath-36-6-r10
+  attackScores:
+    - 15
+    - 15
+    - 14
+    - 13

@@ -1,0 +1,8 @@
+id: weapons.cr-fire-bolt-12-3-r5
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 12
+  dmax: 3
+  range: 5
+  natural: true

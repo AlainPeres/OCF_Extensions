@@ -1,0 +1,36 @@
+id: creatures.goblin
+type: creature
+fields:
+  category: people
+  threat: negligible
+  size: x1/2
+  str: 3
+  agi: 7
+  end: 4
+  dex: 6
+  wit: 4
+  wil: 4
+  pre: 3
+  ins: 6
+  speed: 6
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - survival
+  skillLearning:
+    - 2
+    - 4
+    - 3
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-dagger-2-4
+    - weapons.cr-shortbow-6-4-r9
+  attackScores:
+    - 9
+    - 11

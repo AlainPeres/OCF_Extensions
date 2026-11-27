@@ -1,0 +1,38 @@
+id: creatures.lich
+type: creature
+fields:
+  category: undead
+  threat: legendary
+  size: x1
+  str: 5
+  agi: 5
+  end: 8
+  dex: 6
+  wit: 12
+  wil: 12
+  pre: 9
+  ins: 9
+  speed: 6
+  protection: 2
+  skillNames:
+    - dodge
+    - occultism
+    - mental-resistance
+    - intimidation
+    - persuasion
+    - perception
+  skillLearning:
+    - 2
+    - 6
+    - 6
+    - 6
+    - 4
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-paralyzing-touch-6-3
+  attackScores:
+    - 10

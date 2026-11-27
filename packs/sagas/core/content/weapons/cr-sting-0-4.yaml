@@ -1,0 +1,7 @@
+id: weapons.cr-sting-0-4
+type: weapon
+fields:
+  kind: melee
+  damageBonus: 0
+  dmax: 4
+  natural: true

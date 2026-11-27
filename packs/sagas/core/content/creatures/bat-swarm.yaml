@@ -1,0 +1,28 @@
+id: creatures.bat-swarm
+type: creature
+fields:
+  category: animal
+  threat: low
+  size: x1
+  str: 2
+  agi: 10
+  end: 5
+  dex: 3
+  wit: 2
+  wil: 3
+  pre: 2
+  ins: 9
+  speed: 8
+  protection: 0
+  skillNames:
+    - perception
+  skillLearning:
+    - 5
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-swarm-bites-3-2
+  attackScores:
+    - 9

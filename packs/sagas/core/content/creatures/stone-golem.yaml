@@ -1,0 +1,28 @@
+id: creatures.stone-golem
+type: creature
+fields:
+  category: monster
+  threat: high
+  size: x2
+  str: 23
+  agi: 3
+  end: 14
+  dex: 2
+  wit: 1
+  wil: 10
+  pre: 1
+  ins: 3
+  speed: 3
+  protection: 15
+  skillNames:
+    - perception
+  skillLearning:
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-slam-4-3
+  attackScores:
+    - 11

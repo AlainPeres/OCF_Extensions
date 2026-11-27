@@ -1,0 +1,36 @@
+id: creatures.hellhound
+type: creature
+fields:
+  category: monster
+  threat: moderate
+  size: x1
+  str: 10
+  agi: 8
+  end: 10
+  dex: 3
+  wit: 4
+  wil: 7
+  pre: 6
+  ins: 9
+  speed: 11
+  protection: 2
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+    - intimidation
+  skillLearning:
+    - 2
+    - 5
+    - 5
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+    - weapons.cr-fire-breath-12-2-r4
+  attackScores:
+    - 11
+    - 8

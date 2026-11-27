@@ -1,0 +1,36 @@
+id: creatures.fire-giant
+type: creature
+fields:
+  category: people
+  threat: high
+  size: x2
+  str: 24
+  agi: 5
+  end: 13
+  dex: 4
+  wit: 4
+  wil: 7
+  pre: 6
+  ins: 5
+  speed: 7
+  protection: 5
+  skillNames:
+    - intimidation
+    - perception
+  skillLearning:
+    - 5
+    - 3
+  genericSkills:
+    - skills.handcrafts
+  genericSpecialties:
+    - smithing
+  genericInitial:
+    - -10
+  genericLearning:
+    - 8
+  attacks:
+    - weapons.cr-greatsword-12-3
+    - weapons.cr-molten-rock-12-3-r5
+  attackScores:
+    - 17
+    - 9

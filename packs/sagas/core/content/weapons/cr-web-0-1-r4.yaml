@@ -1,0 +1,8 @@
+id: weapons.cr-web-0-1-r4
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 0
+  dmax: 1
+  range: 4
+  natural: true

@@ -5,7 +5,8 @@ creation:
 constraints:
   # A new character spends no more than its creation points (section 3.4).
   - id: creation-within-budget
-    check: '!character.creating || points.remaining >= 0'
+    # A creature (the creature start) isn't bought with points.
+    check: '!character.creating || creature.present || points.remaining >= 0'
     data: {}
 
 actions:

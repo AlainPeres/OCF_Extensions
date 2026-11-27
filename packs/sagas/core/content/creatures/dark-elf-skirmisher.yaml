@@ -1,0 +1,42 @@
+id: creatures.dark-elf-skirmisher
+type: creature
+fields:
+  category: people
+  threat: moderate
+  size: x1
+  str: 5
+  agi: 9
+  end: 5
+  dex: 8
+  wit: 7
+  wil: 7
+  pre: 7
+  ins: 7
+  speed: 6
+  protection: 2
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - persuasion
+  skillLearning:
+    - 3
+    - 5
+    - 4
+    - 3
+  genericSkills:
+    - skills.handcrafts
+  genericSpecialties:
+    - poisons
+  genericInitial:
+    - -10
+  genericLearning:
+    - 4
+  attacks:
+    - weapons.cr-short-sword-4-4
+    - weapons.cr-light-crossbow-6-4-r9
+    - weapons.cr-dagger-2-4
+  attackScores:
+    - 11
+    - 13
+    - 11

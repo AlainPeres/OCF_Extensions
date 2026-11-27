@@ -1,0 +1,28 @@
+id: creatures.ox-bull
+type: creature
+fields:
+  category: animal
+  threat: moderate
+  size: x2
+  str: 22
+  agi: 5
+  end: 12
+  dex: 2
+  wit: 2
+  wil: 5
+  pre: 4
+  ins: 5
+  speed: 8
+  protection: 1
+  skillNames:
+    - perception
+  skillLearning:
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-horns-4-4
+  attackScores:
+    - 11

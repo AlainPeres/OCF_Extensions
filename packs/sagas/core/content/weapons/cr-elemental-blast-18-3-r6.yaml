@@ -1,0 +1,8 @@
+id: weapons.cr-elemental-blast-18-3-r6
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 18
+  dmax: 3
+  range: 6
+  natural: true

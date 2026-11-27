@@ -1,0 +1,28 @@
+id: creatures.earth-elemental
+type: creature
+fields:
+  category: monster
+  threat: high
+  size: x2
+  str: 24
+  agi: 3
+  end: 16
+  dex: 2
+  wit: 3
+  wil: 9
+  pre: 4
+  ins: 5
+  speed: 3
+  protection: 12
+  skillNames:
+    - perception
+  skillLearning:
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-slam-4-3
+  attackScores:
+    - 11

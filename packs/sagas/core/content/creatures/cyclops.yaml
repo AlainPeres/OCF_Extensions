@@ -1,0 +1,36 @@
+id: creatures.cyclops
+type: creature
+fields:
+  category: people
+  threat: high
+  size: x2
+  str: 22
+  agi: 4
+  end: 12
+  dex: 3
+  wit: 3
+  wil: 6
+  pre: 5
+  ins: 5
+  speed: 7
+  protection: 2
+  skillNames:
+    - intimidation
+    - perception
+  skillLearning:
+    - 4
+    - 3
+  genericSkills:
+    - skills.handcrafts
+  genericSpecialties:
+    - smithing
+  genericInitial:
+    - -10
+  genericLearning:
+    - 7
+  attacks:
+    - weapons.cr-great-club-12-3
+    - weapons.cr-boulder-12-3-r5
+  attackScores:
+    - 15
+    - 8

@@ -1,0 +1,42 @@
+id: creatures.orc-warrior
+type: creature
+fields:
+  category: people
+  threat: moderate
+  size: x1
+  str: 8
+  agi: 6
+  end: 7
+  dex: 5
+  wit: 4
+  wil: 6
+  pre: 5
+  ins: 6
+  speed: 6
+  protection: 3
+  skillNames:
+    - dodge
+    - shield
+    - intimidation
+    - perception
+    - stealth
+    - survival
+    - physical-resistance
+  skillLearning:
+    - 2
+    - 5
+    - 5
+    - 3
+    - 2
+    - 3
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-axe-8-3
+    - weapons.cr-javelin-6-4-r5
+  attackScores:
+    - 14
+    - 10

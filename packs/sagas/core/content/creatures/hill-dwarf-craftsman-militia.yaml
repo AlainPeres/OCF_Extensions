@@ -1,0 +1,40 @@
+id: creatures.hill-dwarf-craftsman-militia
+type: creature
+fields:
+  category: people
+  threat: low
+  size: x1
+  str: 6
+  agi: 5
+  end: 8
+  dex: 6
+  wit: 6
+  wil: 7
+  pre: 5
+  ins: 6
+  speed: 4
+  protection: 3
+  skillNames:
+    - dodge
+    - mechanical
+    - physical-resistance
+    - perception
+  skillLearning:
+    - 2
+    - 5
+    - 3
+    - 2
+  genericSkills:
+    - skills.handcrafts
+  genericSpecialties:
+    - smithing
+  genericInitial:
+    - -10
+  genericLearning:
+    - 9
+  attacks:
+    - weapons.cr-hammer-8-3
+    - weapons.cr-dagger-2-4
+  attackScores:
+    - 13
+    - 8

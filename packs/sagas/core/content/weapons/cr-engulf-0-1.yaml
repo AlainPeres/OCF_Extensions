@@ -1,0 +1,7 @@
+id: weapons.cr-engulf-0-1
+type: weapon
+fields:
+  kind: melee
+  damageBonus: 0
+  dmax: 1
+  natural: true

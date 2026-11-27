@@ -1,0 +1,42 @@
+id: creatures.medusa-gorgon
+type: creature
+fields:
+  category: monster
+  threat: high
+  size: x1
+  str: 6
+  agi: 8
+  end: 6
+  dex: 7
+  wit: 7
+  wil: 9
+  pre: 9
+  ins: 8
+  speed: 6
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - intimidation
+    - mental-resistance
+    - persuasion
+  skillLearning:
+    - 3
+    - 5
+    - 4
+    - 5
+    - 4
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-shortbow-6-4-r9
+    - weapons.cr-short-sword-4-4
+    - weapons.cr-snake-hair-2-4
+  attackScores:
+    - 13
+    - 13
+    - 11

@@ -1,0 +1,36 @@
+id: creatures.siren
+type: creature
+fields:
+  category: monster
+  threat: moderate
+  size: x1
+  str: 4
+  agi: 8
+  end: 7
+  dex: 5
+  wit: 6
+  wil: 6
+  pre: 10
+  ins: 8
+  speed: 8
+  protection: 0
+  skillNames:
+    - dodge
+    - swimming
+    - charm
+    - perception
+  skillLearning:
+    - 2
+    - 4
+    - 6
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-siren-song-0-3-r8
+  attackScores:
+    - 10
+    - 16

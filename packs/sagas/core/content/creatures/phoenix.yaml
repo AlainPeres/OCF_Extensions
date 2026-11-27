@@ -1,0 +1,36 @@
+id: creatures.phoenix
+type: creature
+fields:
+  category: monster
+  threat: moderate
+  size: x2
+  str: 8
+  agi: 9
+  end: 8
+  dex: 5
+  wit: 6
+  wil: 9
+  pre: 9
+  ins: 9
+  speed: 15
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+  skillLearning:
+    - 3
+    - 4
+  genericSkills:
+    - skills.other-agi
+  genericSpecialties:
+    - Flight
+  genericInitial:
+    - 0
+  genericLearning:
+    - 11
+  attacks:
+    - weapons.cr-talons-2-4
+    - weapons.cr-beak-2-4
+  attackScores:
+    - 11
+    - 11

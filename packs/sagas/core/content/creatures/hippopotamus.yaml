@@ -1,0 +1,30 @@
+id: creatures.hippopotamus
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x2
+  str: 25
+  agi: 3
+  end: 14
+  dex: 2
+  wit: 2
+  wil: 6
+  pre: 5
+  ins: 5
+  speed: 8
+  protection: 3
+  skillNames:
+    - perception
+    - swimming
+  skillLearning:
+    - 2
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 11

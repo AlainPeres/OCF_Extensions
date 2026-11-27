@@ -1,0 +1,36 @@
+id: creatures.dire-wolf
+type: creature
+fields:
+  category: animal
+  threat: moderate
+  size: x1
+  str: 9
+  agi: 7
+  end: 9
+  dex: 3
+  wit: 3
+  wil: 6
+  pre: 5
+  ins: 8
+  speed: 11
+  protection: 1
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+    - stealth
+    - run
+  skillLearning:
+    - 1
+    - 5
+    - 5
+    - 2
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 12

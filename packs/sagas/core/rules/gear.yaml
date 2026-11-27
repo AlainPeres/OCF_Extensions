@@ -25,7 +25,17 @@ contentTypes:
       rof: { type: integer, min: 1 }
       weight: { type: decimal, min: 0 }
       tripod: { type: boolean, default: false }
+      # A creature's attack (rules/creatures.yaml): rolled at its own score, the copy's, with no
+      # skill.
+      natural: { type: boolean, default: false }
+    state:
+      # A natural weapon's attack score (the bestiary's), set by the creature start.
+      score: { type: integer, default: 0, min: 0 }
     actions:
+      - use: natural-attack
+        available: item.natural
+        params:
+          score: self.score
       - use: damage
         params:
           weaponBonus: item.damageBonus

@@ -1,0 +1,34 @@
+id: creatures.fox
+type: creature
+fields:
+  category: animal
+  threat: negligible
+  size: x1/4
+  str: 2
+  agi: 9
+  end: 4
+  dex: 4
+  wit: 4
+  wil: 3
+  pre: 3
+  ins: 8
+  speed: 10
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+    - stealth
+    - tracking
+  skillLearning:
+    - 4
+    - 5
+    - 4
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-0-4
+  attackScores:
+    - 9

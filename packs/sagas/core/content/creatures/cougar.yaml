@@ -1,0 +1,38 @@
+id: creatures.cougar
+type: creature
+fields:
+  category: animal
+  threat: moderate
+  size: x1
+  str: 7
+  agi: 10
+  end: 7
+  dex: 4
+  wit: 3
+  wil: 5
+  pre: 4
+  ins: 8
+  speed: 11
+  protection: 0
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - climb
+    - jump
+  skillLearning:
+    - 4
+    - 5
+    - 4
+    - 3
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 12
+    - 11

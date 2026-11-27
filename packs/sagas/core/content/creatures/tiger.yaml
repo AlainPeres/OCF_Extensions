@@ -1,0 +1,38 @@
+id: creatures.tiger
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x2
+  str: 17
+  agi: 9
+  end: 11
+  dex: 3
+  wit: 3
+  wil: 8
+  pre: 8
+  ins: 8
+  speed: 11
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - swimming
+    - intimidation
+  skillLearning:
+    - 2
+    - 5
+    - 4
+    - 0
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 14
+    - 13

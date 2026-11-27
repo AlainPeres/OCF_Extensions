@@ -1,0 +1,32 @@
+id: creatures.brown-bear-grizzly
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x2
+  str: 20
+  agi: 6
+  end: 14
+  dex: 3
+  wit: 3
+  wil: 7
+  pre: 7
+  ins: 8
+  speed: 10
+  protection: 3
+  skillNames:
+    - perception
+    - tracking
+  skillLearning:
+    - 3
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 13
+    - 12

@@ -1,0 +1,36 @@
+id: creatures.domestic-dog-guard-hunting
+type: creature
+fields:
+  category: animal
+  threat: low
+  size: x1/2
+  str: 4
+  agi: 8
+  end: 5
+  dex: 3
+  wit: 3
+  wil: 4
+  pre: 3
+  ins: 8
+  speed: 11
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+    - stealth
+    - run
+  skillLearning:
+    - 2
+    - 5
+    - 5
+    - 1
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 10

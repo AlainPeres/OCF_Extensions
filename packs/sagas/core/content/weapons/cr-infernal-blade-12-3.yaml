@@ -1,0 +1,7 @@
+id: weapons.cr-infernal-blade-12-3
+type: weapon
+fields:
+  kind: melee
+  damageBonus: 12
+  dmax: 3
+  natural: true

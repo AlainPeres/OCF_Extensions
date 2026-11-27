@@ -1,0 +1,36 @@
+id: creatures.orca
+type: creature
+fields:
+  category: animal
+  threat: deadly
+  size: x4
+  str: 27
+  agi: 6
+  end: 14
+  dex: 2
+  wit: 5
+  wil: 7
+  pre: 7
+  ins: 8
+  speed: 12
+  protection: 2
+  skillNames:
+    - dodge
+    - perception
+    - swimming
+    - tracking
+  skillLearning:
+    - 1
+    - 5
+    - 3
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+    - weapons.cr-tail-slap-4-3
+  attackScores:
+    - 13
+    - 12

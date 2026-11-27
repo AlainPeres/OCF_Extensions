@@ -1,0 +1,36 @@
+id: creatures.wight
+type: creature
+fields:
+  category: undead
+  threat: high
+  size: x1
+  str: 8
+  agi: 6
+  end: 8
+  dex: 5
+  wit: 6
+  wil: 9
+  pre: 7
+  ins: 7
+  speed: 6
+  protection: 3
+  skillNames:
+    - dodge
+    - intimidation
+    - command
+    - perception
+  skillLearning:
+    - 2
+    - 5
+    - 4
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-long-sword-6-4
+    - weapons.cr-draining-touch-4-3
+  attackScores:
+    - 13
+    - 11

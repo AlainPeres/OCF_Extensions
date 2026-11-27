@@ -1,0 +1,38 @@
+id: creatures.owl
+type: creature
+fields:
+  category: animal
+  threat: negligible
+  size: x1/4
+  str: 1
+  agi: 9
+  end: 3
+  dex: 5
+  wit: 3
+  wil: 4
+  pre: 4
+  ins: 9
+  speed: 12
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+    - stealth
+  skillLearning:
+    - 3
+    - 8
+    - 6
+  genericSkills:
+    - skills.other-agi
+  genericSpecialties:
+    - Flight
+  genericInitial:
+    - 0
+  genericLearning:
+    - 7
+  attacks:
+    - weapons.cr-talons-0-4
+    - weapons.cr-beak-0-4
+  attackScores:
+    - 9
+    - 9

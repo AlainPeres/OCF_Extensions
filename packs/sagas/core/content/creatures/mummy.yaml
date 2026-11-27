@@ -1,0 +1,30 @@
+id: creatures.mummy
+type: creature
+fields:
+  category: undead
+  threat: high
+  size: x1
+  str: 12
+  agi: 4
+  end: 12
+  dex: 3
+  wit: 4
+  wil: 8
+  pre: 6
+  ins: 5
+  speed: 4
+  protection: 2
+  skillNames:
+    - intimidation
+    - perception
+  skillLearning:
+    - 4
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-slam-0-2
+  attackScores:
+    - 10

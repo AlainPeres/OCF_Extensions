@@ -1,0 +1,36 @@
+id: creatures.hawk-falcon
+type: creature
+fields:
+  category: animal
+  threat: negligible
+  size: x1/4
+  str: 1
+  agi: 11
+  end: 3
+  dex: 5
+  wit: 3
+  wil: 4
+  pre: 3
+  ins: 8
+  speed: 14
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+  skillLearning:
+    - 3
+    - 8
+  genericSkills:
+    - skills.other-agi
+  genericSpecialties:
+    - Flight
+  genericInitial:
+    - 0
+  genericLearning:
+    - 8
+  attacks:
+    - weapons.cr-talons-0-4
+    - weapons.cr-beak-0-4
+  attackScores:
+    - 10
+    - 10

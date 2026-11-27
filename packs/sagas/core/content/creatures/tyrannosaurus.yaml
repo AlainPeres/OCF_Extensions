@@ -1,0 +1,34 @@
+id: creatures.tyrannosaurus
+type: creature
+fields:
+  category: animal
+  threat: deadly
+  size: x4
+  str: 29
+  agi: 4
+  end: 16
+  dex: 2
+  wit: 3
+  wil: 8
+  pre: 8
+  ins: 8
+  speed: 9
+  protection: 4
+  skillNames:
+    - perception
+    - tracking
+    - intimidation
+  skillLearning:
+    - 5
+    - 4
+    - 6
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+    - weapons.cr-tail-swipe-4-3
+  attackScores:
+    - 13
+    - 12

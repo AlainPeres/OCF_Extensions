@@ -1,0 +1,32 @@
+id: creatures.wild-boar
+type: creature
+fields:
+  category: animal
+  threat: moderate
+  size: x1/2
+  str: 12
+  agi: 6
+  end: 9
+  dex: 2
+  wit: 3
+  wil: 6
+  pre: 4
+  ins: 7
+  speed: 10
+  protection: 2
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+  skillLearning:
+    - 1
+    - 3
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-tusks-2-4
+  attackScores:
+    - 11

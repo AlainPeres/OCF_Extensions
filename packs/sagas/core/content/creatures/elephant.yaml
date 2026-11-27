@@ -1,0 +1,32 @@
+id: creatures.elephant
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x4
+  str: 28
+  agi: 3
+  end: 16
+  dex: 3
+  wit: 5
+  wil: 7
+  pre: 6
+  ins: 6
+  speed: 10
+  protection: 4
+  skillNames:
+    - perception
+  skillLearning:
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-tusks-4-4
+    - weapons.cr-trunk-4-3
+    - weapons.cr-stomp-4-3
+  attackScores:
+    - 12
+    - 12
+    - 12

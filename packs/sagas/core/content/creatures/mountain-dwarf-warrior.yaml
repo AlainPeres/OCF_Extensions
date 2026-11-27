@@ -1,0 +1,40 @@
+id: creatures.mountain-dwarf-warrior
+type: creature
+fields:
+  category: people
+  threat: moderate
+  size: x1
+  str: 8
+  agi: 5
+  end: 8
+  dex: 5
+  wit: 5
+  wil: 7
+  pre: 4
+  ins: 5
+  speed: 4
+  protection: 5
+  skillNames:
+    - dodge
+    - shield
+    - perception
+    - physical-resistance
+  skillLearning:
+    - 2
+    - 6
+    - 2
+    - 3
+  genericSkills:
+    - skills.handcrafts
+  genericSpecialties:
+    - smithing
+  genericInitial:
+    - -10
+  genericLearning:
+    - 8
+  attacks:
+    - weapons.cr-axe-8-3
+    - weapons.cr-light-crossbow-6-4-r9
+  attackScores:
+    - 15
+    - 10

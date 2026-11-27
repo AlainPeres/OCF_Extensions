@@ -1,0 +1,8 @@
+id: weapons.cr-siren-song-0-3-r8
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 0
+  dmax: 3
+  range: 8
+  natural: true

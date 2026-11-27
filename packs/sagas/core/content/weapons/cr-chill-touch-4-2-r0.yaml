@@ -1,0 +1,7 @@
+id: weapons.cr-chill-touch-4-2-r0
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 4
+  dmax: 2
+  natural: true

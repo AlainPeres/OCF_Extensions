@@ -1,0 +1,36 @@
+id: creatures.manticore
+type: creature
+fields:
+  category: monster
+  threat: high
+  size: x2
+  str: 20
+  agi: 7
+  end: 11
+  dex: 5
+  wit: 5
+  wil: 6
+  pre: 6
+  ins: 8
+  speed: 12
+  protection: 2
+  skillNames:
+    - dodge
+    - perception
+    - persuasion
+  skillLearning:
+    - 2
+    - 4
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+    - weapons.cr-tail-spikes-10-3-r6
+  attackScores:
+    - 13
+    - 12
+    - 10

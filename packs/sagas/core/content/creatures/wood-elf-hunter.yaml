@@ -1,0 +1,42 @@
+id: creatures.wood-elf-hunter
+type: creature
+fields:
+  category: people
+  threat: moderate
+  size: x1
+  str: 5
+  agi: 9
+  end: 6
+  dex: 8
+  wit: 5
+  wil: 5
+  pre: 6
+  ins: 9
+  speed: 6
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - survival
+    - tracking
+    - climb
+  skillLearning:
+    - 3
+    - 6
+    - 5
+    - 4
+    - 4
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-shortbow-6-4-r9
+    - weapons.cr-spear-6-4
+    - weapons.cr-dagger-2-4
+  attackScores:
+    - 16
+    - 12
+    - 11

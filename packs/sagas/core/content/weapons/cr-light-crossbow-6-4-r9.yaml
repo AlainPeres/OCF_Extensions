@@ -1,0 +1,8 @@
+id: weapons.cr-light-crossbow-6-4-r9
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 6
+  dmax: 4
+  range: 9
+  natural: true

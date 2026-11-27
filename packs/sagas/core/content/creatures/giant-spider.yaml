@@ -1,0 +1,36 @@
+id: creatures.giant-spider
+type: creature
+fields:
+  category: animal
+  threat: moderate
+  size: x1
+  str: 6
+  agi: 8
+  end: 6
+  dex: 6
+  wit: 3
+  wil: 5
+  pre: 3
+  ins: 7
+  speed: 5
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - climb
+  skillLearning:
+    - 2
+    - 4
+    - 3
+    - 6
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+    - weapons.cr-web-0-1-r4
+  attackScores:
+    - 9
+    - 9

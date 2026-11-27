@@ -1,0 +1,36 @@
+id: creatures.polar-bear
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x2
+  str: 22
+  agi: 6
+  end: 15
+  dex: 3
+  wit: 3
+  wil: 7
+  pre: 7
+  ins: 9
+  speed: 10
+  protection: 3
+  skillNames:
+    - perception
+    - tracking
+    - stealth
+    - swimming
+  skillLearning:
+    - 3
+    - 4
+    - 1
+    - 0
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 14
+    - 13

@@ -1,0 +1,36 @@
+id: creatures.wolf
+type: creature
+fields:
+  category: animal
+  threat: low
+  size: x1/2
+  str: 5
+  agi: 8
+  end: 7
+  dex: 3
+  wit: 3
+  wil: 5
+  pre: 4
+  ins: 8
+  speed: 11
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+    - stealth
+    - run
+  skillLearning:
+    - 2
+    - 5
+    - 5
+    - 3
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 10

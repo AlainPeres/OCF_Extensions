@@ -1,0 +1,8 @@
+id: weapons.cr-tail-spikes-10-3-r6
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 10
+  dmax: 3
+  range: 6
+  natural: true

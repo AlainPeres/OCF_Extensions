@@ -1,0 +1,28 @@
+id: creatures.ankylosaurus
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x4
+  str: 28
+  agi: 2
+  end: 16
+  dex: 2
+  wit: 2
+  wil: 7
+  pre: 4
+  ins: 5
+  speed: 5
+  protection: 10
+  skillNames:
+    - perception
+  skillLearning:
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-tail-club-4-3
+  attackScores:
+    - 11

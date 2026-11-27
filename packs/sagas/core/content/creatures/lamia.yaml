@@ -1,0 +1,38 @@
+id: creatures.lamia
+type: creature
+fields:
+  category: monster
+  threat: moderate
+  size: x2
+  str: 12
+  agi: 7
+  end: 8
+  dex: 6
+  wit: 7
+  wil: 8
+  pre: 9
+  ins: 8
+  speed: 5
+  protection: 1
+  skillNames:
+    - dodge
+    - charm
+    - persuasion
+    - stealth
+    - perception
+  skillLearning:
+    - 2
+    - 5
+    - 4
+    - 3
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-coil-4-3
+    - weapons.cr-short-sword-4-4
+  attackScores:
+    - 11
+    - 12

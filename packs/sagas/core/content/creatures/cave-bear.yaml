@@ -1,0 +1,32 @@
+id: creatures.cave-bear
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x2
+  str: 23
+  agi: 5
+  end: 15
+  dex: 3
+  wit: 3
+  wil: 7
+  pre: 7
+  ins: 7
+  speed: 10
+  protection: 3
+  skillNames:
+    - perception
+    - tracking
+  skillLearning:
+    - 3
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 13
+    - 12

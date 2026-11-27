@@ -1,0 +1,2705 @@
+# The creatures of the bestiary (scripts/extensions/sagas/SagaS_Creatures.md) and their attacks:
+# generated from it, with the rest of the stat block as each creature's description.
+creatures.domestic-dog-guard-hunting.name: Domestic Dog (Guard / Hunting)
+creatures.domestic-dog-guard-hunting.description: |-
+  *A medium-to-large dog trained to guard, hunt or track. Loyal, fast, and able to pin down an unarmed person.*
+
+  **Type:** Animal (canid) · **Size:** x1/2 · **Weight:** 35 kg · **Threat:** Low
+
+  **Speed:** 14 (base 11): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Bite: skill 10, damage +2, DMAX 4, total +0
+
+  **Skills:** Dodge 10, Perception 13, Tracking 13 (by scent), Stealth 9, Run 15, Swimming 10
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Trainable.** Can be trained with Animal Handling to obey simple commands.
+
+  **Variants**
+
+  - **War Dog / Mastiff** (70 kg): STR 6, END 7. Recompute derived values.
+  - **Hunting Hound:** SPD base 12, Tracking +3.
+creatures.wolf.name: Wolf
+creatures.wolf.description: |-
+  *A wild pack hunter: patient, tireless and wary of humans unless starving.*
+
+  **Type:** Animal (canid) · **Size:** x1/2 · **Weight:** 40 kg · **Threat:** Low (Moderate in packs)
+
+  **Speed:** 14 (base 11): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Bite: skill 10, damage +2, DMAX 4, total +2
+
+  **Skills:** Dodge 10, Perception 13, Tracking 13 (by scent), Stealth 11, Run 16, Swimming 10
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Pack Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+  - **Endurance Runner.** Can trot for hours without fatigue.
+creatures.dire-wolf.name: Dire Wolf
+creatures.dire-wolf.description: |-
+  *A huge prehistoric wolf, also found in fantasy wilds. Hunts large game in packs.*
+
+  **Type:** Animal (canid) · **Size:** x1 · **Weight:** 90 kg · **Threat:** Moderate (High in packs)
+
+  **Speed:** 15 (base 11): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Bite: skill 12, damage +2, DMAX 4, total +4
+
+  **Skills:** Dodge 8, Perception 13, Tracking 13 (by scent), Stealth 9, Run 16
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Pack Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+  - **Night Vision.** No penalty in dim light.
+creatures.jackal.name: Jackal
+creatures.jackal.description: |-
+  *A small scavenging canid living in arid lands, bold in packs.*
+
+  **Type:** Animal (canid) · **Size:** x1/4 · **Weight:** 10 kg · **Threat:** Negligible (Low in packs)
+
+  **Speed:** 14 (base 11): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Bite: skill 8, damage +0, DMAX 4, total -6
+
+  **Skills:** Dodge 11, Perception 11, Tracking 10 (by scent), Run 15
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Pack Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+  - **Scavenger.** Resistant to rot: +I to Physical Resistance against disease from carrion.
+creatures.fox.name: Fox
+creatures.fox.description: |-
+  *A small, cunning omnivore, more likely to flee than to fight.*
+
+  **Type:** Animal (canid) · **Size:** x1/4 · **Weight:** 6 kg · **Threat:** Negligible
+
+  **Speed:** 13 (base 10): 35 km/h, 29 m/round
+
+  **Attacks:**
+
+  - Bite: skill 9, damage +0, DMAX 4, total -6
+
+  **Skills:** Dodge 13, Perception 13, Stealth 13, Run 13, Tracking 11 (by scent)
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Night Vision.** No penalty in dim light.
+  - **Cunning.** Excellent at evading pursuers: +I to Run or Stealth when fleeing.
+creatures.coyote.name: Coyote
+creatures.coyote.description: |-
+  *An adaptable, opportunistic canid of open country that hunts alone or in small packs.*
+
+  **Type:** Animal (canid) · **Size:** x1/4 · **Weight:** 15 kg · **Threat:** Negligible (Low in packs)
+
+  **Speed:** 14 (base 11): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Bite: skill 9, damage +0, DMAX 4, total -4
+
+  **Skills:** Dodge 11, Perception 11, Tracking 10 (by scent), Run 15
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Pack Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+creatures.black-bear.name: Black Bear
+creatures.black-bear.description: |-
+  *A forest omnivore, usually shy but extremely dangerous when cornered, surprised or protecting cubs.*
+
+  **Type:** Animal (ursid) · **Size:** x1 · **Weight:** 120 kg · **Threat:** High
+
+  **Speed:** 14 (base 10): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Claws: skill 12, damage +2, DMAX 4, total +7
+  - Bite: skill 10, damage +2, DMAX 4, total +7
+
+  **Skills:** Dodge 6, Perception 11, Tracking 11 (by scent), Stealth 6, Climb 9, Run 14, Swimming 10
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Bear Hug.** May grapple with a successful Claws attack (Strength vs. Strength, see Grappling).
+  - **Climber.** Climbs trees easily.
+
+  **Variants**
+
+  - **Brown Bear / Grizzly** and **Polar Bear** have their own entries.
+creatures.brown-bear-grizzly.name: Brown Bear / Grizzly
+creatures.brown-bear-grizzly.description: |-
+  *A massive bear of forests and mountains, ferocious when surprised or defending its young.*
+
+  **Type:** Animal (ursid) · **Size:** x2 · **Weight:** 300 kg · **Threat:** High
+
+  **Speed:** 15 (base 10): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Claws: skill 13, damage +2, DMAX 4, total +10
+  - Bite: skill 12, damage +2, DMAX 4, total +10
+
+  **Skills:** Dodge 6, Perception 11, Tracking 11 (by scent), Stealth 6, Run 15, Swimming 11
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Bear Hug.** May grapple with a successful Claws attack (Strength vs. Strength).
+  - **Charge.** Creature Charge: +10 damage (2 x speed bonus +5), limited by Max Impact Bonus.
+
+  **Variants**
+
+  - **Kodiak:** weight 450 kg, STR 22.
+creatures.polar-bear.name: Polar Bear
+creatures.polar-bear.description: |-
+  *A powerful white bear of the frozen north, the largest land carnivore, an ambush hunter on ice.*
+
+  **Type:** Animal (ursid) · **Size:** x2 · **Weight:** 450 kg · **Threat:** High
+
+  **Speed:** 15 (base 10): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Claws: skill 14, damage +2, DMAX 4, total +14
+  - Bite: skill 13, damage +2, DMAX 4, total +14
+
+  **Skills:** Dodge 6, Perception 12, Tracking 13 (by scent), Stealth 7 (+I on snow), Swimming 15, Run 15
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Cold Adapted.** Immune to normal cold; +I to Physical Resistance against fatigue in cold.
+  - **Bear Hug.** May grapple with a successful Claws attack.
+creatures.cave-bear.name: Cave Bear
+creatures.cave-bear.description: |-
+  *A prehistoric bear, larger and heavier than any living bear. Dwells in caves.*
+
+  **Type:** Animal (ursid) · **Size:** x2 · **Weight:** 600 kg · **Threat:** High
+
+  **Speed:** 15 (base 10): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Claws: skill 13, damage +2, DMAX 4, total +17
+  - Bite: skill 12, damage +2, DMAX 4, total +17
+
+  **Skills:** Dodge 5, Perception 10, Tracking 9 (by scent), Run 15
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Night Vision.** No penalty in dim light.
+  - **Territorial.** Aggressive near its den; fights to the death if cornered.
+creatures.housecat.name: Housecat
+creatures.housecat.description: |-
+  *A small, agile predator. Harmless to most people, deadly to mice and birds.*
+
+  **Type:** Animal (feline) · **Size:** x1/4 · **Weight:** 4 kg · **Threat:** Negligible
+
+  **Speed:** 13 (base 10): 35 km/h, 29 m/round
+
+  **Attacks:**
+
+  - Claws: skill 8, damage +0, DMAX 4, total -8
+  - Bite: skill 8, damage +0, DMAX 4, total -8
+
+  **Skills:** Dodge 15, Stealth 14, Climb 13, Perception 11, Jump 14, Run 13
+
+  **Special**
+
+  - **Always Lands on Feet.** Reduce falling damage by 2d6*.
+  - **Night Vision.** No penalty in dim light.
+
+  **Variants**
+
+  - **Kitten:** STR 0, END 2, Physical HP and thresholds recomputed.
+creatures.lynx.name: Lynx
+creatures.lynx.description: |-
+  *A medium wildcat with tufted ears, an elusive ambush hunter of cold forests.*
+
+  **Type:** Animal (feline) · **Size:** x1/2 · **Weight:** 20 kg · **Threat:** Low
+
+  **Speed:** 13 (base 10): 35 km/h, 29 m/round
+
+  **Attacks:**
+
+  - Claws: skill 10, damage +2, DMAX 4, total +0
+  - Bite: skill 10, damage +2, DMAX 4, total +0
+
+  **Skills:** Dodge 14, Stealth 15, Perception 13, Climb 13, Jump 14, Run 13
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Ambush.** Pounces from hiding: attack by surprise (+I).
+creatures.cougar.name: Cougar
+creatures.cougar.description: |-
+  *A large solitary cat, a silent stalker able to leap on prey many times its size.*
+
+  **Type:** Animal (feline) · **Size:** x1 · **Weight:** 60 kg · **Threat:** Moderate
+
+  **Speed:** 15 (base 11): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Claws: skill 12, damage +2, DMAX 4, total +3
+  - Bite: skill 11, damage +2, DMAX 4, total +3
+
+  **Skills:** Dodge 14, Stealth 15, Perception 12, Climb 13, Jump 17, Run 15
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Ambush.** Pounces from hiding: attack by surprise (+I).
+  - **Leaper.** Jumps up to 6 m in a single bound.
+creatures.leopard-jaguar.name: Leopard / Jaguar
+creatures.leopard-jaguar.description: |-
+  *A powerful spotted cat that climbs, swims and drags prey into trees.*
+
+  **Type:** Animal (feline) · **Size:** x1 · **Weight:** 70 kg · **Threat:** Moderate
+
+  **Speed:** 15 (base 11): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Claws: skill 12, damage +2, DMAX 4, total +4
+  - Bite: skill 11, damage +2, DMAX 4, total +4
+
+  **Skills:** Dodge 14, Stealth 16, Perception 12, Climb 15, Swimming 12, Run 15
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Ambush.** Pounces from hiding: attack by surprise (+I).
+  - **Tree Hunter.** Can carry prey twice its weight up a tree.
+creatures.lion.name: Lion
+creatures.lion.description: |-
+  *A large social cat of the savannah. Lionesses hunt in groups, males defend the pride.*
+
+  **Type:** Animal (feline) · **Size:** x2 · **Weight:** 190 kg · **Threat:** High
+
+  **Speed:** 15 (base 11): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Claws: skill 13, damage +2, DMAX 4, total +8
+  - Bite: skill 12, damage +2, DMAX 4, total +8
+
+  **Skills:** Dodge 11, Stealth 12, Perception 12, Intimidation 12, Run 15
+
+  **Special**
+
+  - **Pack Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+  - **Roar.** Intimidation vs. Mental Resistance at close range.
+  - **Night Vision.** No penalty in dim light.
+creatures.tiger.name: Tiger
+creatures.tiger.description: |-
+  *The largest cat, a solitary and relentless hunter of forests and jungles.*
+
+  **Type:** Animal (feline) · **Size:** x2 · **Weight:** 220 kg · **Threat:** High
+
+  **Speed:** 16 (base 11): 48 km/h, 40 m/round
+
+  **Attacks:**
+
+  - Claws: skill 14, damage +2, DMAX 4, total +8
+  - Bite: skill 13, damage +2, DMAX 4, total +8
+
+  **Skills:** Dodge 11, Stealth 14, Perception 12, Swimming 14, Intimidation 11, Run 16
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Ambush.** Attacks by surprise (+I) from cover.
+  - **Swimmer.** Hunts in water without penalty.
+creatures.sabre-toothed-cat.name: Sabre-toothed Cat
+creatures.sabre-toothed-cat.description: |-
+  *A powerful prehistoric cat with huge canines, specialized in killing large prey.*
+
+  **Type:** Animal (feline) · **Size:** x2 · **Weight:** 300 kg · **Threat:** High
+
+  **Speed:** 15 (base 10): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Claws: skill 14, damage +2, DMAX 4, total +10
+  - Sabre fangs: skill 13, damage +2, DMAX 4, total +10
+
+  **Skills:** Dodge 9, Stealth 11, Perception 10, Run 15
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Sabre Fangs.** Bites a grappled or helpless target with +I and half-armor.
+  - **Ambush.** Attacks by surprise (+I) from cover.
+creatures.venomous-snake-viper-cobra.name: Venomous Snake (Viper / Cobra)
+creatures.venomous-snake-viper-cobra.description: |-
+  *A small snake relying on camouflage and a fast, venomous strike.*
+
+  **Type:** Animal (reptile) · **Size:** x1/4 · **Weight:** 1.5 kg · **Threat:** Low (venom can be lethal)
+
+  **Speed:** 5 (base 2): 14 km/h, 12 m/round
+
+  **Attacks:**
+
+  - Bite: skill 11, damage +0, DMAX 4, total -8 (Injects venom if at least 1 damage gets through armor)
+
+  **Skills:** Dodge 13, Stealth 13 (+I in natural terrain), Perception 8 (+I heat sense at close range)
+
+  **Special**
+
+  - **Venom.** Virulence 12, period 1 minute, effect 1d6* Physical Injury at the end of each period until the victim succeeds a Physical Resistance roll (see 6.1). _Effect values are proposals._
+  - **Ambush Predator.** Typically attacks by surprise (+I).
+
+  **Variants**
+
+  - **Cobra:** length 2 m (Size x1/2), Virulence 14.
+creatures.giant-constrictor-python-anaconda.name: Giant Constrictor (Python / Anaconda)
+creatures.giant-constrictor-python-anaconda.description: |-
+  *A 6 m snake that ambushes prey, coils around it and suffocates it.*
+
+  **Type:** Animal (reptile) · **Size:** x2 · **Weight:** 100 kg · **Threat:** Moderate
+
+  **Speed:** 5 (base 2): 14 km/h, 12 m/round
+
+  **Attacks:**
+
+  - Coil: skill 10, damage +4, DMAX 3, total +8 (Grapple (see Special))
+  - Bite: skill 8, damage +2, DMAX 4, total +6
+
+  **Skills:** Dodge 7, Stealth 9, Perception 8, Climb 8, Swimming 6
+
+  **Special**
+
+  - **Constriction.** A successful Coil grapples the target. Each round it wins Strength vs. Strength, the victim takes Physical Stun equal to the Coil's damage (suffocation). _Proposal._
+  - **Ambush.** Attacks by surprise (+I) from water or foliage.
+
+  **Variants**
+
+  - **Anaconda:** swims with SPD base 6, Stealth +I in water.
+creatures.crocodile.name: Crocodile
+creatures.crocodile.description: |-
+  *A 4 m ambush predator of rivers and swamps, with a bone-crushing bite.*
+
+  **Type:** Animal (reptile) · **Size:** x2 · **Weight:** 500 kg · **Threat:** High
+
+  **Speed:** swimming 12 (base 8): 31 km/h, 26 m/round; ground 9 (base 5): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Bite: skill 12, damage +2, DMAX 4, total +17 (Death Roll (see Special))
+  - Tail slap: skill 11, damage +4, DMAX 3, total +19
+
+  **Skills:** Dodge 6, Stealth 10 (+I in water), Perception 10, Swimming 16
+
+  **Special**
+
+  - **Death Roll.** A Bite with relative degree II or more grapples the target and adds 1d6* damage each round it holds. _Proposal._
+  - **Ambush.** Attacks by surprise (+I) from the water's edge.
+  - **Aquatic Hunter.** Moves at its swimming speed; sluggish out of water.
+
+  **Variants**
+
+  - **Saltwater Crocodile:** weight 1000 kg, STR 24, Size x4.
+creatures.komodo-dragon-giant-lizard.name: Komodo Dragon / Giant Lizard
+creatures.komodo-dragon-giant-lizard.description: |-
+  *A large monitor lizard whose bite carries a septic venom. It tracks wounded prey for days.*
+
+  **Type:** Animal (reptile) · **Size:** x1 · **Weight:** 80 kg · **Threat:** Low (Moderate with venom)
+
+  **Speed:** 8 (base 5): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Bite: skill 9, damage +2, DMAX 4, total +4 (Venom)
+  - Claws: skill 9, damage +2, DMAX 4, total +4
+
+  **Skills:** Dodge 8, Perception 12, Tracking 11 (by scent), Stealth 8, Climb 8, Swimming 8, Run 9
+
+  **Special**
+
+  - **Septic Venom.** Virulence 10, period 1 hour, effect 1 Physical Injury and -I to all rolls until resisted. _Proposal._
+  - **Scavenger.** Smells carrion from far away.
+
+  **Variants**
+
+  - **Giant Lizard (fantasy):** weight 400 kg, Size x2, STR 21.
+creatures.giant-tortoise.name: Giant Tortoise
+creatures.giant-tortoise.description: |-
+  *A slow, ancient grazer protected by a heavy shell. It withdraws rather than fights.*
+
+  **Type:** Animal (reptile) · **Size:** x1 · **Weight:** 300 kg · **Threat:** Negligible
+
+  **Speed:** 3 (base 0): 3.5 km/h, 3 m/round
+
+  **Attacks:**
+
+  - Bite: skill 8, damage +2, DMAX 4, total +8
+
+  **Skills:** Dodge 2, Perception 4
+
+  **Special**
+
+  - **Shell.** Already counted in Protection.
+  - **Withdrawal.** Protection 12 against all attacks, but it cannot attack or move.
+  - **Long-lived.** Can live for 150 years or more.
+creatures.giant-toad.name: Giant Toad
+creatures.giant-toad.description: |-
+  *A swamp-dwelling amphibian the size of a large dog. It snatches prey with a sticky tongue.*
+
+  **Type:** Animal (amphibian) · **Size:** x1/2 · **Weight:** 50 kg · **Threat:** Low
+
+  **Speed:** 6 (base 4): 17 km/h, 14 m/round
+
+  **Attacks:**
+
+  - Tongue: skill 8, damage +0, DMAX 1, total +0 (Grapple, reach 6 m)
+  - Bite: skill 7, damage +2, DMAX 4, total +2
+
+  **Skills:** Dodge 7, Stealth 8 (+I in swamp), Perception 9, Jump 9, Swimming 6
+
+  **Special**
+
+  - **Sticky Tongue.** A hit grapples the target and pulls it adjacent (Strength vs. Strength to resist). _Proposal._
+  - **Toxic Skin.** Contact poison: Virulence 10, period 10 minutes, effect 1d6* Physical Stun. _Proposal._
+creatures.hawk-falcon.name: Hawk / Falcon
+creatures.hawk-falcon.description: |-
+  *A diurnal bird of prey with exceptional eyesight, hunting small animals from the air.*
+
+  **Type:** Animal (bird) · **Size:** x1/4 · **Weight:** 1 kg · **Threat:** Negligible
+
+  **Speed:** flying 17 (base 14): 54 km/h, 45 m/round; ground 4 (base 1): 7 km/h, 6 m/round
+
+  **Attacks:**
+
+  - Talons: skill 10, damage +0, DMAX 4, total -8
+  - Beak: skill 10, damage +0, DMAX 4, total -8
+
+  **Skills:** Dodge 14, Perception 16 (+I by sight), Flight 19
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Stoop.** An attack diving from above and unseen counts as an attack by surprise (+I).
+
+  **Variants**
+
+  - **Eagle** and **Owl** have their own entries.
+creatures.eagle.name: Eagle
+creatures.eagle.description: |-
+  *A large bird of prey, a strong flyer with extraordinary eyesight.*
+
+  **Type:** Animal (bird) · **Size:** x1/2 · **Weight:** 5 kg · **Threat:** Low
+
+  **Speed:** flying 17 (base 14): 54 km/h, 45 m/round; ground 4 (base 1): 7 km/h, 6 m/round
+
+  **Attacks:**
+
+  - Talons: skill 10, damage +2, DMAX 4, total -4
+  - Beak: skill 10, damage +2, DMAX 4, total -4
+
+  **Skills:** Dodge 13, Perception 17 (+I by sight), Flight 19
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Stoop.** An attack diving from above and unseen counts as an attack by surprise (+I).
+
+  **Variants**
+
+  - **Golden / Sea Eagle:** can carry up to 6 kg.
+creatures.owl.name: Owl
+creatures.owl.description: |-
+  *A nocturnal raptor with silent flight and superb hearing.*
+
+  **Type:** Animal (bird) · **Size:** x1/4 · **Weight:** 2 kg · **Threat:** Negligible
+
+  **Speed:** flying 15 (base 12): 43 km/h, 36 m/round; ground 4 (base 1): 7 km/h, 6 m/round
+
+  **Attacks:**
+
+  - Talons: skill 9, damage +0, DMAX 4, total -8
+  - Beak: skill 9, damage +0, DMAX 4, total -8
+
+  **Skills:** Dodge 12, Perception 17 (+I by hearing), Stealth 15, Flight 16
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Silent Flight.** +II to Stealth while flying.
+  - **Night Hunter.** No penalty in dim light, only -I in total darkness.
+creatures.raven-crow.name: Raven / Crow
+creatures.raven-crow.description: |-
+  *A clever black bird that scavenges, mimics sounds and gathers in flocks.*
+
+  **Type:** Animal (bird) · **Size:** x1/4 · **Weight:** 1 kg · **Threat:** Negligible
+
+  **Speed:** flying 15 (base 12): 43 km/h, 36 m/round; ground 4 (base 1): 7 km/h, 6 m/round
+
+  **Attacks:**
+
+  - Beak: skill 9, damage +0, DMAX 4, total -8
+
+  **Skills:** Dodge 12, Perception 12, Flight 16
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Clever.** Can learn simple tasks and mimic sounds.
+  - **Scavenger.** Gathers around carrion and battlefields.
+creatures.vulture.name: Vulture
+creatures.vulture.description: |-
+  *A large carrion bird that soars for hours looking for the dying.*
+
+  **Type:** Animal (bird) · **Size:** x1/2 · **Weight:** 6 kg · **Threat:** Negligible
+
+  **Speed:** flying 15 (base 13): 43 km/h, 36 m/round; ground 3 (base 1): 3.5 km/h, 3 m/round
+
+  **Attacks:**
+
+  - Beak: skill 8, damage +2, DMAX 4, total -4
+
+  **Skills:** Dodge 8, Perception 15, Flight 16
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Soaring.** Flies for hours without fatigue.
+  - **Carrion Eater.** +I to Physical Resistance against disease.
+creatures.ostrich.name: Ostrich
+creatures.ostrich.description: |-
+  *A tall flightless bird, the fastest on land, with a powerful kick.*
+
+  **Type:** Animal (bird) · **Size:** x1 · **Weight:** 120 kg · **Threat:** Low
+
+  **Speed:** 17 (base 13): 54 km/h, 45 m/round
+
+  **Attacks:**
+
+  - Kick: skill 10, damage +0, DMAX 2, total +4
+
+  **Skills:** Dodge 9, Perception 12, Run 20
+
+  **Special**
+
+  - **Runner.** Keeps its top speed over long distances.
+  - **Skittish.** Prefers to flee, but a cornered bird kicks hard.
+creatures.terror-bird.name: Terror Bird
+creatures.terror-bird.description: |-
+  *A giant, flightless predator of the prehistoric plains, with a hooked beak and powerful legs.*
+
+  **Type:** Animal (bird) · **Size:** x2 · **Weight:** 150 kg · **Threat:** Moderate
+
+  **Speed:** 17 (base 13): 54 km/h, 45 m/round
+
+  **Attacks:**
+
+  - Beak: skill 12, damage +2, DMAX 4, total +7
+  - Kick: skill 11, damage +4, DMAX 3, total +9
+
+  **Skills:** Dodge 9, Perception 11, Run 19
+
+  **Special**
+
+  - **Swift Pursuit.** Runs down prey over short distances.
+  - **Prehistoric.** Native to TL0 settings.
+creatures.roc.name: Roc
+creatures.roc.description: |-
+  *A legendary bird of colossal size, said to carry off elephants.*
+
+  **Type:** Animal (giant bird) · **Size:** x8 · **Weight:** 2000 kg · **Threat:** Deadly
+
+  **Speed:** flying 20 (base 15): 72 km/h, 60 m/round; ground 9 (base 4): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Talons: skill 13, damage +4, DMAX 4, total +25
+  - Beak: skill 13, damage +4, DMAX 4, total +25
+
+  **Skills:** Dodge 6, Perception 16, Flight 21
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Diving Strike.** Creature Charge in flight: +16 damage (2 x speed bonus +8), limited by Max Impact Bonus.
+  - **Carry Off.** Can lift a load of up to 1.5 tons in flight.
+creatures.compsognathus.name: Compsognathus
+creatures.compsognathus.description: |-
+  *A chicken-sized, fast, two-legged carnivore that hunts small prey and scavenges, often in packs.*
+
+  **Type:** Animal (dinosaur) · **Size:** x1/4 · **Weight:** 3 kg · **Threat:** Negligible (Low in packs)
+
+  **Speed:** 14 (base 11): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Bite: skill 9, damage +0, DMAX 4, total -8
+
+  **Skills:** Dodge 13, Perception 11, Stealth 12, Run 15
+
+  **Special**
+
+  - **Pack Hunter.** Usually met in packs of 6 to 12.
+  - **Skittish.** Flees when it has lost half its Physical HP.
+creatures.velociraptor-deinonychus.name: Velociraptor / Deinonychus
+creatures.velociraptor-deinonychus.description: |-
+  *A man-sized, feathered pack hunter with a sickle-shaped claw on each foot.*
+
+  **Type:** Animal (dinosaur) · **Size:** x1 · **Weight:** 70 kg · **Threat:** Moderate (High in packs)
+
+  **Speed:** 14 (base 10): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Sickle claw: skill 11, damage +2, DMAX 4, total +4
+  - Bite: skill 10, damage +2, DMAX 4, total +4
+
+  **Skills:** Dodge 12, Perception 12, Stealth 11, Run 15, Jump 13
+
+  **Special**
+
+  - **Pack Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+  - **Pounce.** Leaps on prey from up to 4 m, clinging with its claws (+I when attacking by surprise).
+creatures.dilophosaurus.name: Dilophosaurus
+creatures.dilophosaurus.description: |-
+  *A 6 m crested predator that hunts by ambush and keeps its prey at a distance.*
+
+  **Type:** Animal (dinosaur) · **Size:** x2 · **Weight:** 400 kg · **Threat:** Moderate
+
+  **Speed:** 14 (base 10): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Bite: skill 12, damage +2, DMAX 4, total +10
+  - Claws: skill 12, damage +2, DMAX 4, total +10
+  - Spit: skill 6, damage +0, DMAX 1, total +0 (Venom, range UT 4)
+
+  **Skills:** Dodge 8, Perception 10, Run 14
+
+  **Special**
+
+  - **Venom Spit.** Aimed at the eyes. Virulence 12, period 1 hour: blinded until resisted. _Proposal (fictional ability)._
+  - **Crest Display.** Intimidation PRE+3.
+creatures.allosaurus.name: Allosaurus
+creatures.allosaurus.description: |-
+  *A 9 m Jurassic predator, fast and powerful, that hunts large herbivores.*
+
+  **Type:** Animal (dinosaur) · **Size:** x4 · **Weight:** 2000 kg · **Threat:** Deadly
+
+  **Speed:** 15 (base 11): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Bite: skill 12, damage +2, DMAX 4, total +23
+  - Claws: skill 12, damage +2, DMAX 4, total +23
+
+  **Skills:** Dodge 5, Perception 10, Tracking 8 (by scent), Run 15
+
+  **Special**
+
+  - **Ambusher.** Charges prey from cover (Creature Charge: +8, 2 x speed bonus +4, limited by Max Impact Bonus).
+  - **Rending Bite.** A Bite with relative degree II or more tears the target: +1d6*.
+creatures.tyrannosaurus.name: Tyrannosaurus
+creatures.tyrannosaurus.description: |-
+  *A 12 m apex predator of the late Cretaceous. Its bite crushes bone and its roar can paralyze.*
+
+  **Type:** Animal (dinosaur) · **Size:** x4 · **Weight:** 8000 kg · **Threat:** Deadly
+
+  **Speed:** 14 (base 9): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Bite: skill 13, damage +2, DMAX 4, total +37 (AP 1)
+  - Tail swipe: skill 12, damage +4, DMAX 3, total +39
+
+  **Skills:** Dodge 4, Perception 13, Tracking 12 (by scent), Intimidation 14, Run 14
+
+  **Special**
+
+  - **Bone Crusher.** Its Bite has Armor Piercing 1 (armor value halved).
+  - **Terrifying Roar.** Intimidation vs. Mental Resistance; a failure inflicts Psychical Stun 1d6* (range UT 6). _Proposal._
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+creatures.spinosaurus.name: Spinosaurus
+creatures.spinosaurus.description: |-
+  *A semi-aquatic giant with a sail on its back, a crocodile-like snout and claws to snatch fish and prey.*
+
+  **Type:** Animal (dinosaur) · **Size:** x4 · **Weight:** 7000 kg · **Threat:** Deadly
+
+  **Speed:** ground 13 (base 9): 35 km/h, 29 m/round; swimming 12 (base 8): 31 km/h, 26 m/round
+
+  **Attacks:**
+
+  - Bite: skill 13, damage +2, DMAX 4, total +32
+  - Claws: skill 13, damage +2, DMAX 4, total +32
+
+  **Skills:** Dodge 4, Perception 12, Swimming 16, Intimidation 10
+
+  **Special**
+
+  - **Semi-aquatic.** Uses the ground speed on land, the swimming speed in water.
+  - **Sail Display.** Intimidation vs. rivals; +I against other animals.
+creatures.triceratops.name: Triceratops
+creatures.triceratops.description: |-
+  *A 9 m herbivore with a bony frill and three horns. It defends the herd by charging.*
+
+  **Type:** Animal (dinosaur) · **Size:** x4 · **Weight:** 6000 kg · **Threat:** High
+
+  **Speed:** 13 (base 9): 35 km/h, 29 m/round
+
+  **Attacks:**
+
+  - Horns: skill 12, damage +4, DMAX 4, total +34
+
+  **Skills:** Dodge 4, Perception 9, Run 13
+
+  **Special**
+
+  - **Charge.** Creature Charge: +8 damage (2 x speed bonus +4), limited by Max Impact Bonus.
+  - **Frill.** Already counted in Protection.
+  - **Horn Parry.** Can parry with its horns using its attack skill.
+creatures.stegosaurus.name: Stegosaurus
+creatures.stegosaurus.description: |-
+  *A 9 m herbivore with a double row of plates and a spiked tail it swings against predators.*
+
+  **Type:** Animal (dinosaur) · **Size:** x4 · **Weight:** 4000 kg · **Threat:** High
+
+  **Speed:** 9 (base 5): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Thagomizer (tail): skill 11, damage +4, DMAX 4, total +31 (Sweeps targets behind)
+
+  **Skills:** Dodge 3, Perception 7
+
+  **Special**
+
+  - **Tail Swing.** Can strike any target behind it or at its side, without turning.
+  - **Slow.** Rarely pursues.
+creatures.ankylosaurus.name: Ankylosaurus
+creatures.ankylosaurus.description: |-
+  *A living tank covered with bony plates and armed with a heavy bone club at the end of its tail.*
+
+  **Type:** Animal (dinosaur) · **Size:** x4 · **Weight:** 6000 kg · **Threat:** High
+
+  **Speed:** 9 (base 5): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Tail club: skill 11, damage +4, DMAX 3, total +34 (Halves target's Physical Shock Threshold)
+
+  **Skills:** Dodge 2, Perception 7
+
+  **Special**
+
+  - **Armored.** Already counted in Protection.
+  - **Bone Breaker.** Its club blows halve the target's Physical Shock Threshold (as a called shot, with no penalty to hit).
+creatures.diplodocus-brachiosaurus.name: Diplodocus / Brachiosaurus
+creatures.diplodocus-brachiosaurus.description: |-
+  *A gigantic long-necked herbivore, harmless but for its size, its stomp and a whipping tail.*
+
+  **Type:** Animal (dinosaur) · **Size:** x8 · **Weight:** 20000 kg · **Threat:** Deadly if provoked
+
+  **Speed:** 8 (base 3): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Tail whip: skill 11, damage +4, DMAX 3, total +44
+  - Stomp: skill 11, damage +4, DMAX 3, total +44
+
+  **Skills:** Dodge 2, Perception 6
+
+  **Special**
+
+  - **Gigantic.** Anything smaller than a ton can be walked over without notice.
+  - **Herd Animal.** Moves in herds; stampedes if panicked.
+
+  **Variants**
+
+  - **Brachiosaurus:** weight 40000 kg, STR 31, taller, no tail whip.
+creatures.pteranodon.name: Pteranodon
+creatures.pteranodon.description: |-
+  *A large flying reptile with a 6 m wingspan, a long beak and a head crest. It catches fish and small prey.*
+
+  **Type:** Animal (pterosaur) · **Size:** x2 · **Weight:** 25 kg · **Threat:** Low
+
+  **Speed:** flying 15 (base 12): 43 km/h, 36 m/round; ground 4 (base 1): 7 km/h, 6 m/round
+
+  **Attacks:**
+
+  - Beak: skill 9, damage +2, DMAX 4, total -2
+
+  **Skills:** Dodge 10, Perception 13, Flight 16
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Fisher.** Snatches prey from water in passing.
+  - **Colony Bird.** Often found in flocks.
+creatures.plesiosaur.name: Plesiosaur
+creatures.plesiosaur.description: |-
+  *A long-necked marine reptile, a 7 m predator of coastal waters.*
+
+  **Type:** Animal (marine reptile) · **Size:** x4 · **Weight:** 1500 kg · **Threat:** High
+
+  **Speed:** swimming 11 (base 7): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Bite: skill 12, damage +2, DMAX 4, total +20 (Reach 4 m)
+
+  **Skills:** Dodge 6, Perception 10, Swimming 16
+
+  **Special**
+
+  - **Long Neck.** Attacks from up to 4 m away.
+  - **Aquatic.** Helpless out of water.
+creatures.horse-riding.name: Horse (Riding)
+creatures.horse-riding.description: |-
+  *A strong, fast herbivore used for riding, war and draft. Kicks and bites when cornered, but prefers to flee.*
+
+  **Type:** Animal (equine) · **Size:** x2 · **Weight:** 500 kg · **Threat:** Low
+
+  **Speed:** 18 (base 14): 60 km/h, 50 m/round
+
+  **Attacks:**
+
+  - Kick: skill 9, damage +4, DMAX 3, total +12
+  - Bite: skill 9, damage +2, DMAX 4, total +10
+
+  **Skills:** Dodge 8, Perception 10, Run 19, Jump 15, Swimming 12
+
+  **Special**
+
+  - **Trample.** Creature Charge: damage +14 (2 x speed bonus +7), limited by Max Impact Bonus.
+  - **Mount.** Carries up to 300 kg (UT).
+  - **Skittish.** Loud noises may panic an untrained horse (Riding or Animal Handling roll).
+
+  **Variants**
+
+  - **War Horse:** STR 21, END 13, Kick and Bite skill +4, barding adds Protection.
+  - **Draft Horse:** STR 23, END 14, SPD base 10.
+creatures.ox-bull.name: Ox / Bull
+creatures.ox-bull.description: |-
+  *A massive domestic bovine. An ox is placid, a bull in rut or defending its herd is not.*
+
+  **Type:** Animal (bovine) · **Size:** x2 · **Weight:** 700 kg · **Threat:** Moderate
+
+  **Speed:** 12 (base 8): 31 km/h, 26 m/round
+
+  **Attacks:**
+
+  - Horns: skill 11, damage +4, DMAX 4, total +16
+
+  **Skills:** Dodge 5, Perception 7, Run 12
+
+  **Special**
+
+  - **Charge.** Creature Charge: +8 damage (2 x speed bonus +4), limited by Max Impact Bonus.
+  - **Draft Animal.** An ox can pull up to 1.5 tons (UT).
+
+  **Variants**
+
+  - **Ox:** placid, no Charge unless provoked.
+creatures.wild-boar.name: Wild Boar
+creatures.wild-boar.description: |-
+  *A stocky, short-tempered forest pig with sharp tusks that charges when cornered.*
+
+  **Type:** Animal (suid) · **Size:** x1/2 · **Weight:** 120 kg · **Threat:** Moderate
+
+  **Speed:** 13 (base 10): 35 km/h, 29 m/round
+
+  **Attacks:**
+
+  - Tusks: skill 11, damage +2, DMAX 4, total +6
+
+  **Skills:** Dodge 7, Perception 10, Tracking 10 (by scent), Run 13
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Charge.** Creature Charge: +8 damage (2 x speed bonus +4), limited by Max Impact Bonus.
+  - **Savage.** +I to Endurance rolls against Physical Shock.
+creatures.hyena.name: Hyena
+creatures.hyena.description: |-
+  *A scavenging and hunting carnivore with powerful jaws, living in clans.*
+
+  **Type:** Animal (carnivore) · **Size:** x1/2 · **Weight:** 60 kg · **Threat:** Low (Moderate in clans)
+
+  **Speed:** 14 (base 11): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Bite: skill 11, damage +2, DMAX 4, total +4
+
+  **Skills:** Dodge 9, Perception 12, Tracking 11 (by scent), Run 14
+
+  **Special**
+
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Pack Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+  - **Bone Crusher.** Bite damage halves the Protection of armor made of bone, hide or leather.
+creatures.gorilla.name: Gorilla
+creatures.gorilla.description: |-
+  *A huge, peaceful ape that defends its group with tremendous strength if threatened.*
+
+  **Type:** Animal (primate) · **Size:** x1 · **Weight:** 160 kg · **Threat:** Moderate
+
+  **Speed:** 8 (base 4): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Slam: skill 11, damage +0, DMAX 2, total +6
+  - Bite: skill 11, damage +2, DMAX 4, total +8
+
+  **Skills:** Dodge 7, Perception 10, Climb 10, Intimidation 10
+
+  **Special**
+
+  - **Chest Beat.** Intimidation vs. Mental Resistance as a warning display.
+  - **Grappler.** May grapple a target and bite it.
+creatures.rhinoceros.name: Rhinoceros
+creatures.rhinoceros.description: |-
+  *A 2-ton herbivore with a thick hide and a heavy horn, short-sighted and prone to charge anything that moves.*
+
+  **Type:** Animal (rhinoceros) · **Size:** x2 · **Weight:** 2000 kg · **Threat:** High
+
+  **Speed:** 16 (base 12): 48 km/h, 40 m/round
+
+  **Attacks:**
+
+  - Horn: skill 11, damage +4, DMAX 4, total +25
+
+  **Skills:** Dodge 4, Perception 5, Run 16
+
+  **Special**
+
+  - **Charge.** Creature Charge: +12 damage (2 x speed bonus +6), limited by Max Impact Bonus.
+  - **Poor Sight.** -I on Perception beyond 20 m.
+  - **Thick Hide.** Already counted in Protection.
+creatures.hippopotamus.name: Hippopotamus
+creatures.hippopotamus.description: |-
+  *A territorial, 1.5 ton amphibious herbivore, among the most dangerous large animals.*
+
+  **Type:** Animal (hippopotamid) · **Size:** x2 · **Weight:** 1500 kg · **Threat:** High
+
+  **Speed:** ground 12 (base 8): 31 km/h, 26 m/round; swimming 10 (base 6): 26 km/h, 22 m/round
+
+  **Attacks:**
+
+  - Bite: skill 11, damage +2, DMAX 4, total +23
+
+  **Skills:** Dodge 3, Perception 7, Swimming 16
+
+  **Special**
+
+  - **Territorial.** Attacks anything that comes between it and water.
+  - **Amphibious.** Can hold its breath for 5 minutes and walk on the river bed.
+creatures.elephant.name: Elephant
+creatures.elephant.description: |-
+  *A 5-ton herbivore, intelligent and long-lived, able to uproot trees. Also used as a war beast.*
+
+  **Type:** Animal (proboscid) · **Size:** x4 · **Weight:** 5000 kg · **Threat:** High
+
+  **Speed:** 14 (base 10): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Tusks: skill 12, damage +4, DMAX 4, total +34
+  - Trunk: skill 12, damage +4, DMAX 3, total +34 (Grapple)
+  - Stomp: skill 12, damage +4, DMAX 3, total +34 (Prone targets)
+
+  **Skills:** Dodge 3, Perception 8, Run 14
+
+  **Special**
+
+  - **Charge.** Creature Charge: +10 damage (2 x speed bonus +5), limited by Max Impact Bonus.
+  - **Trunk Grab.** May grapple a target with the Trunk and hurl or crush it.
+  - **Memory.** Never forgets a friend or an enemy.
+
+  **Variants**
+
+  - **War Elephant:** trained, carries a howdah and up to 4 riders (portable weight 5 tons).
+creatures.mammoth.name: Mammoth
+creatures.mammoth.description: |-
+  *A shaggy, long-tusked elephant of the glacial era.*
+
+  **Type:** Animal (proboscid) · **Size:** x4 · **Weight:** 6000 kg · **Threat:** High
+
+  **Speed:** 14 (base 9): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Tusks: skill 12, damage +4, DMAX 4, total +39
+  - Trunk: skill 12, damage +4, DMAX 3, total +39 (Grapple)
+
+  **Skills:** Dodge 3, Perception 8, Run 14
+
+  **Special**
+
+  - **Cold Adapted.** Immune to normal cold.
+  - **Charge.** Creature Charge: +10 damage (2 x speed bonus +5), limited by Max Impact Bonus.
+creatures.great-white-shark.name: Great White Shark
+creatures.great-white-shark.description: |-
+  *A 4.5 m apex predator, an ambush hunter attracted by blood.*
+
+  **Type:** Animal (fish) · **Size:** x2 · **Weight:** 1000 kg · **Threat:** Deadly (in water)
+
+  **Speed:** swimming 13 (base 8): 35 km/h, 29 m/round
+
+  **Attacks:**
+
+  - Bite: skill 13, damage +2, DMAX 4, total +20
+
+  **Skills:** Dodge 9, Perception 14, Tracking 15 (blood and electro-sense), Swimming 18
+
+  **Special**
+
+  - **Aquatic.** Helpless out of water.
+  - **Blood Frenzy.** +I on attacks against bleeding targets.
+  - **Bite and Retreat.** Usually strikes then circles back.
+creatures.orca.name: Orca
+creatures.orca.description: |-
+  *A 7 m intelligent apex predator that hunts in coordinated pods.*
+
+  **Type:** Animal (marine mammal) · **Size:** x4 · **Weight:** 4000 kg · **Threat:** Deadly (in water)
+
+  **Speed:** swimming 17 (base 12): 54 km/h, 45 m/round
+
+  **Attacks:**
+
+  - Bite: skill 13, damage +2, DMAX 4, total +29
+  - Tail slap: skill 12, damage +4, DMAX 3, total +31 (Stun)
+
+  **Skills:** Dodge 7, Perception 13 (+I echolocation), Swimming 20, Tracking 11
+
+  **Special**
+
+  - **Aquatic.** Helpless out of water.
+  - **Pod Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+  - **Tail Slap.** Damage may be inflicted as Physical Stun with no penalty.
+creatures.giant-squid.name: Giant Squid
+creatures.giant-squid.description: |-
+  *A 12 m deep-sea cephalopod with ten arms, a hard beak and eyes the size of dinner plates.*
+
+  **Type:** Animal (cephalopod) · **Size:** x8 · **Weight:** 500 kg · **Threat:** High (in water)
+
+  **Speed:** swimming 11 (base 8): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Tentacle: skill 11, damage +4, DMAX 3, total +16 (Grapple, Multiple Attacks (2))
+  - Beak: skill 11, damage +4, DMAX 4, total +16 (Grappled target)
+
+  **Skills:** Dodge 6, Perception 9, Swimming 16, Stealth 7
+
+  **Special**
+
+  - **Multiple Attacks.** Two tentacle attacks per round.
+  - **Ink Cloud.** Once per fight: a 10 m cloud blocks vision (-II to all attacks within) and the squid jets away at +4 SPD.
+  - **Aquatic.** Helpless out of water.
+creatures.giant-rat.name: Giant Rat
+creatures.giant-rat.description: |-
+  *A dog-sized, disease-ridden rodent living in sewers, ruins and dungeons.*
+
+  **Type:** Animal (rodent) · **Size:** x1/4 · **Weight:** 6 kg · **Threat:** Negligible (Low in numbers)
+
+  **Speed:** 10 (base 7): 26 km/h, 22 m/round
+
+  **Attacks:**
+
+  - Bite: skill 8, damage +0, DMAX 4, total -6 (Disease)
+
+  **Skills:** Dodge 11, Perception 11, Stealth 11, Climb 10, Swimming 7, Run 10
+
+  **Special**
+
+  - **Filth Fever.** Virulence 8, period 1 day, effect 1 Physical Injury and -I to all rolls until resisted. _Proposal._
+  - **Night Vision.** No penalty in dim light.
+creatures.rat-swarm.name: Rat Swarm
+creatures.rat-swarm.description: |-
+  *Dozens of rats surging together over everything in their path.*
+
+  **Type:** Animal swarm (rodent) · **Size:** x1 · **Weight:** 15 kg total · **Threat:** Low
+
+  **Speed:** 9 (base 5): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Swarm bites: skill 9, damage +4, DMAX 3, total +2 (All characters in the zone)
+
+  **Skills:** Dodge 8, Perception 11, Climb 10, Swimming 6
+
+  **Special**
+
+  - **Swarm.** Occupies a zone about 3 m across and attacks every character in it. Single-target attacks inflict only half damage on it; area attacks, fire and explosions inflict full damage. It disperses when it has lost half its Physical HP. _Proposal._
+  - **Filth Fever.** Virulence 8, period 1 day, effect 1 Physical Injury and -I to all rolls until resisted. _Proposal._
+creatures.bat-swarm.name: Bat Swarm
+creatures.bat-swarm.description: |-
+  *A cloud of bats bursting from a cave or a ruin, blinding and biting anything in their way.*
+
+  **Type:** Animal swarm (bat) · **Size:** x1 · **Weight:** 5 kg total · **Threat:** Low
+
+  **Speed:** flying 11 (base 8): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Swarm bites: skill 9, damage +3, DMAX 2, total -3 (All characters in the zone)
+
+  **Skills:** Dodge 10, Perception 14
+
+  **Special**
+
+  - **Swarm.** Occupies a zone about 3 m across and attacks every character in it. Single-target attacks inflict only half damage on it; area attacks, fire and explosions inflict full damage. It disperses when it has lost half its Physical HP. _Proposal._
+  - **Flight.** Uses the flying speed above.
+  - **Blinding Cloud.** All actions of characters in the zone are at -I.
+  - **Fear of Light.** Disperses when exposed to bright light.
+creatures.giant-spider.name: Giant Spider
+creatures.giant-spider.description: |-
+  *A 2 m (leg span) hunting spider that ambushes prey from webs.*
+
+  **Type:** Animal (arachnid) · **Size:** x1 · **Weight:** 40 kg · **Threat:** Moderate
+
+  **Speed:** 8 (base 5): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Bite: skill 9, damage +2, DMAX 4, total +3 (Venom)
+  - Web: skill 9, damage +0, DMAX 1, total +0 (Entangles, range UT 4)
+
+  **Skills:** Dodge 10, Stealth 12, Perception 10, Climb 14
+
+  **Special**
+
+  - **Venom.** Virulence 13, period 1 minute, effect 1d6* Physical Stun per failed period (paralysis). _Proposal._
+  - **Web.** A hit entangles the target; freeing himself requires Strength vs. Strength 10.
+  - **Wall Walker.** Climbs any surface.
+creatures.scorpion.name: Scorpion
+creatures.scorpion.description: |-
+  *A small arachnid with a venomous sting, hiding under stones and in boots.*
+
+  **Type:** Animal (arachnid) · **Size:** x1/16 · **Weight:** 0.05 kg · **Threat:** Negligible (Low with venom)
+
+  **Speed:** 4 (base 2): 7 km/h, 6 m/round
+
+  **Attacks:**
+
+  - Sting: skill 7, damage +0, DMAX 4, total -10 (Venom)
+  - Claws: skill 6, damage +0, DMAX 4, total -10
+
+  **Skills:** Dodge 9, Stealth 11, Perception 7
+
+  **Special**
+
+  - **Venom.** Virulence 12, period 10 minutes, effect 1d6* Physical Injury per failed period. _Proposal._
+  - **Hidden.** Almost invisible: -II to spot it before it strikes.
+
+  **Variants**
+
+  - **Giant Scorpion:** Size x2, weight 200 kg, STR 19, claws DMAX 3 with grapple, Virulence 14.
+creatures.giant-centipede.name: Giant Centipede
+creatures.giant-centipede.description: |-
+  *A 1.5 m predatory arthropod that hides in dark corners and lunges at prey.*
+
+  **Type:** Animal (arthropod) · **Size:** x1/2 · **Weight:** 10 kg · **Threat:** Low
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Bite: skill 8, damage +2, DMAX 4, total -2 (Venom)
+
+  **Skills:** Dodge 10, Stealth 11, Perception 8, Climb 12
+
+  **Special**
+
+  - **Venom.** Virulence 11, period 1 minute, effect 1d6* Physical Injury per failed period. _Proposal._
+  - **Many Legs.** +I to Climb and to resist being knocked down.
+creatures.high-elf-warden.name: High Elf (Warden)
+creatures.high-elf-warden.description: |-
+  *Graceful, long-lived folk with keen senses and a love of bow and blade.*
+
+  **Type:** Humanoid (elf) · **Size:** x1 · **Weight:** 65 kg · **Threat:** Moderate
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Long sword: skill 14, damage +6, DMAX 4, total +6
+  - Longbow: skill 16, damage +9, DMAX 4, total +9 (Range UT 9)
+  - Dagger: skill 11, damage +2, DMAX 4, total +2
+
+  **Skills:** Dodge 12, Stealth 14, Perception 13, Survival 11, Tracking 11, Music 12
+
+  **Racial template:** AGI +2, DEX +2, WIT +1, WIL +1, PRE +2, INS +2 (vs. human baseline 5). Warden training adds AGI +2, DEX +1, INS +1.
+
+  **Equipment:** Rigid leather armor (2), long sword, longbow, dagger.
+
+  **Special**
+
+  - **Keen Senses.** +I to Perception in dim light and by hearing.
+  - **Fey Resolve.** +I to Mental Resistance against magical charm and compulsion.
+  - **Long-lived.** Lives for several centuries.
+
+  **Variants**
+
+  - Wood Elf, Dark Elf and other roles use the same template with adjusted characteristics and skills.
+creatures.wood-elf-hunter.name: Wood Elf (Hunter)
+creatures.wood-elf-hunter.description: |-
+  *Reclusive forest dwellers, masters of tracking, camouflage and the bow.*
+
+  **Type:** Humanoid (elf) · **Size:** x1 · **Weight:** 60 kg · **Threat:** Moderate
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Shortbow: skill 16, damage +6, DMAX 4, total +6 (Range UT 9)
+  - Spear: skill 12, damage +6, DMAX 4, total +6
+  - Dagger: skill 11, damage +2, DMAX 4, total +2
+
+  **Skills:** Dodge 12, Stealth 15, Perception 14, Survival 13, Tracking 13, Climb 11
+
+  **Racial template:** AGI +2, DEX +2, PRE +1, INS +3. Hunter training adds AGI +2, DEX +1, END +1, INS +1.
+
+  **Equipment:** Soft leather armor (1), shortbow, spear, dagger.
+
+  **Special**
+
+  - **Keen Senses.** +I to Perception in dim light and by hearing.
+  - **Forest Stride.** No movement penalty in woods; +I to Stealth in forest.
+  - **Fey Resolve.** +I to Mental Resistance against magical charm and compulsion.
+
+  **Variants**
+
+  - **Other roles** (shaman, noble, scout) use the same template.
+creatures.dark-elf-skirmisher.name: Dark Elf (Skirmisher)
+creatures.dark-elf-skirmisher.description: |-
+  *Cruel, secretive elves of the underworld, raiders who strike from the shadows with poisoned bolts.*
+
+  **Type:** Humanoid (elf) · **Size:** x1 · **Weight:** 60 kg · **Threat:** Moderate
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Short sword: skill 11, damage +4, DMAX 4, total +4
+  - Light crossbow: skill 13, damage +6, DMAX 4, total +6 (Range UT 9, poisoned bolts)
+  - Dagger: skill 11, damage +2, DMAX 4, total +2
+
+  **Skills:** Dodge 12, Stealth 14, Perception 11, Persuasion 10, Handcrafts (poisons) 11
+
+  **Racial template:** AGI +2, DEX +2, WIT +2, WIL +2, PRE +2, INS +1. Skirmisher training adds AGI +2, DEX +1, INS +1.
+
+  **Equipment:** Rigid leather armor (2), short sword, light crossbow, dagger.
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Light Sensitivity.** -I to all actions in bright sunlight.
+  - **Sleep Poison.** Virulence 12, period 1 minute: unconscious until resisted. _Proposal._
+  - **Fey Resolve.** +I to Mental Resistance against magical charm and compulsion.
+creatures.mountain-dwarf-warrior.name: Mountain Dwarf (Warrior)
+creatures.mountain-dwarf-warrior.description: |-
+  *Short, broad folk, master smiths and stubborn fighters.*
+
+  **Type:** Humanoid (dwarf) · **Size:** x1 · **Weight:** 80 kg · **Threat:** Moderate
+
+  **Speed:** 7 (base 4): 19 km/h, 16 m/round
+
+  **Attacks:**
+
+  - Axe: skill 15, damage +8, DMAX 3, total +10
+  - Light crossbow: skill 10, damage +6, DMAX 4, total +6 (Range UT 9)
+
+  **Skills:** Dodge 7, Shield 12 (+I parry vs frontal attacks), Perception 7, Physical Resistance 11, Handcrafts (smithing) 13
+
+  **Racial template:** STR +2, AGI -1, END +3, WIL +2, PRE -1. Warrior training adds STR +1, AGI +1.
+
+  **Equipment:** Chainmail (4) and helmet (+1), axe, medium shield, light crossbow.
+
+  **Special**
+
+  - **Dwarven Resilience.** +I to Physical Resistance against poison and disease.
+  - **Underground Sense.** No penalty in dim light; always knows direction underground.
+  - **Short Legs.** SPD base 4.
+
+  **Variants**
+
+  - Hill Dwarf: less armor, +1 INS, -1 END.
+creatures.hill-dwarf-craftsman-militia.name: Hill Dwarf (Craftsman / Militia)
+creatures.hill-dwarf-craftsman-militia.description: |-
+  *Friendly, hardy dwarves of the hills and valleys, farmers, smiths and part-time soldiers.*
+
+  **Type:** Humanoid (dwarf) · **Size:** x1 · **Weight:** 75 kg · **Threat:** Low
+
+  **Speed:** 7 (base 4): 19 km/h, 16 m/round
+
+  **Attacks:**
+
+  - Hammer: skill 13, damage +8, DMAX 3, total +9
+  - Dagger: skill 8, damage +2, DMAX 4, total +3
+
+  **Skills:** Dodge 7, Handcrafts (smithing) 15, Mechanical 11, Physical Resistance 11, Perception 8
+
+  **Racial template:** STR +1, END +3, WIL +2, INS +1. Craftsman training adds DEX +1, WIT +1.
+
+  **Equipment:** Leather apron (2), helmet (+1), hammer (Axe / Mace), dagger.
+
+  **Special**
+
+  - **Dwarven Resilience.** +I to Physical Resistance against poison and disease.
+  - **Master Craft.** +I when making weapons and armor.
+  - **Short Legs.** SPD base 4.
+creatures.orc-warrior.name: Orc (Warrior)
+creatures.orc-warrior.description: |-
+  *Strong, brutish and aggressive humanoids organized in warbands.*
+
+  **Type:** Humanoid (orc) · **Size:** x1 · **Weight:** 80 kg · **Threat:** Moderate
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Axe: skill 14, damage +8, DMAX 3, total +10
+  - Javelin: skill 10, damage +6, DMAX 4, total +6 (Range UT 5)
+
+  **Skills:** Dodge 8, Shield 11, Intimidation 10, Perception 9, Stealth 8, Survival 9, Physical Resistance 9
+
+  **Racial template:** STR +2, END +2, WIT -1, WIL +1, INS +1. Warrior training adds STR +1, AGI +1.
+
+  **Equipment:** Rigid leather armor (2) and helmet (+1), axe, small shield, three javelins.
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Savage Resilience.** +I to Endurance rolls against Physical Shock.
+
+  **Variants**
+
+  - **Orc Warchief:** STR 10, AGI 7, END 8, WIL 8, PRE 7, Axe skill +4, chainmail (4) and helmet. Recompute derived values.
+creatures.orc-warchief.name: Orc Warchief
+creatures.orc-warchief.description: |-
+  *A hardened orc leader who rules a warband by strength and cunning.*
+
+  **Type:** Humanoid (orc) · **Size:** x1 · **Weight:** 100 kg · **Threat:** High
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Great axe: skill 16, damage +12, DMAX 3, total +15 (2-handed)
+  - Axe: skill 15, damage +8, DMAX 3, total +11
+
+  **Skills:** Dodge 9, Intimidation 14, Command 13, Perception 10, Survival 10, Physical Resistance 11
+
+  **Racial template:** STR +2, END +2, WIT -1, WIL +1, INS +1. Chief training adds STR +2, AGI +1, WIL +2, PRE +2.
+
+  **Equipment:** Chainmail (4) and helmet (+1), great axe, axe.
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Savage Resilience.** +I to Endurance rolls against Physical Shock.
+  - **War Cry.** Allies within 20 m get +I to Mental Resistance against fear and a free Reflex Dodge (+I) for 1 round. _Proposal._
+creatures.goblin.name: Goblin
+creatures.goblin.description: |-
+  *A small, malicious and cowardly raider, dangerous only in numbers or from ambush.*
+
+  **Type:** Humanoid (goblinoid) · **Size:** x1/2 · **Weight:** 30 kg · **Threat:** Negligible (Low in groups)
+
+  **Speed:** 8 (base 6): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Dagger: skill 9, damage +2, DMAX 4, total -2
+  - Shortbow: skill 11, damage +6, DMAX 4, total +6 (Range UT 9)
+
+  **Skills:** Dodge 9, Stealth 11, Perception 9, Survival 8
+
+  **Racial template:** STR -2, AGI +2, END -1, DEX +1, WIT -1, WIL -1, PRE -2, INS +1.
+
+  **Equipment:** Soft leather armor (1), dagger, shortbow.
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Cowardly.** -I to Mental Resistance against fear; flees when its leader falls or half its Physical HP is lost.
+  - **Ambusher.** Fights best from hiding (+I when attacking by surprise).
+creatures.hobgoblin.name: Hobgoblin
+creatures.hobgoblin.description: |-
+  *A disciplined, militaristic goblinoid soldier.*
+
+  **Type:** Humanoid (goblinoid) · **Size:** x1 · **Weight:** 85 kg · **Threat:** Moderate
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Long sword: skill 13, damage +6, DMAX 4, total +7
+  - Javelin: skill 10, damage +6, DMAX 4, total +6 (Range UT 5)
+
+  **Skills:** Dodge 8, Shield 12 (+I parry vs frontal), Command 8, Perception 8, Physical Resistance 9
+
+  **Racial template:** STR +1, END +2, WIL +2.
+
+  **Equipment:** Rigid leather (2) and helmet (+1), long sword, medium shield, javelins.
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Formation.** +I to parry with a shield when an ally is adjacent.
+  - **Disciplined.** +I to Mental Resistance against fear in formation.
+creatures.bugbear.name: Bugbear
+creatures.bugbear.description: |-
+  *A hulking, hairy goblinoid that stalks prey in silence despite its size.*
+
+  **Type:** Humanoid (goblinoid) · **Size:** x1 · **Weight:** 120 kg · **Threat:** Moderate
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Morningstar (mace): skill 14, damage +8, DMAX 3, total +11
+  - Fists: skill 11, damage +0, DMAX 2, total +3
+
+  **Skills:** Dodge 8, Stealth 11, Perception 9, Intimidation 8
+
+  **Racial template:** STR +6, END +3, DEX -1, WIT -1, PRE -1, INS +1.
+
+  **Equipment:** Hide armor (2), morningstar.
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Ambusher.** Attacks by surprise (+I) from hiding.
+  - **Long Arms.** Reach 2 m.
+creatures.kobold.name: Kobold
+creatures.kobold.description: |-
+  *A small, reptilian trapmaker that lurks in dungeons and fights from the shadows.*
+
+  **Type:** Humanoid (reptilian) · **Size:** x1/2 · **Weight:** 20 kg · **Threat:** Negligible (Low in numbers)
+
+  **Speed:** 8 (base 6): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Spear: skill 9, damage +6, DMAX 4, total +0
+  - Sling: skill 10, damage +4, DMAX 3, total +4 (Range UT 9)
+
+  **Skills:** Dodge 10, Stealth 11, Perception 9, Mechanical (traps) 8
+
+  **Racial template:** STR -3, AGI +2, END -2, WIL -2, PRE -2, INS +1.
+
+  **Equipment:** Scaly hide (1), spear, sling.
+
+  **Special**
+
+  - **Night Vision.** No penalty in dim light.
+  - **Trapmaker.** Sets traps with +I.
+  - **Cowardly.** Flees when half its Physical HP is lost.
+creatures.halfling-scout.name: Halfling (Scout)
+creatures.halfling-scout.description: |-
+  *Small, nimble and unassuming folk, quiet but surprisingly brave.*
+
+  **Type:** Humanoid (halfling) · **Size:** x1/2 · **Weight:** 40 kg · **Threat:** Low
+
+  **Speed:** 8 (base 5): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Sling: skill 14, damage +4, DMAX 3, total +4 (Range UT 9)
+  - Dagger: skill 11, damage +2, DMAX 4, total -2
+
+  **Skills:** Dodge 11, Stealth 13, Perception 10, Survival 9, Climb 9
+
+  **Racial template:** STR -2, AGI +1, DEX +2, WIL +1, INS +1. Scout training adds AGI +1, INS +1.
+
+  **Equipment:** Soft leather armor (1), sling, dagger.
+
+  **Special**
+
+  - **Stout-hearted.** +I to Mental Resistance against fear and intimidation.
+  - **Small.** Size x1/2: harder to hit at range.
+creatures.gnoll.name: Gnoll
+creatures.gnoll.description: |-
+  *A hyena-headed raider with a taste for carrion and a laugh that unnerves.*
+
+  **Type:** Humanoid (gnoll) · **Size:** x1 · **Weight:** 90 kg · **Threat:** Moderate
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Spear: skill 13, damage +6, DMAX 4, total +8
+  - Bite: skill 9, damage +2, DMAX 4, total +4
+  - Shortbow: skill 10, damage +6, DMAX 4, total +6 (Range UT 9)
+
+  **Skills:** Dodge 8, Perception 10, Tracking 9 (by scent), Intimidation 7
+
+  **Racial template:** STR +3, END +2, WIT -1, INS +1.
+
+  **Equipment:** Hide and leather (2), spear, shortbow.
+
+  **Special**
+
+  - **Pack Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Night Vision.** No penalty in dim light.
+creatures.lizardfolk.name: Lizardfolk
+creatures.lizardfolk.description: |-
+  *Amphibious reptilian humanoids of swamps and coasts, patient hunters and fierce defenders of their territory.*
+
+  **Type:** Humanoid (reptilian) · **Size:** x1 · **Weight:** 90 kg · **Threat:** Moderate
+
+  **Speed:** ground 8 (base 5): 22 km/h, 18 m/round; swimming 10 (base 7): 26 km/h, 22 m/round
+
+  **Attacks:**
+
+  - Spear: skill 13, damage +6, DMAX 4, total +8
+  - Bite: skill 9, damage +2, DMAX 4, total +4
+  - Javelin: skill 10, damage +6, DMAX 4, total +6 (Range UT 5)
+
+  **Skills:** Dodge 8, Swimming 12, Stealth 9, Perception 9, Survival 10
+
+  **Racial template:** STR +3, END +3, WIT -1, WIL +1, PRE -1, INS +1.
+
+  **Equipment:** Natural scales (3), spear, javelins.
+
+  **Special**
+
+  - **Hold Breath.** Can stay underwater for 30 minutes.
+  - **Cold-blooded.** -I to all actions in cold weather.
+  - **Scaly Hide.** Already counted in Protection.
+creatures.ogre.name: Ogre
+creatures.ogre.description: |-
+  *A hulking, slow-witted brute about 2.7 m tall, strong enough to swing a tree trunk like a club.*
+
+  **Type:** Giant humanoid · **Size:** x2 · **Weight:** 300 kg · **Threat:** High
+
+  **Speed:** 10 (base 7): 26 km/h, 22 m/round
+
+  **Attacks:**
+
+  - Great club: skill 14, damage +12, DMAX 3, total +21 (+I oversized weapon (size x2) on top of skill)
+  - Fists: skill 11, damage +0, DMAX 2, total +9
+
+  **Skills:** Dodge 4, Intimidation 10, Perception 7, Physical Resistance 12
+
+  **Equipment:** Hides (included in Protection), great club (2-handed mace).
+
+  **Special**
+
+  - **Dull-witted.** -I to Mental Resistance against Bluff and Persuasion.
+  - **Thick Hide.** Already counted in Protection.
+
+  **Variants**
+
+  - **Ogre Chieftain:** STR 23, END 12, club skill +3.
+creatures.troll-cave-hill.name: Troll (Cave / Hill)
+creatures.troll-cave-hill.description: |-
+  *A 3 m brute with gnarled skin and an appetite for anything alive. Its wounds close as fast as they open.*
+
+  **Type:** Giant humanoid · **Size:** x2 · **Weight:** 400 kg · **Threat:** High
+
+  **Speed:** 11 (base 7): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Claws: skill 12, damage +2, DMAX 4, total +14
+  - Bite: skill 11, damage +2, DMAX 4, total +14
+
+  **Skills:** Dodge 6, Perception 7, Intimidation 9, Physical Resistance 17
+
+  **Special**
+
+  - **Regeneration.** Recovers 3 Physical Injury per round, unless it took fire or acid damage in the last 3 rounds. Fire or acid damage must be inflicted to finish it. _Proposal._
+  - **Multiple Attacks.** Claws and Bite in the same round, each at -I.
+  - **Night Vision.** No penalty in dim light.
+
+  **Variants**
+
+  - **Cave Troll:** turns to stone in sunlight. **Hill Troll:** no weakness to light.
+creatures.hill-giant.name: Hill Giant
+creatures.hill-giant.description: |-
+  *A crude, 4 m giant of the highlands, armed with a tree-trunk club and a pile of boulders.*
+
+  **Type:** Giant humanoid · **Size:** x2 · **Weight:** 800 kg · **Threat:** High
+
+  **Speed:** 11 (base 7): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Great club: skill 16, damage +12, DMAX 3, total +27 (+II oversized weapon)
+  - Boulder: skill 8, damage +12, DMAX 3, total +12 (Range UT 5)
+
+  **Skills:** Dodge 4, Intimidation 9, Perception 7
+
+  **Special**
+
+  - **Rock Thrower.** Always has a few boulders at hand.
+  - **Dim.** -I to Mental Resistance against Bluff and Persuasion.
+creatures.frost-giant.name: Frost Giant
+creatures.frost-giant.description: |-
+  *A pale, 4.5 m raider of the frozen north, immune to the cold it brings.*
+
+  **Type:** Giant humanoid · **Size:** x2 · **Weight:** 1000 kg · **Threat:** High
+
+  **Speed:** 11 (base 7): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Great axe: skill 17, damage +12, DMAX 3, total +30 (+II oversized weapon)
+  - Ice boulder: skill 8, damage +12, DMAX 3, total +12 (Range UT 5)
+
+  **Skills:** Dodge 5, Intimidation 11, Perception 8, Survival 9
+
+  **Special**
+
+  - **Cold Immune.** Immune to normal cold.
+  - **Frost Rime.** Its weapon blows can inflict damage as Physical Stun with no penalty. _Proposal._
+creatures.fire-giant.name: Fire Giant
+creatures.fire-giant.description: |-
+  *A 4.5 m smith-lord of volcanic forges, clad in black iron.*
+
+  **Type:** Giant humanoid · **Size:** x2 · **Weight:** 1000 kg · **Threat:** High
+
+  **Speed:** 11 (base 7): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Greatsword: skill 17, damage +12, DMAX 3, total +30 (+II oversized weapon, burns)
+  - Molten rock: skill 9, damage +12, DMAX 3, total +12 (Range UT 5, burns)
+
+  **Skills:** Dodge 5, Intimidation 11, Perception 8, Handcrafts (smithing) 12
+
+  **Special**
+
+  - **Fire Immune.** Immune to normal fire and heat.
+  - **Burning Blows.** Each hit also sets the target on fire (1d6* Physical Injury per round for 3 rounds unless extinguished). _Proposal._
+creatures.cyclops.name: Cyclops
+creatures.cyclops.description: |-
+  *A one-eyed giant, forgemaster and herder, with a temper as large as its stature.*
+
+  **Type:** Giant humanoid · **Size:** x2 · **Weight:** 600 kg · **Threat:** High
+
+  **Speed:** 11 (base 7): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Great club: skill 15, damage +12, DMAX 3, total +24 (+II oversized weapon)
+  - Boulder: skill 8, damage +12, DMAX 3, total +12 (Range UT 5)
+
+  **Skills:** Dodge 4, Intimidation 9, Perception 8, Handcrafts (smithing) 10
+
+  **Special**
+
+  - **Single Eye.** -I on ranged attacks and on judging distances.
+  - **Forge Master.** +I when working metal.
+creatures.skeleton.name: Skeleton
+creatures.skeleton.description: |-
+  *A reanimated skeleton bound to obey its master. Mindless, relentless, never tires.*
+
+  **Type:** Undead · **Size:** x1 · **Weight:** 15 kg + gear · **Threat:** Low (Moderate in groups)
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Rusty sword: skill 9, damage +6, DMAX 4, total +7
+
+  **Skills:** Dodge 6, Shield 8, Perception 6
+
+  **Equipment:** Rusty sword, small shield.
+
+  **Special**
+
+  - **Undead.** Immune to Physical Shock, Stun, poison, disease, suffocation, and to all psychical damage, fear and influence.
+  - **Brittle.** Collapses when it has taken Physical damage equal to its Physical HP (it never falls unconscious).
+  - **Hollow.** Piercing weapons and missiles deal half damage; blunt weapons deal full damage.
+
+  **Variants**
+
+  - **Skeleton Archer:** replaces sword and shield with a shortbow (Bow 8, +6, DMAX 4).
+creatures.zombie.name: Zombie
+creatures.zombie.description: |-
+  *A reanimated corpse, slow and relentless, shambling forward until it is destroyed.*
+
+  **Type:** Undead · **Size:** x1 · **Weight:** 70 kg · **Threat:** Low (Moderate in hordes)
+
+  **Speed:** 6 (base 3): 17 km/h, 14 m/round
+
+  **Attacks:**
+
+  - Slam: skill 6, damage +0, DMAX 2, total +1
+  - Bite: skill 6, damage +2, DMAX 4, total +3 (Grave rot)
+
+  **Skills:** Dodge 3, Perception 4
+
+  **Special**
+
+  - **Undead.** Immune to Physical Stun, suffocation, poison, disease and fatigue.
+  - **Mindless.** Immune to psychical damage, fear and influence.
+  - **Slow.** Acts last in every round.
+  - **Relentless.** Immune to Physical Shock; it only stops when its Physical damage reaches its Physical HP.
+  - **Grave Rot.** Virulence 12, period 1 day, effect 1 Physical Injury and -I to all rolls until resisted. _Proposal._
+creatures.ghoul.name: Ghoul
+creatures.ghoul.description: |-
+  *A carrion-eating undead creature whose touch paralyzes the living.*
+
+  **Type:** Undead · **Size:** x1 · **Weight:** 60 kg · **Threat:** Moderate
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Claws: skill 10, damage +2, DMAX 4, total +3 (Paralysis)
+  - Bite: skill 9, damage +2, DMAX 4, total +3 (Disease)
+
+  **Skills:** Dodge 9, Stealth 10, Perception 10, Tracking 10 (carrion)
+
+  **Special**
+
+  - **Undead.** Immune to Physical Stun, suffocation, poison, disease and fatigue.
+  - **Paralyzing Touch.** Virulence 12, period 1 round: paralyzed until resisted. _Proposal._
+  - **Carrion Stench.** -I to actions of living creatures within 2 m unless they resist (Physical Resistance).
+  - **Night Vision.** No penalty in dim light.
+creatures.wight.name: Wight
+creatures.wight.description: |-
+  *A once-mighty warrior risen from the grave, wearing ancient armor and draining life from the living.*
+
+  **Type:** Undead · **Size:** x1 · **Weight:** 70 kg · **Threat:** High
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Long sword: skill 13, damage +6, DMAX 4, total +8
+  - Draining touch: skill 11, damage +4, DMAX 3, total +6 (Drains life)
+
+  **Skills:** Dodge 8, Intimidation 12, Command 11, Perception 10
+
+  **Special**
+
+  - **Undead.** Immune to Physical Stun, suffocation, poison, disease and fatigue.
+  - **Life Drain.** Its draining touch inflicts Physical Injury; the wight recovers half the damage dealt.
+  - **Aura of Dread.** Characters who see it must succeed a Mental Resistance roll or suffer Psychical Stun 1d6*. _Proposal._
+creatures.ghost-wraith.name: Ghost / Wraith
+creatures.ghost-wraith.description: |-
+  *The restless spirit of a dead person, an incorporeal thing of cold and grief, bound to a place or a purpose.*
+
+  **Type:** Undead (incorporeal) · **Size:** x1 · **Weight:** none · **Threat:** High
+
+  **Speed:** flying 10 (base 6): 26 km/h, 22 m/round
+
+  **Attacks:**
+
+  - Draining touch: skill 9, damage +8, DMAX 3, total +8 (Physical damage ignoring armor, no STR bonus)
+  - Wail: skill 13, damage +6, DMAX 3, total +6 (Psychical Stun, range UT 5)
+
+  **Skills:** Dodge 11, Stealth 13, Perception 12, Intimidation 12
+
+  **Special**
+
+  - **Undead.** Immune to Physical Stun, suffocation, poison, disease and fatigue.
+  - **Incorporeal.** Passes through walls and objects; ordinary weapons cannot harm it. Silver, blessed or magical weapons do.
+  - **Flight.** Uses the flying speed above.
+  - **Terror.** Characters who see it must succeed a Mental Resistance roll or suffer Psychical Stun 1d6*. _Proposal._
+creatures.banshee.name: Banshee
+creatures.banshee.description: |-
+  *The wailing spirit of a woman whose cry announces death.*
+
+  **Type:** Undead (incorporeal) · **Size:** x1 · **Weight:** none · **Threat:** High
+
+  **Speed:** flying 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Death wail: skill 15, damage +14, DMAX 4, total +14 (Psychical damage, range UT 6)
+  - Chill touch: skill 9, damage +4, DMAX 2, total +4 (Physical, ignores armor)
+
+  **Skills:** Dodge 11, Perception 12, Intimidation 16
+
+  **Special**
+
+  - **Undead.** Immune to Physical Stun, suffocation, poison, disease and fatigue.
+  - **Incorporeal.** Passes through walls; ordinary weapons cannot harm it.
+  - **Flight.** Uses the flying speed above.
+  - **Death Wail.** Each target in range makes a Mental Resistance roll; a failure inflicts the full wail damage. _Proposal._
+creatures.mummy.name: Mummy
+creatures.mummy.description: |-
+  *A preserved corpse animated by an ancient curse, guardian of tombs.*
+
+  **Type:** Undead · **Size:** x1 · **Weight:** 60 kg · **Threat:** High
+
+  **Speed:** 8 (base 4): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Slam: skill 10, damage +0, DMAX 2, total +4 (Mummy rot)
+
+  **Skills:** Dodge 4, Intimidation 10, Perception 7
+
+  **Special**
+
+  - **Undead.** Immune to Physical Stun, suffocation, poison, disease and fatigue.
+  - **Mummy Rot.** Virulence 14, period 1 day: wounds do not heal naturally until the victim resists. _Proposal._
+  - **Vulnerable to Fire.** Fire damage is doubled.
+  - **Aura of Dread.** Mental Resistance or Psychical Stun 1d6* when first seen. _Proposal._
+creatures.vampire-lesser.name: Vampire (Lesser)
+creatures.vampire-lesser.description: |-
+  *A predator that feeds on the blood of the living, charming, cunning and immortal.*
+
+  **Type:** Undead · **Size:** x1 · **Weight:** 75 kg · **Threat:** High
+
+  **Speed:** 10 (base 6): 26 km/h, 22 m/round
+
+  **Attacks:**
+
+  - Claws: skill 13, damage +2, DMAX 4, total +6
+  - Bite: skill 12, damage +2, DMAX 4, total +6 (Drains blood, grappled or charmed target)
+
+  **Skills:** Dodge 12, Charm 16, Persuasion 15, Stealth 13, Perception 13, Intimidation 14
+
+  **Special**
+
+  - **Undead.** Immune to Physical Stun, suffocation, poison, disease and fatigue.
+  - **Blood Drain.** Its bite on a grappled or charmed target inflicts Physical Injury; the vampire recovers the same amount.
+  - **Charm.** Charm vs. Mental Resistance at close range.
+  - **Regeneration.** 2 Physical Injury per round, except from fire, sunlight or holy sources. _Proposal._
+  - **Weaknesses.** Sunlight (1d6* Physical Injury per round), a stake through the heart (destroys it), holy symbols, running water.
+
+  **Variants**
+
+  - **Vampire Lord (Elder):** STR 18, AGI 10, END 12, WIL 11, PRE 13, regeneration 5 per round, +4 to all skills.
+creatures.lich.name: Lich
+creatures.lich.description: |-
+  *A sorcerer who bound his soul to a vessel to escape death. The undead master of ancient magic.*
+
+  **Type:** Undead · **Size:** x1 · **Weight:** 40 kg · **Threat:** Legendary
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Paralyzing touch: skill 10, damage +6, DMAX 3, total +6 (Virulence 14)
+
+  **Skills:** Dodge 7, Occultism 18, Mental Resistance 18, Intimidation 15, Persuasion 13, Perception 13
+
+  **Special**
+
+  - **Undead.** Immune to Physical Stun, suffocation, poison, disease and fatigue.
+  - **Magic.** Casts spells according to the game universe (Occultism 18); the referee chooses its repertoire.
+  - **Phylactery.** A destroyed lich reforms near its phylactery in 1d6 days unless the vessel is destroyed.
+  - **Paralyzing Touch.** Virulence 14, period 1 round: paralyzed until resisted. _Proposal._
+  - **Command Undead.** Controls lesser undead within sight.
+creatures.wyvern.name: Wyvern
+creatures.wyvern.description: |-
+  *A two-legged dragon-kin with leathery wings and a venomous tail sting. Cunning but not truly intelligent.*
+
+  **Type:** Dragonkind · **Size:** x4 · **Weight:** 800 kg · **Threat:** High
+
+  **Speed:** flying 20 (base 15): 72 km/h, 60 m/round; ground 10 (base 5): 26 km/h, 22 m/round
+
+  **Attacks:**
+
+  - Bite: skill 13, damage +2, DMAX 4, total +17
+  - Tail sting: skill 13, damage +2, DMAX 4, total +17 (Venom)
+  - Talons: skill 13, damage +2, DMAX 4, total +17 (Best used in a dive)
+
+  **Skills:** Dodge 10, Perception 13, Flight 21, Intimidation 9
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Venom.** Virulence 14, period 1 minute, effect 2d6* Physical Injury per failed period. _Proposal._
+  - **Diving Strike.** Creature Charge in flight: +16 damage (2 x speed bonus +8), limited by Max Impact Bonus.
+creatures.drake.name: Drake
+creatures.drake.description: |-
+  *A wingless, fire-breathing relative of dragons: a 6 m reptile with armored scales and a savage temper.*
+
+  **Type:** Dragonkind · **Size:** x2 · **Weight:** 600 kg · **Threat:** High
+
+  **Speed:** 11 (base 7): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Bite: skill 12, damage +2, DMAX 4, total +14
+  - Claws: skill 12, damage +2, DMAX 4, total +14
+  - Fire breath: skill 10, damage +16, DMAX 3, total +16 (Cone 30°, range UT 4, burns, every 3 rounds)
+
+  **Skills:** Dodge 7, Perception 12, Intimidation 10
+
+  **Special**
+
+  - **Fire Breath.** An area attack as for explosives (30° cone), usable once every 3 rounds; burns targets for 1d6* Physical Injury per round for 2 rounds. _Proposal._
+  - **Fire Resistant.** Fire damage is halved.
+creatures.dragon-adult.name: Dragon (Adult)
+creatures.dragon-adult.description: |-
+  *A colossal, intelligent winged reptile that hoards treasure and breathes fire. The apex predator of fantasy.*
+
+  **Type:** Dragonkind · **Size:** x8 · **Weight:** 5000 kg · **Threat:** Legendary
+
+  **Speed:** flying 19 (base 14): 66 km/h, 55 m/round; ground 13 (base 8): 35 km/h, 29 m/round
+
+  **Attacks:**
+
+  - Bite: skill 15, damage +4, DMAX 4, total +34
+  - Claws: skill 15, damage +4, DMAX 4, total +34
+  - Tail: skill 14, damage +4, DMAX 3, total +34 (Sweeps all behind)
+  - Fire breath: skill 13, damage +36, DMAX 6, total +36 (Cone 30°, range UT 10, burns, every 3 rounds)
+
+  **Skills:** Dodge 5, Perception 16, Intimidation 22, Persuasion 18, Mental Resistance 18, Occultism 15
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Dragon Fear.** Any character who sees it must succeed a Mental Resistance roll or suffer Psychical Stun 2d6*. _Proposal._
+  - **Fire Breath.** An area attack (30° cone), usable once every 3 rounds; burns for 2d6* Physical Injury per round for 3 rounds. _Proposal._
+  - **Fire Immune.** Immune to normal fire.
+  - **Intelligent.** Speaks, schemes and hoards treasure.
+  - **Multiple Attacks.** Bite, claws and tail in the same round, each at -I.
+
+  **Variants**
+
+  - **Young Dragon:** Size x4, 1500 kg, STR 25, Protection 6, Breath +24. **Ancient Dragon:** Size x16, 20000 kg, STR 30, Protection 12, Breath +48. Recompute derived values.
+creatures.griffin.name: Griffin
+creatures.griffin.description: |-
+  *A proud hybrid with the body of a lion and the head, wings and talons of an eagle.*
+
+  **Type:** Hybrid beast · **Size:** x2 · **Weight:** 400 kg · **Threat:** High
+
+  **Speed:** flying 20 (base 16): 72 km/h, 60 m/round; ground 13 (base 9): 35 km/h, 29 m/round
+
+  **Attacks:**
+
+  - Beak: skill 14, damage +2, DMAX 4, total +11
+  - Talons: skill 14, damage +2, DMAX 4, total +11
+
+  **Skills:** Dodge 12, Perception 16 (+I by sight), Flight 21, Intimidation 8
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Diving Strike.** Creature Charge in flight: +16 damage, limited by Max Impact Bonus.
+  - **Proud Mount.** Can carry one rider (up to 300 kg), but only one who has earned its trust.
+creatures.hippogriff.name: Hippogriff
+creatures.hippogriff.description: |-
+  *A creature with the forequarters of an eagle and the body of a horse. Proud, but it can be tamed.*
+
+  **Type:** Hybrid beast · **Size:** x2 · **Weight:** 450 kg · **Threat:** Moderate
+
+  **Speed:** flying 18 (base 14): 60 km/h, 50 m/round; ground 15 (base 11): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Beak: skill 13, damage +2, DMAX 4, total +10
+  - Talons: skill 13, damage +2, DMAX 4, total +10
+
+  **Skills:** Dodge 9, Perception 13, Flight 19
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Mount.** Can carry one rider (up to 300 kg) once it trusts him.
+  - **Proud.** Attacks anyone who does not show proper respect (Animal Handling roll to calm it).
+creatures.chimera.name: Chimera
+creatures.chimera.description: |-
+  *A monster with a lion's body and head, a goat's head on its back and a serpent for a tail.*
+
+  **Type:** Hybrid beast · **Size:** x2 · **Weight:** 500 kg · **Threat:** High
+
+  **Speed:** 14 (base 10): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Lion bite: skill 13, damage +2, DMAX 4, total +14
+  - Goat horns: skill 13, damage +4, DMAX 4, total +16
+  - Snake tail: skill 13, damage +2, DMAX 4, total +14 (Venom)
+  - Fire breath: skill 8, damage +16, DMAX 3, total +16 (Cone 30°, range UT 4, burns, every 3 rounds)
+
+  **Skills:** Dodge 8, Perception 11, Intimidation 10
+
+  **Special**
+
+  - **Multiple Attacks.** One attack per head (3 per round); each is made at -I if more than one is made. _Proposal._
+  - **Venom.** Virulence 14, period 1 minute, effect 1d6* Physical Injury per failed period. _Proposal._
+  - **Fire Breath.** From the goat's head; burns for 1d6* Physical Injury per round for 2 rounds. _Proposal._
+  - **Alert.** Its three heads cannot be surprised from behind.
+creatures.manticore.name: Manticore
+creatures.manticore.description: |-
+  *A beast with a lion's body, a human face, bat wings and a tail studded with spikes that it shoots at prey.*
+
+  **Type:** Hybrid beast · **Size:** x2 · **Weight:** 350 kg · **Threat:** High
+
+  **Speed:** flying 16 (base 12): 48 km/h, 40 m/round; ground 14 (base 10): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Claws: skill 13, damage +2, DMAX 4, total +10
+  - Bite: skill 12, damage +2, DMAX 4, total +10
+  - Tail spikes: skill 10, damage +10, DMAX 3, total +10 (Range UT 6, up to 3 per round)
+
+  **Skills:** Dodge 9, Perception 12, Persuasion 9
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Spike Volley.** Up to 3 spikes per round at one target (+1d6* damage for each spike beyond the first, as semi-automatic fire).
+  - **Man-eater.** Intelligent enough to speak, taunt and bargain.
+creatures.basilisk.name: Basilisk
+creatures.basilisk.description: |-
+  *A 6 m serpent, the king of snakes, whose gaze turns living beings to stone and whose bite is deadly.*
+
+  **Type:** Hybrid beast · **Size:** x2 · **Weight:** 300 kg · **Threat:** Deadly
+
+  **Speed:** 7 (base 3): 19 km/h, 16 m/round
+
+  **Attacks:**
+
+  - Bite: skill 11, damage +2, DMAX 4, total +10 (Venom)
+
+  **Skills:** Dodge 6, Perception 9, Stealth 8
+
+  **Special**
+
+  - **Petrifying Gaze.** Virulence 14, range UT 4, treated as a poison each round a victim can see its eyes: failed Physical Resistance rolls inflict 2d6* Physical Stun; a victim whose Physical Stun reaches his Physical HP is turned to stone. _Proposal._
+  - **Deadly Venom.** Virulence 15, period 1 minute, effect 2d6* Physical Injury per failed period. _Proposal._
+  - **Weakness.** Seeing its own reflection exposes it to its own gaze.
+creatures.cerberus.name: Cerberus
+creatures.cerberus.description: |-
+  *A three-headed hound that guards the gates of the underworld.*
+
+  **Type:** Hybrid beast · **Size:** x2 · **Weight:** 600 kg · **Threat:** High
+
+  **Speed:** 15 (base 10): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Bite: skill 13, damage +2, DMAX 4, total +14 (Per head)
+
+  **Skills:** Dodge 8, Perception 15, Tracking 14, Intimidation 12
+
+  **Special**
+
+  - **Multiple Attacks.** One attack per head (3 per round); each is made at -I if more than one is made. _Proposal._
+  - **Hellish Howl.** Intimidation vs. Mental Resistance; a failure inflicts Psychical Stun 1d6* (range UT 6). _Proposal._
+  - **Never Surprised.** Three heads watch every direction.
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+creatures.hydra.name: Hydra
+creatures.hydra.description: |-
+  *A multi-headed swamp serpent whose heads regrow when severed.*
+
+  **Type:** Hybrid beast · **Size:** x4 · **Weight:** 3000 kg · **Threat:** Deadly
+
+  **Speed:** ground 10 (base 6): 26 km/h, 22 m/round; swimming 12 (base 8): 31 km/h, 26 m/round
+
+  **Attacks:**
+
+  - Bite: skill 12, damage +2, DMAX 4, total +26 (Per head)
+
+  **Skills:** Dodge 4, Perception 9, Swimming 13
+
+  **Special**
+
+  - **Multiple Attacks.** One attack per head (5 per round); each is made at -I if more than one is made. _Proposal._
+  - **Regeneration.** 3 Physical Injury per round, except from fire or acid in the last 3 rounds. _Proposal._
+  - **Regrowing Heads.** A severed head (called shot and Physical damage over 1/5 of its PHP) regrows in 1 day; unless the stump is burned, two heads grow back.
+  - **Aquatic.** Uses its swimming speed in water.
+creatures.sphinx.name: Sphinx
+creatures.sphinx.description: |-
+  *A lion with a human head and eagle wings, a keeper of riddles and secrets.*
+
+  **Type:** Hybrid beast · **Size:** x2 · **Weight:** 600 kg · **Threat:** High
+
+  **Speed:** flying 16 (base 12): 48 km/h, 40 m/round; ground 14 (base 10): 38 km/h, 32 m/round
+
+  **Attacks:**
+
+  - Claws: skill 15, damage +2, DMAX 4, total +14
+  - Bite: skill 14, damage +2, DMAX 4, total +14
+
+  **Skills:** Dodge 9, Mind games 16, Occultism 18, Persuasion 14, Perception 15, Intimidation 14
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Riddle Duel.** A long-term action: its Mind games vs. the challenger's WIT. The loser suffers Psychical Stun 2d6* per failed round. _Proposal._
+  - **Guardian.** Rarely attacks unless a riddle is failed or a secret threatened.
+creatures.minotaur.name: Minotaur
+creatures.minotaur.description: |-
+  *A bull-headed giant, the monster of the labyrinth.*
+
+  **Type:** Hybrid beast · **Size:** x1 · **Weight:** 300 kg · **Threat:** High
+
+  **Speed:** 11 (base 7): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Great axe: skill 13, damage +12, DMAX 3, total +20 (2-handed)
+  - Gore: skill 12, damage +4, DMAX 4, total +12
+
+  **Skills:** Dodge 7, Perception 9, Intimidation 10, Survival 9
+
+  **Special**
+
+  - **Gore Charge.** Creature Charge: +6 damage (2 x speed bonus +3), limited by Max Impact Bonus.
+  - **Labyrinth Sense.** Never lost in mazes (+II to orient itself).
+  - **Bull Rage.** +I to attack when wounded below half its Physical HP, -I to defense.
+creatures.centaur.name: Centaur
+creatures.centaur.description: |-
+  *A creature with a human torso on a horse's body. Archer, hunter and wanderer of the plains and forests.*
+
+  **Type:** Hybrid (humanoid) · **Size:** x2 · **Weight:** 500 kg · **Threat:** Moderate
+
+  **Speed:** 17 (base 13): 54 km/h, 45 m/round
+
+  **Attacks:**
+
+  - Spear: skill 15, damage +6, DMAX 4, total +13
+  - Hooves: skill 11, damage +4, DMAX 3, total +11
+  - Longbow: skill 14, damage +9, DMAX 4, total +9 (Range UT 9)
+
+  **Skills:** Dodge 9, Perception 10, Survival 11, Run 18
+
+  **Racial template:** Horse-man hybrid: STR +13, END +6, AGI +2.
+
+  **Equipment:** Leather (2) over natural hide (1), spear, longbow.
+
+  **Special**
+
+  - **Trample.** Creature Charge: +12 damage (2 x speed bonus +6), limited by Max Impact Bonus.
+  - **Hit and Run.** Can move and shoot without penalty.
+creatures.harpy.name: Harpy
+creatures.harpy.description: |-
+  *A winged, bird-footed woman with a haunting voice, feeding on carrion and the weak.*
+
+  **Type:** Monstrous humanoid · **Size:** x1 · **Weight:** 55 kg · **Threat:** Low (Moderate in flocks)
+
+  **Speed:** flying 16 (base 13): 48 km/h, 40 m/round; ground 8 (base 5): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Talons: skill 11, damage +2, DMAX 4, total +2
+  - Screech: skill 12, damage +4, DMAX 3, total +4 (Psychical Stun; resisted by Mental Resistance; range UT 5)
+
+  **Skills:** Dodge 11, Perception 13, Flight 17, Stealth 9
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Carrion Eater.** +I to Physical Resistance against disease.
+  - **Flocks.** Often attacks in groups of 3 to 8.
+creatures.siren.name: Siren
+creatures.siren.description: |-
+  *A sea-dwelling woman whose song lures sailors to their doom.*
+
+  **Type:** Monstrous humanoid · **Size:** x1 · **Weight:** 55 kg · **Threat:** Moderate (deadly to sailors)
+
+  **Speed:** swimming 11 (base 8): 29 km/h, 24 m/round; ground 6 (base 3): 17 km/h, 14 m/round
+
+  **Attacks:**
+
+  - Claws: skill 10, damage +2, DMAX 4, total +0
+  - Siren song: skill 16, damage +0, DMAX 3, total +0 (Charm, range UT 8)
+
+  **Skills:** Dodge 10, Swimming 15, Charm 16, Perception 11
+
+  **Special**
+
+  - **Siren Song.** Everyone who hears it makes a Mental Resistance roll against the siren's Charm; a failure compels him to move toward her. Wax in the ears protects. _Proposal._
+  - **Aquatic.** Weak and slow on land.
+creatures.kraken.name: Kraken
+creatures.kraken.description: |-
+  *A colossal sea monster that drags ships to the depths.*
+
+  **Type:** Colossal sea monster · **Size:** x16 · **Weight:** 20000 kg · **Threat:** Legendary
+
+  **Speed:** swimming 15 (base 10): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Tentacle: skill 14, damage +4, DMAX 3, total +44 (Grapple, 8 per round)
+  - Beak: skill 14, damage +4, DMAX 4, total +44 (Grappled target)
+
+  **Skills:** Dodge 4, Perception 11, Swimming 20
+
+  **Special**
+
+  - **Multiple Attacks.** Up to 8 tentacle attacks per round, each at -I if more than one is made. _Proposal._
+  - **Drag Down.** A grappled victim is pulled underwater and takes drowning damage.
+  - **Ink Cloud.** Blinds everything within 30 m (-II) and lets it jet away.
+  - **Aquatic.** Helpless out of water.
+creatures.phoenix.name: Phoenix
+creatures.phoenix.description: |-
+  *A bird of fire that dies in flames and is reborn from its ashes.*
+
+  **Type:** Magical beast · **Size:** x2 · **Weight:** 100 kg · **Threat:** Moderate
+
+  **Speed:** flying 19 (base 15): 66 km/h, 55 m/round; ground 9 (base 5): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Talons: skill 11, damage +2, DMAX 4, total +4 (Burns)
+  - Beak: skill 11, damage +2, DMAX 4, total +4
+
+  **Skills:** Dodge 12, Perception 13, Flight 20
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Fire Aura.** Anyone grappling or hit in melee takes 1d6* fire damage. Immune to fire.
+  - **Rebirth.** When destroyed, it bursts into flames (area +12, radius 5 m) and is reborn from its ashes after 1d6 days, unless the ashes are scattered or doused.
+  - **Healing Tears.** Its tears add +II to Physical Resistance rolls and heal wounds (Endurance degree recovered).
+creatures.medusa-gorgon.name: Medusa / Gorgon
+creatures.medusa-gorgon.description: |-
+  *A cursed woman with serpents for hair, whose gaze turns living creatures to stone.*
+
+  **Type:** Monstrous humanoid · **Size:** x1 · **Weight:** 70 kg · **Threat:** High
+
+  **Speed:** 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Shortbow: skill 13, damage +6, DMAX 4, total +6 (Range UT 9)
+  - Short sword: skill 13, damage +4, DMAX 4, total +5
+  - Snake hair: skill 11, damage +2, DMAX 4, total +3 (Venom)
+
+  **Skills:** Dodge 11, Stealth 13, Perception 12, Intimidation 14, Mental Resistance 13, Persuasion 12
+
+  **Equipment:** Shortbow, short sword.
+
+  **Special**
+
+  - **Petrifying Gaze.** Virulence 15, range UT 5, treated as a poison (6.1) each round a victim can see her eyes: on a failed Physical Resistance roll, 2d6* Physical Stun. A victim whose Physical Stun reaches his Physical HP is turned to stone instead of fainting. _Proposal._
+  - **Averting the Eyes.** Immunity to the gaze, but -II on attacks against her.
+  - **Venomous Hair.** Virulence 12, as the Venomous Snake.
+creatures.lamia.name: Lamia
+creatures.lamia.description: |-
+  *A serpent-bodied woman, a seducer who preys on travelers.*
+
+  **Type:** Monstrous humanoid · **Size:** x2 · **Weight:** 150 kg · **Threat:** Moderate
+
+  **Speed:** ground 8 (base 5): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Coil: skill 11, damage +4, DMAX 3, total +8 (Grapple)
+  - Short sword: skill 12, damage +4, DMAX 4, total +8
+
+  **Skills:** Dodge 9, Charm 14, Persuasion 13, Stealth 10, Perception 12
+
+  **Special**
+
+  - **Charm.** Charm vs. Mental Resistance at close range.
+  - **Constriction.** A successful Coil grapples; each round it wins Strength vs. Strength, the victim takes Physical Stun equal to the Coil's damage. _Proposal._
+  - **Disguise.** Can pass for a beautiful human woman (+II to Disguise).
+creatures.werewolf.name: Werewolf
+creatures.werewolf.description: |-
+  *A man cursed to become a wolf-like monster under the moon, strong, fast and nearly unkillable.*
+
+  **Type:** Shapechanger · **Size:** x1 · **Weight:** 120 kg · **Threat:** High
+
+  **Speed:** 16 (base 11): 48 km/h, 40 m/round
+
+  **Attacks:**
+
+  - Claws: skill 13, damage +2, DMAX 4, total +7
+  - Bite: skill 12, damage +2, DMAX 4, total +7 (Lycanthropy)
+
+  **Skills:** Dodge 11, Perception 14, Tracking 14 (by scent), Stealth 12, Intimidation 9
+
+  **Special**
+
+  - **Regeneration.** 2 Physical Injury per round, except for wounds from silver. _Proposal._
+  - **Lycanthropy.** Virulence 14, period 1 month, effect: the victim becomes a werewolf.
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Human Form.** In human form it has ordinary human stats.
+creatures.stone-golem.name: Stone Golem
+creatures.stone-golem.description: |-
+  *A man-shaped construct of stone, animated by magic and obeying its creator literally.*
+
+  **Type:** Construct · **Size:** x2 · **Weight:** 800 kg · **Threat:** High
+
+  **Speed:** 7 (base 3): 19 km/h, 16 m/round
+
+  **Attacks:**
+
+  - Slam: skill 11, damage +4, DMAX 3, total +19
+
+  **Skills:** Dodge 3, Perception 4
+
+  **Special**
+
+  - **Construct.** Immune to Physical Stun, Physical Shock, poison, disease, suffocation, fatigue and all mental effects.
+  - **Stone Body.** Edged and piercing weapons inflict half damage.
+  - **Literal.** Follows its creator's orders word by word.
+  - **Slow.** Always acts last in a round.
+creatures.unicorn.name: Unicorn
+creatures.unicorn.description: |-
+  *A white horse with a spiral horn, shy and swift, that can heal wounds and purify poison.*
+
+  **Type:** Magical beast · **Size:** x2 · **Weight:** 450 kg · **Threat:** Moderate
+
+  **Speed:** 20 (base 15): 72 km/h, 60 m/round
+
+  **Attacks:**
+
+  - Horn: skill 13, damage +4, DMAX 4, total +12
+  - Kick: skill 12, damage +4, DMAX 3, total +12
+
+  **Skills:** Dodge 11, Perception 13, Run 21
+
+  **Special**
+
+  - **Charge.** Creature Charge: +16 damage (2 x speed bonus +8), limited by Max Impact Bonus.
+  - **Healing Horn.** Its touch adds +II to Physical Resistance against poison and disease and heals Physical Injury equal to a Presence roll degree x 5.
+  - **Elusive.** Can only be approached by the pure of heart; flees from others.
+  - **Magic Resistance.** +II to Mental Resistance against magic.
+creatures.pegasus.name: Pegasus
+creatures.pegasus.description: |-
+  *A winged horse, noble and swift. It can be trained as a mount.*
+
+  **Type:** Magical beast · **Size:** x2 · **Weight:** 500 kg · **Threat:** Low
+
+  **Speed:** flying 19 (base 14): 66 km/h, 55 m/round; ground 18 (base 13): 60 km/h, 50 m/round
+
+  **Attacks:**
+
+  - Kick: skill 11, damage +4, DMAX 3, total +12
+  - Bite: skill 11, damage +2, DMAX 4, total +10
+
+  **Skills:** Dodge 10, Perception 10, Flight 20
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Mount.** Carries one rider up to 300 kg in flight.
+  - **Skittish.** Panics easily; Riding or Animal Handling roll to control.
+creatures.imp.name: Imp
+creatures.imp.description: |-
+  *A tiny winged fiend, a messenger and spy of greater demons, with a stinging tail and a wicked tongue.*
+
+  **Type:** Fiend · **Size:** x1/4 · **Weight:** 8 kg · **Threat:** Low
+
+  **Speed:** flying 13 (base 10): 35 km/h, 29 m/round; ground 7 (base 4): 19 km/h, 16 m/round
+
+  **Attacks:**
+
+  - Claws: skill 9, damage +0, DMAX 4, total -6
+  - Tail sting: skill 9, damage +0, DMAX 4, total -6 (Venom)
+
+  **Skills:** Dodge 12, Stealth 13, Perception 12, Persuasion 8
+
+  **Special**
+
+  - **Infernal.** Immune to normal fire and heat; resists poison (+II to Physical Resistance). Destroyed on the mortal plane, it returns to the Pit and may come back after a century.
+  - **Flight.** Uses the flying speed above.
+  - **Venom.** Virulence 12, period 1 minute, effect 1d6* Physical Stun per failed period. _Proposal._
+  - **Invisibility.** Can turn invisible at will; the referee decides the duration and any limits.
+creatures.hellhound.name: Hellhound
+creatures.hellhound.description: |-
+  *A black, fire-eyed hound that exhales flames, hunted down in packs by infernal masters.*
+
+  **Type:** Fiend (canid) · **Size:** x1 · **Weight:** 100 kg · **Threat:** Moderate (High in packs)
+
+  **Speed:** 15 (base 11): 43 km/h, 36 m/round
+
+  **Attacks:**
+
+  - Bite: skill 11, damage +2, DMAX 4, total +5 (Burns)
+  - Fire breath: skill 8, damage +12, DMAX 2, total +12 (Cone 30°, range UT 4, burns, every 3 rounds)
+
+  **Skills:** Dodge 10, Perception 14, Tracking 14 (by scent), Intimidation 9
+
+  **Special**
+
+  - **Infernal.** Immune to normal fire and heat; resists poison (+II to Physical Resistance). Destroyed on the mortal plane, it returns to the Pit and may come back after a century.
+  - **Burning Bite.** A hit sets the target on fire: 1d6* Physical Injury per round for 2 rounds unless extinguished. _Proposal._
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Pack Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+creatures.succubus-incubus.name: Succubus / Incubus
+creatures.succubus-incubus.description: |-
+  *A beautiful seducer of mortals, a demon who drains the will and the life of its lovers.*
+
+  **Type:** Fiend · **Size:** x1 · **Weight:** 65 kg · **Threat:** High
+
+  **Speed:** flying 13 (base 10): 35 km/h, 29 m/round; ground 9 (base 6): 24 km/h, 20 m/round
+
+  **Attacks:**
+
+  - Claws: skill 12, damage +2, DMAX 4, total +3
+  - Draining kiss: skill 12, damage +6, DMAX 3, total +6 (Charmed or grappled target, psychical damage)
+
+  **Skills:** Dodge 11, Charm 20, Persuasion 18, Bluff 17, Psychology 14, Perception 13
+
+  **Special**
+
+  - **Infernal.** Immune to normal fire and heat; resists poison (+II to Physical Resistance). Destroyed on the mortal plane, it returns to the Pit and may come back after a century.
+  - **Flight.** Uses the flying speed above. (if winged form).
+  - **Charm.** Charm vs. Mental Resistance at close range; a charmed victim obeys simple requests.
+  - **Draining Kiss.** Inflicts Psychical Injury; the demon recovers half of it. _Proposal._
+  - **Shapechange.** Can pass for a human of either sex (+II to Disguise).
+creatures.lesser-demon-fiend-warrior.name: Lesser Demon (Fiend Warrior)
+creatures.lesser-demon-fiend-warrior.description: |-
+  *A 2.5 m horned and armored fiend, the soldier of infernal armies.*
+
+  **Type:** Fiend · **Size:** x2 · **Weight:** 250 kg · **Threat:** High
+
+  **Speed:** 10 (base 6): 26 km/h, 22 m/round
+
+  **Attacks:**
+
+  - Infernal blade: skill 13, damage +12, DMAX 3, total +19 (2-handed sword, +I oversized, burns)
+  - Claws: skill 12, damage +2, DMAX 4, total +9
+
+  **Skills:** Dodge 9, Intimidation 14, Command 12, Perception 10
+
+  **Special**
+
+  - **Infernal.** Immune to normal fire and heat; resists poison (+II to Physical Resistance). Destroyed on the mortal plane, it returns to the Pit and may come back after a century.
+  - **Burning Blade.** A hit sets the target on fire: 1d6* Physical Injury per round for 2 rounds unless extinguished. _Proposal._
+  - **Aura of Dread.** Characters who see it must succeed a Mental Resistance roll or suffer Psychical Stun 1d6*. _Proposal._
+  - **Infernal Hide.** Already counted in Protection.
+
+  **Variants**
+
+  - **Winged Fiend:** adds flight (flying SPD base 12).
+creatures.greater-demon.name: Greater Demon
+creatures.greater-demon.description: |-
+  *A 6 m infernal lord wreathed in hellfire, a ruler of legions and breaker of worlds.*
+
+  **Type:** Fiend · **Size:** x4 · **Weight:** 3000 kg · **Threat:** Legendary
+
+  **Speed:** flying 17 (base 12): 54 km/h, 45 m/round; ground 11 (base 6): 29 km/h, 24 m/round
+
+  **Attacks:**
+
+  - Great blade: skill 16, damage +12, DMAX 3, total +36 (2-handed sword, +II oversized, burns)
+  - Claws: skill 15, damage +2, DMAX 4, total +26
+  - Hellfire: skill 13, damage +24, DMAX 5, total +24 (Area, radius 5 m, range UT 8, burns)
+
+  **Skills:** Dodge 6, Intimidation 21, Persuasion 17, Mental Resistance 18, Occultism 15, Perception 15
+
+  **Special**
+
+  - **Infernal.** Immune to normal fire and heat; resists poison (+II to Physical Resistance). Destroyed on the mortal plane, it returns to the Pit and may come back after a century.
+  - **Flight.** Uses the flying speed above.
+  - **Terrifying Presence.** Characters who see it must succeed a Mental Resistance roll or suffer Psychical Stun 2d6*. _Proposal._
+  - **Hellfire.** Area attack (as explosives); targets burn for 1d6* Physical Injury per round for 3 rounds. _Proposal._
+  - **Magic.** Casts spells according to the game universe; the referee chooses its repertoire.
+  - **Command Lesser Fiends.** Commands lesser demons and imps within sight.
+  - **Multiple Attacks.** Blade and claws in the same round, each at -I.
+creatures.fire-elemental.name: Fire Elemental
+creatures.fire-elemental.description: |-
+  *A living column of flame, summoned or born of volcanoes and great fires.*
+
+  **Type:** Elemental · **Size:** x2 · **Weight:** none · **Threat:** Moderate
+
+  **Speed:** 13 (base 8): 35 km/h, 29 m/round
+
+  **Attacks:**
+
+  - Fire lash: skill 11, damage +8, DMAX 3, total +12 (Burns)
+  - Fire bolt: skill 8, damage +12, DMAX 3, total +12 (Range UT 5, burns)
+
+  **Skills:** Dodge 11, Perception 7, Intimidation 8
+
+  **Special**
+
+  - **Elemental.** Immune to poison, disease, suffocation, fatigue and mental influence.
+  - **Body of Flame.** Ignites flammable materials on contact; anyone grappling or hit in melee takes 1d6* fire damage. Non-magical weapons inflict half damage.
+  - **Burning Blows.** A hit sets the target on fire: 1d6* Physical Injury per round for 2 rounds unless extinguished. _Proposal._
+  - **Weakness.** Water inflicts double damage.
+
+  **Variants**
+
+  - **Lesser (Size x1):** STR 8, END 8, Fire lash +4. **Greater (Size x4):** STR 20, END 16, Fire lash +12.
+creatures.water-elemental.name: Water Elemental
+creatures.water-elemental.description: |-
+  *A towering wave given form and will, drowning anything that enters its domain.*
+
+  **Type:** Elemental · **Size:** x2 · **Weight:** none · **Threat:** Moderate
+
+  **Speed:** swimming 15 (base 10): 43 km/h, 36 m/round; ground 8 (base 3): 22 km/h, 18 m/round
+
+  **Attacks:**
+
+  - Slam: skill 11, damage +4, DMAX 3, total +10
+  - Engulf: skill 11, damage +0, DMAX 1, total +6 (Grapple, drowning)
+
+  **Skills:** Dodge 6, Perception 7, Swimming 19
+
+  **Special**
+
+  - **Elemental.** Immune to poison, disease, suffocation, fatigue and mental influence.
+  - **Fluid Body.** Piercing weapons inflict half damage.
+  - **Engulf.** A grappled victim is drowned (see 6.3): 1d6* Physical Stun per round.
+  - **Bound to Water.** Moves at full speed in water, half speed on land.
+  - **Weakness.** Cold slows it (-3 SPD).
+creatures.air-elemental.name: Air Elemental
+creatures.air-elemental.description: |-
+  *A whirling storm of wind and dust, deadly to anything it can lift off the ground.*
+
+  **Type:** Elemental · **Size:** x4 · **Weight:** none · **Threat:** Moderate
+
+  **Speed:** flying 20 (base 15): 72 km/h, 60 m/round
+
+  **Attacks:**
+
+  - Buffet: skill 13, damage +6, DMAX 3, total +11 (Blunt)
+  - Whirlwind: skill 13, damage +6, DMAX 3, total +11 (All in 3 m, grapple, hurls victims 6 m)
+
+  **Skills:** Dodge 15, Perception 8
+
+  **Special**
+
+  - **Elemental.** Immune to poison, disease, suffocation, fatigue and mental influence.
+  - **Flight.** Uses the flying speed above.
+  - **Winds.** Non-magical weapons inflict half damage; missiles against it are at -II.
+  - **Whirlwind.** Victims must win Strength vs. Strength or be lifted and hurled 6 m (falling damage). _Proposal._
+creatures.earth-elemental.name: Earth Elemental
+creatures.earth-elemental.description: |-
+  *A walking mass of stone and soil, slow but irresistible.*
+
+  **Type:** Elemental · **Size:** x2 · **Weight:** none · **Threat:** High
+
+  **Speed:** 7 (base 3): 19 km/h, 16 m/round
+
+  **Attacks:**
+
+  - Slam: skill 11, damage +4, DMAX 3, total +22 (Blunt)
+
+  **Skills:** Dodge 3, Perception 7
+
+  **Special**
+
+  - **Elemental.** Immune to poison, disease, suffocation, fatigue and mental influence.
+  - **Stone Body.** Edged and piercing weapons inflict half damage. Already counted in Protection.
+  - **Earth Glide.** Moves through earth and stone at its normal speed without disturbing them.
+  - **Slow.** Acts last in every round.
+creatures.djinn-efreet.name: Djinn / Efreet
+creatures.djinn-efreet.description: |-
+  *A powerful spirit of air (djinn) or fire (efreet), proud, cunning and bound by pacts and wishes.*
+
+  **Type:** Spirit · **Size:** x2 · **Weight:** 150 kg · **Threat:** High
+
+  **Speed:** flying 18 (base 14): 60 km/h, 50 m/round; ground 10 (base 6): 26 km/h, 22 m/round
+
+  **Attacks:**
+
+  - Scimitar: skill 16, damage +6, DMAX 4, total +10
+  - Elemental blast: skill 12, damage +18, DMAX 3, total +18 (Wind or flame, range UT 6)
+
+  **Skills:** Dodge 12, Persuasion 18, Perception 14, Occultism 15, Mental Resistance 15
+
+  **Special**
+
+  - **Flight.** Uses the flying speed above.
+  - **Magic.** Casts spells according to the game universe; the referee chooses its repertoire.
+  - **Bargain.** Can grant wishes under the terms of a pact; bound to its vessel or master.
+  - **Shapechange.** Can take the form of a smoke, a whirlwind or a human.
+  - **Elemental Nature.** Immune to poison, disease and its own element (wind or fire).
+weapons.cr-bite-2-4.name: Bite
+weapons.cr-bite-0-4.name: Bite
+weapons.cr-claws-2-4.name: Claws
+weapons.cr-claws-0-4.name: Claws
+weapons.cr-sabre-fangs-2-4.name: Sabre fangs
+weapons.cr-coil-4-3.name: Coil
+weapons.cr-tail-slap-4-3.name: Tail slap
+weapons.cr-tongue-0-1.name: Tongue
+weapons.cr-talons-0-4.name: Talons
+weapons.cr-beak-0-4.name: Beak
+weapons.cr-talons-2-4.name: Talons
+weapons.cr-beak-2-4.name: Beak
+weapons.cr-kick-0-2.name: Kick
+weapons.cr-kick-4-3.name: Kick
+weapons.cr-talons-4-4.name: Talons
+weapons.cr-beak-4-4.name: Beak
+weapons.cr-sickle-claw-2-4.name: Sickle claw
+weapons.cr-spit-0-1-r4.name: Spit
+weapons.cr-tail-swipe-4-3.name: Tail swipe
+weapons.cr-horns-4-4.name: Horns
+weapons.cr-thagomizer-4-4.name: Thagomizer
+weapons.cr-tail-club-4-3.name: Tail club
+weapons.cr-tail-whip-4-3.name: Tail whip
+weapons.cr-stomp-4-3.name: Stomp
+weapons.cr-tusks-2-4.name: Tusks
+weapons.cr-slam-0-2.name: Slam
+weapons.cr-horn-4-4.name: Horn
+weapons.cr-tusks-4-4.name: Tusks
+weapons.cr-trunk-4-3.name: Trunk
+weapons.cr-tentacle-4-3.name: Tentacle
+weapons.cr-swarm-bites-4-3.name: Swarm bites
+weapons.cr-swarm-bites-3-2.name: Swarm bites
+weapons.cr-web-0-1-r4.name: Web
+weapons.cr-sting-0-4.name: Sting
+weapons.cr-long-sword-6-4.name: Long sword
+weapons.cr-longbow-9-4-r9.name: Longbow
+weapons.cr-dagger-2-4.name: Dagger
+weapons.cr-shortbow-6-4-r9.name: Shortbow
+weapons.cr-spear-6-4.name: Spear
+weapons.cr-short-sword-4-4.name: Short sword
+weapons.cr-light-crossbow-6-4-r9.name: Light crossbow
+weapons.cr-axe-8-3.name: Axe
+weapons.cr-hammer-8-3.name: Hammer
+weapons.cr-javelin-6-4-r5.name: Javelin
+weapons.cr-great-axe-12-3.name: Great axe
+weapons.cr-morningstar-8-3.name: Morningstar
+weapons.cr-fists-0-2.name: Fists
+weapons.cr-sling-4-3-r9.name: Sling
+weapons.cr-great-club-12-3.name: Great club
+weapons.cr-boulder-12-3-r5.name: Boulder
+weapons.cr-ice-boulder-12-3-r5.name: Ice boulder
+weapons.cr-greatsword-12-3.name: Greatsword
+weapons.cr-molten-rock-12-3-r5.name: Molten rock
+weapons.cr-rusty-sword-6-4.name: Rusty sword
+weapons.cr-draining-touch-4-3.name: Draining touch
+weapons.cr-draining-touch-8-3-r0.name: Draining touch
+weapons.cr-wail-6-3-r5.name: Wail
+weapons.cr-death-wail-14-4-r6.name: Death wail
+weapons.cr-chill-touch-4-2-r0.name: Chill touch
+weapons.cr-paralyzing-touch-6-3.name: Paralyzing touch
+weapons.cr-tail-sting-2-4.name: Tail sting
+weapons.cr-fire-breath-16-3-r4.name: Fire breath
+weapons.cr-bite-4-4.name: Bite
+weapons.cr-claws-4-4.name: Claws
+weapons.cr-tail-4-3.name: Tail
+weapons.cr-fire-breath-36-6-r10.name: Fire breath
+weapons.cr-lion-bite-2-4.name: Lion bite
+weapons.cr-goat-horns-4-4.name: Goat horns
+weapons.cr-snake-tail-2-4.name: Snake tail
+weapons.cr-tail-spikes-10-3-r6.name: Tail spikes
+weapons.cr-gore-4-4.name: Gore
+weapons.cr-hooves-4-3.name: Hooves
+weapons.cr-screech-4-3-r5.name: Screech
+weapons.cr-siren-song-0-3-r8.name: Siren song
+weapons.cr-snake-hair-2-4.name: Snake hair
+weapons.cr-slam-4-3.name: Slam
+weapons.cr-tail-sting-0-4.name: Tail sting
+weapons.cr-fire-breath-12-2-r4.name: Fire breath
+weapons.cr-draining-kiss-6-3-r0.name: Draining kiss
+weapons.cr-infernal-blade-12-3.name: Infernal blade
+weapons.cr-great-blade-12-3.name: Great blade
+weapons.cr-hellfire-24-5-r8.name: Hellfire
+weapons.cr-fire-lash-8-3.name: Fire lash
+weapons.cr-fire-bolt-12-3-r5.name: Fire bolt
+weapons.cr-engulf-0-1.name: Engulf
+weapons.cr-buffet-6-3.name: Buffet
+weapons.cr-whirlwind-6-3.name: Whirlwind
+weapons.cr-scimitar-6-4.name: Scimitar
+weapons.cr-elemental-blast-18-3-r6.name: Elemental blast

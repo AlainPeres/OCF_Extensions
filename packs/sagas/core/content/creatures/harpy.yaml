@@ -1,0 +1,36 @@
+id: creatures.harpy
+type: creature
+fields:
+  category: monster
+  threat: low
+  size: x1
+  str: 5
+  agi: 9
+  end: 5
+  dex: 6
+  wit: 4
+  wil: 5
+  pre: 6
+  ins: 8
+  speed: 13
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+  skillLearning:
+    - 2
+    - 5
+  genericSkills:
+    - skills.other-agi
+  genericSpecialties:
+    - Flight
+  genericInitial:
+    - 0
+  genericLearning:
+    - 8
+  attacks:
+    - weapons.cr-talons-2-4
+    - weapons.cr-screech-4-3-r5
+  attackScores:
+    - 11
+    - 12

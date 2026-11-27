@@ -1,0 +1,38 @@
+id: creatures.halfling-scout
+type: creature
+fields:
+  category: people
+  threat: low
+  size: x1/2
+  str: 3
+  agi: 7
+  end: 5
+  dex: 7
+  wit: 5
+  wil: 6
+  pre: 5
+  ins: 7
+  speed: 5
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - survival
+    - climb
+  skillLearning:
+    - 4
+    - 6
+    - 3
+    - 2
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-sling-4-3-r9
+    - weapons.cr-dagger-2-4
+  attackScores:
+    - 14
+    - 11

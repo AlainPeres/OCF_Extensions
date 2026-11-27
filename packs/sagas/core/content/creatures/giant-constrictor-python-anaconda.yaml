@@ -1,0 +1,38 @@
+id: creatures.giant-constrictor-python-anaconda
+type: creature
+fields:
+  category: animal
+  threat: moderate
+  size: x2
+  str: 13
+  agi: 5
+  end: 9
+  dex: 3
+  wit: 2
+  wil: 4
+  pre: 3
+  ins: 6
+  speed: 2
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - climb
+    - swimming
+  skillLearning:
+    - 2
+    - 4
+    - 2
+    - 3
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-coil-4-3
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 10
+    - 8

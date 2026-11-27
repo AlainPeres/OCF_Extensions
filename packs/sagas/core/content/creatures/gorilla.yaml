@@ -1,0 +1,36 @@
+id: creatures.gorilla
+type: creature
+fields:
+  category: animal
+  threat: moderate
+  size: x1
+  str: 17
+  agi: 6
+  end: 10
+  dex: 4
+  wit: 4
+  wil: 6
+  pre: 6
+  ins: 7
+  speed: 4
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+    - climb
+    - intimidation
+  skillLearning:
+    - 1
+    - 3
+    - 4
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-slam-0-2
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 11
+    - 11

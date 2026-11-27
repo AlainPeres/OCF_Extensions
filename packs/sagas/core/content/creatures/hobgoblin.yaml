@@ -1,0 +1,38 @@
+id: creatures.hobgoblin
+type: creature
+fields:
+  category: people
+  threat: moderate
+  size: x1
+  str: 7
+  agi: 6
+  end: 7
+  dex: 5
+  wit: 5
+  wil: 7
+  pre: 5
+  ins: 5
+  speed: 6
+  protection: 3
+  skillNames:
+    - dodge
+    - shield
+    - command
+    - perception
+    - physical-resistance
+  skillLearning:
+    - 2
+    - 6
+    - 3
+    - 3
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-long-sword-6-4
+    - weapons.cr-javelin-6-4-r5
+  attackScores:
+    - 13
+    - 10

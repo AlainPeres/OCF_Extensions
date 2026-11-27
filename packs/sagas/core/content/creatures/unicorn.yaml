@@ -1,0 +1,34 @@
+id: creatures.unicorn
+type: creature
+fields:
+  category: monster
+  threat: moderate
+  size: x2
+  str: 20
+  agi: 8
+  end: 12
+  dex: 3
+  wit: 5
+  wil: 9
+  pre: 10
+  ins: 9
+  speed: 15
+  protection: 1
+  skillNames:
+    - dodge
+    - perception
+    - run
+  skillLearning:
+    - 3
+    - 4
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-horn-4-4
+    - weapons.cr-kick-4-3
+  attackScores:
+    - 13
+    - 12

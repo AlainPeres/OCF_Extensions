@@ -1,0 +1,38 @@
+id: creatures.djinn-efreet
+type: creature
+fields:
+  category: monster
+  threat: high
+  size: x2
+  str: 12
+  agi: 9
+  end: 9
+  dex: 6
+  wit: 9
+  wil: 11
+  pre: 12
+  ins: 10
+  speed: 14
+  protection: 2
+  skillNames:
+    - dodge
+    - persuasion
+    - perception
+    - occultism
+    - mental-resistance
+  skillLearning:
+    - 3
+    - 6
+    - 4
+    - 6
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-scimitar-6-4
+    - weapons.cr-elemental-blast-18-3-r6
+  attackScores:
+    - 16
+    - 12

@@ -1,0 +1,28 @@
+id: creatures.stegosaurus
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x4
+  str: 27
+  agi: 3
+  end: 14
+  dex: 2
+  wit: 2
+  wil: 6
+  pre: 4
+  ins: 5
+  speed: 5
+  protection: 5
+  skillNames:
+    - perception
+  skillLearning:
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-thagomizer-4-4
+  attackScores:
+    - 11

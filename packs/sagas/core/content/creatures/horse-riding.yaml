@@ -1,0 +1,34 @@
+id: creatures.horse-riding
+type: creature
+fields:
+  category: animal
+  threat: low
+  size: x2
+  str: 20
+  agi: 7
+  end: 12
+  dex: 3
+  wit: 3
+  wil: 5
+  pre: 4
+  ins: 7
+  speed: 14
+  protection: 1
+  skillNames:
+    - dodge
+    - perception
+    - run
+  skillLearning:
+    - 1
+    - 3
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-kick-4-3
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 9
+    - 9

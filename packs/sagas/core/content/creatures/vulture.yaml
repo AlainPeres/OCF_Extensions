@@ -1,0 +1,34 @@
+id: creatures.vulture
+type: creature
+fields:
+  category: animal
+  threat: negligible
+  size: x1/2
+  str: 2
+  agi: 6
+  end: 5
+  dex: 3
+  wit: 3
+  wil: 5
+  pre: 3
+  ins: 8
+  speed: 13
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+  skillLearning:
+    - 2
+    - 7
+  genericSkills:
+    - skills.other-agi
+  genericSpecialties:
+    - Flight
+  genericInitial:
+    - 0
+  genericLearning:
+    - 10
+  attacks:
+    - weapons.cr-beak-2-4
+  attackScores:
+    - 8

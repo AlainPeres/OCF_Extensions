@@ -1,0 +1,36 @@
+id: creatures.kobold
+type: creature
+fields:
+  category: people
+  threat: negligible
+  size: x1/2
+  str: 2
+  agi: 7
+  end: 3
+  dex: 5
+  wit: 4
+  wil: 3
+  pre: 3
+  ins: 6
+  speed: 6
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - mechanical
+  skillLearning:
+    - 3
+    - 4
+    - 3
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-spear-6-4
+    - weapons.cr-sling-4-3-r9
+  attackScores:
+    - 9
+    - 10

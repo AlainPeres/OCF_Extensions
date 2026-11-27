@@ -1,0 +1,36 @@
+id: creatures.imp
+type: creature
+fields:
+  category: monster
+  threat: low
+  size: x1/4
+  str: 2
+  agi: 9
+  end: 6
+  dex: 6
+  wit: 6
+  wil: 6
+  pre: 5
+  ins: 8
+  speed: 10
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - persuasion
+  skillLearning:
+    - 3
+    - 4
+    - 4
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-0-4
+    - weapons.cr-tail-sting-0-4
+  attackScores:
+    - 9
+    - 9

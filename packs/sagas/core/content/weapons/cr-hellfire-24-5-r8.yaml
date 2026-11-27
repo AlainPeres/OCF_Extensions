@@ -1,0 +1,8 @@
+id: weapons.cr-hellfire-24-5-r8
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 24
+  dmax: 5
+  range: 8
+  natural: true

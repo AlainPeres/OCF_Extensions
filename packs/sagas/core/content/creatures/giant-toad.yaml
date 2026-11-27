@@ -1,0 +1,38 @@
+id: creatures.giant-toad
+type: creature
+fields:
+  category: animal
+  threat: low
+  size: x1/2
+  str: 5
+  agi: 5
+  end: 6
+  dex: 3
+  wit: 2
+  wil: 4
+  pre: 2
+  ins: 6
+  speed: 4
+  protection: 0
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - jump
+    - swimming
+  skillLearning:
+    - 2
+    - 3
+    - 3
+    - 3
+    - 0
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-tongue-0-1
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 8
+    - 7

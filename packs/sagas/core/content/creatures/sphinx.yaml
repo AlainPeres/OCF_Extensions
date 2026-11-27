@@ -1,0 +1,42 @@
+id: creatures.sphinx
+type: creature
+fields:
+  category: monster
+  threat: high
+  size: x2
+  str: 22
+  agi: 7
+  end: 11
+  dex: 4
+  wit: 12
+  wil: 9
+  pre: 10
+  ins: 10
+  speed: 12
+  protection: 2
+  skillNames:
+    - dodge
+    - occultism
+    - persuasion
+    - perception
+    - intimidation
+  skillLearning:
+    - 2
+    - 6
+    - 4
+    - 5
+    - 4
+  genericSkills:
+    - skills.mind-games
+  genericSpecialties:
+    - General
+  genericInitial:
+    - -5
+  genericLearning:
+    - 4
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 15
+    - 14

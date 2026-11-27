@@ -1,0 +1,36 @@
+id: creatures.velociraptor-deinonychus
+type: creature
+fields:
+  category: animal
+  threat: moderate
+  size: x1
+  str: 8
+  agi: 9
+  end: 7
+  dex: 4
+  wit: 4
+  wil: 5
+  pre: 4
+  ins: 8
+  speed: 10
+  protection: 1
+  skillNames:
+    - dodge
+    - perception
+    - stealth
+    - run
+  skillLearning:
+    - 3
+    - 4
+    - 2
+    - 1
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-sickle-claw-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 11
+    - 10

@@ -1,0 +1,38 @@
+id: creatures.gnoll
+type: creature
+fields:
+  category: people
+  threat: moderate
+  size: x1
+  str: 8
+  agi: 6
+  end: 7
+  dex: 5
+  wit: 4
+  wil: 5
+  pre: 4
+  ins: 6
+  speed: 6
+  protection: 2
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+    - intimidation
+  skillLearning:
+    - 2
+    - 4
+    - 3
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-spear-6-4
+    - weapons.cr-bite-2-4
+    - weapons.cr-shortbow-6-4-r9
+  attackScores:
+    - 13
+    - 9
+    - 10

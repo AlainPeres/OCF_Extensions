@@ -1,0 +1,34 @@
+id: creatures.great-white-shark
+type: creature
+fields:
+  category: animal
+  threat: deadly
+  size: x2
+  str: 24
+  agi: 8
+  end: 12
+  dex: 2
+  wit: 2
+  wil: 6
+  pre: 5
+  ins: 9
+  speed: 8
+  protection: 2
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+    - swimming
+  skillLearning:
+    - 1
+    - 5
+    - 6
+    - 5
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 13

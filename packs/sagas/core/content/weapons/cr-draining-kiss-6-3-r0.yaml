@@ -1,0 +1,7 @@
+id: weapons.cr-draining-kiss-6-3-r0
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 6
+  dmax: 3
+  natural: true

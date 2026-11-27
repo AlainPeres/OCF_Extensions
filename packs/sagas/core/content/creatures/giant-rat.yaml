@@ -1,0 +1,34 @@
+id: creatures.giant-rat
+type: creature
+fields:
+  category: animal
+  threat: negligible
+  size: x1/4
+  str: 2
+  agi: 8
+  end: 5
+  dex: 4
+  wit: 3
+  wil: 3
+  pre: 2
+  ins: 7
+  speed: 7
+  protection: 0
+  skillNames:
+    - dodge
+    - perception
+    - stealth
+    - climb
+  skillLearning:
+    - 3
+    - 4
+    - 3
+    - 2
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-0-4
+  attackScores:
+    - 8

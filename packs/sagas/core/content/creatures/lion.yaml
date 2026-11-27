@@ -1,0 +1,36 @@
+id: creatures.lion
+type: creature
+fields:
+  category: animal
+  threat: high
+  size: x2
+  str: 16
+  agi: 9
+  end: 10
+  dex: 3
+  wit: 3
+  wil: 7
+  pre: 8
+  ins: 8
+  speed: 11
+  protection: 1
+  skillNames:
+    - dodge
+    - stealth
+    - perception
+    - intimidation
+  skillLearning:
+    - 2
+    - 3
+    - 4
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 13
+    - 12

@@ -1,0 +1,146 @@
+# Creatures, for the referee: the bestiary for SagaS 0.995 LLL (scripts/extensions/sagas/
+# SagaS_Creatures.md, Open Game Content). A creature sheet is a character made with the
+# "creature" start, the creature a copy on it: its eight characteristics, its species' base Speed
+# and its natural protection, the skills it has (each as a learning level over its
+# characteristic, so that the total is the bestiary's), and its attacks with their scores. The
+# derived values (Initiative, Close and Ranged Combat, Speed, hit points, shock thresholds, Max
+# Impact, Reflex Dodge) are the usual formulas: the bestiary uses them too. Size, weight, the
+# other movement modes, special abilities and variants are text: the creature's description.
+fields:
+  creature.present: { type: boolean, formula: "countCopies(copy.type == 'creature') > 0" }
+
+contentTypes:
+  creature:
+    fields:
+      # Animal, fantasy people, undead or monster: the bestiary's four parts.
+      category: { type: enum, values: [animal, people, undead, monster], required: true }
+      # Against a 150-point starting character in a one-on-one fight.
+      threat:
+        { type: enum, values: [negligible, low, moderate, high, deadly, legendary], required: true }
+      # The linear ratio to a human (1.8 m): x1/16 to x16.
+      size: { type: string, required: true }
+      str: { type: integer, required: true, min: 0 }
+      agi: { type: integer, required: true, min: 0 }
+      end: { type: integer, required: true, min: 0 }
+      dex: { type: integer, required: true, min: 0 }
+      wit: { type: integer, required: true, min: 0 }
+      wil: { type: integer, required: true, min: 0 }
+      pre: { type: integer, required: true, min: 0 }
+      ins: { type: integer, required: true, min: 0 }
+      # The species' base Speed (the first movement mode's, for a flyer).
+      speed: { type: integer, required: true, min: 0 }
+      # Natural protection (hide, scales), or the armor it wears.
+      protection: { type: integer, default: 0, min: 0 }
+      # Skills that aren't generic: local IDs and learning levels, in step (the standard copies).
+      skillNames: { type: list, of: string, default: [] }
+      skillLearning: { type: list, of: integer, default: [] }
+      # Generic skills, one copy each: the skill, its specialty (Flight is "Other (Agility)"), its
+      # initial and learning levels, in step.
+      genericSkills: { type: list, of: skill, default: [] }
+      genericSpecialties: { type: list, of: string, default: [] }
+      genericInitial: { type: list, of: integer, default: [] }
+      genericLearning: { type: list, of: integer, default: [] }
+      # Its attacks (natural weapons, weapons.cr-…) and their scores, in step.
+      attacks: { type: list, of: weapon, default: [] }
+      attackScores: { type: list, of: integer, default: [] }
+
+creation:
+  - { id: creature, action: create-creature }
+
+actions:
+  # A creature sheet: the creature, its characteristics, base Speed and protection, its skills,
+  # its attacks (ready, each at its score). The sheet is finished at once: the referee plays it.
+  - id: create-creature
+    tags: [creation]
+    available: character.creating
+    results: [created]
+    steps:
+      - id: creature
+        kind: choice
+        options: { content: { type: creature } }
+        recommend: options[0]
+        changes:
+          - { type: addItem, entry: { item: picked.id } }
+      - id: characteristics
+        kind: changes
+        changes:
+          - { type: set, field: chars.str, value: steps.creature.item.str }
+          - { type: set, field: chars.agi, value: steps.creature.item.agi }
+          - { type: set, field: chars.end, value: steps.creature.item.end }
+          - { type: set, field: chars.dex, value: steps.creature.item.dex }
+          - { type: set, field: chars.wit, value: steps.creature.item.wit }
+          - { type: set, field: chars.wil, value: steps.creature.item.wil }
+          - { type: set, field: chars.pre, value: steps.creature.item.pre }
+          - { type: set, field: chars.ins, value: steps.creature.item.ins }
+          - { type: set, field: species.speed, value: steps.creature.item.speed }
+          - { type: set, field: protection, value: steps.creature.item.protection }
+      - id: kit
+        kind: changes
+        changes:
+          - type: setState
+            forEach: steps.creature.item.skillNames
+            entry: { formula: "'sagas-core-skills-' + x" }
+            key: learning
+            value: 'steps.creature.item.skillLearning[i]'
+          - type: addItem
+            forEach: steps.creature.item.genericSkills
+            entry:
+              item: x
+              state:
+                specialty: 'steps.creature.item.genericSpecialties[i]'
+                initial: 'steps.creature.item.genericInitial[i]'
+                learning: 'steps.creature.item.genericLearning[i]'
+          - type: addItem
+            forEach: steps.creature.item.attacks
+            entry:
+              item: x
+              equipped: true
+              state:
+                score: 'steps.creature.item.attackScores[i]'
+      - id: finish
+        kind: changes
+        sheet: proposed
+        changes:
+          - { type: finishCreation }
+      - id: result
+        kind: outcome
+        result: "'created'"
+
+  # A creature's attack (a natural weapon, weapons.cr-…): the degree roll at the attack's score,
+  # the copy's, which the bestiary gives for each attack.
+  - id: natural-attack
+    tags: [check, combat]
+    params:
+      score: { type: integer }
+      modifier: { type: integer, default: 0 }
+      difficulty:
+        {
+          type: enum,
+          values:
+            [
+              obvious,
+              very-easy,
+              easy,
+              normal,
+              difficult,
+              very-difficult,
+              extremely-difficult,
+              almost-impossible,
+              theoretically-impossible,
+            ],
+          default: normal,
+        }
+    results: { bands: degree }
+    steps:
+      - id: roll
+        kind: action
+        use: degree-roll
+        params:
+          score: params.score
+          modifier: params.modifier
+          difficulty: params.difficulty
+      - id: result
+        kind: outcome
+        result: steps.roll.result
+        data:
+          degree: steps.roll.data.degree

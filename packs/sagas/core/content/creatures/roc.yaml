@@ -1,0 +1,34 @@
+id: creatures.roc
+type: creature
+fields:
+  category: animal
+  threat: deadly
+  size: x8
+  str: 25
+  agi: 6
+  end: 14
+  dex: 3
+  wit: 4
+  wil: 8
+  pre: 8
+  ins: 9
+  speed: 15
+  protection: 3
+  skillNames:
+    - perception
+  skillLearning:
+    - 7
+  genericSkills:
+    - skills.other-agi
+  genericSpecialties:
+    - Flight
+  genericInitial:
+    - 0
+  genericLearning:
+    - 15
+  attacks:
+    - weapons.cr-talons-4-4
+    - weapons.cr-beak-4-4
+  attackScores:
+    - 13
+    - 13

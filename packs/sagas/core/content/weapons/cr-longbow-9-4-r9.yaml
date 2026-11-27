@@ -1,0 +1,8 @@
+id: weapons.cr-longbow-9-4-r9
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 9
+  dmax: 4
+  range: 9
+  natural: true

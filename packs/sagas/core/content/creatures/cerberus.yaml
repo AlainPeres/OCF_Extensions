@@ -1,0 +1,34 @@
+id: creatures.cerberus
+type: creature
+fields:
+  category: monster
+  threat: high
+  size: x2
+  str: 22
+  agi: 7
+  end: 13
+  dex: 3
+  wit: 4
+  wil: 8
+  pre: 8
+  ins: 9
+  speed: 10
+  protection: 3
+  skillNames:
+    - dodge
+    - perception
+    - tracking
+    - intimidation
+  skillLearning:
+    - 1
+    - 6
+    - 5
+    - 4
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 13

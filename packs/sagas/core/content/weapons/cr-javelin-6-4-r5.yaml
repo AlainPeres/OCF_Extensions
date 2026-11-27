@@ -1,0 +1,8 @@
+id: weapons.cr-javelin-6-4-r5
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 6
+  dmax: 4
+  range: 5
+  natural: true

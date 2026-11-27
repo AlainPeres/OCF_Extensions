@@ -1,0 +1,30 @@
+id: creatures.hydra
+type: creature
+fields:
+  category: monster
+  threat: deadly
+  size: x4
+  str: 26
+  agi: 4
+  end: 14
+  dex: 3
+  wit: 3
+  wil: 8
+  pre: 6
+  ins: 6
+  speed: 6
+  protection: 4
+  skillNames:
+    - perception
+    - swimming
+  skillLearning:
+    - 3
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 12

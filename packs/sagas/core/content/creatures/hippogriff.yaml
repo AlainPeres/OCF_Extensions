@@ -1,0 +1,36 @@
+id: creatures.hippogriff
+type: creature
+fields:
+  category: monster
+  threat: moderate
+  size: x2
+  str: 20
+  agi: 8
+  end: 10
+  dex: 3
+  wit: 3
+  wil: 6
+  pre: 5
+  ins: 8
+  speed: 14
+  protection: 1
+  skillNames:
+    - dodge
+    - perception
+  skillLearning:
+    - 1
+    - 5
+  genericSkills:
+    - skills.other-agi
+  genericSpecialties:
+    - Flight
+  genericInitial:
+    - 0
+  genericLearning:
+    - 11
+  attacks:
+    - weapons.cr-beak-2-4
+    - weapons.cr-talons-2-4
+  attackScores:
+    - 13
+    - 13

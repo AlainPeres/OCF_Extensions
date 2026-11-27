@@ -1,0 +1,36 @@
+id: creatures.troll-cave-hill
+type: creature
+fields:
+  category: people
+  threat: high
+  size: x2
+  str: 22
+  agi: 5
+  end: 14
+  dex: 3
+  wit: 3
+  wil: 6
+  pre: 4
+  ins: 5
+  speed: 7
+  protection: 3
+  skillNames:
+    - dodge
+    - perception
+    - intimidation
+    - physical-resistance
+  skillLearning:
+    - 1
+    - 2
+    - 5
+    - 3
+  genericSkills: []
+  genericSpecialties: []
+  genericInitial: []
+  genericLearning: []
+  attacks:
+    - weapons.cr-claws-2-4
+    - weapons.cr-bite-2-4
+  attackScores:
+    - 12
+    - 11

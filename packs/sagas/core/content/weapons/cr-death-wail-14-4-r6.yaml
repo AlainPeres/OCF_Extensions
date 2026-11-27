@@ -1,0 +1,8 @@
+id: weapons.cr-death-wail-14-4-r6
+type: weapon
+fields:
+  kind: ranged
+  damageBonus: 14
+  dmax: 4
+  range: 6
+  natural: true
