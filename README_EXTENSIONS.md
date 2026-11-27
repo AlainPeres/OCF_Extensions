@@ -329,6 +329,7 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 | `scripts/extensions/d100/d100-create.html`                  | The D100 heroic sheet's Create mode                                 |
 | `scripts/extensions/d100/d100-play.html`                    | The D100 heroic sheet's Play mode                                   |
 | `scripts/extensions/validate-pack.ts`                       | `pnpm validate`'s checks on one pack and its characters             |
+| `scripts/extensions/check-links.ts`                         | Before deleting a folder: where its links point, without following  |
 | `examples/characters/extensions/`                           | SagaS and D100 heroic example characters, and those the sheets save |
 | `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                      |
 
@@ -1180,22 +1181,48 @@ that matters depends on where the junctions point:
 
 - **A clone** (`git clone`, then `pnpm install`): every junction pnpm makes points inside the clone
   itself (`node_modules\.pnpm\…`, the workspace packages), and the files from pnpm's global store
-  are hard links, which can be deleted without touching the store. Deleting the clone, by any
-  means, deletes nothing else.
-- **A copy made with `robocopy /SJ`** (above): its junctions point into the **original** folder.
-  A tool that follows them would delete the original's files.
+  are hard links, which can be deleted without touching the store. Deleting the clone deletes
+  nothing else (checked on a clone: its 1,350 links all point inside it).
+- **A copy** (`robocopy /SJ`, or any copy of a `node_modules`): its junctions keep their absolute
+  paths, so they point into **another** folder. A tool that follows them deletes that folder's
+  files.
 
-The tools:
+**Check first**, with `scripts/extensions/check-links.ts`: it lists the folder's links without
+following any, and says whether one points outside it (exit code 0: none; 1: some, listed).
 
-| Tool                                  | Behaviour                                                                                 |
-| ------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `cmd /c rmdir /s /q <folder>`         | Removes each junction without entering it. Safe in every case, and the fastest            |
-| Windows Explorer                      | Removes a junction as a link (since Windows Vista). Fine for a clone, but slow; see below |
-| `Remove-Item -Recurse` (PowerShell 5) | Can follow junctions: never on a folder whose junctions point elsewhere                   |
+```powershell
+node --import tsx scripts/extensions/check-links.ts D:\Developpement\FichiersTypescript\OCF_Test
+# D:\…\OCF_Test: 7140 folders, 1350 links.
+# Every link points inside the folder: deleting it touches nothing else.
+```
 
-With Windows Explorer, use Shift+Delete: a plain Delete sends the folder to the Recycle Bin, often
-too small for it. It may stop on paths too long in `node_modules\.pnpm` or on broken links (the two
-ORC links, if still there); finish then with `cmd /c rmdir /s /q`.
+**Then delete with `cmd /c rmdir /s /q <folder>`**: it removes each junction as a link, without
+entering it, and is the fastest. Avoid the other tools on a folder whose links point outside:
+
+| Tool                                  | Behaviour                                                                   |
+| ------------------------------------- | --------------------------------------------------------------------------- |
+| `cmd /c rmdir /s /q <folder>`         | Removes each junction without entering it. Safe in every case, the fastest  |
+| Windows Explorer                      | Not to be trusted with such a folder: see the incident below. Slow, besides |
+| `Remove-Item -Recurse` (PowerShell 5) | Can follow junctions: never on a folder whose junctions point elsewhere     |
+
+With Windows Explorer, on a clone, use Shift+Delete: a plain Delete sends the folder to the Recycle
+Bin, often too small for it. It may stop on paths too long in `node_modules\.pnpm` or on broken
+links (the two ORC links, if still there); finish then with `cmd /c rmdir /s /q`.
+
+**The incident of 2026-11-26.** This repository was first a copy of `opencharacter` (above).
+Deleting `opencharacter` at 17:53 emptied part of this repository at 17:56: 8,784 files of
+`packages/spec` (only folders and some hundred files left) and the files of packages in
+`node_modules\.pnpm` (`yaml`, `ajv`…), their folders kept. So `opencharacter` then held
+junctions pointing into this repository, and the deletion followed them. How they got there, and
+why the deletion followed them, can't be told now that the folder is gone. It was repaired with:
+
+```powershell
+git restore packages/spec                  # the deleted files, from the last commit
+pnpm install --frozen-lockfile --force     # a plain install keeps the emptied package folders
+cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-2e
+cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-sf-2e
+pnpm typecheck; pnpm validate
+```
 
 #### Before deleting the original
 
@@ -1206,8 +1233,10 @@ pnpm validate
 node --import tsx --conditions @opencharacter/source scripts/extensions/universal.ts
 ```
 
-If everything works while the original has another name, the copy no longer depends on it. Delete
-`opencharacter_old` with `cmd /c rmdir /s /q`.
+If everything works while the original has another name, the copy no longer depends on it. That
+says nothing of the other way round: the original may hold links into the copy. Before deleting
+`opencharacter_old`, run `check-links.ts` on it; with any link outside it, rebuild its
+`node_modules` first or keep it. Then delete it with `cmd /c rmdir /s /q`.
 
 ### PowerShell and UTF-8
 
