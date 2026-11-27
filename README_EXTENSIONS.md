@@ -315,28 +315,28 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 
 ## What was added
 
-| Path                                                        | What                                                                                       |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `packs/sagas/core/`                                         | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor, 15 species, 123 creatures) |
-| `scripts/extensions/sagas/sagas.ts` + `.html`               | SagaS sheet: Create and Play in one page                                                   |
-| `scripts/extensions/sagas/sagas-create.html`                | The SagaS sheet's Create mode                                                              |
-| `scripts/extensions/sagas/sagas-play.html`                  | The SagaS sheet's Play mode                                                                |
-| `scripts/extensions/sagas/sagas-lib.ts`                     | The SagaS pages' own routes: their data, a random character                                |
-| `scripts/extensions/universal-lib.ts`                       | Shared server of the universal, SagaS and D100 heroic tools                                |
-| `scripts/extensions/display-lib.ts`                         | What a pack's display hints hide, for the SagaS and universal tools                        |
-| `scripts/extensions/universal.ts` + `.html`                 | Universal sheet for any pack: Create and Play                                              |
-| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                                            |
-| `scripts/extensions/sagas/SagaS_Creatures.md`               | The bestiary the creatures come from (Open Game Content)                                   |
-| `scripts/extensions/sagas/bestiary-import.mjs`              | The bestiary into the pack: creatures, species (`--check`: each creature)                  |
-| `packs/d100/heroic/`                                        | The `d100-heroic` pack (rules, 32 skills, 43 weapons, 163 spells)                          |
-| `scripts/extensions/d100/`                                  | The SRD chapters the pack models (Markdown), and its terms of use                          |
-| `scripts/extensions/d100/d100.ts` + `.html`                 | D100 heroic sheet: Create and Play in one page                                             |
-| `scripts/extensions/d100/d100-create.html`                  | The D100 heroic sheet's Create mode                                                        |
-| `scripts/extensions/d100/d100-play.html`                    | The D100 heroic sheet's Play mode                                                          |
-| `scripts/extensions/validate-pack.ts`                       | `pnpm validate`'s checks on one pack and its characters                                    |
-| `scripts/extensions/check-links.ts`                         | Before deleting a folder: where its links point, without following                         |
-| `examples/characters/extensions/`                           | SagaS and D100 heroic example characters, and those the sheets save                        |
-| `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                                             |
+| Path                                                        | What                                                                                        |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `packs/sagas/core/`                                         | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor, 15 species, 123 creatures)  |
+| `scripts/extensions/sagas/sagas.ts` + `.html`               | SagaS sheet: Create and Play in one page                                                    |
+| `scripts/extensions/sagas/sagas-create.html`                | The SagaS sheet's Create mode                                                               |
+| `scripts/extensions/sagas/sagas-play.html`                  | The SagaS sheet's Play mode                                                                 |
+| `scripts/extensions/sagas/sagas-lib.ts`                     | The SagaS pages' own routes: their data, a random character                                 |
+| `scripts/extensions/universal-lib.ts`                       | Shared server of the universal, SagaS and D100 heroic tools                                 |
+| `scripts/extensions/display-lib.ts`                         | What a pack's display hints hide, for the SagaS and universal tools                         |
+| `scripts/extensions/universal.ts` + `.html`                 | Universal sheet for any pack: Create and Play                                               |
+| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                                             |
+| `scripts/extensions/sagas/SagaS_Creatures.md`               | The bestiary the creatures come from (Open Game Content)                                    |
+| `scripts/extensions/sagas/bestiary-import.mjs`              | The bestiary into the pack: creatures, species (`--check`: each creature)                   |
+| `packs/d100/heroic/`                                        | The `d100-heroic` pack (rules, 33 skills, 93 weapons, 163 spells, 14 species, 72 creatures) |
+| `scripts/extensions/d100/`                                  | The SRD chapters the pack models (Markdown), and its terms of use                           |
+| `scripts/extensions/d100/d100.ts` + `.html`                 | D100 heroic sheet: Create and Play in one page                                              |
+| `scripts/extensions/d100/d100-create.html`                  | The D100 heroic sheet's Create mode                                                         |
+| `scripts/extensions/d100/d100-play.html`                    | The D100 heroic sheet's Play mode                                                           |
+| `scripts/extensions/validate-pack.ts`                       | `pnpm validate`'s checks on one pack and its characters                                     |
+| `scripts/extensions/check-links.ts`                         | Before deleting a folder: where its links point, without following                          |
+| `examples/characters/extensions/`                           | SagaS and D100 heroic example characters, and those the sheets save                         |
+| `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                                              |
 
 Our files stay apart from OCF's: scripts in `scripts/extensions/`, characters in
 `examples/characters/extensions/`. `pnpm validate` reads `examples/characters/` with its
@@ -836,11 +836,16 @@ The D100 heroic sheet ([below](#the-d100-heroic-tools)) and the universal sheet 
 
 ### Content (`content/`)
 
-- **Skills (32)**: the Characters chapter's skill bases. Culture (Other), Language (Other), Lore
-  and Religion (Other) are taken once per descriptor; Shamanism only by a Shaman.
-- **Weapons (43)**: close weapons, shields, missile and thrown weapons, one item per name of the
-  tables ("Club, Hatchet" is two items).
-- **Armour (5)** and **gear (42)**: the general items, ammunition and food.
+- **Skills (33)**: the Characters chapter's 32 skill bases, and Spirit Combat, a creature's own
+  (`rules/creatures.yaml`). Culture (Other), Language (Other), Lore and Religion (Other) are taken
+  once per descriptor; Shamanism only by a Shaman.
+- **Weapons (93)**: the tables' 43 (close weapons, shields, missile and thrown weapons, one item
+  per name: "Club, Hatchet" is two items), the sorcerer's staff (`stores.yaml`), the species'
+  5 natural weapons (`weapons.natural-…`: bite, claw, gore, head-butt, kick) and the creatures'
+  44 attacks of their own (`weapons.cr-…`, below).
+- **Armour (5)** and **gear (43)**: the general items, ammunition and food, and the sorcerer's
+  wand.
+- **Species (14)**: human and the 13 non-human adventurers (`rules/species.yaml`).
 - **Spells (163)**: 70 of Personal Magic, 39 of Sorcery, 54 of Divine Magic (the Axe Maidens'
   Earth Scream included), their traits read from the chapters' italic lines by a script. A spell
   with a descriptor (Detect (Type), Energy Projection (Type), Call (Elemental)…) is taken once per
