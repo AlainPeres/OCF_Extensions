@@ -381,12 +381,13 @@ section 15 in `pack.yaml`, the bestiary's line included). Mechanics live in `rul
 ### Rules (`rules/`)
 
 - **`stats.yaml`**: the eight main characteristics (base 5), the secondary ones (Close Combat,
-  Ranged Combat, Speed, Initiative) with their creation bonuses, characteristic bonuses from the
-  Universal Table, shock thresholds, physical and psychical hit points, injuries and stun, states
-  (unconscious, dead, confused, mad), protection and impact bonus, simultaneous studies, Reflex
-  Dodge, and the creation points: budget (150/250/350 and the social class), the cost of the
-  characteristics (3/6/12/24/48 a point, from the species' baseline: 5 plus its modifier), of the
-  secondary ones (three times as much) and of the skills.
+  Ranged Combat, Speed, Initiative) with their creation bonuses, the species' base Speed
+  (`species.speed`, 6 for a human: Speed = base Speed + (END + AGI) / 4 + creation bonus),
+  characteristic bonuses from the Universal Table, shock thresholds, physical and psychical hit
+  points, injuries and stun, states (unconscious, dead, confused, mad), protection and impact
+  bonus, simultaneous studies, Reflex Dodge, and the creation points: budget (150/250/350 and the
+  social class), the cost of the characteristics (3/6/12/24/48 a point, from the species'
+  baseline: 5 plus its modifier), of the secondary ones (three times as much) and of the skills.
 - **`identity.yaml`**: free-text fields: name, species (default Human; emptied when a species or a
   creature copy says what the character is), profession, description, background, possessions.
 - **`skills.yaml`**: the skill content type. Each copy has a learning level, an initial level and a
@@ -640,7 +641,11 @@ come from the engine.
 - **Create** (`sagas-create.html`): point costs come from the pack's formulas; the page
   recodes no rule. Its sections, in order:
 
-  1. identity;
+  1. identity: name, people ("People": the species), species (free text), **Base Speed**,
+     profession, description. Base Speed is the species' base Speed, which Speed starts from
+     (Speed = base Speed + (END + AGI) / 4 + creation bonus). A species sets it (4 for a dwarf,
+     5 for a halfling, 6 for a human or an elf, 13 for a centaur) and the field shows it, locked;
+     without one it is typed (6 by default, left out of the file);
   2. creation points (150/250/350 or any number), social class and the universe's technological
      level: what the pack's display hints hide isn't offered (skills, weapons and protections
      above it), and lowering it removes the skills learned above it (after a confirmation);
@@ -654,8 +659,7 @@ come from the engine.
   load and save. "Creature…" makes a creature sheet of the bestiary (the pack's creature start),
   for the referee; natural weapons aren't offered as gear. In the identity, "People" picks the
   species (its copy, as `choose-species` does): each characteristic then shows its species
-  modifier and its total, and "Base Speed" follows the species (typed without one: 6 for a
-  human).
+  modifier and its total, and Base Speed follows the species.
 
 - **Play** (`sagas-play.html`): a play sheet, its sections by theme (character, checks, combat,
   health and dangers, long-term action, progression), the header linking to each:
