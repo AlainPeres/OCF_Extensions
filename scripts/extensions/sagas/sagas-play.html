@@ -1462,10 +1462,12 @@
         if (!ch) return;
         const name = V('identity.name');
         $('title').textContent = name || ch.id;
-        // A creature sheet: the creature's name, its species being empty.
-        const creature = (ch.features ?? [])
-          .map((f) => itemOf(f.item))
-          .find((it) => it && it.id.startsWith('creatures.'));
+        // Its species (rules/species.yaml), or a creature sheet's creature, the species field
+        // being empty.
+        const held = (ch.features ?? []).map((f) => itemOf(f.item)).filter(Boolean);
+        const creature =
+          held.find((it) => it.id.startsWith('species.')) ??
+          held.find((it) => it.id.startsWith('creatures.'));
         $('who').textContent = [V('identity.species') || creature?.name, V('identity.profession')]
           .filter(Boolean)
           .join(' · ');

@@ -31,6 +31,10 @@ const skills = readContent('skills');
 // The weapons, and the gear among them: a creature's attacks (natural weapons) aren't bought.
 const allWeapons = readContent('weapons');
 const weapons = allWeapons.filter((w) => !w.fields.natural);
+// The species a character may belong to (rules/species.yaml), human first.
+const species = readContent('species').toSorted(
+  (a, b) => Number(b.id === 'species.human') - Number(a.id === 'species.human'),
+);
 // The bestiary's creatures, by name, for the creature start (rules/creatures.yaml).
 const creatures = readContent('creatures').map((c) => ({
   id: key(c.id),
@@ -53,6 +57,7 @@ const createData = {
   armors,
   techLevels,
   creatures,
+  species: species.map((s) => ({ id: key(s.id), name: s.name, fields: s.fields })),
   // Constraint messages, by constraint ID.
   constraints: Object.fromEntries(
     Object.entries(names)
@@ -85,7 +90,10 @@ const playData = {
     ]),
   ),
   items: Object.fromEntries(
-    [...skills, ...allWeapons, ...armors, ...readContent('creatures')].map((i) => [key(i.id), i]),
+    [...skills, ...allWeapons, ...armors, ...readContent('creatures'), ...species].map((i) => [
+      key(i.id),
+      i,
+    ]),
   ),
   techLevels,
 };

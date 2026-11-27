@@ -430,6 +430,11 @@
           <h2>Identity</h2>
           <div class="ident">
             <label>Name <input data-identity="name" placeholder="Character name" /></label>
+            <label
+              title="The species: its modifiers to the main characteristics (free) and its base Speed"
+              >People
+              <select id="speciesSelect"></select
+            ></label>
             <label>Species <input data-identity="species" /></label>
             <label
               title="The species' base Speed: 6 for a human (the bestiary's peoples: 4 for a dwarf, 5 for a halfling, 7 for a giant)"
@@ -719,6 +724,20 @@
       // A creature sheet (the creature start): its creature's name.
       const creatureName = () =>
         D.creatures.find((c) => (ch.features ?? []).some((f) => f.item === c.id))?.name;
+      // The character's species (rules/species.yaml): its copy's, if any.
+      const speciesOf = () =>
+        D.species.find((s) => (ch.features ?? []).some((f) => f.item === s.id));
+      // What the character is: its species field, else its species', else its creature's.
+      const whatItIs = () => V('identity.species') || speciesOf()?.name || creatureName();
+      /** Another species, as the pack's choose-species does: one copy, the free text emptied. */
+      function setSpecies(id) {
+        ch.features = (ch.features ?? []).filter((f) => !D.species.some((s) => s.id === f.item));
+        if (id) {
+          ch.features.push({ id: id.split(':')[1].replace(/\./g, '-'), item: id });
+          setV('identity.species', '', IDENTITY_DEFAULTS.species);
+        }
+        change();
+      }
 
       function renderInputs() {
         $('charId').value = ch.id;
@@ -727,8 +746,14 @@
           el.value = getV(`identity.${f}`, IDENTITY_DEFAULTS[f] ?? '');
         }
         // A creature's species: its name, as a hint; the species' base Speed.
-        document.querySelector('[data-identity="species"]').placeholder = creatureName() ?? '';
-        if (document.activeElement !== $('speciesSpeed'))
+        document.querySelector('[data-identity="species"]').placeholder =
+          speciesOf()?.name ?? creatureName() ?? '';
+        $('speciesSelect').value = speciesOf()?.id ?? '';
+        // A species sets the base Speed; without one, it is typed (6 for a human).
+        const sp = speciesOf();
+        $('speciesSpeed').disabled = !!sp;
+        if (sp) $('speciesSpeed').value = sp.fields.speed ?? 6;
+        else if (document.activeElement !== $('speciesSpeed'))
           $('speciesSpeed').value = getV('species.speed', 6);
         for (const b of $('power').children)
           b.classList.toggle('on', Number(b.dataset.v) === getV('creation.points', 150));
@@ -741,7 +766,7 @@
         for (const c of D.chars) {
           const div = document.createElement('div');
           div.className = 'stat';
-          div.innerHTML = `<span class="name">${esc(c.name)}</span>`;
+          div.innerHTML = `<span class="name">${esc(c.name)}<br><span class="muted" data-race="${c.key.split('.')[1]}"></span></span>`;
           div.append(
             stepper(getV(c.key, 5), 0, (v) => {
               setV(c.key, v);
@@ -1069,6 +1094,13 @@
           el.textContent = c?.total ?? '';
           el.nextElementSibling.textContent = c ? (GRADES[c.grade] ?? '') : '';
         }
+        // The species' modifier, when it has one: bought value + modifier = the characteristic.
+        for (const el of document.querySelectorAll('[data-race]')) {
+          const m = V(`race.${el.dataset.race}`) ?? 0;
+          el.textContent = m
+            ? `species ${m > 0 ? '+' : ''}${m} → ${V(`chars.${el.dataset.race}`)}`
+            : '';
+        }
         for (const el of document.querySelectorAll('[data-sec]')) {
           const s = el.dataset.sec;
           if (V(`sec.${s}`) !== undefined)
@@ -1087,7 +1119,7 @@
 
         const rows = [
           ['Name', esc(V('identity.name') || '—')],
-          ['Species', esc(V('identity.species') || creatureName() || '—')],
+          ['Species', esc(whatItIs() || '—')],
           ['Profession', esc(V('identity.profession') || '—')],
           'sep',
           ...D.secondary.map((s) => [D.fieldNames[`sec.${s.key}`], V(`sec.${s.key}`)]),
@@ -1146,6 +1178,7 @@
         $('charId').onchange = (e) => {
           ch.id = e.target.value.trim();
         };
+        $('speciesSelect').onchange = (e) => setSpecies(e.target.value);
         // The species' base Speed (6, a human's, is left out of the file).
         $('speciesSpeed').oninput = (e) => {
           const n = Math.max(0, Math.floor(Number(e.target.value)));
@@ -1314,6 +1347,10 @@
         $('skillChar').innerHTML += chars
           .map((c) => `<option value="${esc(c)}">${esc(charName(c))}</option>`)
           .join('');
+        // The species, human first; none: the rules' human with a typed base Speed.
+        $('speciesSelect').innerHTML =
+          '<option value="">—</option>' +
+          D.species.map((s) => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
         // The bestiary's creatures, by category.
         const CATEGORIES = {
           animal: 'Animals',
