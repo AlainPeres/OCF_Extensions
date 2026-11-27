@@ -5,5 +5,9 @@
   "code-runner.runInTerminal": true,
   "code-runner.saveFileBeforeRun": true,
   // SchemaStore associe tout « dice.yaml » au schéma Erda Runtime : faux positifs sur les tests.
-  "yaml.schemaStore.enable": false
+  "yaml.schemaStore.enable": false,
+  // Explorateur : une indentation plus marquée et des guides toujours visibles, pour voir quel
+  // fichier est dans quel dossier (examples/characters/ et son sous-dossier extensions/).
+  "workbench.tree.indent": 16,
+  "workbench.tree.renderIndentGuides": "always"
 }
