@@ -5,7 +5,7 @@
 //
 //   node --import tsx --conditions @opencharacter/source scripts/extensions/validate-pack.ts <pack-id or folder> [...]
 //
-// e.g. `scripts/extensions/validate-pack.ts openquest-core`, or `… packs/sagas/core sagas-core`.
+// e.g. `scripts/extensions/validate-pack.ts d100-heroic`, or `… packs/sagas/core sagas-core`.
 // Characters with homebrew are left to `pnpm validate`. Exits 1 on any error.
 import { existsSync, readdirSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';

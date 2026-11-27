@@ -1,7 +1,8 @@
-# OpenQuest 3 Core (OCF pack)
+# D100 heroic fantasy rules (OCF pack)
 
-From the _OpenQuest 3rd Edition System Resource Document_ (v1.2, D101 Games, Creative Commons
-Attribution):
+A D100 heroic fantasy game's character rules, from a System Resource Document under the Creative
+Commons Attribution 4.0 license (its attribution is in `pack.yaml` and `LICENSE`). The SRD's terms
+keep its trademark out of everything but the license text, hence the pack's generic name.
 
 - the seven characteristics; damage modifier (STR + SIZ), hit points, magic points, movement
   rate, armour points, encumbrance (STR + SIZ, overloaded), fortune points, money and the

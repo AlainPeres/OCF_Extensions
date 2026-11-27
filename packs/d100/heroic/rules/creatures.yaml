@@ -169,7 +169,7 @@ actions:
         changes:
           - type: setState
             forEach: steps.creature.item.skillNames
-            entry: { formula: "'openquest-core-skills-' + x" }
+            entry: { formula: "'d100-heroic-skills-' + x" }
             key: fixed
             value: 'steps.creature.item.skillValues[i]'
           - type: addItem

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>OpenQuest</title>
+    <title>D100 heroic</title>
     <style>
       :root {
         --bg: #f6f5f2;
@@ -91,7 +91,7 @@
   </head>
   <body>
     <div id="modes">
-      <h1>OpenQuest</h1>
+      <h1>D100 heroic</h1>
       <span class="seg">
         <button data-mode="create">Create</button>
         <button data-mode="play">Play</button>
@@ -118,7 +118,7 @@
         );
       let mode = 'create';
       try {
-        mode = localStorage.getItem('openquest.mode') === 'play' ? 'play' : 'create';
+        mode = localStorage.getItem('d100.mode') === 'play' ? 'play' : 'create';
       } catch {}
       const seen = { create: 0, play: 0 }; // each page's version when last passed on or given
       function show(m) {
@@ -127,7 +127,7 @@
         for (const b of document.querySelectorAll('.seg button'))
           b.classList.toggle('on', b.dataset.mode === m);
         try {
-          localStorage.setItem('openquest.mode', m);
+          localStorage.setItem('d100.mode', m);
         } catch {}
       }
       async function switchTo(m) {

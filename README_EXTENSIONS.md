@@ -1,7 +1,8 @@
 # Extensions
 
 Additions to the Open Character Format (OCF) repository: a pack for the _Rules of SagaS 0.995 LLL
-(OGL)_ and a pack for _OpenQuest 3rd Edition_ (SRD v1.2, Creative Commons), each with a sheet to
+(OGL)_ and a D100 heroic fantasy pack from a System Resource Document under Creative Commons
+Attribution 4.0, each with a sheet to
 create and play characters in the browser, and a universal sheet for any pack. This repository
 (<https://github.com/AlainPeres/OCF_Extensions>, the `origin` remote) keeps OCF's whole history,
 with OCF's repository as the `upstream` remote. None of the additions is part of OCF; the rest of
@@ -56,7 +57,7 @@ What you should get:
 
 No sparse checkout and no `core.protectNTFS`: every file is on disk, and the universal tools read
 the ORC packs from it. `pnpm test` runs, but a few OCF tests that list the official packs fail
-because of `packs/sagas/core` and `packs/openquest/core` ([GitHub setup](#github-setup)).
+because of `packs/sagas/core` and `packs/d100/heroic` ([GitHub setup](#github-setup)).
 
 ### macOS
 
@@ -116,7 +117,7 @@ In Git Bash instead of PowerShell, the commands are the same except the two `rmd
 fastest; Windows Explorer works too, with Shift+Delete
 ([Deleting a folder that holds junctions](#deleting-a-folder-that-holds-junctions)).
 
-What works: the SagaS and OpenQuest sheets, the universal sheet (which even loads the ORC packs,
+What works: the SagaS and D100 heroic sheets, the universal sheet (which even loads the ORC packs,
 from git: [PF2 in the universal tools](#pf2-in-the-universal-tools)), `pnpm validate` on the 15
 packs on disk,
 `pnpm typecheck`, and merges from `upstream`. What doesn't: `pnpm validate` and `pnpm test` on the
@@ -311,25 +312,25 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 
 ## What was added
 
-| Path                                                        | What                                                                 |
-| ----------------------------------------------------------- | -------------------------------------------------------------------- |
-| `packs/sagas/core/`                                         | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor)      |
-| `scripts/extensions/sagas/sagas.ts` + `.html`               | SagaS sheet: Create and Play in one page                             |
-| `scripts/extensions/sagas/sagas-create.html`                | The SagaS sheet's Create mode                                        |
-| `scripts/extensions/sagas/sagas-play.html`                  | The SagaS sheet's Play mode                                          |
-| `scripts/extensions/sagas/sagas-lib.ts`                     | The SagaS pages' own routes: their data, a random character          |
-| `scripts/extensions/universal-lib.ts`                       | Shared server of the universal, SagaS and OpenQuest tools            |
-| `scripts/extensions/display-lib.ts`                         | What a pack's display hints hide, for the SagaS and universal tools  |
-| `scripts/extensions/universal.ts` + `.html`                 | Universal sheet for any pack: Create and Play                        |
-| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                      |
-| `packs/openquest/core/`                                     | The `openquest-core` pack (rules, 32 skills, 43 weapons, 163 spells) |
-| `scripts/extensions/openquest/`                             | The OpenQuest 3 SRD chapters the pack models (Markdown)              |
-| `scripts/extensions/openquest/openquest.ts` + `.html`       | OpenQuest sheet: Create and Play in one page                         |
-| `scripts/extensions/openquest/openquest-create.html`        | The OpenQuest sheet's Create mode                                    |
-| `scripts/extensions/openquest/openquest-play.html`          | The OpenQuest sheet's Play mode                                      |
-| `scripts/extensions/validate-pack.ts`                       | `pnpm validate`'s checks on one pack and its characters              |
-| `examples/characters/extensions/`                           | SagaS and OpenQuest example characters, and those the sheets save    |
-| `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                       |
+| Path                                                        | What                                                                |
+| ----------------------------------------------------------- | ------------------------------------------------------------------- |
+| `packs/sagas/core/`                                         | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor)     |
+| `scripts/extensions/sagas/sagas.ts` + `.html`               | SagaS sheet: Create and Play in one page                            |
+| `scripts/extensions/sagas/sagas-create.html`                | The SagaS sheet's Create mode                                       |
+| `scripts/extensions/sagas/sagas-play.html`                  | The SagaS sheet's Play mode                                         |
+| `scripts/extensions/sagas/sagas-lib.ts`                     | The SagaS pages' own routes: their data, a random character         |
+| `scripts/extensions/universal-lib.ts`                       | Shared server of the universal, SagaS and D100 heroic tools         |
+| `scripts/extensions/display-lib.ts`                         | What a pack's display hints hide, for the SagaS and universal tools |
+| `scripts/extensions/universal.ts` + `.html`                 | Universal sheet for any pack: Create and Play                       |
+| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                     |
+| `packs/d100/heroic/`                                        | The `d100-heroic` pack (rules, 32 skills, 43 weapons, 163 spells)   |
+| `scripts/extensions/d100/`                                  | The SRD chapters the pack models (Markdown), and its terms of use   |
+| `scripts/extensions/d100/d100.ts` + `.html`                 | D100 heroic sheet: Create and Play in one page                      |
+| `scripts/extensions/d100/d100-create.html`                  | The D100 heroic sheet's Create mode                                 |
+| `scripts/extensions/d100/d100-play.html`                    | The D100 heroic sheet's Play mode                                   |
+| `scripts/extensions/validate-pack.ts`                       | `pnpm validate`'s checks on one pack and its characters             |
+| `examples/characters/extensions/`                           | SagaS and D100 heroic example characters, and those the sheets save |
+| `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                      |
 
 Our files stay apart from OCF's: scripts in `scripts/extensions/`, characters in
 `examples/characters/extensions/`. `pnpm validate` reads `examples/characters/` with its
@@ -344,7 +345,7 @@ node --import tsx --conditions @opencharacter/source scripts/extensions/<tool>.t
 ```
 
 The SagaS tools are in `scripts/extensions/sagas/`: `scripts/extensions/sagas/<tool>.ts`; the
-OpenQuest tools in `scripts/extensions/openquest/`.
+D100 heroic tools in `scripts/extensions/d100/`.
 
 In VS Code, open the file and press F5 (launch configuration "Exécuter le fichier TS courant
 (tsx)") or the Code Runner ▶ button. Run the `.ts` file, not the `.html`: the script starts a local
@@ -354,11 +355,11 @@ server (127.0.0.1 only) and opens the page in the browser. `--port N` changes th
 | Tool           | Port | Options               |
 | -------------- | ---- | --------------------- |
 | `sagas.ts`     | 5180 | `--port`, `--no-open` |
-| `openquest.ts` | 5181 | `--port`, `--no-open` |
+| `d100.ts`      | 5181 | `--port`, `--no-open` |
 | `universal.ts` | 5176 | `--port`, `--no-open` |
 
 Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
-without asking). The SagaS and OpenQuest sheets list the characters of `examples/characters/` that
+without asking). The SagaS and D100 heroic sheets list the characters of `examples/characters/` that
 use their pack. The universal sheet lists OCF's example characters (`examples/characters/`) and ours
 (`extensions/…`); a loaded character is saved back where it was, and a new one, or one saved under
 another name, goes to `extensions/`.
@@ -529,7 +530,7 @@ passed on (a load, a roll, an edit), with the file it came from. Each page asks 
 (`/api/data?for=create|play`) and has a small hook (`window.ocfCharacter`) the sheet uses.
 
 The sheet is the universal tools' server (`universal-lib.ts`) with pages of its own, like the
-OpenQuest sheet. Unlike it, the SagaS pages keep the character themselves and send it with each
+D100 heroic sheet. Unlike it, the SagaS pages keep the character themselves and send it with each
 request: they use the server's stateless calls.
 
 | Call                                                 | Does                                                                                           |
@@ -587,15 +588,22 @@ come from the engine.
     is a standard copy); so does the list of generic skills to learn;
   - possessions, background and a roll log, where each progression shows the XP left.
 
-## The OpenQuest pack (`packs/openquest/core`)
+## The D100 heroic pack (`packs/d100/heroic`)
 
-Pack ID `openquest-core`, version 0.1.0, spec 0.4.0, from the _OpenQuest 3rd Edition System
-Resource Document_ v1.2 (D101 Games). Its READ ME says the SRD has been under a Creative Commons
-license since 09/03/2023. The pack declares `CC-BY-4.0` with a credit line. The SRD's "How to Use
-the SRD" PDF, not in `scripts/extensions/openquest/`, gives the exact variant: change `license`,
-`credit` and `LICENSE` if it differs. The OpenQuest sheet ([below](#the-openquest-tools)) and
-the universal sheet show it; `examples/characters/extensions/openquest-test.yaml` is a character
-made by its random start, `openquest-dragon.yaml` a creature. `pnpm validate` passes with no error or warning.
+Pack ID `d100-heroic`, version 0.1.0, spec 0.4.0, licensed under `CC-BY-4.0`. It models a System
+Resource Document (v1.2) whose chapters are in `scripts/extensions/d100/`, with its "How to Use the
+SRD" (`how_to_use_the_openquest_srd.md`). That document sets the terms the pack follows:
+
+- its **Attribution Notice**, verbatim, is the pack's `credit` (in `pack.yaml` and `LICENSE`);
+- **no trademark outside the license text**: the game's name appears only in that notice, so the
+  pack, its ID and its sheet carry a generic name (as OCF's `orc-2e` does for its game). The pack
+  was `d100-heroic` until 2026-11-27;
+- **no logo**, and **the SRD's text only**: nothing from the full rulebook. A `not-affiliated`
+  notice says the pack isn't the publisher's product.
+
+The D100 heroic sheet ([below](#the-d100-heroic-tools)) and the universal sheet show it;
+`examples/characters/extensions/d100-test.yaml` is a character made by its random start,
+`d100-dragon.yaml` a creature. `pnpm validate` passes with no error or warning.
 
 ### Rules (`rules/`)
 
@@ -804,20 +812,20 @@ beyond the combat situations, ships and naval combat (a vessel isn't a character
 and transport's costs. Breaking objects is an Athletics test. Creatures' special abilities
 (breath, gaze, regeneration, possession…) are text: the Referee applies them.
 
-## The OpenQuest tools
+## The D100 heroic tools
 
-**`openquest.ts`** is the OpenQuest sheet: one page with two modes, Create
-(`openquest-create.html`) and Play (`openquest-play.html`), switched in its header. Each mode is
+**`d100.ts`** is the D100 heroic sheet: one page with two modes, Create
+(`d100-create.html`) and Play (`d100-play.html`), switched in its header. Each mode is
 its page, framed and kept loaded, so each keeps what it shows. The character is the server's
 session: changing modes gives the other page the session, which sets its own mode (`/api/mode`),
 so the play actions show in Play only. Each page has a small hook (`window.ocfCharacter`) the
 sheet uses.
 
 The sheet is the universal tools' server (`universal-lib.ts`) with pages of its own: the pack's
-actions, pauses and texts come from the engine, the pages lay them out for OpenQuest. It lists the
-characters of `examples/characters/` that use `openquest-core` and saves to `extensions/`.
+actions, pauses and texts come from the engine, the pages lay them out for this pack. It lists the
+characters of `examples/characters/` that use `d100-heroic` and saves to `extensions/`.
 
-- **Create** (`openquest-create.html`): a new character (or one being created), then the guided
+- **Create** (`d100-create.html`): a new character (or one being created), then the guided
   or random start.
   - Each pause of the guided start is asked in turn: the species, the method, the
     characteristic points (with each one's limit), cash or Wealth, the arms package and weapons,
@@ -830,7 +838,7 @@ characters of `examples/characters/` that use `openquest-core` and saves to `ext
     motives, age, background…).
   - Beside it, the sheet as it stands: species, characteristics, attributes, the pools spent
     against their size, the skills by group with their totals, spells and equipment.
-- **Play** (`openquest-play.html`): a play sheet in three columns.
+- **Play** (`d100-play.html`): a play sheet in three columns.
   - The character: characteristics, hit and magic points, armour, damage modifier, movement,
     fortune, growth, encumbrance and money; the conditions as badges (mortal wound, unconscious,
     fatigue…); every input field under "Edit the sheet"; the equipment.
@@ -862,7 +870,7 @@ text (`@opencharacter/text`, `describeNeed`).
 Create; a loaded one in Create while it is being created, else in Play. The mode is the server
 session's (`/api/mode`): in Create, the pack's action groups are read as while creating, even once
 the character is finished (after a random start, or one loaded), so a pack that hides its actions
-of play while creating (SagaS, OpenQuest) keeps them out of Create. A pack that doesn't (Fate, 5e,
+of play while creating (SagaS, D100 heroic) keeps them out of Create. A pack that doesn't (Fate, 5e,
 Draw Steel…) shows them in both modes. The page also loads, saves (a loaded character back where
 it was, any other to `extensions/`) and shows the YAML.
 
@@ -913,7 +921,7 @@ it was, any other to `extensions/`) and shows the YAML.
   Tested on the 32 example characters on disk, and the 19 ORC ones read from git on Windows.
 
 There is no "Improve" mode: OCF has no common mark for a pack's advancement actions (SagaS,
-OpenQuest and a few others tag them `advancement`, Fate `milestone`, others nothing), so they stay
+D100 heroic and a few others tag them `advancement`, Fate `milestone`, others nothing), so they stay
 in Play, under the group each pack gives them.
 
 Limits of the universal tools:
@@ -941,11 +949,11 @@ that adds a pack:
   `packs/` as an official one: `build.test.ts` and `validate.test.ts` expect an exact list of
   packs, `packages.test.ts` expects 19 published packages, and `licenses.test.ts` expects the
   `@opencharacter/packs` bundle's LICENSE to name every pack. With `packs/sagas/core` and
-  `packs/openquest/core` they fail.
+  `packs/d100/heroic` they fail.
   Adapting them would mean changing OCF's files and conflicts on every merge from `upstream`.
 - **Release is disabled** too. On every push to `main` it would try to publish to npm, under the
   `@opencharacter` scope, every package not yet there, `@opencharacter/sagas-core` and
-  `@opencharacter/openquest-core` included.
+  `@opencharacter/d100-heroic` included.
 - **Website** (`pages.yml`) runs only by hand; it stays as is.
 - **Dependabot is off**: `.github/dependabot.yml` is removed and its settings are off (Settings →
   Code security). Dependency updates come with the merges from `upstream`.
@@ -957,7 +965,7 @@ Without CI, check locally before pushing:
 
 ```sh
 npx oxlint --deny-warnings
-npx oxfmt --check packs/sagas packs/openquest scripts/extensions README_EXTENSIONS.md
+npx oxfmt --check packs/sagas packs/d100 scripts/extensions README_EXTENSIONS.md
 pnpm typecheck
 pnpm validate
 ```
@@ -968,7 +976,7 @@ texts and engine load; its dependencies are loaded with it, not checked) and the
 characters that use it. `pnpm validate` still checks the whole repository before a commit.
 
 ```sh
-node --import tsx --conditions @opencharacter/source scripts/extensions/validate-pack.ts openquest-core
+node --import tsx --conditions @opencharacter/source scripts/extensions/validate-pack.ts d100-heroic
 node --import tsx --conditions @opencharacter/source scripts/extensions/validate-pack.ts packs/sagas/core
 ```
 
@@ -1077,9 +1085,9 @@ git update-index --skip-worktree packages/packs/package.json
 
 ### Reinstalling dependencies (`pnpm install`)
 
-`packs/sagas/core/package.json` and `packs/openquest/core/package.json` make the SagaS and
-OpenQuest packs workspace packages, like every pack, and `pnpm-lock.yaml` has their entries
-(`packs/sagas/core` and `packs/openquest/core`, a dev dependency on the engine each, added by hand
+`packs/sagas/core/package.json` and `packs/d100/heroic/package.json` make the SagaS and
+D100 heroic packs workspace packages, like every pack, and `pnpm-lock.yaml` has their entries
+(`packs/sagas/core` and `packs/d100/heroic`, a dev dependency on the engine each, added by hand
 like the other packs'). So `pnpm install --frozen-lockfile` works as is, then remove the two ORC
 links ([above](#pnpms-links-to-the-orc-packs)).
 

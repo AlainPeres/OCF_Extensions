@@ -1,4 +1,4 @@
-// Server of the universal sheet (universal.ts), and of the SagaS and OpenQuest tools: any pack of
+// Server of the universal sheet (universal.ts), and of the SagaS and D100 heroic sheets: any pack of
 // packs/, in the browser, with nothing of the pack written here. It loads a pack with its dependencies and English text, keeps
 // the character and any paused action per session, runs actions with the engine (startAction /
 // continueAction) and hands each pause to the page with its text (describeNeed): a choice, an

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>OpenQuest Creation</title>
+    <title>D100 heroic Creation</title>
     <style>
       :root {
         --bg: #f4f1ea;
@@ -240,7 +240,7 @@
   </head>
   <body>
     <header>
-      <h1>OpenQuest — Creation</h1>
+      <h1>D100 heroic — Creation</h1>
       <select id="charList"></select>
       <button id="btnLoad">Load</button>
       <span class="muted">or new:</span>
@@ -322,7 +322,7 @@
       </div>
     </main>
     <script>
-      const PACK = 'openquest-core';
+      const PACK = 'd100-heroic';
       const $ = (id) => document.getElementById(id);
       const esc = (s) =>
         String(s ?? '').replace(
@@ -424,7 +424,7 @@
         const list = await api('/api/characters?pack=' + PACK);
         $('charList').innerHTML = list.length
           ? list.map((f) => `<option>${esc(f)}</option>`).join('')
-          : '<option value="">(no OpenQuest character)</option>';
+          : '<option value="">(no D100 heroic character)</option>';
       }
       $('btnNew').onclick = () =>
         call('/api/new', { pack: PACK, id: $('newId').value.trim() || undefined });
@@ -443,7 +443,7 @@
         Number((c.state.find((s) => /Creation points/.test(s.label)) || {}).value || 0);
       const computed = (c, k) => (c.computed.find((x) => x.key === k) || {}).value;
 
-      // The OpenQuest sheet (openquest.html) frames this page as one of its modes: the character is
+      // The D100 heroic sheet (d100.html) frames this page as one of its modes: the character is
       // the server's session, so the other mode takes it by its ID and sets its own mode.
       window.ocfCharacter = {
         get: () => state && { sid: state.sid },

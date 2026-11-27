@@ -27,7 +27,7 @@ display:
       members:
         type: action
         where: >-
-          'health' in item.tags && !('combat' in item.tags) && !(item.id in ['openquest-core:fall', 'openquest-core:suffocate', 'openquest-core:burn', 'openquest-core:resist-poison', 'openquest-core:resist-disease', 'openquest-core:travel-day', 'openquest-core:deprivation'])
+          'health' in item.tags && !('combat' in item.tags) && !(item.id in ['d100-heroic:fall', 'd100-heroic:suffocate', 'd100-heroic:burn', 'd100-heroic:resist-poison', 'd100-heroic:resist-disease', 'd100-heroic:travel-day', 'd100-heroic:deprivation'])
     - id: act-dangers
       kind: actions
       priority: 23
@@ -35,7 +35,7 @@ display:
       members:
         type: action
         where: >-
-          item.id in ['openquest-core:fall', 'openquest-core:suffocate', 'openquest-core:burn', 'openquest-core:resist-poison', 'openquest-core:resist-disease', 'openquest-core:travel-day', 'openquest-core:deprivation']
+          item.id in ['d100-heroic:fall', 'd100-heroic:suffocate', 'd100-heroic:burn', 'd100-heroic:resist-poison', 'd100-heroic:resist-disease', 'd100-heroic:travel-day', 'd100-heroic:deprivation']
     - id: act-social
       kind: actions
       priority: 24
@@ -59,7 +59,7 @@ display:
       members:
         type: action
         where: >-
-          'advancement' in item.tags || item.id == 'openquest-core:learn-specialty'
+          'advancement' in item.tags || item.id == 'd100-heroic:learn-specialty'
     - id: act-creation
       kind: actions
       priority: 27
@@ -67,8 +67,8 @@ display:
       members:
         type: action
         where: >-
-          'creation' in item.tags || item.id in ['openquest-core:learn-personal-spell',
-            'openquest-core:religion-rank']
+          'creation' in item.tags || item.id in ['d100-heroic:learn-personal-spell',
+            'd100-heroic:religion-rank']
     - id: identity
       priority: 0
       members:

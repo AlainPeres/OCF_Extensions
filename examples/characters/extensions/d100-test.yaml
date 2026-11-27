@@ -1,0 +1,131 @@
+# An OpenQuest test character, made by the random start.
+specVersion: 0.4.0
+id: d100-test
+packs:
+  - id: d100-heroic
+    version: 0.1.0
+values:
+  d100-heroic:chars.str: 10
+  d100-heroic:chars.con: 5
+  d100-heroic:chars.dex: 9
+  d100-heroic:chars.siz: 16
+  d100-heroic:chars.int: 11
+  d100-heroic:chars.pow: 9
+  d100-heroic:chars.cha: 8
+  d100-heroic:wealth.used: false
+  d100-heroic:money.silver: 130
+  d100-heroic:identity.age: 24
+  d100-heroic:fortune.points: 2
+  d100-heroic:identity.name: Ethelred
+  d100-heroic:identity.concept: A wandering sellsword looking for a lord worth serving
+  d100-heroic:identity.sagaMotive: Find a lord worth serving
+features:
+  - id: d100-heroic-skills-dodge
+    item: d100-heroic:skills.dodge
+    state:
+      creation: 20
+  - id: d100-heroic-skills-persistence
+    item: d100-heroic:skills.persistence
+    state:
+      creation: 10
+  - id: d100-heroic-skills-resilience
+    item: d100-heroic:skills.resilience
+    state:
+      creation: 20
+  - id: d100-heroic-skills-unarmed-combat
+    item: d100-heroic:skills.unarmed-combat
+    state:
+      creation: 20
+  - id: d100-heroic-skills-close-combat
+    item: d100-heroic:skills.close-combat
+    state:
+      creation: 10
+  - id: d100-heroic-skills-ranged-combat
+    item: d100-heroic:skills.ranged-combat
+    state:
+      creation: 20
+  - id: d100-heroic-skills-language-own
+    item: d100-heroic:skills.language-own
+    state:
+      creation: 30
+  - id: d100-heroic-skills-culture-own
+    item: d100-heroic:skills.culture-own
+    state:
+      creation: 10
+  - id: d100-heroic-skills-natural-lore
+    item: d100-heroic:skills.natural-lore
+    state:
+      creation: 10
+  - id: d100-heroic-skills-streetwise
+    item: d100-heroic:skills.streetwise
+    state:
+      creation: 10
+  - id: d100-heroic-skills-engineering
+    item: d100-heroic:skills.engineering
+    state:
+      creation: 15
+  - id: d100-heroic-skills-driving
+    item: d100-heroic:skills.driving
+    state:
+      creation: 10
+  - id: d100-heroic-skills-influence
+    item: d100-heroic:skills.influence
+    state:
+      creation: 5
+  - id: d100-heroic-skills-craft
+    item: d100-heroic:skills.craft
+    state:
+      creation: 5
+  - id: d100-heroic-skills-performance
+    item: d100-heroic:skills.performance
+    state:
+      creation: 10
+  - id: d100-heroic-skills-mechanisms
+    item: d100-heroic:skills.mechanisms
+    state:
+      creation: 10
+  - id: d100-heroic-skills-athletics
+    item: d100-heroic:skills.athletics
+    state:
+      creation: 5
+  - id: d100-heroic-skills-perception
+    item: d100-heroic:skills.perception
+    state:
+      creation: 5
+  - id: personal-harden-1
+    item: d100-heroic:personal.harden
+    state:
+      magnitude: 1
+  - id: personal-dull-weapon-1
+    item: d100-heroic:personal.dull-weapon
+    state:
+      magnitude: 1
+  - id: personal-fireblade-1
+    item: d100-heroic:personal.fireblade
+    state:
+      magnitude: 4
+inventory:
+  - id: weapons-long-bow-1
+    item: d100-heroic:weapons.long-bow
+    equipped: true
+  - id: weapons-war-maul-1
+    item: d100-heroic:weapons.war-maul
+    equipped: true
+  - id: armour-leather-1
+    item: d100-heroic:armour.leather
+    equipped: true
+  - id: weapons-dagger-1
+    item: d100-heroic:weapons.dagger
+    equipped: true
+  - id: gear-backpack-1
+    item: d100-heroic:gear.backpack
+  - id: gear-rope-1
+    item: d100-heroic:gear.rope
+    quantity: 1
+  - id: gear-food-average-1
+    item: d100-heroic:gear.food-average
+    quantity: 14
+  - id: gear-flint-and-tinder-1
+    item: d100-heroic:gear.flint-and-tinder
+  - id: gear-waterskin-1
+    item: d100-heroic:gear.waterskin

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>OpenQuest Play Sheet</title>
+    <title>D100 heroic Play Sheet</title>
     <style>
       :root {
         --bg: #f4f1ea;
@@ -270,7 +270,7 @@
   </head>
   <body>
     <header>
-      <h1>OpenQuest — Play</h1>
+      <h1>D100 heroic — Play</h1>
       <select id="charList"></select>
       <button id="btnLoad" class="primary">Load</button>
       <span style="flex: 1"></span>
@@ -406,7 +406,7 @@
       </div>
     </main>
     <script>
-      const PACK = 'openquest-core';
+      const PACK = 'd100-heroic';
       const $ = (id) => document.getElementById(id);
       const esc = (s) =>
         String(s ?? '').replace(
@@ -540,7 +540,7 @@
         const list = await api('/api/characters?pack=' + PACK);
         $('charList').innerHTML = list.length
           ? list.map((f) => `<option>${esc(f)}</option>`).join('')
-          : '<option value="">(no OpenQuest character)</option>';
+          : '<option value="">(no D100 heroic character)</option>';
         try {
           const last = localStorage.getItem('oqp.file');
           if (last && list.includes(last)) $('charList').value = last;
@@ -565,7 +565,7 @@
       const st = (c, label) => (c.state.find((s) => s.label === label) || {}).value;
       const actionsFor = (v, entry) => v.actions.filter((a) => a.entry === entry);
 
-      // The OpenQuest sheet (openquest.html) frames this page as one of its modes: the character is
+      // The D100 heroic sheet (d100.html) frames this page as one of its modes: the character is
       // the server's session, so the other mode takes it by its ID and sets its own mode.
       window.ocfCharacter = {
         get: () => state && { sid: state.sid },

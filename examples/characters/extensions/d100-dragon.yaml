@@ -1,0 +1,108 @@
+# An OpenQuest creature sheet, made by the creature start (a dragon, its average scores).
+specVersion: 0.4.0
+id: d100-dragon
+packs:
+  - id: d100-heroic
+    version: 0.1.0
+values:
+  d100-heroic:chars.str: 70
+  d100-heroic:chars.con: 35
+  d100-heroic:chars.dex: 14
+  d100-heroic:chars.siz: 65
+  d100-heroic:chars.int: 21
+  d100-heroic:chars.pow: 26
+  d100-heroic:chars.cha: 21
+  d100-heroic:fortune.points: 0
+  d100-heroic:identity.name: Vermithrax
+features:
+  - id: creatures-dragon-1
+    item: d100-heroic:creatures.dragon
+  - id: d100-heroic-skills-dodge
+    item: d100-heroic:skills.dodge
+    state:
+      fixed: 30
+  - id: d100-heroic-skills-persistence
+    item: d100-heroic:skills.persistence
+    state:
+      fixed: 100
+  - id: d100-heroic-skills-resilience
+    item: d100-heroic:skills.resilience
+    state:
+      fixed: 100
+  - id: d100-heroic-skills-natural-lore
+    item: d100-heroic:skills.natural-lore
+    state:
+      fixed: 100
+  - id: d100-heroic-skills-culture-own
+    item: d100-heroic:skills.culture-own
+    state:
+      fixed: 100
+  - id: d100-heroic-skills-athletics
+    item: d100-heroic:skills.athletics
+    state:
+      fixed: 100
+  - id: d100-heroic-skills-influence
+    item: d100-heroic:skills.influence
+    state:
+      fixed: 100
+  - id: d100-heroic-skills-perception
+    item: d100-heroic:skills.perception
+    state:
+      fixed: 100
+  - id: d100-heroic-skills-unarmed-combat
+    item: d100-heroic:skills.unarmed-combat
+    state:
+      fixed: 100
+  - id: d100-heroic-skills-personal-magic-casting
+    item: d100-heroic:skills.personal-magic-casting
+    state:
+      fixed: 85
+  - id: d100-heroic-skills-sorcery-casting
+    item: d100-heroic:skills.sorcery-casting
+    state:
+      fixed: 85
+  - id: personal-befuddle-1
+    item: d100-heroic:personal.befuddle
+    state:
+      magnitude: 2
+      specialty: ''
+  - id: personal-beast-call-1
+    item: d100-heroic:personal.beast-call
+    state:
+      magnitude: 2
+      specialty: ''
+  - id: personal-heal-1
+    item: d100-heroic:personal.heal
+    state:
+      magnitude: 6
+      specialty: ''
+  - id: personal-protection-1
+    item: d100-heroic:personal.protection
+    state:
+      magnitude: 5
+      specialty: ''
+  - id: personal-second-sight-1
+    item: d100-heroic:personal.second-sight
+    state:
+      magnitude: 3
+      specialty: ''
+  - id: personal-talk-to-animal-1
+    item: d100-heroic:personal.talk-to-animal
+    state:
+      magnitude: 3
+      specialty: ''
+  - id: personal-tongues-1
+    item: d100-heroic:personal.tongues
+    state:
+      magnitude: 2
+      specialty: ''
+inventory:
+  - id: weapons-cr-bite-1d10-1
+    item: d100-heroic:weapons.cr-bite-1d10
+    equipped: true
+  - id: weapons-cr-claw-1d8-1
+    item: d100-heroic:weapons.cr-claw-1d8
+    equipped: true
+  - id: weapons-cr-tail-1d20-1
+    item: d100-heroic:weapons.cr-tail-1d20
+    equipped: true

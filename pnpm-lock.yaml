@@ -227,6 +227,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/engine
 
+  packs/d100/heroic:
+    devDependencies:
+      '@opencharacter/engine':
+        specifier: workspace:*
+        version: link:../../../packages/engine
+
   packs/draw-steel/heroes:
     devDependencies:
       '@opencharacter/engine':
@@ -264,12 +270,6 @@ importers:
         version: link:../../../packages/engine
 
   packs/mothership/1e:
-    devDependencies:
-      '@opencharacter/engine':
-        specifier: workspace:*
-        version: link:../../../packages/engine
-
-  packs/openquest/core:
     devDependencies:
       '@opencharacter/engine':
         specifier: workspace:*

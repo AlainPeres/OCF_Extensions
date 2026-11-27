@@ -1,13 +1,12 @@
 {
-  "name": "@opencharacter/openquest-core",
+  "name": "@opencharacter/d100-heroic",
   "version": "0.1.0",
-  "description": "Open Character Format model of OpenQuest 3rd Edition (SRD v1.2): characteristics, attributes, skills, tests, combat, healing, gear, creation and growth.",
+  "description": "Open Character Format model of a D100 heroic fantasy game, from the Open Quest System Resource Document (Creative Commons Attribution 4.0): characteristics, attributes, skills, tests, combat, healing, gear, creation and growth.",
   "keywords": [
     "character-sheet",
     "content-pack",
     "ocf",
     "open-character-format",
-    "openquest",
     "rpg",
     "tabletop",
     "ttrpg"
@@ -20,7 +19,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pixelqueue/opencharacter.git",
-    "directory": "packs/openquest/core"
+    "directory": "packs/d100/heroic"
   },
   "files": [
     "dist",

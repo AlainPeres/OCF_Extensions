@@ -1,0 +1,13 @@
+id: d100-heroic
+version: 0.1.0
+specVersion: 0.4.0
+license: CC-BY-4.0
+# The SRD's "How to Use the SRD" (scripts/extensions/d100/how_to_use_the_openquest_srd.md): its
+# Attribution Notice, verbatim, and its additional requirements: no use of the trademark outside
+# the license text (hence the pack's generic ID and name), no logo, the SRD's text only.
+credit: >-
+  This work is based on the Open Quest System Resource Document (found at https://openquestrpg.com/srd), a D101 Games product developed, authored by Newt Newport with Paul Mitchener. OpenQuest System Resource Document 2021 by Newt Newport with Paul Mitchener is licensed under Attribution 4.0 International. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/
+notices:
+  not-affiliated: >-
+    This pack is an unofficial model of the System Resource Document's character rules. It is not a D101 Games product and is not affiliated with or endorsed by D101 Games; it uses no D101 Games trademark or logo.
+defaultLanguage: en
