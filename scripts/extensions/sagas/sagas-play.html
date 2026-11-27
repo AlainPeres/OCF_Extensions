@@ -1189,6 +1189,16 @@
 
       async function attack(gear) {
         const w = itemOf(gear.item);
+        // A creature's attack: its own score (the copy's), no skill.
+        if (w.fields.natural) {
+          const r = await check(`${w.name}: attack`, {
+            action: { id: P('natural-attack'), entry: gear.id },
+            params: { score: gear.state?.score ?? 0 },
+          });
+          const degree = r?.outcome?.data?.degree ?? 0;
+          if (degree >= 1) await dealDamage(gear, degree);
+          return;
+        }
         const extra =
           (V('chars.str') ?? 0) < (w.fields.strReq ?? 0)
             ? { [P('strengthBelowMinimum')]: true }
@@ -1549,10 +1559,16 @@
           weapons.innerHTML = '<tr><td colspan="8" class="empty">No weapon.</td></tr>';
         for (const g of gear) {
           const w = itemOf(g.item);
-          const skill = itemOf(P(w.fields.skill));
-          const feat = skillCopy(P(w.fields.skill));
-          const total = feat ? sheet.copies[feat.id]?.total : undefined;
-          const raised = (ch.features ?? []).some((f) => f.item === P(w.fields.skill));
+          // A creature's attack (natural weapon) has its own score and no skill.
+          const natural = !!w.fields.natural;
+          const skill = natural ? { name: 'Natural attack' } : itemOf(P(w.fields.skill));
+          const feat = natural ? undefined : skillCopy(P(w.fields.skill));
+          const total = natural
+            ? (g.state?.score ?? 0)
+            : feat
+              ? sheet.copies[feat.id]?.total
+              : undefined;
+          const raised = natural || (ch.features ?? []).some((f) => f.item === P(w.fields.skill));
           const tr = document.createElement('tr');
           const weak =
             (V('chars.str') ?? 0) < (w.fields.strReq ?? 0)
@@ -1589,7 +1605,8 @@
             title: "The weapon's skill roll: tell the attacker the degree to subtract",
           });
           parry.onclick = () => rollSkill(P(w.fields.skill), {}, `${w.name}: parry`);
-          cell.append(atk, ' ', deg, ' ', dmg, ' ', parry);
+          if (natural) cell.append(atk, ' ', deg, ' ', dmg);
+          else cell.append(atk, ' ', deg, ' ', dmg, ' ', parry);
           weapons.append(tr);
         }
 

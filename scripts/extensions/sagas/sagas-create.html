@@ -409,6 +409,12 @@
         <button id="btnRandom" title="Roll a random character at the chosen power level">
           Random
         </button>
+        <select
+          id="creatureSelect"
+          title="A creature of the bestiary, ready to play (for the referee)"
+        >
+          <option value="">Creature…</option>
+        </select>
         <select id="loadSelect" title="Load an existing character">
           <option value="">Load…</option>
         </select>
@@ -1206,6 +1212,27 @@
           change();
           toast('Random character rolled');
         };
+        // A creature: the pack's creature start on a new sheet, which it finishes.
+        $('creatureSelect').onchange = async (e) => {
+          const id = e.target.value;
+          e.target.value = '';
+          if (!id) return;
+          const name = D.creatures.find((c) => c.id === id)?.name ?? id;
+          const sheetId = `creature-${id.split('.').pop()}-${Date.now().toString(36)}`;
+          const out = await api('/api/act', {
+            character: { ...fresh(), id: sheetId, creating: true },
+            input: { action: { id: `${D.pack}:create-creature` }, answers: [{ option: id }] },
+          });
+          if (out.result.status !== 'finished') {
+            toast(
+              `The creature could not be made: ${JSON.stringify(out.result.errors ?? out.result.status)}`,
+            );
+            return;
+          }
+          ch = out.character;
+          change();
+          toast(`Creature: ${name}`);
+        };
         $('loadSelect').onchange = async (e) => {
           if (!e.target.value) return;
           const loaded = await api(`/api/file?file=${encodeURIComponent(e.target.value)}`);
@@ -1268,6 +1295,22 @@
         const chars = [...new Set(D.skills.map((s) => s.fields.characteristic))];
         $('skillChar').innerHTML += chars
           .map((c) => `<option value="${esc(c)}">${esc(charName(c))}</option>`)
+          .join('');
+        // The bestiary's creatures, by category.
+        const CATEGORIES = {
+          animal: 'Animals',
+          people: 'Fantasy peoples',
+          undead: 'Undead',
+          monster: 'Monsters',
+        };
+        $('creatureSelect').innerHTML += Object.entries(CATEGORIES)
+          .map(
+            ([cat, label]) =>
+              `<optgroup label="${esc(label)}">${D.creatures
+                .filter((c) => c.category === cat)
+                .map((c) => `<option value="${esc(c.id)}">${esc(c.name)}</option>`)
+                .join('')}</optgroup>`,
+          )
           .join('');
         ch = fresh();
         bind();

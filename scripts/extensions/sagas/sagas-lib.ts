@@ -28,7 +28,15 @@ const readContent = (folder: string): Item[] =>
 const CHARS = ['str', 'agi', 'end', 'dex', 'wit', 'wil', 'pre', 'ins'];
 const SECONDARY = ['cco', 'rco', 'spd', 'ini'];
 const skills = readContent('skills');
-const weapons = readContent('weapons');
+// The weapons, and the gear among them: a creature's attacks (natural weapons) aren't bought.
+const allWeapons = readContent('weapons');
+const weapons = allWeapons.filter((w) => !w.fields.natural);
+// The bestiary's creatures, by name, for the creature start (rules/creatures.yaml).
+const creatures = readContent('creatures').map((c) => ({
+  id: key(c.id),
+  name: c.name,
+  category: c.fields.category,
+}));
 const armors = readContent('armor');
 // The universe's technological levels, TL0 to TL8, by their names.
 const techLevels = Array.from({ length: 9 }, (_, n) =>
@@ -44,6 +52,7 @@ const createData = {
   weapons,
   armors,
   techLevels,
+  creatures,
   // Constraint messages, by constraint ID.
   constraints: Object.fromEntries(
     Object.entries(names)
@@ -75,7 +84,7 @@ const playData = {
       nameOf(`bands.degree.${b}`),
     ]),
   ),
-  items: Object.fromEntries([...skills, ...weapons, ...armors].map((i) => [key(i.id), i])),
+  items: Object.fromEntries([...skills, ...allWeapons, ...armors].map((i) => [key(i.id), i])),
   techLevels,
 };
 
