@@ -327,7 +327,7 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 | `scripts/extensions/universal.ts` + `.html`                 | Universal sheet for any pack: Create and Play                                  |
 | `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                                |
 | `scripts/extensions/sagas/SagaS_Creatures.md`               | The bestiary the creatures come from (Open Game Content)                       |
-| `scripts/extensions/sagas/bestiary-import.mjs`              | The bestiary into the pack (`--check`: each creature against it)               |
+| `scripts/extensions/sagas/bestiary-import.mjs`              | The bestiary into the pack: creatures, species (`--check`: each creature)      |
 | `packs/d100/heroic/`                                        | The `d100-heroic` pack (rules, 32 skills, 43 weapons, 163 spells)              |
 | `scripts/extensions/d100/`                                  | The SRD chapters the pack models (Markdown), and its terms of use              |
 | `scripts/extensions/d100/d100.ts` + `.html`                 | D100 heroic sheet: Create and Play in one page                                 |
@@ -384,8 +384,8 @@ section 15 in `pack.yaml`, the bestiary's line included). Mechanics live in `rul
   Universal Table, shock thresholds, physical and psychical hit points, injuries and stun, states
   (unconscious, dead, confused, mad), protection and impact bonus, simultaneous studies, Reflex
   Dodge, and the creation points: budget (150/250/350 and the social class), the cost of the
-  characteristics (3/6/12/24/48 a point), of the secondary ones (three times as much) and of the
-  skills.
+  characteristics (3/6/12/24/48 a point, from the species' baseline: 5 plus its modifier), of the
+  secondary ones (three times as much) and of the skills.
 - **`identity.yaml`**: free-text fields: name, species (default Human), profession, description,
   background, possessions.
 - **`skills.yaml`**: the skill content type. Each copy has a learning level, an initial level and a
@@ -459,6 +459,7 @@ section 15 in `pack.yaml`, the bestiary's line included). Mechanics live in `rul
 - **`checks.yaml`** also gives skill rolls help (4.4: the first helper adds half their total,
   the second a quarter, the third an eighth), a neighboring skill (4.5: half its total) and a
   skill used at the same time (4.6: the weaker total).
+- **`species.yaml`**: the species of a player character ([below](#species-rulesspeciesyaml)).
 - **`creatures.yaml`**: creature sheets, for the referee ([below](#creatures-rulescreaturesyaml)).
 - **`tags.yaml`**: the tags `advancement`, `characteristic`, `check`, `combat`, `creation`,
   `damage`, `danger`, `health` and `secondary-bonus`.
@@ -474,6 +475,8 @@ section 15 in `pack.yaml`, the bestiary's line included). Mechanics live in `rul
   rifles, assault rifles, submachine guns, shotguns, a machine gun, heavy weapons), TL4 before
   1900 and TL5 after.
 - **Armor (14)**: section 15, shields included.
+- **Species (15)**: human and the bestiary's 14 fantasy peoples
+  ([below](#species-rulesspeciesyaml)).
 - **Creatures (123)** and their attacks (89 natural weapons, `weapons.cr-…`): the bestiary's
   ([below](#creatures-rulescreaturesyaml)).
 
@@ -484,20 +487,21 @@ and the creature start ([Creatures](#creatures-rulescreaturesyaml)).
 
 - **Guided** (`create-character`): it asks, in order:
 
-  1. the power level (150, 250 or 350 points);
-  2. the social class (privileged −10, average, less favored +10);
-  3. the universe's technological level (TL0–TL8), which limits the skills and gear offered;
-  4. the main characteristics, bought at their cost;
-  5. the secondary characteristic bonuses;
-  6. the skills of the universe to raise, one step at a time while the points last;
-  7. weapons and armor.
+  1. the species (human recommended);
+  2. the power level (150, 250 or 350 points);
+  3. the social class (privileged −10, average, less favored +10);
+  4. the universe's technological level (TL0–TL8), which limits the skills and gear offered;
+  5. the main characteristics, bought at their cost from the species' baseline;
+  6. the secondary characteristic bonuses;
+  7. the skills of the universe to raise, one step at a time while the points last;
+  8. weapons and armor.
 
   It leaves the character being created (`creating: true`), so generic skills can be added next.
 
-- **Random**: the same action, which draws the power level, spends three fifths of the points on
-  the characteristics, draws 1d6 + 3 skills to study, raises each one step and spreads the rest
-  of the points over them, and takes a weapon and
-  an armor. It finishes the creation itself.
+- **Random**: the same action, which keeps a human, draws the power level, spends three fifths
+  of the points on the characteristics, draws 1d6 + 3 skills to study, raises each one step and
+  spreads the rest of the points over them, and takes a weapon and an armor. It finishes the
+  creation itself.
 
 - Both record the technological level in `universe.techLevel`, for the advancement actions.
 
@@ -510,8 +514,8 @@ and the creature start ([Creatures](#creatures-rulescreaturesyaml)).
 - **Constraint `creation-within-budget`**: while the character is being created, no more points
   may be spent than the budget allows; a creature isn't bought with points.
 
-The creation actions (`create-character`, `learn-specialty`, `finish-creation`,
-`create-creature`) carry the `creation` tag, which the universal sheet's Create mode uses to show
+The creation actions (`create-character`, `choose-species`, `learn-specialty`,
+`finish-creation`, `create-creature`) carry the `creation` tag, which the universal sheet's Create mode uses to show
 them first when a pack has no action groups.
 
 ### Creatures (`rules/creatures.yaml`)
@@ -542,10 +546,33 @@ finishes the sheet at once.
   block: type, size, weight and threat, every movement mode, its attacks with their notes
   (venom, grapple, reach…), its skills as written, its special abilities and variants. They are
   the referee's to apply.
-- The bestiary is a draft: after changing it, run the import again
-  (`node --import tsx --conditions @opencharacter/source
-  scripts/extensions/sagas/bestiary-import.mjs`),
-  then `--check` and `validate-pack.ts sagas-core`.
+- The bestiary is a draft: after changing it, run the import again, then `--check` and
+  `validate-pack.ts sagas-core`:
+
+  ```sh
+  node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/bestiary-import.mjs
+  node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/bestiary-import.mjs --check
+  ```
+
+### Species (`rules/species.yaml`)
+
+A player character's species: human, the rules' baseline (5 in every main characteristic, base
+Speed 6), or one of the bestiary's 14 fantasy peoples with a "Racial template" (High, Wood and
+Dark Elf, Mountain and Hill Dwarf, Orc, Goblin, Hobgoblin, Bugbear, Kobold, Halfling, Gnoll,
+Lizardfolk, and the Centaur, a horse-man hybrid). `bestiary-import.mjs` makes them with the
+creatures; peoples with the same template are one (the Orc Warchief is an Orc), and a trained
+individual's own additions ("Warden training adds…") aren't the species'.
+
+- A species is a copy on the character, one at most (constraint `one-species`). Its modifiers add
+  to the main characteristics (effects), and its base Speed is the character's (`species.speed`).
+- **The modifiers are free**: the creation points are the cost of each final value less that of
+  the species' baseline (5 plus the modifier, `race.*`). A point above it costs what the final
+  value says (3/6/12/24/48), as for a human: a dwarf's END 10 costs 12, as a human's from 8.
+- **`choose-species`** (while creating) picks it, replacing any other; the guided start asks it
+  first. Both empty the species field (free text): the sheets name the species from its copy.
+- Its description holds the template as written, its size and base Speed, and the special
+  abilities of the bestiary's stat block (keen senses, darkvision…): the referee's to apply.
+- Characters without a species copy are humans, as before.
 
 ### Advancement (`rules/advancement.yaml`)
 
@@ -624,7 +651,10 @@ come from the engine.
 
   A live summary of the points and rules issues runs alongside, with a random character button,
   load and save. "Creature…" makes a creature sheet of the bestiary (the pack's creature start),
-  for the referee; natural weapons aren't offered as gear.
+  for the referee; natural weapons aren't offered as gear. In the identity, "People" picks the
+  species (its copy, as `choose-species` does): each characteristic then shows its species
+  modifier and its total, and "Base Speed" follows the species (typed without one: 6 for a
+  human).
 
 - **Play** (`sagas-play.html`): a play sheet, its sections by theme (character, checks, combat,
   health and dangers, long-term action, progression), the header linking to each:
