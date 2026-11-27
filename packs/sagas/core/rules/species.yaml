@@ -1,0 +1,76 @@
+# Species: the peoples a player character may belong to, from the bestiary's fantasy peoples
+# (scripts/extensions/sagas/SagaS_Creatures.md: each one's "Racial template", modifiers to the
+# human baseline of 5, and its base Speed). Humans are the rules' baseline (section 3.1: base 5,
+# base Speed 6). A species is a copy on the character: its modifiers add to the main
+# characteristics, free (the creation points are the cost of each final value less that of its
+# species' baseline, 5 + the modifier), and its base Speed is the character's. One at most.
+fields:
+  # The species' modifier to each main characteristic (0 for a human): the baseline it starts from.
+  race.str: { type: integer, formula: '0' }
+  race.agi: { type: integer, formula: '0' }
+  race.end: { type: integer, formula: '0' }
+  race.dex: { type: integer, formula: '0' }
+  race.wit: { type: integer, formula: '0' }
+  race.wil: { type: integer, formula: '0' }
+  race.pre: { type: integer, formula: '0' }
+  race.ins: { type: integer, formula: '0' }
+
+contentTypes:
+  species:
+    fields:
+      # The racial template: modifiers to the human baseline of 5.
+      str: { type: integer, default: 0 }
+      agi: { type: integer, default: 0 }
+      end: { type: integer, default: 0 }
+      dex: { type: integer, default: 0 }
+      wit: { type: integer, default: 0 }
+      wil: { type: integer, default: 0 }
+      pre: { type: integer, default: 0 }
+      ins: { type: integer, default: 0 }
+      # The species' base Speed (6 for a human) and its size, the linear ratio to a human.
+      speed: { type: integer, default: 6, min: 0 }
+      size: { type: string, default: x1 }
+    effects:
+      - { id: str, target: chars.str, op: add, value: item.str }
+      - { id: agi, target: chars.agi, op: add, value: item.agi }
+      - { id: end, target: chars.end, op: add, value: item.end }
+      - { id: dex, target: chars.dex, op: add, value: item.dex }
+      - { id: wit, target: chars.wit, op: add, value: item.wit }
+      - { id: wil, target: chars.wil, op: add, value: item.wil }
+      - { id: pre, target: chars.pre, op: add, value: item.pre }
+      - { id: ins, target: chars.ins, op: add, value: item.ins }
+      - { id: race-str, target: race.str, op: add, value: item.str }
+      - { id: race-agi, target: race.agi, op: add, value: item.agi }
+      - { id: race-end, target: race.end, op: add, value: item.end }
+      - { id: race-dex, target: race.dex, op: add, value: item.dex }
+      - { id: race-wit, target: race.wit, op: add, value: item.wit }
+      - { id: race-wil, target: race.wil, op: add, value: item.wil }
+      - { id: race-pre, target: race.pre, op: add, value: item.pre }
+      - { id: race-ins, target: race.ins, op: add, value: item.ins }
+      - { id: speed, target: species.speed, op: set, value: item.speed }
+
+constraints:
+  # One species at most.
+  - id: one-species
+    check: "countCopies(copy.type == 'species') <= 1"
+    data: {}
+
+actions:
+  # The character's species, while it is being created: it replaces any species chosen before.
+  # The species field (free text) is emptied: the species copy says what the character is.
+  - id: choose-species
+    tags: [creation]
+    available: character.creating
+    results: [chosen]
+    steps:
+      - id: species
+        kind: choice
+        options: { content: { type: species } }
+        recommend: '@species.human'
+        changes:
+          - { type: removeItem, copies: { type: species } }
+          - { type: addItem, entry: { item: picked.id } }
+          - { type: set, field: identity.species, value: "''" }
+      - id: result
+        kind: outcome
+        result: "'chosen'"

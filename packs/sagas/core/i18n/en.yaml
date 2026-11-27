@@ -724,3 +724,29 @@ types.creature.fields.genericInitial.name: Initial levels
 types.creature.fields.genericLearning.name: Learning levels (generic skills)
 types.creature.fields.attacks.name: Attacks
 types.creature.fields.attackScores.name: Attack scores
+
+# Species (rules/species.yaml); each species' name and description are in en/species.yaml.
+types.species.name: Species
+types.species.fields.str.name: STR modifier
+types.species.fields.agi.name: AGI modifier
+types.species.fields.end.name: END modifier
+types.species.fields.dex.name: DEX modifier
+types.species.fields.wit.name: WIT modifier
+types.species.fields.wil.name: WIL modifier
+types.species.fields.pre.name: PRE modifier
+types.species.fields.ins.name: INS modifier
+types.species.fields.speed.name: Base Speed
+types.species.fields.size.name: Size (to a human)
+fields.race.str.name: Species modifier to STR
+fields.race.agi.name: Species modifier to AGI
+fields.race.end.name: Species modifier to END
+fields.race.dex.name: Species modifier to DEX
+fields.race.wit.name: Species modifier to WIT
+fields.race.wil.name: Species modifier to WIL
+fields.race.pre.name: Species modifier to PRE
+fields.race.ins.name: Species modifier to INS
+constraints.one-species: 'A character belongs to one species only.'
+actions.choose-species.name: Choose the species
+actions.choose-species.results.chosen.name: Chosen
+actions.choose-species.steps.species.prompt: Species
+actions.create-character.steps.species.prompt: Species

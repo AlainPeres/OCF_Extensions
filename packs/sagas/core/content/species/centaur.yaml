@@ -1,0 +1,8 @@
+id: species.centaur
+type: species
+fields:
+  str: 13
+  end: 6
+  agi: 2
+  speed: 13
+  size: x2

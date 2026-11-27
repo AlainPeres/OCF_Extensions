@@ -1,0 +1,11 @@
+id: species.dark-elf
+type: species
+fields:
+  agi: 2
+  dex: 2
+  wit: 2
+  wil: 2
+  pre: 2
+  ins: 1
+  speed: 6
+  size: x1

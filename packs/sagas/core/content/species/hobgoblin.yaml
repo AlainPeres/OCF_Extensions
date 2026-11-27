@@ -1,0 +1,8 @@
+id: species.hobgoblin
+type: species
+fields:
+  str: 1
+  end: 2
+  wil: 2
+  speed: 6
+  size: x1

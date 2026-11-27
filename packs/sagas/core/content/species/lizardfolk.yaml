@@ -1,0 +1,11 @@
+id: species.lizardfolk
+type: species
+fields:
+  str: 3
+  end: 3
+  wit: -1
+  wil: 1
+  pre: -1
+  ins: 1
+  speed: 5
+  size: x1

@@ -1,0 +1,5 @@
+id: species.human
+type: species
+fields:
+  speed: 6
+  size: x1

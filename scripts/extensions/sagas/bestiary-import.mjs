@@ -341,7 +341,65 @@ for (const c of creatures) {
   texts[`${id}.description`] = md.join('\n');
 }
 
+// --- Species: the peoples a player character may belong to ---------------------------------------
+// A fantasy people's "Racial template" (modifiers to the human baseline of 5), its base Speed and
+// size: a species (rules/species.yaml). Peoples sharing a template (the Orc and the Orc Warchief)
+// make one; a trained individual's own additions ("Warden training adds…") aren't the species'.
+// Humans, the rules' own, are the baseline.
+const CHAR_OF = {
+  STR: 'str',
+  AGI: 'agi',
+  END: 'end',
+  DEX: 'dex',
+  WIT: 'wit',
+  WIL: 'wil',
+  PRE: 'pre',
+  INS: 'ins',
+};
+const species = [{ id: 'species.human', name: 'Human', fields: { speed: 6, size: 'x1' }, md: [] }];
+const speciesTexts = {
+  'species.human.description': "The rules' baseline: 5 in every main characteristic, base Speed 6.",
+};
+for (const c of creatures) {
+  const line = c.other.find((o) => o.startsWith('**Racial template:**'));
+  if (!line) continue;
+  const template = line.replace('**Racial template:**', '').trim();
+  // The modifiers: the first sentence's, before "(vs. human baseline 5)" or the training's.
+  const own = template.split(/\s*\(vs\.|\.\s/)[0];
+  const mods = {};
+  for (const [, k, v] of own.matchAll(/\b(STR|AGI|END|DEX|WIT|WIL|PRE|INS) ([+-]\d+)/g))
+    mods[CHAR_OF[k]] = Number(v);
+  const name = c.name.replace(/\s*\(.*\)$/, '');
+  const id = `species.${slug(name)}`;
+  const base = first(/base (\d+)/.exec(c.speed)?.[1] ?? NaN);
+  // A people already made, with the same template, Speed and size (the Orc Warchief: an Orc).
+  const same = JSON.stringify({ ...mods, speed: base, size: c.size });
+  if (species.some((s) => s.id === id || JSON.stringify(s.fields) === same)) continue;
+  species.push({ id, name, fields: { ...mods, speed: base, size: c.size }, from: c.name });
+  const md = [
+    `**Racial template:** ${template}`,
+    '',
+    `**Size:** ${c.size} · **Base Speed:** ${base}`,
+  ];
+  if (c.special.length)
+    md.push('', `**Special** (the bestiary's ${c.name}):`, '', ...c.special.map((s) => `- ${s}`));
+  speciesTexts[`${id}.description`] = md.join('\n');
+}
+for (const s of species) speciesTexts[`${s.id}.name`] = s.name;
+
 // --- Writing ------------------------------------------------------------------------------------
+rmSync(`${PACK}/content/species`, { recursive: true, force: true });
+mkdirSync(`${PACK}/content/species`, { recursive: true });
+for (const s of species)
+  writeFileSync(
+    `${PACK}/content/${s.id.replace('.', '/')}.yaml`,
+    stringify({ id: s.id, type: 'species', fields: s.fields }),
+  );
+writeFileSync(
+  `${PACK}/i18n/en/species.yaml`,
+  "# The species (the bestiary's fantasy peoples, scripts/extensions/sagas/SagaS_Creatures.md):\n# generated from it.\n" +
+    stringify(speciesTexts, { lineWidth: 100, blockQuote: 'literal' }),
+);
 rmSync(`${PACK}/content/creatures`, { recursive: true, force: true });
 mkdirSync(`${PACK}/content/creatures`, { recursive: true });
 for (const it of items)
@@ -361,7 +419,9 @@ writeFileSync(
   "# The creatures of the bestiary (scripts/extensions/sagas/SagaS_Creatures.md) and their attacks:\n# generated from it, with the rest of the stat block as each creature's description.\n" +
     stringify(texts, { lineWidth: 100, blockQuote: 'literal' }),
 );
-console.log(`${items.length} creatures, ${weapons.size} natural weapons`);
+console.log(
+  `${items.length} creatures, ${weapons.size} natural weapons, ${species.length} species`,
+);
 console.log(report.join('\n'));
 
 /**

@@ -1,0 +1,11 @@
+id: species.bugbear
+type: species
+fields:
+  str: 6
+  end: 3
+  dex: -1
+  wit: -1
+  pre: -1
+  ins: 1
+  speed: 6
+  size: x1

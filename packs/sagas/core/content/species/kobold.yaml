@@ -1,0 +1,11 @@
+id: species.kobold
+type: species
+fields:
+  str: -3
+  agi: 2
+  end: -2
+  wil: -2
+  pre: -2
+  ins: 1
+  speed: 6
+  size: x1/2

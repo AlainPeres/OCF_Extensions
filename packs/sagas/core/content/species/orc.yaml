@@ -1,0 +1,10 @@
+id: species.orc
+type: species
+fields:
+  str: 2
+  end: 2
+  wit: -1
+  wil: 1
+  ins: 1
+  speed: 6
+  size: x1

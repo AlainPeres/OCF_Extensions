@@ -1,0 +1,10 @@
+id: species.halfling
+type: species
+fields:
+  str: -2
+  agi: 1
+  dex: 2
+  wil: 1
+  ins: 1
+  speed: 5
+  size: x1/2

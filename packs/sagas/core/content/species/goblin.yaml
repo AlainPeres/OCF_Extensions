@@ -1,0 +1,13 @@
+id: species.goblin
+type: species
+fields:
+  str: -2
+  agi: 2
+  end: -1
+  dex: 1
+  wit: -1
+  wil: -1
+  pre: -2
+  ins: 1
+  speed: 6
+  size: x1/2

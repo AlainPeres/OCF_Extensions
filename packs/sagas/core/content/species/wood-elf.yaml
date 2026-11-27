@@ -1,0 +1,9 @@
+id: species.wood-elf
+type: species
+fields:
+  agi: 2
+  dex: 2
+  pre: 1
+  ins: 3
+  speed: 6
+  size: x1

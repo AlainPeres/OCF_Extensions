@@ -1,0 +1,156 @@
+# The species (the bestiary's fantasy peoples, scripts/extensions/sagas/SagaS_Creatures.md):
+# generated from it.
+species.human.description: "The rules' baseline: 5 in every main characteristic, base Speed 6."
+species.high-elf.description: |-
+  **Racial template:** AGI +2, DEX +2, WIT +1, WIL +1, PRE +2, INS +2 (vs. human baseline 5). Warden training adds AGI +2, DEX +1, INS +1.
+
+  **Size:** x1 · **Base Speed:** 6
+
+  **Special** (the bestiary's High Elf (Warden)):
+
+  - **Keen Senses.** +I to Perception in dim light and by hearing.
+  - **Fey Resolve.** +I to Mental Resistance against magical charm and compulsion.
+  - **Long-lived.** Lives for several centuries.
+species.wood-elf.description: |-
+  **Racial template:** AGI +2, DEX +2, PRE +1, INS +3. Hunter training adds AGI +2, DEX +1, END +1, INS +1.
+
+  **Size:** x1 · **Base Speed:** 6
+
+  **Special** (the bestiary's Wood Elf (Hunter)):
+
+  - **Keen Senses.** +I to Perception in dim light and by hearing.
+  - **Forest Stride.** No movement penalty in woods; +I to Stealth in forest.
+  - **Fey Resolve.** +I to Mental Resistance against magical charm and compulsion.
+species.dark-elf.description: |-
+  **Racial template:** AGI +2, DEX +2, WIT +2, WIL +2, PRE +2, INS +1. Skirmisher training adds AGI +2, DEX +1, INS +1.
+
+  **Size:** x1 · **Base Speed:** 6
+
+  **Special** (the bestiary's Dark Elf (Skirmisher)):
+
+  - **Night Vision.** No penalty in dim light.
+  - **Light Sensitivity.** -I to all actions in bright sunlight.
+  - **Sleep Poison.** Virulence 12, period 1 minute: unconscious until resisted. _Proposal._
+  - **Fey Resolve.** +I to Mental Resistance against magical charm and compulsion.
+species.mountain-dwarf.description: |-
+  **Racial template:** STR +2, AGI -1, END +3, WIL +2, PRE -1. Warrior training adds STR +1, AGI +1.
+
+  **Size:** x1 · **Base Speed:** 4
+
+  **Special** (the bestiary's Mountain Dwarf (Warrior)):
+
+  - **Dwarven Resilience.** +I to Physical Resistance against poison and disease.
+  - **Underground Sense.** No penalty in dim light; always knows direction underground.
+  - **Short Legs.** SPD base 4.
+species.hill-dwarf.description: |-
+  **Racial template:** STR +1, END +3, WIL +2, INS +1. Craftsman training adds DEX +1, WIT +1.
+
+  **Size:** x1 · **Base Speed:** 4
+
+  **Special** (the bestiary's Hill Dwarf (Craftsman / Militia)):
+
+  - **Dwarven Resilience.** +I to Physical Resistance against poison and disease.
+  - **Master Craft.** +I when making weapons and armor.
+  - **Short Legs.** SPD base 4.
+species.orc.description: |-
+  **Racial template:** STR +2, END +2, WIT -1, WIL +1, INS +1. Warrior training adds STR +1, AGI +1.
+
+  **Size:** x1 · **Base Speed:** 6
+
+  **Special** (the bestiary's Orc (Warrior)):
+
+  - **Night Vision.** No penalty in dim light.
+  - **Savage Resilience.** +I to Endurance rolls against Physical Shock.
+species.goblin.description: |-
+  **Racial template:** STR -2, AGI +2, END -1, DEX +1, WIT -1, WIL -1, PRE -2, INS +1.
+
+  **Size:** x1/2 · **Base Speed:** 6
+
+  **Special** (the bestiary's Goblin):
+
+  - **Night Vision.** No penalty in dim light.
+  - **Cowardly.** -I to Mental Resistance against fear; flees when its leader falls or half its Physical HP is lost.
+  - **Ambusher.** Fights best from hiding (+I when attacking by surprise).
+species.hobgoblin.description: |-
+  **Racial template:** STR +1, END +2, WIL +2.
+
+  **Size:** x1 · **Base Speed:** 6
+
+  **Special** (the bestiary's Hobgoblin):
+
+  - **Night Vision.** No penalty in dim light.
+  - **Formation.** +I to parry with a shield when an ally is adjacent.
+  - **Disciplined.** +I to Mental Resistance against fear in formation.
+species.bugbear.description: |-
+  **Racial template:** STR +6, END +3, DEX -1, WIT -1, PRE -1, INS +1.
+
+  **Size:** x1 · **Base Speed:** 6
+
+  **Special** (the bestiary's Bugbear):
+
+  - **Night Vision.** No penalty in dim light.
+  - **Ambusher.** Attacks by surprise (+I) from hiding.
+  - **Long Arms.** Reach 2 m.
+species.kobold.description: |-
+  **Racial template:** STR -3, AGI +2, END -2, WIL -2, PRE -2, INS +1.
+
+  **Size:** x1/2 · **Base Speed:** 6
+
+  **Special** (the bestiary's Kobold):
+
+  - **Night Vision.** No penalty in dim light.
+  - **Trapmaker.** Sets traps with +I.
+  - **Cowardly.** Flees when half its Physical HP is lost.
+species.halfling.description: |-
+  **Racial template:** STR -2, AGI +1, DEX +2, WIL +1, INS +1. Scout training adds AGI +1, INS +1.
+
+  **Size:** x1/2 · **Base Speed:** 5
+
+  **Special** (the bestiary's Halfling (Scout)):
+
+  - **Stout-hearted.** +I to Mental Resistance against fear and intimidation.
+  - **Small.** Size x1/2: harder to hit at range.
+species.gnoll.description: |-
+  **Racial template:** STR +3, END +2, WIT -1, INS +1.
+
+  **Size:** x1 · **Base Speed:** 6
+
+  **Special** (the bestiary's Gnoll):
+
+  - **Pack Tactics.** +I on attacks against a target already attacked by a packmate this round. _Optional._
+  - **Keen Smell.** +I to Perception and Tracking rolls based on scent.
+  - **Night Vision.** No penalty in dim light.
+species.lizardfolk.description: |-
+  **Racial template:** STR +3, END +3, WIT -1, WIL +1, PRE -1, INS +1.
+
+  **Size:** x1 · **Base Speed:** 5
+
+  **Special** (the bestiary's Lizardfolk):
+
+  - **Hold Breath.** Can stay underwater for 30 minutes.
+  - **Cold-blooded.** -I to all actions in cold weather.
+  - **Scaly Hide.** Already counted in Protection.
+species.centaur.description: |-
+  **Racial template:** Horse-man hybrid: STR +13, END +6, AGI +2.
+
+  **Size:** x2 · **Base Speed:** 13
+
+  **Special** (the bestiary's Centaur):
+
+  - **Trample.** Creature Charge: +12 damage (2 x speed bonus +6), limited by Max Impact Bonus.
+  - **Hit and Run.** Can move and shoot without penalty.
+species.human.name: Human
+species.high-elf.name: High Elf
+species.wood-elf.name: Wood Elf
+species.dark-elf.name: Dark Elf
+species.mountain-dwarf.name: Mountain Dwarf
+species.hill-dwarf.name: Hill Dwarf
+species.orc.name: Orc
+species.goblin.name: Goblin
+species.hobgoblin.name: Hobgoblin
+species.bugbear.name: Bugbear
+species.kobold.name: Kobold
+species.halfling.name: Halfling
+species.gnoll.name: Gnoll
+species.lizardfolk.name: Lizardfolk
+species.centaur.name: Centaur

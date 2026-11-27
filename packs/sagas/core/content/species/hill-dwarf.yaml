@@ -1,0 +1,9 @@
+id: species.hill-dwarf
+type: species
+fields:
+  str: 1
+  end: 3
+  wil: 2
+  ins: 1
+  speed: 4
+  size: x1

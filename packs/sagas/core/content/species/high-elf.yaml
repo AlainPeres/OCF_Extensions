@@ -1,0 +1,11 @@
+id: species.high-elf
+type: species
+fields:
+  agi: 2
+  dex: 2
+  wit: 1
+  wil: 1
+  pre: 2
+  ins: 2
+  speed: 6
+  size: x1

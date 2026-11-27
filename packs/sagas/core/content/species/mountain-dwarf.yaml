@@ -1,0 +1,10 @@
+id: species.mountain-dwarf
+type: species
+fields:
+  str: 2
+  agi: -1
+  end: 3
+  wil: 2
+  pre: -1
+  speed: 4
+  size: x1

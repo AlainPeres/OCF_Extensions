@@ -24,6 +24,16 @@ actions:
       random: { type: boolean, default: false }
     results: [created]
     steps:
+      # The species (rules/species.yaml): its modifiers are the characteristics' baseline, its base
+      # Speed the character's. The random start keeps a human.
+      - id: species
+        kind: choice
+        options: { content: { type: species } }
+        recommend: '@species.human'
+        changes:
+          - { type: removeItem, copies: { type: species } }
+          - { type: addItem, entry: { item: picked.id } }
+          - { type: set, field: identity.species, value: "''" }
       # Creation points: 150, 250 or 350 by the characters' power (section 3.4).
       - id: power
         kind: choice
