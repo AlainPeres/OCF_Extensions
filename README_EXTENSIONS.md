@@ -312,26 +312,28 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 
 ## What was added
 
-| Path                                                        | What                                                                |
-| ----------------------------------------------------------- | ------------------------------------------------------------------- |
-| `packs/sagas/core/`                                         | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor)     |
-| `scripts/extensions/sagas/sagas.ts` + `.html`               | SagaS sheet: Create and Play in one page                            |
-| `scripts/extensions/sagas/sagas-create.html`                | The SagaS sheet's Create mode                                       |
-| `scripts/extensions/sagas/sagas-play.html`                  | The SagaS sheet's Play mode                                         |
-| `scripts/extensions/sagas/sagas-lib.ts`                     | The SagaS pages' own routes: their data, a random character         |
-| `scripts/extensions/universal-lib.ts`                       | Shared server of the universal, SagaS and D100 heroic tools         |
-| `scripts/extensions/display-lib.ts`                         | What a pack's display hints hide, for the SagaS and universal tools |
-| `scripts/extensions/universal.ts` + `.html`                 | Universal sheet for any pack: Create and Play                       |
-| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                     |
-| `packs/d100/heroic/`                                        | The `d100-heroic` pack (rules, 32 skills, 43 weapons, 163 spells)   |
-| `scripts/extensions/d100/`                                  | The SRD chapters the pack models (Markdown), and its terms of use   |
-| `scripts/extensions/d100/d100.ts` + `.html`                 | D100 heroic sheet: Create and Play in one page                      |
-| `scripts/extensions/d100/d100-create.html`                  | The D100 heroic sheet's Create mode                                 |
-| `scripts/extensions/d100/d100-play.html`                    | The D100 heroic sheet's Play mode                                   |
-| `scripts/extensions/validate-pack.ts`                       | `pnpm validate`'s checks on one pack and its characters             |
-| `scripts/extensions/check-links.ts`                         | Before deleting a folder: where its links point, without following  |
-| `examples/characters/extensions/`                           | SagaS and D100 heroic example characters, and those the sheets save |
-| `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                      |
+| Path                                                        | What                                                                           |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `packs/sagas/core/`                                         | The `sagas-core` pack (rules, 119 skills, 98 weapons, 14 armor, 123 creatures) |
+| `scripts/extensions/sagas/sagas.ts` + `.html`               | SagaS sheet: Create and Play in one page                                       |
+| `scripts/extensions/sagas/sagas-create.html`                | The SagaS sheet's Create mode                                                  |
+| `scripts/extensions/sagas/sagas-play.html`                  | The SagaS sheet's Play mode                                                    |
+| `scripts/extensions/sagas/sagas-lib.ts`                     | The SagaS pages' own routes: their data, a random character                    |
+| `scripts/extensions/universal-lib.ts`                       | Shared server of the universal, SagaS and D100 heroic tools                    |
+| `scripts/extensions/display-lib.ts`                         | What a pack's display hints hide, for the SagaS and universal tools            |
+| `scripts/extensions/universal.ts` + `.html`                 | Universal sheet for any pack: Create and Play                                  |
+| `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                                |
+| `scripts/extensions/sagas/SagaS_Creatures.md`               | The bestiary the creatures come from (Open Game Content)                       |
+| `scripts/extensions/sagas/bestiary-import.mjs`              | The bestiary into the pack (`--check`: each creature against it)               |
+| `packs/d100/heroic/`                                        | The `d100-heroic` pack (rules, 32 skills, 43 weapons, 163 spells)              |
+| `scripts/extensions/d100/`                                  | The SRD chapters the pack models (Markdown), and its terms of use              |
+| `scripts/extensions/d100/d100.ts` + `.html`                 | D100 heroic sheet: Create and Play in one page                                 |
+| `scripts/extensions/d100/d100-create.html`                  | The D100 heroic sheet's Create mode                                            |
+| `scripts/extensions/d100/d100-play.html`                    | The D100 heroic sheet's Play mode                                              |
+| `scripts/extensions/validate-pack.ts`                       | `pnpm validate`'s checks on one pack and its characters                        |
+| `scripts/extensions/check-links.ts`                         | Before deleting a folder: where its links point, without following             |
+| `examples/characters/extensions/`                           | SagaS and D100 heroic example characters, and those the sheets save            |
+| `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                                 |
 
 Our files stay apart from OCF's: scripts in `scripts/extensions/`, characters in
 `examples/characters/extensions/`. `pnpm validate` reads `examples/characters/` with its
@@ -440,6 +442,7 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
 - **`checks.yaml`** also gives skill rolls help (4.4: the first helper adds half their total,
   the second a quarter, the third an eighth), a neighboring skill (4.5: half its total) and a
   skill used at the same time (4.6: the weaker total).
+- **`creatures.yaml`**: creature sheets, for the referee ([below](#creatures-rulescreaturesyaml)).
 - **`tags.yaml`**: the tags `advancement`, `characteristic`, `check`, `combat`, `creation`,
   `damage`, `danger`, `health` and `secondary-bonus`.
 
@@ -454,6 +457,8 @@ section 15 in `pack.yaml`). Mechanics live in `rules/` and `content/`, all Engli
   rifles, assault rifles, submachine guns, shotguns, a machine gun, heavy weapons), TL4 before
   1900 and TL5 after.
 - **Armor (14)**: section 15, shields included.
+- **Creatures (123)** and their attacks (89 natural weapons, `weapons.cr-…`): the bestiary's
+  ([below](#creatures-rulescreaturesyaml)).
 
 ### Creation (`rules/creation.yaml`)
 
@@ -485,10 +490,42 @@ Two creation starts, as every OCF pack that starts a sheet has.
 - **`finish-creation`**: ends a creation the guided start left open.
 
 - **Constraint `creation-within-budget`**: while the character is being created, no more points
-  may be spent than the budget allows.
+  may be spent than the budget allows; a creature isn't bought with points.
 
 The three creation actions carry the `creation` tag, which the universal sheet's Create mode uses to
 show them first when a pack has no action groups.
+
+### Creatures (`rules/creatures.yaml`)
+
+From the bestiary `scripts/extensions/sagas/SagaS_Creatures.md` (draft v0.3, 123 creatures: animals,
+fantasy peoples, undead, monsters; Open Game Content for SagaS 0.995 LLL), by
+`scripts/extensions/sagas/bestiary-import.mjs`. A creature sheet is a character made with the
+**creature** start (`create-creature`): it asks the creature, then sets its eight characteristics,
+its species' base Speed and its protection, raises its skills, adds its attacks (equipped) and
+finishes the sheet at once.
+
+- **The derived values are the pack's formulas**: Initiative, Close and Ranged Combat, Speed, hit
+  points, shock thresholds, Max Impact and Reflex Dodge. The bestiary uses the same, and
+  `bestiary-import.mjs --check` finds every creature's sheet as the bestiary gives it (its
+  "immune" mental values aside: the pack has no immunity).
+- **Skills** are learning levels over their characteristic, so that the total is the bestiary's;
+  Flight, which the pack has no skill for, is "Other (Agility)" with the specialty Flight. Below
+  0 a learning level moves in steps of 5, and a skill is never below its initial level, so 11
+  totals differ from the bestiary's by 1 to 3: Swimming for the Domestic Dog, Wolf, Black and
+  Brown Bears, Leopard, Tiger, Horse, Giant Rat and Rat Swarm, Jump for the Horse and the
+  Velociraptor. The import lists them.
+- **Attacks** are natural weapons (`natural`), one per name, damage bonus, DMAX and range, shared
+  by the creatures that have them. Each copy holds its score (`score`): its attack is the
+  `natural-attack` action, a degree roll at that score, with no skill; its damage is the usual
+  `damage`. An attack without the Strength bonus (a shot, a breath, a draining touch) is
+  "ranged", since the damage action adds the bonus to melee attacks only.
+- **Text**: the creature's description (`i18n/en/creatures.yaml`) holds the rest of its stat
+  block: type, size, weight and threat, every movement mode, its attacks with their notes
+  (venom, grapple, reach…), its skills as written, its special abilities and variants. They are
+  the referee's to apply.
+- The bestiary is a draft: after changing it, run the import again
+  (`node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/bestiary-import.mjs`),
+  then `--check` and `validate-pack.ts sagas-core`.
 
 ### Advancement (`rules/advancement.yaml`)
 
@@ -564,7 +601,8 @@ come from the engine.
   6. possessions and background.
 
   A live summary of the points and rules issues runs alongside, with a random character button,
-  load and save.
+  load and save. "Creature…" makes a creature sheet of the bestiary (the pack's creature start),
+  for the referee; natural weapons aren't offered as gear.
 
 - **Play** (`sagas-play.html`): a play sheet, its sections by theme (character, checks, combat, health and
   dangers, long-term action, progression), the header linking to each:
@@ -572,7 +610,8 @@ come from the engine.
   - identity, with Initiative, Speed and Reflex Dodge in the header;
   - characteristic and skill rolls with difficulty, modifier and situation. Skills are grouped by
     characteristic and filtered (all, points spent, total > 0), with one row per specialty;
-  - weapons with attack, damage and parry, DMAX, AP and range; extra dice (bursts, bullets) and
+  - weapons with attack, damage and parry, DMAX, AP and range (a creature's attack at its own
+    score, without parry); extra dice (bursts, bullets) and
     charge for the damage; help, neighboring and simultaneous skills for skill rolls;
   - combat: initiative (kept for the fight), Reflex Dodge, Dodge, martial arts (style, strike and
     projection damage), the combat modifiers among the situations;
