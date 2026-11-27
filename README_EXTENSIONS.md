@@ -98,8 +98,8 @@ Step by step:
    ([`core.protectNTFS`](#coreprotectntfs) below).
 3. **`git sparse-checkout set`** leaves out `packs/orc/` and the 19 `orc-*.yaml` example
    characters, whose pack is missing.
-4. **`git checkout main`** writes the files: `Updating files: 100% (19702/19702), done.`, then
-   `Already on 'main'`.
+4. **`git checkout main`** writes the files: `Updating files: 100% (20545/20545), done.` (the
+   count grows with the repository: 19,702 when tested), then `Already on 'main'`.
 5. **`git remote add upstream`**: OCF's repository, to keep up with it
    ([After cloning](#after-cloning)).
 6. **`pnpm install --frozen-lockfile`** ends with `Done in …`. Its warning `Ignored build scripts:
@@ -517,8 +517,8 @@ and the creature start ([Creatures](#creatures-rulescreaturesyaml)).
   may be spent than the budget allows; a creature isn't bought with points.
 
 The creation actions (`create-character`, `choose-species`, `learn-specialty`,
-`finish-creation`, `create-creature`) carry the `creation` tag, which the universal sheet's Create mode uses to show
-them first when a pack has no action groups.
+`finish-creation`, `create-creature`) carry the `creation` tag, which the universal sheet's Create
+mode uses to show them first when a pack has no action groups.
 
 ### Creatures (`rules/creatures.yaml`)
 
@@ -573,7 +573,8 @@ individual's own additions ("Warden training adds…") aren't the species'.
 - **`choose-species`** (while creating) picks it, replacing any other; the guided start asks it
   first. Both empty the species field (free text): the sheets name the species from its copy.
 - Its description holds the template as written, its size and base Speed, and the special
-  abilities of the bestiary's stat block (night vision, keen senses, dwarven resilience…): the referee's to apply.
+  abilities of the bestiary's stat block (night vision, keen senses, dwarven resilience…): the
+  referee's to apply.
 - Characters without a species copy are humans, as before.
 
 ### Advancement (`rules/advancement.yaml`)
