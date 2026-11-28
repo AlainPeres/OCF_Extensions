@@ -1,0 +1,5 @@
+id: skills.pilot
+type: skill
+fields:
+  base: 0
+  typed: true

@@ -1,0 +1,48 @@
+id: archetypes.alienist
+type: archetype
+fields:
+  recommended:
+    - stats.pow
+    - stats.int
+  skills:
+    - skills.anthropology
+    - skills.insight
+    - skills.medicine
+    - skills.psychoanalyze
+    - skills.science
+    - skills.social-etiquette
+  ratings:
+    - 50
+    - 60
+    - 40
+    - 70
+    - 50
+    - 40
+  entries:
+    - lovecraft-jazz-age-skills-anthropology
+    - lovecraft-jazz-age-skills-insight
+    - lovecraft-jazz-age-skills-medicine
+    - lovecraft-jazz-age-skills-psychoanalyze
+    - lovecraft-jazz-age-skills-science
+    - lovecraft-jazz-age-skills-social-etiquette
+  options:
+    - skills.administration
+    - skills.alertness
+    - skills.charm
+    - skills.foreign-language
+    - skills.law
+    - skills.research
+  optionRatings:
+    - 50
+    - 60
+    - 60
+    - 40
+    - 40
+    - 50
+  choose: 3
+  resources: 5
+  bonds: 3
+  bondSlots:
+    - 1
+    - 2
+    - 3

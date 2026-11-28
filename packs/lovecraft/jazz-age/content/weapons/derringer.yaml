@@ -1,0 +1,5 @@
+id: weapons.derringer
+type: weapon
+fields:
+  skill: skills.firearms
+  damage: 1d8

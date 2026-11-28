@@ -1,0 +1,86 @@
+# How a sheet shows the Protagonist (display hints, never part of the calculations): the fields by
+# theme, the actions by theme (the creation's only while creating).
+display:
+  groups:
+    - id: identity
+      kind: fields
+      priority: 1
+      members:
+        {
+          type: field,
+          where: 'item.id in [@identity.name, @identity.age, @identity.sex, @identity.birthplace, @identity.home, @identity.appearance, @upbringing]',
+        }
+    - id: stats
+      kind: fields
+      priority: 2
+      members: { type: field, where: "'stat' in item.tags" }
+    - id: derived
+      kind: fields
+      priority: 3
+      members:
+        {
+          type: field,
+          where: 'item.id in [@hp.current, @hp.max, @hp.damage, @wp.current, @wp.max, @wp.spent, @damage.bonus, @armor.worn]',
+        }
+    - id: sanity
+      kind: fields
+      priority: 4
+      members:
+        {
+          type: field,
+          where: 'item.id in [@san.current, @san.breaking, @san.max, @san.recovery, @san.disorders, @unnatural.rating]',
+        }
+    - id: resources
+      kind: fields
+      priority: 5
+      members:
+        {
+          type: field,
+          where: 'item.id in [@resources.rating, @resources.atHand, @resources.stowed, @resources.storage, @resources.checks, @resources.used]',
+        }
+    - id: states
+      kind: fields
+      priority: 6
+      members:
+        {
+          type: field,
+          where: 'item.id in [@state.unconscious, @state.dead, @state.breakdown, @state.collapse, @state.insane, @state.disorderDue]',
+        }
+    - id: notes
+      kind: fields
+      priority: 7
+      members:
+        {
+          type: field,
+          where: 'item.id in [@identity.motivations, @identity.disorders, @identity.equipment]',
+        }
+
+    - id: act-tests
+      kind: actions
+      priority: 20
+      showWhen: '!character.creating'
+      members: { type: action, where: "'check' in item.tags" }
+    - id: act-combat
+      kind: actions
+      priority: 21
+      showWhen: '!character.creating'
+      members: { type: action, where: "'combat' in item.tags" }
+    - id: act-health
+      kind: actions
+      priority: 22
+      showWhen: '!character.creating'
+      members: { type: action, where: "'health' in item.tags && !('combat' in item.tags)" }
+    - id: act-sanity
+      kind: actions
+      priority: 23
+      showWhen: '!character.creating'
+      members: { type: action, where: "'sanity' in item.tags" }
+    - id: act-bonds
+      kind: actions
+      priority: 24
+      members: { type: action, where: "'bond' in item.tags || 'skill' in item.tags" }
+    - id: act-creation
+      kind: actions
+      priority: 25
+      showWhen: character.creating
+      members: { type: action, where: "'creation' in item.tags" }

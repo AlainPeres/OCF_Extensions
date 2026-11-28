@@ -1,0 +1,54 @@
+id: archetypes.scientist
+type: archetype
+fields:
+  recommended:
+    - stats.int
+    - stats.dex
+  skills:
+    - skills.craft
+    - skills.law
+    - skills.research
+    - skills.science
+    - skills.search
+    - skills.social-etiquette
+    - skills.use-gadgets
+  ratings:
+    - 50
+    - 20
+    - 60
+    - 60
+    - 60
+    - 30
+    - 50
+  entries:
+    - lovecraft-jazz-age-skills-craft
+    - lovecraft-jazz-age-skills-law
+    - lovecraft-jazz-age-skills-research
+    - lovecraft-jazz-age-skills-science
+    - lovecraft-jazz-age-skills-search
+    - lovecraft-jazz-age-skills-social-etiquette
+    - lovecraft-jazz-age-skills-use-gadgets
+  options:
+    - skills.anthropology
+    - skills.archeology
+    - skills.firearms
+    - skills.foreign-language
+    - skills.heavy-machinery
+    - skills.military-training
+    - skills.psychoanalyze
+    - skills.science
+  optionRatings:
+    - 40
+    - 40
+    - 60
+    - 40
+    - 50
+    - 40
+    - 50
+    - 40
+  choose: 4
+  resources: 5
+  bonds: 2
+  bondSlots:
+    - 1
+    - 2

@@ -1,0 +1,62 @@
+id: archetypes.private-eye
+type: archetype
+fields:
+  recommended:
+    - stats.int
+    - stats.str
+  skills:
+    - skills.alertness
+    - skills.firearms
+    - skills.first-aid
+    - skills.insight
+    - skills.law
+    - skills.streetwise
+    - skills.search
+    - skills.use-gadgets
+  ratings:
+    - 50
+    - 60
+    - 50
+    - 50
+    - 50
+    - 40
+    - 70
+    - 40
+  entries:
+    - lovecraft-jazz-age-skills-alertness
+    - lovecraft-jazz-age-skills-firearms
+    - lovecraft-jazz-age-skills-first-aid
+    - lovecraft-jazz-age-skills-insight
+    - lovecraft-jazz-age-skills-law
+    - lovecraft-jazz-age-skills-streetwise
+    - lovecraft-jazz-age-skills-search
+    - lovecraft-jazz-age-skills-use-gadgets
+  options:
+    - skills.administration
+    - skills.social-etiquette
+    - skills.athletics
+    - skills.charm
+    - skills.disguise
+    - skills.dodge
+    - skills.drive
+    - skills.harangue
+    - skills.melee-weapons
+    - skills.research
+  optionRatings:
+    - 50
+    - 50
+    - 70
+    - 60
+    - 50
+    - 70
+    - 60
+    - 50
+    - 70
+    - 50
+  choose: 3
+  resources: 4
+  bonds: 3
+  bondSlots:
+    - 1
+    - 2
+    - 3

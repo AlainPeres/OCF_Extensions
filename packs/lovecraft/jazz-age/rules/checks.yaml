@@ -1,0 +1,121 @@
+# Tests (sections 1.2, 3.1 to 3.5): roll 1D100 equal to or under the chance. A critical success is
+# 01 or a success whose two digits match (11, 22…), a fumble 100 or a failure whose digits match.
+# A bonus or penalty is usually ±20% (easy, hard), rarely ±40% (very easy, very hard), the chance between 1% and 99%; a Willpower
+# breakdown (WP 1 or 2) adds −20%, and at 0 WP nothing succeeds.
+resultBands:
+  test:
+    - id: critical
+      when: 'roll.total <= flags.target && roll.total != 100 && (roll.total == 1 || roll.total % 11 == 0)'
+    - id: success
+      success: true
+      when: 'roll.total <= flags.target && roll.total != 100'
+    - id: fumble
+      when: 'roll.total % 11 == 0 || roll.total == 100'
+    - id: failure
+      when: true
+
+actions:
+  # A skill test (the skill's copy gives its rating).
+  - id: skill-test
+    tags: [check]
+    params:
+      score: { type: integer, min: 0 }
+      difficulty:
+        { type: enum, values: [very-easy, easy, normal, hard, very-hard], default: normal }
+    results: { bands: test }
+    steps:
+      - id: roll
+        kind: action
+        use: percentile-test
+        params:
+          chance: params.score
+          difficulty: params.difficulty
+      - id: result
+        kind: outcome
+        result: steps.roll.result
+
+  # A stat test: the stat × 5.
+  - id: stat-test
+    tags: [check]
+    params:
+      stat: { type: id, of: field, where: "'stat' in item.tags" }
+      difficulty:
+        { type: enum, values: [very-easy, easy, normal, hard, very-hard], default: normal }
+    results: { bands: test }
+    steps:
+      - id: roll
+        kind: action
+        use: percentile-test
+        params:
+          chance: params.stat.value * 5
+          difficulty: params.difficulty
+      - id: result
+        kind: outcome
+        result: steps.roll.result
+
+  # A Luck roll (3.3): 50%, the same for everyone.
+  - id: luck-roll
+    tags: [check]
+    results: { bands: test }
+    steps:
+      - id: target
+        kind: branch
+        cases:
+          - { when: true, flags: { target: 50 } }
+      - id: roll
+        kind: roll
+        bands: test
+        parts: [{ dice: 1d100 }]
+      - id: result
+        kind: outcome
+        result: steps.roll.band
+
+  # A Resources test (2.7.3): the effective rating × 5 (at hand, with what is stowed, or all of it).
+  - id: resources-test
+    tags: [check]
+    params:
+      where: { type: enum, values: [at-hand, nearby, home], default: at-hand }
+      difficulty:
+        { type: enum, values: [very-easy, easy, normal, hard, very-hard], default: normal }
+    results: { bands: test }
+    steps:
+      - id: roll
+        kind: action
+        use: percentile-test
+        params:
+          chance: >-
+            5 * (params.where == 'home' ? resources.rating
+              : params.where == 'nearby' ? resources.atHand + resources.stowed : resources.atHand)
+          difficulty: params.difficulty
+      - id: result
+        kind: outcome
+        result: steps.roll.result
+
+  # The roll itself: the chance with its modifier and a breakdown's −20%, between 1 and 99; at
+  # 0 WP, every test fails.
+  - id: percentile-test
+    listed: false
+    params:
+      chance: { type: integer }
+      difficulty:
+        { type: enum, values: [very-easy, easy, normal, hard, very-hard], default: normal }
+    results: { bands: test }
+    steps:
+      - id: target
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              target: >-
+                state.collapse ? 0 : max(1, min(99, params.chance
+                  + [40, 20, 0, -20, -40][indexOf(['very-easy', 'easy', 'normal', 'hard', 'very-hard'], params.difficulty)]
+                  + (state.breakdown ? -20 : 0)))
+      - id: roll
+        kind: roll
+        bands: test
+        parts: [{ dice: 1d100 }]
+      - id: result
+        kind: outcome
+        result: steps.roll.band
+        data:
+          target: flags.target

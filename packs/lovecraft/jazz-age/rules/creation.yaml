@@ -1,0 +1,222 @@
+# Protagonist creation (2.2), in the book's order: the upbringing's harshness, the stats (72
+# points to divide, or 4D6 drop the lowest six times, placed at will), Harsh bonuses to STR and
+# CON, the derived attributes, the Archetype (its skills, the ones chosen from its list, its
+# Resources, its Bonds), the adversity picks (+20 to First Aid, Military Training, Regional Lore or
+# Survival: 1 if Harsh, 2 if Very Harsh), then the ten bonus picks (+20 to any skill but Unnatural,
+# 80% at most), some of which may be traded for Resources. The guided start leaves the Protagonist
+# being created, so the player names the Bonds and the typed skills' specialties, then finishes;
+# the random start rolls the stats, keeps a Normal upbringing and finishes on its own.
+creation:
+  - { id: guided, action: create-protagonist }
+  - { id: random, action: create-protagonist, params: { random: true }, random: true }
+
+actions:
+  - id: create-protagonist
+    tags: [creation]
+    available: character.creating
+    params:
+      random: { type: boolean, default: false }
+    results: [created]
+    steps:
+      # Step 0: the upbringing.
+      - id: upbringing
+        kind: choice
+        options:
+          - { id: normal, changes: [{ type: set, field: upbringing, value: "'normal'" }] }
+          - { id: harsh, changes: [{ type: set, field: upbringing, value: "'harsh'" }] }
+          - { id: very-harsh, changes: [{ type: set, field: upbringing, value: "'very-harsh'" }] }
+        recommend: "'normal'"
+      # Step 1: the stats, by points or rolled.
+      - id: method
+        kind: choice
+        options: [{ id: points }, { id: roll }]
+        recommend: "params.random ? 'roll' : 'points'"
+      - id: stats
+        kind: branch
+        cases:
+          - when: "steps.method.picked == 'roll'"
+            steps:
+              - { id: roll1, kind: roll, tags: [creation], parts: [{ dice: 4d6dl1 }] }
+              - { id: roll2, kind: roll, tags: [creation], parts: [{ dice: 4d6dl1 }] }
+              - { id: roll3, kind: roll, tags: [creation], parts: [{ dice: 4d6dl1 }] }
+              - { id: roll4, kind: roll, tags: [creation], parts: [{ dice: 4d6dl1 }] }
+              - { id: roll5, kind: roll, tags: [creation], parts: [{ dice: 4d6dl1 }] }
+              - { id: roll6, kind: roll, tags: [creation], parts: [{ dice: 4d6dl1 }] }
+              - id: sorted
+                kind: branch
+                cases:
+                  - when: true
+                    flags:
+                      sorted: >-
+                        sortList([steps.roll1.total, steps.roll2.total, steps.roll3.total,
+                          steps.roll4.total, steps.roll5.total, steps.roll6.total], -x)
+              # Placed at will; the highest to INT and POW, an investigator's.
+              - id: rolled
+                kind: allocate
+                fields: { type: field, where: "'stat' in item.tags" }
+                values:
+                  - steps.roll1.total
+                  - steps.roll2.total
+                  - steps.roll3.total
+                  - steps.roll4.total
+                  - steps.roll5.total
+                  - steps.roll6.total
+                recommend:
+                  stats.int: flags.sorted[0]
+                  stats.pow: flags.sorted[1]
+                  stats.dex: flags.sorted[2]
+                  stats.con: flags.sorted[3]
+                  stats.cha: flags.sorted[4]
+                  stats.str: flags.sorted[5]
+          - when: true
+            steps:
+              - id: threes
+                kind: changes
+                changes:
+                  - { type: set, field: stats.str, value: 3 }
+                  - { type: set, field: stats.con, value: 3 }
+                  - { type: set, field: stats.dex, value: 3 }
+                  - { type: set, field: stats.int, value: 3 }
+                  - { type: set, field: stats.pow, value: 3 }
+                  - { type: set, field: stats.cha, value: 3 }
+              # 72 points: 3 each already, 54 to divide, 18 at most (a "Well-Rounded" 12 each).
+              - id: points
+                kind: allocate
+                sheet: proposed
+                fields: { type: field, where: "'stat' in item.tags" }
+                budget: 54
+                limit: 18 - field.value
+                recommend: 9
+      # Harsh upbringing: +1 to STR or CON; Very Harsh: +1 to both.
+      - id: hardy
+        kind: choice
+        when: "upbringing == 'harsh'"
+        options:
+          - { id: hardy-str, changes: [{ type: adjust, field: stats.str, by: 1 }] }
+          - { id: hardy-con, changes: [{ type: adjust, field: stats.con, by: 1 }] }
+        recommend: "'hardy-con'"
+      - id: veryHardy
+        kind: changes
+        when: "upbringing == 'very-harsh'"
+        changes:
+          - { type: adjust, field: stats.str, by: 1 }
+          - { type: adjust, field: stats.con, by: 1 }
+      # Step 2: Sanity and the Breaking Point (the rest are formulas).
+      - id: derived
+        kind: changes
+        sheet: proposed
+        changes:
+          - type: set
+            field: san.current
+            value: "stats.pow * (upbringing == 'normal' ? 5 : 4)"
+          - type: set
+            field: san.breaking
+            value: "stats.pow * (upbringing == 'normal' ? 5 : 4) - stats.pow"
+      # Step 3: the Archetype, its skills, its Resources, its Bonds (individual, at CHA).
+      - id: archetype
+        kind: choice
+        sheet: proposed
+        random: params.random
+        options: { content: { type: archetype } }
+        recommend: options[0]
+        changes:
+          - { type: addItem, entry: { item: picked.id } }
+      - id: kit
+        kind: changes
+        sheet: proposed
+        changes:
+          - { type: set, field: resources.rating, value: steps.archetype.item.resources }
+          - type: setState
+            forEach: steps.archetype.item.entries
+            entry: { formula: x }
+            key: rating
+            value: 'steps.archetype.item.ratings[i]'
+          - type: addItem
+            forEach: steps.archetype.item.bondSlots
+            entry:
+              item: '@bonds.bond'
+              state: { score: stats.cha }
+      # The skills chosen from its list, those it doesn't already have.
+      - id: archetypeSkills
+        kind: choice
+        sheet: proposed
+        random: params.random
+        repeat: { min: steps.archetype.item.choose, max: steps.archetype.item.choose }
+        options:
+          copies:
+            type: skill
+            where: 'item.id in steps.archetype.item.options && self.rating == item.base'
+        prefer: 'steps.archetype.item.optionRatings[indexOf(steps.archetype.item.options, item.id)]'
+        changes:
+          - type: setState
+            entry: picked
+            key: rating
+            value: 'steps.archetype.item.optionRatings[indexOf(steps.archetype.item.options, picked.item.id)]'
+      # Adversity picks: +20 to one of the four adversity skills each.
+      - id: adversity
+        kind: choice
+        sheet: proposed
+        random: params.random
+        when: "upbringing != 'normal'"
+        repeat:
+          min: "upbringing == 'very-harsh' ? 2 : 1"
+          max: "upbringing == 'very-harsh' ? 2 : 1"
+        options: { copies: { type: skill, where: 'item.adversity && self.rating <= 60' } }
+        prefer: -self.rating
+        changes:
+          - { type: setState, entry: picked, key: rating, value: picked.self.rating + 20 }
+      # Step 4: Resources, traded for bonus picks: none to 0 (+1 pick), or +5 for one pick and +2
+      # for each further pick.
+      - id: trade
+        kind: choice
+        options:
+          - { id: trade-none, flags: { picks: 10 } }
+          - id: trade-zero
+            flags: { picks: 11 }
+            changes: [{ type: set, field: resources.rating, value: 0 }]
+          - id: trade-5
+            flags: { picks: 9 }
+            changes: [{ type: adjust, field: resources.rating, by: 5 }]
+          - id: trade-7
+            flags: { picks: 8 }
+            changes: [{ type: adjust, field: resources.rating, by: 7 }]
+          - id: trade-9
+            flags: { picks: 7 }
+            changes: [{ type: adjust, field: resources.rating, by: 9 }]
+        recommend: "'trade-none'"
+      # Step 6: the bonus picks, +20 each to any skill but Unnatural, 80% at most.
+      - id: bonus
+        kind: choice
+        sheet: proposed
+        random: params.random
+        repeat: { min: flags.picks, max: flags.picks }
+        options:
+          copies:
+            type: skill
+            where: 'self.rating <= 60 && item.id != @skills.unnatural && (self.rating > 0 || item.base > 0 || !item.typed)'
+        prefer: self.rating
+        changes:
+          - { type: setState, entry: picked, key: rating, value: picked.self.rating + 20 }
+      - id: finish
+        kind: changes
+        when: params.random
+        sheet: proposed
+        changes:
+          - { type: finishCreation }
+      - id: result
+        kind: outcome
+        result: "'created'"
+
+  # The end of a guided creation, once the Bonds and specialties are named.
+  - id: finish-creation
+    tags: [creation]
+    available: character.creating
+    results: [finished]
+    steps:
+      - id: finish
+        kind: changes
+        changes:
+          - { type: finishCreation }
+      - id: result
+        kind: outcome
+        result: "'finished'"

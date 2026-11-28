@@ -1,0 +1,4 @@
+id: skills.melee-weapons
+type: skill
+fields:
+  base: 30

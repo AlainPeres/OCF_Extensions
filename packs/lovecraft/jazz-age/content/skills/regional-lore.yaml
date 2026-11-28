@@ -1,0 +1,6 @@
+id: skills.regional-lore
+type: skill
+fields:
+  base: 0
+  typed: true
+  adversity: true

@@ -1,0 +1,5 @@
+id: weapons.thrown-hand-grenade
+type: weapon
+fields:
+  skill: skills.athletics
+  lethality: 12

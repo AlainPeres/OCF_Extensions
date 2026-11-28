@@ -1,0 +1,5 @@
+id: skills.first-aid
+type: skill
+fields:
+  base: 10
+  adversity: true

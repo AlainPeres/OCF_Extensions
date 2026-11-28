@@ -1,0 +1,5 @@
+id: weapons.medium-pistol
+type: weapon
+fields:
+  skill: skills.firearms
+  damage: 1d10

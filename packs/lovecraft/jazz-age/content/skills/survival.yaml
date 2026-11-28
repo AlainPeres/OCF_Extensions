@@ -1,0 +1,6 @@
+id: skills.survival
+type: skill
+fields:
+  base: 10
+  typed: true
+  adversity: true

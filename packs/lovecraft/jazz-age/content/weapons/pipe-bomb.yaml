@@ -1,0 +1,5 @@
+id: weapons.pipe-bomb
+type: weapon
+fields:
+  skill: skills.military-training
+  lethality: 20

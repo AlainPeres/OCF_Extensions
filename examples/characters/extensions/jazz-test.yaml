@@ -1,0 +1,112 @@
+specVersion: 0.4.0
+id: jazz-test
+packs:
+  - id: lovecraft-jazz-age
+    version: 0.1.0
+values:
+  lovecraft-jazz-age:upbringing: normal
+  lovecraft-jazz-age:stats.str: 9
+  lovecraft-jazz-age:stats.con: 10
+  lovecraft-jazz-age:stats.dex: 10
+  lovecraft-jazz-age:stats.int: 12
+  lovecraft-jazz-age:stats.pow: 11
+  lovecraft-jazz-age:stats.cha: 9
+  lovecraft-jazz-age:san.current: 55
+  lovecraft-jazz-age:san.breaking: 44
+  lovecraft-jazz-age:resources.rating: 5
+  lovecraft-jazz-age:identity.name: Evelyn Marsh
+  lovecraft-jazz-age:identity.home: Arkham, Massachusetts
+features:
+  - id: archetypes-criminal-1
+    item: lovecraft-jazz-age:archetypes.criminal
+  - id: lovecraft-jazz-age-skills-alertness
+    item: lovecraft-jazz-age:skills.alertness
+    state:
+      rating: 50
+  - id: lovecraft-jazz-age-skills-appraise
+    item: lovecraft-jazz-age:skills.appraise
+    state:
+      rating: 40
+  - id: lovecraft-jazz-age-skills-athletics
+    item: lovecraft-jazz-age:skills.athletics
+    state:
+      rating: 50
+  - id: lovecraft-jazz-age-skills-insight
+    item: lovecraft-jazz-age:skills.insight
+    state:
+      rating: 40
+  - id: lovecraft-jazz-age-skills-search
+    item: lovecraft-jazz-age:skills.search
+    state:
+      rating: 50
+  - id: lovecraft-jazz-age-skills-stealth
+    item: lovecraft-jazz-age:skills.stealth
+    state:
+      rating: 80
+  - id: lovecraft-jazz-age-skills-streetwise
+    item: lovecraft-jazz-age:skills.streetwise
+    state:
+      rating: 60
+  - id: bonds-bond-1
+    item: lovecraft-jazz-age:bonds.bond
+    state:
+      score: 9
+  - id: bonds-bond-2
+    item: lovecraft-jazz-age:bonds.bond
+    state:
+      score: 9
+  - id: bonds-bond-3
+    item: lovecraft-jazz-age:bonds.bond
+    state:
+      score: 9
+  - id: bonds-bond-4
+    item: lovecraft-jazz-age:bonds.bond
+    state:
+      score: 9
+  - id: lovecraft-jazz-age-skills-harangue
+    item: lovecraft-jazz-age:skills.harangue
+    state:
+      rating: 50
+  - id: lovecraft-jazz-age-skills-unarmed-combat
+    item: lovecraft-jazz-age:skills.unarmed-combat
+    state:
+      rating: 60
+  - id: lovecraft-jazz-age-skills-craft
+    item: lovecraft-jazz-age:skills.craft
+    state:
+      rating: 40
+  - id: lovecraft-jazz-age-skills-anthropology
+    item: lovecraft-jazz-age:skills.anthropology
+    state:
+      rating: 40
+  - id: lovecraft-jazz-age-skills-first-aid
+    item: lovecraft-jazz-age:skills.first-aid
+    state:
+      rating: 30
+  - id: lovecraft-jazz-age-skills-research
+    item: lovecraft-jazz-age:skills.research
+    state:
+      rating: 30
+  - id: lovecraft-jazz-age-skills-dodge
+    item: lovecraft-jazz-age:skills.dodge
+    state:
+      rating: 50
+  - id: lovecraft-jazz-age-skills-archeology
+    item: lovecraft-jazz-age:skills.archeology
+    state:
+      rating: 20
+  - id: lovecraft-jazz-age-skills-firearms
+    item: lovecraft-jazz-age:skills.firearms
+    state:
+      rating: 40
+  - id: lovecraft-jazz-age-skills-heavy-machinery
+    item: lovecraft-jazz-age:skills.heavy-machinery
+    state:
+      rating: 30
+inventory:
+  - id: pistol
+    item: lovecraft-jazz-age:weapons.medium-pistol
+    equipped: true
+  - id: coat
+    item: lovecraft-jazz-age:armor.trench-coat
+    equipped: true

@@ -1,0 +1,27 @@
+# Archetypes (2.5): what the Protagonist does for a living. Each sets a kit of skill ratings
+# (replacing the base ratings), lets the player choose a few more from a list, and gives the
+# starting Resources rating and the number of Bonds. Recommended stats are advice (10 or higher).
+# The archetype is a copy on the character.
+contentTypes:
+  archetype:
+    fields:
+      recommended: { type: list, of: string, default: [] }
+      # Its skills and their ratings, in step.
+      skills: { type: list, of: skill, default: [] }
+      ratings: { type: list, of: integer, default: [] }
+      # Their standard copies' IDs, in step.
+      entries: { type: list, of: string, default: [] }
+      # The skills to choose from ("Choose any N of these that you don't already have"), their
+      # ratings, in step, and how many.
+      options: { type: list, of: skill, default: [] }
+      optionRatings: { type: list, of: integer, default: [] }
+      choose: { type: integer, default: 0, min: 0 }
+      resources: { type: integer, default: 0, min: 0 }
+      bonds: { type: integer, default: 0, min: 0 }
+      bondSlots: { type: list, of: integer, default: [] }
+
+constraints:
+  # One archetype at most.
+  - id: one-archetype
+    check: "countCopies(copy.type == 'archetype') <= 1"
+    data: {}

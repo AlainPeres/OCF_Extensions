@@ -1,0 +1,56 @@
+id: archetypes.criminal
+type: archetype
+fields:
+  recommended:
+    - stats.str
+    - stats.dex
+  skills:
+    - skills.alertness
+    - skills.appraise
+    - skills.athletics
+    - skills.insight
+    - skills.search
+    - skills.stealth
+    - skills.streetwise
+  ratings:
+    - 50
+    - 40
+    - 50
+    - 40
+    - 50
+    - 60
+    - 40
+  entries:
+    - lovecraft-jazz-age-skills-alertness
+    - lovecraft-jazz-age-skills-appraise
+    - lovecraft-jazz-age-skills-athletics
+    - lovecraft-jazz-age-skills-insight
+    - lovecraft-jazz-age-skills-search
+    - lovecraft-jazz-age-skills-stealth
+    - lovecraft-jazz-age-skills-streetwise
+  options:
+    - skills.craft
+    - skills.disguise
+    - skills.firearms
+    - skills.harangue
+    - skills.law
+    - skills.melee-weapons
+    - skills.unarmed-combat
+    - skills.use-gadgets
+  optionRatings:
+    - 40
+    - 50
+    - 60
+    - 50
+    - 40
+    - 70
+    - 60
+    - 40
+  choose: 3
+  resources: 5
+  bonds: 4
+  bondSlots:
+    - 1
+    - 2
+    - 3
+    - 4

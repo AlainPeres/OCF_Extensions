@@ -1,0 +1,4 @@
+id: skills.stealth
+type: skill
+fields:
+  base: 10

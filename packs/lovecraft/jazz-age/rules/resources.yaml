@@ -1,0 +1,13 @@
+# Resources (2.7): a rating from 0 to 20 or more, the Archetype's to start with. At most 6 points
+# are at hand, 6 more stowed (a vehicle, an animal), the rest in storage; the check boxes are the
+# times per adventure the pool yields something (1 up to 6, 2 up to 12, 3 above).
+fields:
+  resources.rating: { type: integer, input: true, default: 0, min: 0 }
+  resources.atHand: { type: integer, formula: 'min(resources.rating, 6)' }
+  resources.stowed: { type: integer, formula: 'min(max(resources.rating - 6, 0), 6)' }
+  resources.storage: { type: integer, formula: 'max(resources.rating - 12, 0)' }
+  resources.checks:
+    type: integer
+    formula: 'resources.rating == 0 ? 0 : resources.rating <= 6 ? 1 : resources.rating <= 12 ? 2 : 3'
+  # Checks used this adventure (the boxes ticked); a new adventure clears them.
+  resources.used: { type: integer, input: true, default: 0, min: 0 }

@@ -1,0 +1,4 @@
+id: skills.natural-world
+type: skill
+fields:
+  base: 10

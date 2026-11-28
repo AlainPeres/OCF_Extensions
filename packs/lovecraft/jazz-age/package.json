@@ -1,0 +1,62 @@
+{
+  "name": "@opencharacter/lovecraft-jazz-age",
+  "version": "0.1.0",
+  "description": "Open Character Format model of Lovecraftian investigations in the Jazz Age (an OGL System Reference Document): statistics, derived attributes, skills, archetypes, resources, bonds, tests, combat and sanity.",
+  "keywords": [
+    "character-sheet",
+    "content-pack",
+    "lovecraftian",
+    "ocf",
+    "open-character-format",
+    "rpg",
+    "tabletop",
+    "ttrpg"
+  ],
+  "homepage": "https://opencharacterformat.org",
+  "bugs": {
+    "url": "https://github.com/pixelqueue/opencharacter/issues"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixelqueue/opencharacter.git",
+    "directory": "packs/lovecraft/jazz-age"
+  },
+  "files": [
+    "dist",
+    "pack.yaml",
+    "rules",
+    "content",
+    "i18n",
+    "upgrades",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/release.json"
+    },
+    "./release.json": "./dist/release.json",
+    "./i18n/*": {
+      "types": "./dist/i18n/*.d.ts",
+      "import": "./dist/i18n/*.js",
+      "default": "./dist/i18n/*.json"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "node -e \"for(const f of ['dist/index.js','dist/release.json'])require('node:fs').existsSync(f)||(console.error('Missing '+f+': run pnpm build from the repo root first'),process.exit(1))\""
+  },
+  "devDependencies": {
+    "@opencharacter/engine": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

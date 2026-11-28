@@ -1,0 +1,112 @@
+# Combat (section 4): an attack is a skill test with the weapon's skill (a critical hit doubles the
+# damage). Damage is the weapon's dice, plus the damage bonus for unarmed and hand-to-hand attacks
+# (never below 0). A weapon with a Lethality rating instead kills a human target outright when a
+# 1D100 roll is under it; otherwise its two dice add up as damage (a critical doubles the rating and
+# that damage). Armor reduces damage by its rating, less the weapon's armor piercing; the best
+# armor worn counts. At 2 HP or fewer the Protagonist falls unconscious, at 0 dies.
+fields:
+  armor.worn: { type: integer, formula: '0' }
+
+contentTypes:
+  weapon:
+    carried: true
+    equippable: true
+    fields:
+      skill: { type: id, of: skill, required: true }
+      damage: { type: dice }
+      lethality: { type: integer, min: 0 }
+      # Adds the damage bonus (hand-to-hand and thrown weapons, the "*" of the tables).
+      damageBonus: { type: boolean, default: false }
+      armorPiercing: { type: integer, default: 0, min: 0 }
+    actions:
+      - use: attack
+        params:
+          skill: item.skill
+      - use: damage
+        params:
+          dice: 'has(item.damage) ? item.damage : 1d4'
+          lethality: 'has(item.lethality) ? item.lethality : 0'
+          bonus: item.damageBonus
+  armor:
+    carried: true
+    equippable: true
+    fields:
+      armor: { type: integer, required: true, min: 0 }
+    effectsWhen: self.equipped
+    effects:
+      - { id: armor, target: armor.worn, op: atLeast, value: item.armor }
+
+actions:
+  # An attack: the weapon's skill, the difficulty from the combat modifiers.
+  - id: attack
+    tags: [combat]
+    params:
+      skill: { type: id, of: skill }
+      difficulty:
+        { type: enum, values: [very-easy, easy, normal, hard, very-hard], default: normal }
+    results: { bands: test }
+    steps:
+      - id: roll
+        kind: action
+        use: percentile-test
+        params:
+          chance: 'maxCopies(copy.state.rating, copy.item == params.skill)'
+          difficulty: params.difficulty
+      - id: result
+        kind: outcome
+        result: steps.roll.result
+
+  # The damage of a hit: dice (+ damage bonus) or a Lethality roll; doubled by a critical hit.
+  - id: damage
+    tags: [combat]
+    params:
+      dice: { type: dice }
+      lethality: { type: integer, default: 0, min: 0 }
+      bonus: { type: boolean, default: false }
+      critical: { type: boolean, default: false }
+    results: [damage, lethal]
+    steps:
+      - id: lethal
+        kind: roll
+        when: params.lethality > 0
+        parts: [{ dice: 1d100 }]
+      - id: dice
+        kind: roll
+        when: params.lethality == 0
+        parts: [{ dice: params.dice }]
+      - id: killed
+        kind: outcome
+        when: 'params.lethality > 0 && steps.lethal.total <= params.lethality * (params.critical ? 2 : 1)'
+        result: "'lethal'"
+      - id: result
+        kind: outcome
+        result: "'damage'"
+        data:
+          damage: >-
+            (params.lethality > 0
+              ? floor(steps.lethal.total / 10) % 10 + steps.lethal.total % 10 + (steps.lethal.total == 100 ? 10 : 0)
+              : max(0, steps.dice.total + (params.bonus ? damage.bonus : 0)))
+            * (params.critical ? 2 : 1)
+
+  # Damage taken: less the armor worn (its rating less the armor piercing), unless it ignores
+  # armor; a lethal hit drops the Protagonist to 0 HP.
+  - id: take-damage
+    tags: [combat, health]
+    params:
+      amount: { type: integer, min: 0 }
+      armorPiercing: { type: integer, default: 0, min: 0 }
+      ignoreArmor: { type: boolean, default: false }
+      lethal: { type: boolean, default: false }
+    results: [taken]
+    steps:
+      - id: take
+        kind: changes
+        changes:
+          - type: adjust
+            field: hp.damage
+            by: >-
+              params.lethal ? hp.current
+                : max(0, params.amount - (params.ignoreArmor ? 0 : max(0, armor.worn - params.armorPiercing)))
+      - id: result
+        kind: outcome
+        result: "'taken'"

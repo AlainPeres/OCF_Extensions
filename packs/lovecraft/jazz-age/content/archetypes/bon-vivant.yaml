@@ -1,0 +1,49 @@
+id: archetypes.bon-vivant
+type: archetype
+fields:
+  recommended:
+    - stats.pow
+    - stats.cha
+  skills:
+    - skills.anthropology
+    - skills.insight
+    - skills.occult
+    - skills.persuade
+    - skills.research
+    - skills.social-etiquette
+  ratings:
+    - 30
+    - 50
+    - 70
+    - 40
+    - 40
+    - 60
+  entries:
+    - lovecraft-jazz-age-skills-anthropology
+    - lovecraft-jazz-age-skills-insight
+    - lovecraft-jazz-age-skills-occult
+    - lovecraft-jazz-age-skills-persuade
+    - lovecraft-jazz-age-skills-research
+    - lovecraft-jazz-age-skills-social-etiquette
+  options:
+    - skills.art
+    - skills.charm
+    - skills.foreign-language
+    - skills.history
+    - skills.psychoanalyze
+    - skills.regional-lore
+  optionRatings:
+    - 40
+    - 60
+    - 40
+    - 50
+    - 50
+    - 40
+  choose: 3
+  resources: 5
+  bonds: 4
+  bondSlots:
+    - 1
+    - 2
+    - 3
+    - 4

@@ -1,0 +1,53 @@
+id: archetypes.doctor
+type: archetype
+fields:
+  recommended:
+    - stats.int
+  skills:
+    - skills.administration
+    - skills.charm
+    - skills.first-aid
+    - skills.insight
+    - skills.medicine
+    - skills.search
+    - skills.social-etiquette
+    - skills.surgery
+  ratings:
+    - 30
+    - 60
+    - 50
+    - 50
+    - 50
+    - 60
+    - 50
+    - 50
+  entries:
+    - lovecraft-jazz-age-skills-administration
+    - lovecraft-jazz-age-skills-charm
+    - lovecraft-jazz-age-skills-first-aid
+    - lovecraft-jazz-age-skills-insight
+    - lovecraft-jazz-age-skills-medicine
+    - lovecraft-jazz-age-skills-search
+    - lovecraft-jazz-age-skills-social-etiquette
+    - lovecraft-jazz-age-skills-surgery
+  options:
+    - skills.foreign-language
+    - skills.military-training
+    - skills.psychoanalyze
+    - skills.research
+    - skills.science
+    - skills.use-gadgets
+  optionRatings:
+    - 40
+    - 40
+    - 50
+    - 50
+    - 40
+    - 40
+  choose: 2
+  resources: 5
+  bonds: 3
+  bondSlots:
+    - 1
+    - 2
+    - 3

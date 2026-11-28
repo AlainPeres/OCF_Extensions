@@ -1,0 +1,58 @@
+id: archetypes.professor
+type: archetype
+fields:
+  recommended:
+    - stats.int
+    - stats.pow
+  skills:
+    - skills.administration
+    - skills.insight
+    - skills.persuade
+    - skills.research
+    - skills.search
+    - skills.social-etiquette
+    - skills.use-gadgets
+  ratings:
+    - 40
+    - 60
+    - 60
+    - 70
+    - 60
+    - 50
+    - 40
+  entries:
+    - lovecraft-jazz-age-skills-administration
+    - lovecraft-jazz-age-skills-insight
+    - lovecraft-jazz-age-skills-persuade
+    - lovecraft-jazz-age-skills-research
+    - lovecraft-jazz-age-skills-search
+    - lovecraft-jazz-age-skills-social-etiquette
+    - lovecraft-jazz-age-skills-use-gadgets
+  options:
+    - skills.anthropology
+    - skills.archeology
+    - skills.art
+    - skills.foreign-language
+    - skills.history
+    - skills.law
+    - skills.medicine
+    - skills.occult
+    - skills.regional-lore
+    - skills.science
+  optionRatings:
+    - 40
+    - 40
+    - 40
+    - 40
+    - 50
+    - 40
+    - 40
+    - 50
+    - 40
+    - 40
+  choose: 5
+  resources: 4
+  bonds: 2
+  bondSlots:
+    - 1
+    - 2

@@ -1,0 +1,5 @@
+id: weapons.dynamite-stick
+type: weapon
+fields:
+  skill: skills.military-training
+  lethality: 15

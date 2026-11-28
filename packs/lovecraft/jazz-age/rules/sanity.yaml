@@ -1,0 +1,73 @@
+# Sanity (section 7): a SAN test rolls under current SAN; success loses the first amount ("0/1D4"),
+# failure the second. A critical success loses the least possible, a fumble the most. Reaching the
+# Breaking Point gives a disorder and resets it to SAN − POW; at 0 SAN the Protagonist is
+# irretrievably insane. SAN never rises above its Maximum (99 − Unnatural).
+actions:
+  - id: sanity-test
+    tags: [sanity]
+    params:
+      # The loss on a success and on a failure: dice, or 0 (as "0/1D4").
+      success: { type: dice, default: 0 }
+      failure: { type: dice, default: 1d4 }
+    results: [kept, lost, disorder, insane]
+    steps:
+      - id: test
+        kind: action
+        use: percentile-test
+        params:
+          chance: san.current
+      - id: passed
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              passed: "steps.test.result == 'critical' || steps.test.result == 'success'"
+      - id: lossRoll
+        kind: roll
+        parts: [{ dice: 'flags.passed ? params.success : params.failure' }]
+      - id: loss
+        kind: branch
+        cases:
+          - when: true
+            flags:
+              loss: >-
+                min(san.current, steps.test.result == 'critical' ? minOf(params.success)
+                  : steps.test.result == 'fumble' ? maxOf(params.failure) : steps.lossRoll.total)
+      - id: lose
+        kind: changes
+        sheet: proposed
+        changes:
+          - { type: adjust, field: san.current, by: -flags.loss }
+      - id: breaking
+        kind: changes
+        when: 'flags.loss > 0 && san.current - flags.loss <= san.breaking && san.current - flags.loss > 0'
+        changes:
+          - { type: adjust, field: san.disorders, by: 1 }
+          - {
+              type: set,
+              field: san.breaking,
+              value: 'max(0, san.current - flags.loss - stats.pow)',
+            }
+      - id: result
+        kind: outcome
+        result: >-
+          san.current - flags.loss <= 0 ? 'insane'
+            : flags.loss > 0 && san.current - flags.loss <= san.breaking ? 'disorder'
+            : flags.loss > 0 ? 'lost' : 'kept'
+        data:
+          loss: flags.loss
+
+  # SAN regained (mundane help, defeating an unnatural threat…): never above the Maximum.
+  - id: regain-sanity
+    tags: [sanity]
+    params:
+      amount: { type: integer, default: 1, min: 1 }
+    results: [regained]
+    steps:
+      - id: regain
+        kind: changes
+        changes:
+          - { type: set, field: san.current, value: 'min(san.max, san.current + params.amount)' }
+      - id: result
+        kind: outcome
+        result: "'regained'"

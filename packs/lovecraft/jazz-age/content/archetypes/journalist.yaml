@@ -1,0 +1,57 @@
+id: archetypes.journalist
+type: archetype
+fields:
+  recommended:
+    - stats.int
+    - stats.cha
+  skills:
+    - skills.alertness
+    - skills.art
+    - skills.insight
+    - skills.research
+    - skills.search
+    - skills.social-etiquette
+  ratings:
+    - 50
+    - 50
+    - 60
+    - 60
+    - 60
+    - 30
+  entries:
+    - lovecraft-jazz-age-skills-alertness
+    - lovecraft-jazz-age-skills-art
+    - lovecraft-jazz-age-skills-insight
+    - lovecraft-jazz-age-skills-research
+    - lovecraft-jazz-age-skills-search
+    - lovecraft-jazz-age-skills-social-etiquette
+  options:
+    - skills.administration
+    - skills.anthropology
+    - skills.archeology
+    - skills.foreign-language
+    - skills.history
+    - skills.law
+    - skills.occult
+    - skills.regional-lore
+    - skills.science
+    - skills.use-gadgets
+  optionRatings:
+    - 50
+    - 40
+    - 40
+    - 40
+    - 50
+    - 40
+    - 50
+    - 40
+    - 40
+    - 40
+  choose: 4
+  resources: 4
+  bonds: 4
+  bondSlots:
+    - 1
+    - 2
+    - 3
+    - 4

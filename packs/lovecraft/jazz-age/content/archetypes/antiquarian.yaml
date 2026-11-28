@@ -1,0 +1,50 @@
+id: archetypes.antiquarian
+type: archetype
+fields:
+  recommended:
+    - stats.int
+    - stats.cha
+  skills:
+    - skills.administration
+    - skills.appraise
+    - skills.history
+    - skills.research
+    - skills.persuade
+    - skills.search
+  ratings:
+    - 50
+    - 60
+    - 80
+    - 60
+    - 60
+    - 60
+  entries:
+    - lovecraft-jazz-age-skills-administration
+    - lovecraft-jazz-age-skills-appraise
+    - lovecraft-jazz-age-skills-history
+    - lovecraft-jazz-age-skills-research
+    - lovecraft-jazz-age-skills-persuade
+    - lovecraft-jazz-age-skills-search
+  options:
+    - skills.charm
+    - skills.craft
+    - skills.foreign-language
+    - skills.occult
+    - skills.regional-lore
+    - skills.streetwise
+    - skills.use-gadgets
+  optionRatings:
+    - 60
+    - 40
+    - 40
+    - 50
+    - 40
+    - 40
+    - 40
+  choose: 4
+  resources: 4
+  bonds: 3
+  bondSlots:
+    - 1
+    - 2
+    - 3

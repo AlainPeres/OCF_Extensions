@@ -1,0 +1,6 @@
+id: weapons.ww1-machinegun-mounted
+type: weapon
+fields:
+  skill: skills.heavy-machinery
+  lethality: 20
+  armorPiercing: 5

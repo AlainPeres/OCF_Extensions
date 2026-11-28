@@ -1,0 +1,4 @@
+id: skills.psychoanalyze
+type: skill
+fields:
+  base: 10

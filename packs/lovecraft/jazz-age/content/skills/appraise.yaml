@@ -1,0 +1,4 @@
+id: skills.appraise
+type: skill
+fields:
+  base: 10

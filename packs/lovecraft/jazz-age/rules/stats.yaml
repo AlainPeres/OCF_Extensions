@@ -1,0 +1,50 @@
+# Statistics and derived attributes (sections 2.3 and 2.4). Six stats, 3 to 18 (an average adult
+# 10), a Harsh upbringing adding to STR and CON; each stat's test is stat × 5. Hit Points are
+# (STR + CON) / 2 rounded up, Willpower Points POW, starting Sanity POW × 5 (× 4 after a Harsh or
+# Very Harsh upbringing), Breaking Point SAN − POW, Maximum SAN 99 − Unnatural, Recovery SAN POW × 5
+# (at most the Maximum). Damage taken, Willpower spent and current Sanity are kept on the sheet.
+fields:
+  stats.str: { type: integer, input: true, default: 10, min: 1, max: 30, tags: [stat] }
+  stats.con: { type: integer, input: true, default: 10, min: 1, max: 30, tags: [stat] }
+  stats.dex: { type: integer, input: true, default: 10, min: 1, max: 30, tags: [stat] }
+  stats.int: { type: integer, input: true, default: 10, min: 1, max: 30, tags: [stat] }
+  stats.pow: { type: integer, input: true, default: 10, min: 1, max: 30, tags: [stat] }
+  stats.cha: { type: integer, input: true, default: 10, min: 1, max: 30, tags: [stat] }
+
+  # The upbringing's harshness (2.2.1): Normal(ish), Harsh or Very Harsh.
+  upbringing: { type: enum, values: [normal, harsh, very-harsh], input: true, default: normal }
+
+  # Hit Points: unconscious at 2 or fewer, dead at 0.
+  hp.max: { type: integer, formula: 'ceil((stats.str + stats.con) / 2)' }
+  hp.damage: { type: integer, input: true, default: 0, min: 0 }
+  hp.current: { type: integer, formula: 'max(0, hp.max - hp.damage)' }
+  # Willpower Points: a breakdown at 1 or 2 (−20% to every action), no control at 0.
+  wp.max: { type: integer, formula: stats.pow }
+  wp.spent: { type: integer, input: true, default: 0, min: 0 }
+  wp.current: { type: integer, formula: 'max(0, wp.max - wp.spent)' }
+  # Sanity Points: the current score, set at creation (POW × 5, or × 4 after a harsh upbringing).
+  san.current: { type: integer, input: true, default: 50, min: 0, max: 99 }
+  # The Breaking Point: reaching it gives a disorder, and it resets to SAN − POW.
+  san.breaking: { type: integer, input: true, default: 40, min: 0, max: 99 }
+  san.max: { type: integer, formula: '99 - unnatural.rating' }
+  san.recovery: { type: integer, formula: 'min(stats.pow * 5, san.max)' }
+  # Disorders gained (7.7): their names are text (identity.disorders).
+  san.disorders: { type: integer, input: true, default: 0, min: 0 }
+
+  # Damage bonus from STR (2.4): unarmed and hand-to-hand attacks.
+  damage.bonus:
+    type: integer
+    formula: 'stats.str <= 4 ? -2 : stats.str <= 8 ? -1 : stats.str <= 12 ? 0 : stats.str <= 16 ? 1 : 2'
+  # The Unnatural skill's rating, for Maximum SAN.
+  unnatural.rating:
+    type: integer
+    formula: 'maxCopies(copy.state.rating, copy.item == @skills.unnatural)'
+
+  # States.
+  state.unconscious: { type: boolean, formula: 'hp.current <= 2' }
+  state.dead: { type: boolean, formula: 'hp.current <= 0' }
+  state.breakdown: { type: boolean, formula: 'wp.current <= 2' }
+  state.collapse: { type: boolean, formula: 'wp.current <= 0' }
+  state.insane: { type: boolean, formula: 'san.current <= 0' }
+  # The Breaking Point reached: a disorder to give (the sanity actions do).
+  state.disorderDue: { type: boolean, formula: 'san.current <= san.breaking && san.current > 0' }

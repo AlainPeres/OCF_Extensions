@@ -1,0 +1,6 @@
+id: weapons.large-sword
+type: weapon
+fields:
+  skill: skills.melee-weapons
+  damage: 2d6
+  damageBonus: true

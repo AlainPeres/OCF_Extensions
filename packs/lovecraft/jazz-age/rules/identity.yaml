@@ -1,0 +1,14 @@
+# Final details (2.2.9): free text the player writes.
+fields:
+  identity.name: { type: string, input: true, default: '' }
+  identity.age: { type: string, input: true, default: '' }
+  identity.sex: { type: string, input: true, default: '' }
+  identity.birthplace: { type: string, input: true, default: '' }
+  identity.home: { type: string, input: true, default: '' }
+  identity.appearance: { type: string, input: true, default: '' }
+  # Up to five motivations that are not Bonds; a new disorder replaces one.
+  identity.motivations: { type: string, input: true, default: '' }
+  # The disorders gained, by name (their number is san.disorders).
+  identity.disorders: { type: string, input: true, default: '' }
+  # Named equipment beyond the Resources rating, one per line.
+  identity.equipment: { type: string, input: true, default: '' }

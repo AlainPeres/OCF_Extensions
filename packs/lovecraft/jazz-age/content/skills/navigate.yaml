@@ -1,0 +1,4 @@
+id: skills.navigate
+type: skill
+fields:
+  base: 10

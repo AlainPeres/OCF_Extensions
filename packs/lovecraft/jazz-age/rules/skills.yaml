@@ -1,0 +1,72 @@
+# Skills (2.10): a rating from 0% to 99%, starting at the skill's base rating; at 0% a skill can't
+# be used. Every skill is a standard copy, on every sheet at its base: a typed skill ("Science
+# (Type)") has one copy with a specialty, and another specialty is another copy (learn-specialty).
+# The Archetype sets ratings, adversity and bonus picks add 20 each; no skill above 80% at
+# creation, and Unnatural never through picks.
+contentTypes:
+  skill:
+    fields:
+      base: { type: integer, required: true, min: 0, max: 99 }
+      # Taken with a specialty: Art, Craft, Foreign Language, Law, Military Training, Pilot,
+      # Regional Lore, Science, Streetwise, Survival.
+      typed: { type: boolean, default: false }
+      # One of the four adversity skills (2.6): First Aid, Military Training, Regional Lore,
+      # Survival.
+      adversity: { type: boolean, default: false }
+    state:
+      rating: { type: integer, default: item.base, min: 0, max: 99 }
+      specialty: { type: string, default: '' }
+    computed:
+      total: { type: integer, formula: self.rating }
+    actions:
+      - use: skill-test
+        available: self.rating > 0
+        params:
+          score: self.rating
+      - use: name-specialty
+        available: item.typed
+
+standardCopies:
+  - { type: skill }
+
+constraints:
+  # No skill above 80% at creation (2.9), Unnatural aside (the GM's).
+  - id: creation-skill-limit
+    copies: { type: skill }
+    check: '!character.creating || self.rating <= 80 || item.id == @skills.unnatural'
+    data: {}
+
+actions:
+  # A typed skill's specialty (its copy's): the language, the science, the region…
+  - id: name-specialty
+    tags: [skill]
+    params:
+      specialty: { type: string }
+    results: [named]
+    steps:
+      - id: name
+        kind: changes
+        changes:
+          - { type: setState, entry: self, key: specialty, value: params.specialty }
+      - id: result
+        kind: outcome
+        result: "'named'"
+
+  # Another specialty of a typed skill (a second language…): a new copy at the base rating.
+  - id: learn-specialty
+    tags: [skill]
+    params:
+      skill: { type: id, of: skill, where: item.typed }
+      specialty: { type: string }
+    results: [learned]
+    steps:
+      - id: add
+        kind: changes
+        changes:
+          - type: addItem
+            entry:
+              item: params.skill
+              state: { specialty: params.specialty }
+      - id: result
+        kind: outcome
+        result: "'learned'"

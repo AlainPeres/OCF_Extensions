@@ -1,0 +1,4 @@
+id: skills.charm
+type: skill
+fields:
+  base: 20

@@ -1,0 +1,4 @@
+id: skills.research
+type: skill
+fields:
+  base: 10

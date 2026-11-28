@@ -1,0 +1,5 @@
+id: weapons.shotgun-blast
+type: weapon
+fields:
+  skill: skills.firearms
+  damage: 2d10

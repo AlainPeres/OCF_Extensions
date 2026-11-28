@@ -1,0 +1,54 @@
+id: archetypes.artist
+type: archetype
+fields:
+  recommended:
+    - stats.dex
+  skills:
+    - skills.appraise
+    - skills.art
+    - skills.art
+    - skills.insight
+    - skills.search
+    - skills.streetwise
+    - skills.social-etiquette
+  ratings:
+    - 40
+    - 60
+    - 40
+    - 60
+    - 60
+    - 30
+    - 50
+  entries:
+    - lovecraft-jazz-age-skills-appraise
+    - lovecraft-jazz-age-skills-art
+    - lovecraft-jazz-age-skills-art
+    - lovecraft-jazz-age-skills-insight
+    - lovecraft-jazz-age-skills-search
+    - lovecraft-jazz-age-skills-streetwise
+    - lovecraft-jazz-age-skills-social-etiquette
+  options:
+    - skills.administration
+    - skills.alertness
+    - skills.anthropology
+    - skills.athletics
+    - skills.harangue
+    - skills.heavy-machinery
+    - skills.natural-world
+    - skills.use-gadgets
+  optionRatings:
+    - 50
+    - 60
+    - 40
+    - 70
+    - 50
+    - 50
+    - 50
+    - 40
+  choose: 4
+  resources: 4
+  bonds: 3
+  bondSlots:
+    - 1
+    - 2
+    - 3

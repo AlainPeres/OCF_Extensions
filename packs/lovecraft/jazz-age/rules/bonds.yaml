@@ -1,0 +1,64 @@
+# Bonds (2.8): the people and communities the Protagonist fights to protect, as many as the
+# Archetype says. An Individual Bond starts at CHA and never goes above it; a Community Bond starts
+# at half the Resources rating (at most 20). A Bond at 0 is broken. Each Bond is a copy: its name
+# (who or which community), its kind and its score.
+contentTypes:
+  bond:
+    state:
+      name: { type: string, default: '' }
+      community: { type: boolean, default: false }
+      score: { type: integer, default: 0, min: 0 }
+    computed:
+      broken: { type: boolean, formula: 'self.score <= 0' }
+    actions:
+      - use: name-bond
+      - use: adjust-bond
+
+constraints:
+  # An Individual Bond never above CHA, a Community Bond never above 20.
+  - id: bond-limit
+    copies: { type: bond }
+    check: 'self.community ? self.score <= 20 : self.score <= stats.cha'
+    data: {}
+
+actions:
+  # Who or which community the Bond is, and its kind: an Individual Bond's score is CHA, a
+  # Community Bond's half the Resources rating, when the Bond is named during creation.
+  - id: name-bond
+    tags: [bond]
+    params:
+      name: { type: string }
+      community: { type: boolean, default: false }
+    results: [named]
+    steps:
+      - id: name
+        kind: changes
+        changes:
+          - { type: setState, entry: self, key: name, value: params.name }
+          - { type: setState, entry: self, key: community, value: params.community }
+          - type: setState
+            when: character.creating
+            entry: self
+            key: score
+            value: 'params.community ? floor(resources.rating / 2) : stats.cha'
+      - id: result
+        kind: outcome
+        result: "'named'"
+
+  # A Bond's score changes (damage from projecting SAN loss, cultivation in downtime…).
+  - id: adjust-bond
+    tags: [bond]
+    params:
+      change: { type: integer }
+    results: [adjusted]
+    steps:
+      - id: adjust
+        kind: changes
+        changes:
+          - type: setState
+            entry: self
+            key: score
+            value: 'max(0, self.score + params.change)'
+      - id: result
+        kind: outcome
+        result: "'adjusted'"

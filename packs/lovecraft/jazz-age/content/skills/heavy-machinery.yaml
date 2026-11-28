@@ -1,0 +1,4 @@
+id: skills.heavy-machinery
+type: skill
+fields:
+  base: 10

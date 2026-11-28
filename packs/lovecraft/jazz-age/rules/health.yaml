@@ -1,0 +1,75 @@
+# Healing (4.4.1) and Willpower (3.7). One sheet never acts on another: the patient records what a
+# healer's test did. First aid stabilizes: 1D4 HP (doubled on a critical; a fumble inflicts 1D4).
+# Treatment by a doctor, once a week: 1D4 HP (the same). Recuperation: a CON×5 test a day of rest
+# recovers 1 HP (2 on a critical). Willpower is spent to resist, and regained with rest.
+actions:
+  - id: healing-received
+    tags: [health]
+    params:
+      kind: { type: enum, values: [first-aid, treatment], default: first-aid }
+      result: { type: enum, values: [critical, success, fumble], default: success }
+    results: [healed, hurt]
+    steps:
+      - id: dice
+        kind: roll
+        parts: [{ dice: 1d4 }]
+      - id: heal
+        kind: changes
+        changes:
+          - type: adjust
+            field: hp.damage
+            by: >-
+              params.result == 'fumble' ? steps.dice.total
+                : -min(hp.damage, steps.dice.total * (params.result == 'critical' ? 2 : 1))
+      - id: result
+        kind: outcome
+        result: "params.result == 'fumble' ? 'hurt' : 'healed'"
+
+  - id: recuperate
+    tags: [health]
+    results: [recovered, rested]
+    steps:
+      - id: test
+        kind: action
+        use: percentile-test
+        params:
+          chance: stats.con * 5
+      - id: heal
+        kind: changes
+        when: "steps.test.result == 'critical' || steps.test.result == 'success'"
+        changes:
+          - type: adjust
+            field: hp.damage
+            by: "-min(hp.damage, steps.test.result == 'critical' ? 2 : 1)"
+      - id: result
+        kind: outcome
+        result: "steps.test.result == 'critical' || steps.test.result == 'success' ? 'recovered' : 'rested'"
+
+  # Willpower spent (resisting persuasion or a disorder, exhaustion, fuelling the unnatural), or
+  # regained with rest.
+  - id: spend-willpower
+    tags: [health]
+    params:
+      amount: { type: integer, default: 1, min: 1 }
+    results: [spent]
+    steps:
+      - id: spend
+        kind: changes
+        changes:
+          - { type: adjust, field: wp.spent, by: 'min(params.amount, wp.current)' }
+      - id: result
+        kind: outcome
+        result: "'spent'"
+  - id: regain-willpower
+    tags: [health]
+    params:
+      amount: { type: integer, default: 1, min: 1 }
+    results: [regained]
+    steps:
+      - id: regain
+        kind: changes
+        changes:
+          - { type: adjust, field: wp.spent, by: '-min(params.amount, wp.spent)' }
+      - id: result
+        kind: outcome
+        result: "'regained'"

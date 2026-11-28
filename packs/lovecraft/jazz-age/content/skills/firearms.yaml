@@ -1,0 +1,4 @@
+id: skills.firearms
+type: skill
+fields:
+  base: 20

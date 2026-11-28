@@ -1,0 +1,6 @@
+id: weapons.thompson-sub-machine-gun
+type: weapon
+fields:
+  skill: skills.firearms
+  lethality: 15
+  armorPiercing: 5

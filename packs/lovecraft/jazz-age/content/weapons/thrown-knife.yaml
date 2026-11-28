@@ -1,0 +1,6 @@
+id: weapons.thrown-knife
+type: weapon
+fields:
+  skill: skills.athletics
+  damage: 1d4
+  damageBonus: true
