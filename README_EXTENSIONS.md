@@ -382,19 +382,21 @@ They print their result and end; no server.
 | `check-links.ts <folder> [--all]`   | Before deleting a folder: where its links point ([Deleting a folder that holds junctions](#deleting-a-folder-that-holds-junctions)) |
 | `sagas/bestiary-import.mjs`         | The SagaS bestiary into the pack: creatures, their attacks, species                                                                 |
 | `sagas/bestiary-import.mjs --check` | Each creature through the creature start, against the bestiary                                                                      |
+| `Eternal_C_Jazz/srd-import.mjs`     | The Jazz Age SRD into the pack: skills, archetypes, weapons, armor                                                                  |
 
 ```sh
 node --import tsx --conditions @opencharacter/source scripts/extensions/validate-pack.ts sagas-core d100-heroic
 node --import tsx scripts/extensions/check-links.ts D:\Developpement\FichiersTypescript\OCF_Test
 node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/bestiary-import.mjs
 node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/bestiary-import.mjs --check
+node scripts/extensions/Eternal_C_Jazz/srd-import.mjs
 ```
 
 ### From VS Code
 
 Three ways, all from the repo folder opened in VS Code:
 
-- **F5**: open the tool's `.ts` file (`sagas.ts`, `d100.ts`, `universal.ts`, `validate-pack.ts`…)
+- **F5**: open the tool's `.ts` file (`sagas.ts`, `jazz.ts`, `d100.ts`, `universal.ts`, `validate-pack.ts`…)
   and press F5. The launch configuration "Exécuter le fichier TS courant (tsx)" runs the open file
   with the command above, in the integrated terminal, and stops at breakpoints. Shift+F5 stops it.
   It runs without arguments: for `validate-pack.ts`, `check-links.ts` or `--port`, use the
