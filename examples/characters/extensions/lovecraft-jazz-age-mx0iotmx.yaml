@@ -1,0 +1,78 @@
+specVersion: 0.4.0
+id: lovecraft-jazz-age-mx0iotmx
+packs:
+  - id: lovecraft-jazz-age
+    version: 0.1.0
+creating: true
+values:
+  lovecraft-jazz-age:upbringing: normal
+  lovecraft-jazz-age:stats.str: 6
+  lovecraft-jazz-age:stats.con: 10
+  lovecraft-jazz-age:stats.dex: 12
+  lovecraft-jazz-age:stats.int: 14
+  lovecraft-jazz-age:stats.pow: 12
+  lovecraft-jazz-age:stats.cha: 9
+  lovecraft-jazz-age:san.current: 60
+  lovecraft-jazz-age:san.breaking: 48
+  lovecraft-jazz-age:resources.rating: 5
+  lovecraft-jazz-age:identity.name: aaron volbis
+  lovecraft-jazz-age:identity.age: "50"
+  lovecraft-jazz-age:identity.sex: male
+  lovecraft-jazz-age:identity.birthplace: new york
+  lovecraft-jazz-age:identity.appearance: bald
+  lovecraft-jazz-age:identity.motivations: science forever
+features:
+  - id: archetypes-scientist-1
+    item: lovecraft-jazz-age:archetypes.scientist
+  - id: lovecraft-jazz-age-skills-craft
+    item: lovecraft-jazz-age:skills.craft
+    state:
+      rating: 70
+  - id: lovecraft-jazz-age-skills-law
+    item: lovecraft-jazz-age:skills.law
+    state:
+      rating: 20
+  - id: lovecraft-jazz-age-skills-research
+    item: lovecraft-jazz-age:skills.research
+    state:
+      rating: 80
+  - id: lovecraft-jazz-age-skills-science
+    item: lovecraft-jazz-age:skills.science
+    state:
+      rating: 80
+  - id: lovecraft-jazz-age-skills-search
+    item: lovecraft-jazz-age:skills.search
+    state:
+      rating: 80
+  - id: lovecraft-jazz-age-skills-social-etiquette
+    item: lovecraft-jazz-age:skills.social-etiquette
+    state:
+      rating: 30
+  - id: lovecraft-jazz-age-skills-use-gadgets
+    item: lovecraft-jazz-age:skills.use-gadgets
+    state:
+      rating: 70
+  - id: bonds-bond-1
+    item: lovecraft-jazz-age:bonds.bond
+    state:
+      score: 9
+  - id: bonds-bond-2
+    item: lovecraft-jazz-age:bonds.bond
+    state:
+      score: 9
+  - id: lovecraft-jazz-age-skills-firearms
+    item: lovecraft-jazz-age:skills.firearms
+    state:
+      rating: 80
+  - id: lovecraft-jazz-age-skills-heavy-machinery
+    item: lovecraft-jazz-age:skills.heavy-machinery
+    state:
+      rating: 70
+  - id: lovecraft-jazz-age-skills-psychoanalyze
+    item: lovecraft-jazz-age:skills.psychoanalyze
+    state:
+      rating: 70
+  - id: lovecraft-jazz-age-skills-anthropology
+    item: lovecraft-jazz-age:skills.anthropology
+    state:
+      rating: 80

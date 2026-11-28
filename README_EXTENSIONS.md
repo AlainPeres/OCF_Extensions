@@ -52,9 +52,9 @@ pnpm validate
 What you should get:
 
 - `pnpm install` ends with `Done in …`;
-- `pnpm validate` ends with `Validated 18 pack(s) […] 52 character file(s) and 1 export(s): 0
-  error(s), 0 warning(s)` (the 18 packs include `orc-2e` and `orc-sf-2e`; the 52 characters, OCF's
-  examples, the 19 ORC ones and our 5 in `extensions/`);
+- `pnpm validate` ends with `Validated 18 pack(s) […] 53 character file(s) and 1 export(s): 0
+  error(s), 0 warning(s)` (the 18 packs include `orc-2e` and `orc-sf-2e`; the 53 characters, OCF's
+  examples, the 19 ORC ones and our 6 in `extensions/`);
 - `git status` says `nothing to commit, working tree clean`.
 
 No sparse checkout and no `core.protectNTFS`: every file is on disk, and the universal tools read
@@ -107,7 +107,7 @@ Step by step:
    esbuild` is pnpm 10's default and harmless.
 7. **The two `rmdir`** remove the links pnpm makes to the missing ORC packs
    ([pnpm's links to the ORC packs](#pnpms-links-to-the-orc-packs)). They print nothing.
-8. **`pnpm validate`** takes a few seconds, then ends with `Validated 16 pack(s) […] 33 character
+8. **`pnpm validate`** takes a few seconds, then ends with `Validated 16 pack(s) […] 34 character
    file(s) and 1 export(s): 0 error(s), 0 warning(s)`.
 
 `git status` then says `nothing to commit, working tree clean`, with `You are in a sparse checkout
@@ -248,7 +248,7 @@ git status                             # nothing to commit, working tree clean, 
 pnpm install --frozen-lockfile
 cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-2e
 cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-sf-2e
-pnpm validate                          # Validated 16 pack(s) […] 33 character file(s) […] 0 error(s)
+pnpm validate                          # Validated 16 pack(s) […] 34 character file(s) […] 0 error(s)
 ```
 
 - The copied `.git` comes from Linux, without a sparse checkout, so git first sees the left-out
