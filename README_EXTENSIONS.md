@@ -120,7 +120,8 @@ never follows a link, and it is the fastest. A clone's links all point inside it
 `check-links.ts` confirms ([Deleting a folder that holds
 junctions](#deleting-a-folder-that-holds-junctions)).
 
-What works: the SagaS, Jazz Age and D100 heroic sheets, the universal sheet (which even loads the ORC packs,
+What works: the SagaS, Jazz Age and D100 heroic sheets, the universal sheet (which even loads the
+ORC packs,
 from git: [PF2 in the universal tools](#pf2-in-the-universal-tools)), `pnpm validate` on the 15
 packs on disk, `pnpm typecheck`, and merges from `upstream`. What doesn't: `pnpm validate` and `pnpm
 test` on the
@@ -396,7 +397,8 @@ node scripts/extensions/Eternal_C_Jazz/srd-import.mjs
 
 Three ways, all from the repo folder opened in VS Code:
 
-- **F5**: open the tool's `.ts` file (`sagas.ts`, `jazz.ts`, `d100.ts`, `universal.ts`, `validate-pack.ts`…)
+- **F5**: open the tool's `.ts` file (`sagas.ts`, `jazz.ts`, `d100.ts`, `universal.ts`,
+  `validate-pack.ts`…)
   and press F5. The launch configuration "Exécuter le fichier TS courant (tsx)" runs the open file
   with the command above, in the integrated terminal, and stops at breakpoints. Shift+F5 stops it.
   It runs without arguments: for `validate-pack.ts`, `check-links.ts` or `--port`, use the
@@ -408,7 +410,8 @@ Three ways, all from the repo folder opened in VS Code:
 
 Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
 without asking). The SagaS, Jazz Age and D100 heroic sheets list the characters of
-`examples/characters/` that use their pack. The universal sheet lists OCF's example characters (`examples/characters/`) and ours
+`examples/characters/` that use their pack. The universal sheet lists OCF's example characters
+(`examples/characters/`) and ours
 (`extensions/…`); a loaded character is saved back where it was, and a new one, or one saved under
 another name, goes to `extensions/`.
 
@@ -1064,7 +1067,8 @@ example weapons (20) and armor (3); and the Bond item. Run it again after changi
 node scripts/extensions/Eternal_C_Jazz/srd-import.mjs
 ```
 
-`examples/characters/extensions/jazz-test.yaml` is a Protagonist made by the random start.
+`examples/characters/extensions/jazz-test.yaml` is a Protagonist made by the random start;
+`lovecraft-jazz-age-mx0iotmx.yaml` one made in the sheet by the guided start, still being created.
 
 ### Not yet modelled
 
@@ -1093,7 +1097,8 @@ text (`@opencharacter/text`, `describeNeed`).
 Create; a loaded one in Create while it is being created, else in Play. The mode is the server
 session's (`/api/mode`): in Create, the pack's action groups are read as while creating, even once
 the character is finished (after a random start, or one loaded), so a pack that hides its actions
-of play while creating (SagaS, Jazz Age, D100 heroic) keeps them out of Create. A pack that doesn't (Fate, 5e,
+of play while creating (SagaS, Jazz Age, D100 heroic) keeps them out of Create. A pack that doesn't
+(Fate, 5e,
 Draw Steel…) shows them in both modes. The page also loads, saves (a loaded character back where
 it was, any other to `extensions/`) and shows the YAML.
 
@@ -1142,7 +1147,8 @@ it was, any other to `extensions/`) and shows the YAML.
   - **Offers**: the rules' follow-ups can be run or dismissed.
   - **Input fields** can be edited.
 
-  Tested on the 32 example characters on disk, and the 19 ORC ones read from git on Windows.
+  Tested on the example characters on disk (32 at the time), and the 19 ORC ones read from git on
+  Windows.
 
 There is no "Improve" mode: OCF has no common mark for a pack's advancement actions (SagaS,
 D100 heroic and a few others tag them `advancement`, Fate `milestone`, others nothing), so they stay
@@ -1316,7 +1322,8 @@ git update-index --skip-worktree packages/packs/package.json
 
 Our packs' `package.json` (`packs/sagas/core`, `packs/lovecraft/jazz-age`, `packs/d100/heroic`)
 make them workspace packages, like every pack, and `pnpm-lock.yaml` has their entries (a dev
-dependency on the engine each, added by hand like the other packs'). So `pnpm install --frozen-lockfile` works as is, then remove the two ORC
+dependency on the engine each, added by hand like the other packs'). So `pnpm install
+--frozen-lockfile` works as is, then remove the two ORC
 links ([above](#pnpms-links-to-the-orc-packs)).
 
 Don't run a plain `pnpm install` on Windows: it would rewrite `pnpm-lock.yaml` without the ORC
