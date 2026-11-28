@@ -59,7 +59,7 @@ What you should get:
 
 No sparse checkout and no `core.protectNTFS`: every file is on disk, and the universal tools read
 the ORC packs from it. `pnpm test` runs, but a few OCF tests that list the official packs fail
-because of `packs/sagas/core` and `packs/d100/heroic` ([GitHub setup](#github-setup)).
+because of our packs ([GitHub setup](#github-setup)).
 
 ### macOS
 
@@ -120,7 +120,7 @@ never follows a link, and it is the fastest. A clone's links all point inside it
 `check-links.ts` confirms ([Deleting a folder that holds
 junctions](#deleting-a-folder-that-holds-junctions)).
 
-What works: the SagaS and D100 heroic sheets, the universal sheet (which even loads the ORC packs,
+What works: the SagaS, Jazz Age and D100 heroic sheets, the universal sheet (which even loads the ORC packs,
 from git: [PF2 in the universal tools](#pf2-in-the-universal-tools)), `pnpm validate` on the 15
 packs on disk, `pnpm typecheck`, and merges from `upstream`. What doesn't: `pnpm validate` and `pnpm
 test` on the
@@ -323,7 +323,7 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 | `scripts/extensions/sagas/sagas-create.html`                | The SagaS sheet's Create mode                                                               |
 | `scripts/extensions/sagas/sagas-play.html`                  | The SagaS sheet's Play mode                                                                 |
 | `scripts/extensions/sagas/sagas-lib.ts`                     | The SagaS pages' own routes: their data, a random character                                 |
-| `scripts/extensions/universal-lib.ts`                       | Shared server of the universal, SagaS and D100 heroic tools                                 |
+| `scripts/extensions/universal-lib.ts`                       | Shared server of the universal, SagaS, Jazz Age and D100 heroic tools                       |
 | `scripts/extensions/display-lib.ts`                         | What a pack's display hints hide, for the SagaS and universal tools                         |
 | `scripts/extensions/universal.ts` + `.html`                 | Universal sheet for any pack: Create and Play                                               |
 | `scripts/extensions/sagas/rules_of_sagas_v0_995_lll_ogl.md` | The rules the pack models (OGL)                                                             |
@@ -369,7 +369,7 @@ terminal stops it. `--port N` changes the port, `--no-open` doesn't open the bro
 | D100 heroic (Create and Play)         | 5181 | `node --import tsx --conditions @opencharacter/source scripts/extensions/d100/d100.ts`           |
 | Universal (any pack, Create and Play) | 5176 | `node --import tsx --conditions @opencharacter/source scripts/extensions/universal.ts`           |
 
-The three can run at once, on their own ports. Two copies of one sheet need `--port` for the
+The four can run at once, on their own ports. Two copies of one sheet need `--port` for the
 second.
 
 ### The command-line tools
@@ -405,8 +405,8 @@ Three ways, all from the repo folder opened in VS Code:
 - **The terminal** (Ctrl+ù, or Terminal → New Terminal): type the command, with any argument.
 
 Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
-without asking). The SagaS, Jazz Age and D100 heroic sheets list the characters of `examples/characters/` that
-use their pack. The universal sheet lists OCF's example characters (`examples/characters/`) and ours
+without asking). The SagaS, Jazz Age and D100 heroic sheets list the characters of
+`examples/characters/` that use their pack. The universal sheet lists OCF's example characters (`examples/characters/`) and ours
 (`extensions/…`); a loaded character is saved back where it was, and a new one, or one saved under
 another name, goes to `extensions/`.
 
@@ -1091,7 +1091,7 @@ text (`@opencharacter/text`, `describeNeed`).
 Create; a loaded one in Create while it is being created, else in Play. The mode is the server
 session's (`/api/mode`): in Create, the pack's action groups are read as while creating, even once
 the character is finished (after a random start, or one loaded), so a pack that hides its actions
-of play while creating (SagaS, D100 heroic) keeps them out of Create. A pack that doesn't (Fate, 5e,
+of play while creating (SagaS, Jazz Age, D100 heroic) keeps them out of Create. A pack that doesn't (Fate, 5e,
 Draw Steel…) shows them in both modes. The page also loads, saves (a loaded character back where
 it was, any other to `extensions/`) and shows the YAML.
 
@@ -1174,12 +1174,12 @@ that adds a pack:
 - **CI is disabled** (Actions → CI → Disable workflow). OCF's tests treat every pack under
   `packs/` as an official one: `build.test.ts` and `validate.test.ts` expect an exact list of
   packs, `packages.test.ts` expects 19 published packages, and `licenses.test.ts` expects the
-  `@opencharacter/packs` bundle's LICENSE to name every pack. With `packs/sagas/core` and
-  `packs/d100/heroic` they fail.
+  `@opencharacter/packs` bundle's LICENSE to name every pack. With our packs (`packs/sagas/core`,
+  `packs/lovecraft/jazz-age`, `packs/d100/heroic`) they fail.
   Adapting them would mean changing OCF's files and conflicts on every merge from `upstream`.
 - **Release is disabled** too. On every push to `main` it would try to publish to npm, under the
-  `@opencharacter` scope, every package not yet there, `@opencharacter/sagas-core` and
-  `@opencharacter/d100-heroic` included.
+  `@opencharacter` scope, every package not yet there, `@opencharacter/sagas-core`,
+  `@opencharacter/lovecraft-jazz-age` and `@opencharacter/d100-heroic` included.
 - **Website** (`pages.yml`) runs only by hand; it stays as is.
 - **Dependabot is off**: `.github/dependabot.yml` is removed and its settings are off (Settings →
   Code security). Dependency updates come with the merges from `upstream`.
@@ -1191,7 +1191,7 @@ Without CI, check locally before pushing:
 
 ```sh
 npx oxlint --deny-warnings
-npx oxfmt --check packs/sagas packs/d100 scripts/extensions README_EXTENSIONS.md
+npx oxfmt --check packs/sagas packs/lovecraft packs/d100 scripts/extensions README_EXTENSIONS.md
 pnpm typecheck
 pnpm validate
 ```
@@ -1312,18 +1312,17 @@ git update-index --skip-worktree packages/packs/package.json
 
 ### Reinstalling dependencies (`pnpm install`)
 
-`packs/sagas/core/package.json` and `packs/d100/heroic/package.json` make the SagaS and
-D100 heroic packs workspace packages, like every pack, and `pnpm-lock.yaml` has their entries
-(`packs/sagas/core` and `packs/d100/heroic`, a dev dependency on the engine each, added by hand
-like the other packs'). So `pnpm install --frozen-lockfile` works as is, then remove the two ORC
+Our packs' `package.json` (`packs/sagas/core`, `packs/lovecraft/jazz-age`, `packs/d100/heroic`)
+make them workspace packages, like every pack, and `pnpm-lock.yaml` has their entries (a dev
+dependency on the engine each, added by hand like the other packs'). So `pnpm install --frozen-lockfile` works as is, then remove the two ORC
 links ([above](#pnpms-links-to-the-orc-packs)).
 
 Don't run a plain `pnpm install` on Windows: it would rewrite `pnpm-lock.yaml` without the ORC
-packs, which aren't on disk. If a merge from `upstream` ever drops the `packs/sagas/core` or
-`packs/d100/heroic` entry
-(a frozen install then stops with `ERR_PNPM_OUTDATED_LOCKFILE`), add it back in path order
-(`packs/d100/heroic` before `packs/draw-steel/heroes`, `packs/sagas/core` before
-`packs/swn/revised`), the same for both but the path:
+packs, which aren't on disk. If a merge from `upstream` ever drops one of their entries (a frozen
+install then stops with `ERR_PNPM_OUTDATED_LOCKFILE`), add it back in path order
+(`packs/d100/heroic` before `packs/draw-steel/heroes`, `packs/lovecraft/jazz-age` before
+`packs/mork-borg/core`, `packs/sagas/core` before `packs/swn/revised`), the same for all but the
+path:
 
 ```yaml
 packs/sagas/core:
