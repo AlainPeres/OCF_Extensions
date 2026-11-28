@@ -1,7 +1,8 @@
 # Extensions
 
 Additions to the Open Character Format (OCF) repository: a pack for the _Rules of SagaS 0.995 LLL
-(OGL)_, with its bestiary, and a D100 heroic fantasy pack from a System Resource Document under
+(OGL)_, with its bestiary, a Jazz Age Lovecraftian investigation pack from an OGL System
+Reference Document, and a D100 heroic fantasy pack from a System Resource Document under
 Creative Commons Attribution 4.0, each with a sheet to create and play characters in the browser,
 and a universal sheet for any pack. This repository
 (<https://github.com/AlainPeres/OCF_Extensions>, the `origin` remote) keeps OCF's whole history,
@@ -15,9 +16,9 @@ Everything runs from the repo's TypeScript sources, so nothing needs a build: th
 
 | System          | Procedure                                                  | What you get                                      | Tested                             |
 | --------------- | ---------------------------------------------------------- | ------------------------------------------------- | ---------------------------------- |
-| Linux           | [Linux](#linux)                                            | Everything: 17 packs, ORC included                | Not yet                            |
-| macOS           | [macOS](#macos)                                            | Everything: 17 packs, ORC included                | Not yet                            |
-| Windows         | [Windows](#windows)                                        | 15 packs on disk; ORC only in the universal tools | Yes, clone from GitHub, 2026-11-23 |
+| Linux           | [Linux](#linux)                                            | Everything: 18 packs, ORC included                | Not yet                            |
+| macOS           | [macOS](#macos)                                            | Everything: 18 packs, ORC included                | Not yet                            |
+| Windows         | [Windows](#windows)                                        | 16 packs on disk; ORC only in the universal tools | Yes, clone from GitHub, 2026-11-23 |
 | Windows via WSL | [Windows, cloned through WSL](#windows-cloned-through-wsl) | As Windows; a full clone stays in WSL             | Yes, 2026-11-24                    |
 
 Linux and macOS take the same commands. Windows needs a few more (no checkout at first,
@@ -51,9 +52,9 @@ pnpm validate
 What you should get:
 
 - `pnpm install` ends with `Done in …`;
-- `pnpm validate` ends with `Validated 17 pack(s) […] 51 character file(s) and 1 export(s): 0
-  error(s), 0 warning(s)` (the 17 packs include `orc-2e` and `orc-sf-2e`; the 51 characters, OCF's
-  examples, the 19 ORC ones and our 4 in `extensions/`);
+- `pnpm validate` ends with `Validated 18 pack(s) […] 52 character file(s) and 1 export(s): 0
+  error(s), 0 warning(s)` (the 18 packs include `orc-2e` and `orc-sf-2e`; the 52 characters, OCF's
+  examples, the 19 ORC ones and our 5 in `extensions/`);
 - `git status` says `nothing to commit, working tree clean`.
 
 No sparse checkout and no `core.protectNTFS`: every file is on disk, and the universal tools read
@@ -106,7 +107,7 @@ Step by step:
    esbuild` is pnpm 10's default and harmless.
 7. **The two `rmdir`** remove the links pnpm makes to the missing ORC packs
    ([pnpm's links to the ORC packs](#pnpms-links-to-the-orc-packs)). They print nothing.
-8. **`pnpm validate`** takes a few seconds, then ends with `Validated 15 pack(s) […] 32 character
+8. **`pnpm validate`** takes a few seconds, then ends with `Validated 16 pack(s) […] 33 character
    file(s) and 1 export(s): 0 error(s), 0 warning(s)`.
 
 `git status` then says `nothing to commit, working tree clean`, with `You are in a sparse checkout
@@ -247,7 +248,7 @@ git status                             # nothing to commit, working tree clean, 
 pnpm install --frozen-lockfile
 cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-2e
 cmd /c rmdir packages\packs\node_modules\@opencharacter\orc-sf-2e
-pnpm validate                          # Validated 15 pack(s) […] 32 character file(s) […] 0 error(s)
+pnpm validate                          # Validated 16 pack(s) […] 33 character file(s) […] 0 error(s)
 ```
 
 - The copied `.git` comes from Linux, without a sparse checkout, so git first sees the left-out
@@ -335,7 +336,11 @@ holds: `git log -1 upstream/main`, or `git merge-base HEAD upstream/main`.
 | `scripts/extensions/d100/d100-play.html`                    | The D100 heroic sheet's Play mode                                                           |
 | `scripts/extensions/validate-pack.ts`                       | `pnpm validate`'s checks on one pack and its characters                                     |
 | `scripts/extensions/check-links.ts`                         | Before deleting a folder: where its links point, without following                          |
-| `examples/characters/extensions/`                           | SagaS and D100 heroic example characters, and those the sheets save                         |
+| `packs/lovecraft/jazz-age/`                                 | The `lovecraft-jazz-age` pack (rules, 44 skills, 11 archetypes, 20 weapons, 3 armor)        |
+| `scripts/extensions/Eternal_C_Jazz/`                        | The Jazz Age SRD the pack models (Markdown), and its OGL                                    |
+| `scripts/extensions/Eternal_C_Jazz/jazz.ts`                 | Jazz Age sheet: Create and Play in one page (the universal page, for this pack)             |
+| `scripts/extensions/Eternal_C_Jazz/srd-import.mjs`          | The SRD into the pack: skills, archetypes, weapons, armor                                   |
+| `examples/characters/extensions/`                           | SagaS, Jazz Age and D100 heroic example characters, and those the sheets save               |
 | `.vscode/launch.json`, `.vscode/settings.json`              | Run and debug the current TS file from VS Code                                              |
 
 Our files stay apart from OCF's: scripts in `scripts/extensions/`, characters in
@@ -357,11 +362,12 @@ Each starts a local server (127.0.0.1 only) and opens its page in the browser; C
 terminal stops it. `--port N` changes the port, `--no-open` doesn't open the browser. Run the
 `.ts` file, not the `.html`: the page needs its server.
 
-| Sheet                                 | Port | Command                                                                                  |
-| ------------------------------------- | ---- | ---------------------------------------------------------------------------------------- |
-| SagaS (Create and Play)               | 5180 | `node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/sagas.ts` |
-| D100 heroic (Create and Play)         | 5181 | `node --import tsx --conditions @opencharacter/source scripts/extensions/d100/d100.ts`   |
-| Universal (any pack, Create and Play) | 5176 | `node --import tsx --conditions @opencharacter/source scripts/extensions/universal.ts`   |
+| Sheet                                 | Port | Command                                                                                          |
+| ------------------------------------- | ---- | ------------------------------------------------------------------------------------------------ |
+| SagaS (Create and Play)               | 5180 | `node --import tsx --conditions @opencharacter/source scripts/extensions/sagas/sagas.ts`         |
+| Jazz Age (Create and Play)            | 5182 | `node --import tsx --conditions @opencharacter/source scripts/extensions/Eternal_C_Jazz/jazz.ts` |
+| D100 heroic (Create and Play)         | 5181 | `node --import tsx --conditions @opencharacter/source scripts/extensions/d100/d100.ts`           |
+| Universal (any pack, Create and Play) | 5176 | `node --import tsx --conditions @opencharacter/source scripts/extensions/universal.ts`           |
 
 The three can run at once, on their own ports. Two copies of one sheet need `--port` for the
 second.
@@ -399,7 +405,7 @@ Three ways, all from the repo folder opened in VS Code:
 - **The terminal** (Ctrl+ù, or Terminal → New Terminal): type the command, with any argument.
 
 Characters are saved to `examples/characters/extensions/` (an existing file is never overwritten
-without asking). The SagaS and D100 heroic sheets list the characters of `examples/characters/` that
+without asking). The SagaS, Jazz Age and D100 heroic sheets list the characters of `examples/characters/` that
 use their pack. The universal sheet lists OCF's example characters (`examples/characters/`) and ours
 (`extensions/…`); a loaded character is saved back where it was, and a new one, or one saved under
 another name, goes to `extensions/`.
@@ -1001,6 +1007,80 @@ For these pages, the universal server's view also gives each copy's item, the st
 and the content applied to the character (`applied`, with its state): additions the universal
 sheet doesn't use.
 
+## The Jazz Age pack (`packs/lovecraft/jazz-age`)
+
+Pack ID `lovecraft-jazz-age`, version 0.1.0, spec 0.4.0, licensed under OGL 1.0a. It models an
+any-time Lovecraftian investigation game's OGL System Reference Document, as localized for the
+Jazz Age (the world between the World Wars); its chapters are in `scripts/extensions/Eternal_C_Jazz/`.
+All its text is Open Game Content but the game's name and logo, its publisher's Product Identity:
+the pack, its ID and its sheet carry a generic name, and that name appears only in the section 15
+notices the license requires (`pack.yaml` and `LICENSE` hold the license, section 15 with the
+pack's own line, and the Product Identity statement).
+
+### Rules (`rules/`)
+
+- **`stats.yaml`**: six stats (3 to 18, tested at ×5), the upbringing's harshness, Hit Points
+  ((STR + CON) / 2 rounded up; unconscious at 2, dead at 0), Willpower Points (POW; a breakdown at
+  1 or 2, −20% to every test; no control at 0), Sanity (POW × 5, or × 4 after a harsh upbringing),
+  the Breaking Point (SAN − POW), Maximum SAN (99 − Unnatural) and Recovery SAN, the damage bonus.
+- **`skills.yaml`**: the `skill` type, a rating from its base; every skill is a standard copy,
+  a typed one (Science, Foreign Language…) with a specialty (`name-specialty`), another
+  specialty another copy (`learn-specialty`). No skill above 80% at creation.
+- **`checks.yaml`**: the test on 1D100 (critical on 01 or matching digits, fumble on 100 or
+  matching digits; ±20% or ±40%; 1% to 99%), `skill-test`, `stat-test`, `luck-roll` (50%),
+  `resources-test` (at hand, with what is stowed, or all of it, × 5).
+- **`archetypes.yaml`**: the `archetype` type: its skills and ratings, those to choose from, its
+  starting Resources and number of Bonds.
+- **`resources.yaml`** and **`bonds.yaml`**: Resources (at hand, stowed, in storage, check
+  boxes) and Bonds, each a copy with its name, its kind (individual: at most CHA; community: at
+  most 20) and its score (`name-bond`, `adjust-bond`).
+- **`combat.yaml`**: weapons (skill, damage dice or Lethality, the damage bonus, armor piercing)
+  and armor; `attack` (the weapon's skill), `damage` (dice and bonus, or a Lethality roll whose
+  failure deals the two dice's sum; doubled by a critical), `take-damage` (the best armor worn,
+  less armor piercing).
+- **`health.yaml`**: `healing-received` (first aid or treatment, 1D4, as the healer's test
+  went), `recuperate` (CON×5, 1 HP a day), Willpower spent and regained.
+- **`sanity.yaml`**: `sanity-test` (the loss on a success and on a failure; a critical loses the
+  least, a fumble the most; the Breaking Point gives a disorder and resets), `regain-sanity`.
+- **`creation.yaml`**: `create-protagonist`, guided and random, in the book's order: the
+  upbringing, the stats (72 points or 4D6 drop the lowest, placed at will), the Harsh bonuses,
+  SAN and the Breaking Point, the archetype (its skills, those chosen from its list, its
+  Resources, its Bonds at CHA), the adversity picks (1 or 2, +20 to First Aid, Military
+  Training, Regional Lore or Survival), Resources traded for bonus picks, the ten bonus picks
+  (+20, 80% at most, never Unnatural). The guided start leaves the Protagonist being created, to
+  name the Bonds and specialties, then `finish-creation`; the random start finishes.
+- **`display.yaml`**, **`identity.yaml`**, **`tags.yaml`**: the sheet's field and action groups,
+  the free text (name, age, home, motivations, disorders, equipment), the tags.
+
+### Content (`content/`)
+
+From `scripts/extensions/Eternal_C_Jazz/srd-import.mjs`, which reads the SRD's Markdown: the 44
+skills of the base ratings table with each one's description, the 11 Jazz Age archetypes, the
+example weapons (20) and armor (3); and the Bond item. Run it again after changing the SRD:
+
+```sh
+node scripts/extensions/Eternal_C_Jazz/srd-import.mjs
+```
+
+`examples/characters/extensions/jazz-test.yaml` is a Protagonist made by the random start.
+
+### Not yet modelled
+
+Opposed tests and pursuits, exhaustion and sleeplessness, called shots and the other combat
+options, explosions, fear in combat, the other threats (poison, falls, fire…), the effects of
+disorders, adapting to violence and helplessness, projecting SAN loss onto a Bond, Community Bond
+trade-ins at creation, the mental damage of a harsh upbringing, downtime, Mythos research, rituals
+and supernatural effects, creatures.
+
+## The Jazz Age sheet
+
+**`jazz.ts`** (port 5182) is the universal sheet (`universal.html`, [below](#the-universal-tools))
+served for this pack alone: the server answers `/api/sheet` with the pack and the title, and the
+page then hides its pack list. Create and Play work as there: the creation starts, each pause as
+a form, the actions by the pack's groups (the creation's while creating, the others in Play), the
+skills, Bonds, weapons and armor as copies with their actions, the log. Pages of its own, laid
+out for the game as SagaS and D100 heroic have, may follow.
+
 ## The universal tools
 
 They work for any pack under `packs/`, with nothing of a pack written in their code: the engine
@@ -1150,7 +1230,7 @@ git sparse-checkout list    # /*  !packs/orc/  !examples/characters/orc-*.yaml
 
 The consequences:
 
-- the ORC packs (`orc-2e`, `orc-sf-2e`) aren't on disk, so `pnpm validate` checks 15 packs;
+- the ORC packs (`orc-2e`, `orc-sf-2e`) aren't on disk, so `pnpm validate` checks 16 packs;
 - the ORC example characters (`examples/characters/orc-*.yaml`) aren't on disk either, since their
   pack is missing. Git knows they are left out on purpose, so `git status` stays clean;
 - the tests that read the ORC packs fail with `ENOENT … packs/orc/2e/pack.yaml`;
