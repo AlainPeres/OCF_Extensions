@@ -521,6 +521,15 @@
         const last = store.get('pack');
         if (last !== null && (last === '' || packs.some((p) => p.id === last)))
           $('pack').value = last;
+        // A game's own sheet (jazz.ts…) serves this page for one pack: /api/sheet names it and
+        // its title; the pack can't be changed then. The universal sheet has no such route.
+        const own = await api('/api/sheet').catch(() => null);
+        if (own?.pack && packs.some((p) => p.id === own.pack)) {
+          $('pack').value = own.pack;
+          $('pack').classList.add('hidden');
+          document.title = own.title ?? document.title;
+          document.querySelector('header h1').textContent = own.title ?? '';
+        }
         packChanged();
         await listCharacters();
       }
